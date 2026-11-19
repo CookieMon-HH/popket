@@ -1,6 +1,6 @@
 import { W, H, text, drawSprite, type Ctx } from './engine/draw';
 import { input, bindTouchPad } from './engine/input';
-import { ui, Menu, setTextFormatter, say } from './engine/ui';
+import { ui, Menu, MessageBox, setTextFormatter, say } from './engine/ui';
 import { clock, tickTasks } from './engine/timing';
 import { scenes, fx, fadeTo, type Scene } from './engine/scene';
 import { world } from './game/overworld';
@@ -88,7 +88,18 @@ async function titleFlow() {
   } catch {
     /* prompt unavailable */
   }
-  newGame(name || '하루');
+  if (!name) {
+    const names = ['하루', '지수', '민준', '서윤', '도윤'];
+    await fadeTo(0, 10);
+    const m = new MessageBox('주인공의 이름을 골라 주세요.', { persist: true, instant: true });
+    ui.run(m);
+    await m.promise;
+    const k = await ui.run(new Menu({ items: names, x: W - 76, y: 20, w: 72 }));
+    m.close();
+    name = names[k];
+    await fadeTo(1, 12);
+  }
+  newGame(name);
   world.load('home', 2, 5, 'down');
   scenes.current = world;
   await fadeTo(0, 20);
