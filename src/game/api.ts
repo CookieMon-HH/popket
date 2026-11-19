@@ -6,7 +6,7 @@ import { silhouette } from '../engine/pix';
 import { SPECIES } from '../data/species';
 import { ITEMS } from '../data/items';
 import { world, type NPC } from './overworld';
-import { game, runtime, addItem, saveGame, markCaught, addMon, itemCount } from './state';
+import { game, runtime, addItem, saveGame, markCaught, addMon, itemCount, beatenAll } from './state';
 import { createMon, healMon, monName, maxHp, type Mon } from './monster';
 import { runBattle, type BattleResult } from './battle';
 import { monSprite } from './sprites';
@@ -171,6 +171,10 @@ export async function talkTo(npc: NPC) {
     return;
   }
   npc.dir = OPP[world.player.dir];
+  if (!beatenAll(d.requires)) {
+    await say(d.waitText ?? '…');
+    return;
+  }
   if (d.trainer) {
     const t = d.trainer;
     if (game.flags['tr_' + t.id]) await say(`${t.name}: ${t.after}`);

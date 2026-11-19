@@ -128,3 +128,6 @@ export function addMon(m: Mon): 'party' | 'box' {
   game.box.push(m);
   return 'box';
 }
+
+/** True once every listed trainer has been beaten (bosses wait for their grunts). */
+export const beatenAll = (ids?: string[]) => (ids ?? []).every((id) => game.flags['tr_' + id]);

@@ -1,14 +1,14 @@
-import { W, H, OX, BW, text, drawSprite, setLogicalWidth, type Ctx } from './engine/draw';
+import { W, H, OX, BW, setLogicalWidth } from './engine/draw';
 import { input, bindTouchPad, bindJoystick, bindDpad } from './engine/input';
 import { loadSettings } from './game/settings';
 import { ui, Menu, MessageBox, setTextFormatter, say, yesNo } from './engine/ui';
-import { clock, tickTasks } from './engine/timing';
-import { scenes, fx, fadeTo, type Scene } from './engine/scene';
+import { tickTasks } from './engine/timing';
+import { scenes, fx, fadeTo } from './engine/scene';
 import { world } from './game/overworld';
 import { installHooks, runScript, appHooks } from './game/api';
 import { game, hasSave, loadGame, newGame, saveGame, runtime } from './game/state';
-import { monSprite } from './game/sprites';
 import { j } from './game/common';
+import { TitleScene } from './game/title';
 
 const canvas = document.getElementById('screen') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
@@ -49,42 +49,14 @@ installHooks();
 
 // ---------------------------------------------------------------------------
 
-class TitleScene implements Scene {
-  update() {}
-  drawWorld(g: Ctx) {
-    const grad = g.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, '#5ab8f0');
-    grad.addColorStop(0.6, '#bfe6ff');
-    grad.addColorStop(0.6, '#8ad46e');
-    grad.addColorStop(1, '#5cb44a');
-    g.fillStyle = grad;
-    g.fillRect(0, 0, W, H);
-    const t = clock.frame;
-    ['modak', 'pong', 'saesun'].forEach((id, i) => {
-      const bob = Math.round(Math.sin(t / 18 + i * 2) * 3);
-      drawSprite(g, monSprite(id), OX + 8 + i * 80, 76 + bob, 80, 80);
-    });
-    g.fillStyle = 'rgba(255,255,255,0.8)';
-    for (let i = 0; i < 4; i++) {
-      const x = ((t / 3 + i * 80) % (W + 60)) - 40;
-      g.fillRect(x, 16 + i * 9, 30, 6);
-      g.fillRect(x + 6, 12 + i * 9, 16, 4);
-    }
-  }
-  drawUI(c: Ctx) {
-    text(c, '팜팜몬', W / 2, 22, { size: 40, weight: 900, align: 'center', color: '#ffd84a', shadow: '#2a4a8a' });
-    text(c, '몬스터 수집 RPG', W / 2, 68, { size: 11, align: 'center', color: '#ffffff', shadow: '#2a4a8a' });
-    if (!ui.active && Math.floor(clock.frame / 30) % 2 === 0) {
-      text(c, 'Z / Enter 를 눌러 시작', W / 2, 160, { size: 10, align: 'center', color: '#ffffff', shadow: '#2a5a2a' });
-    }
-  }
-}
-
 async function titleFlow() {
-  scenes.current = new TitleScene();
+  const title = new TitleScene();
+  scenes.current = title;
   await fadeTo(0, 20);
+  await title.waitStart();
   const items = hasSave() ? ['이어하기', '새로 시작'] : ['새로 시작'];
-  const r = await ui.run(new Menu({ items, x: W / 2 - 48, y: 146, w: 96 }));
+  const r = await ui.run(new Menu({ items, x: W / 2 - 48, y: 130, w: 96 }));
+  title.dispose();
   if (items[r] === '새로 시작' && hasSave()) {
     const ok = await yesNo('새로 시작하면, 저장할 때 이전 기록을 덮어써요.\n그래도 새로 시작할까요?');
     if (!ok) return titleFlow();

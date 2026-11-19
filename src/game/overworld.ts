@@ -8,7 +8,7 @@ import { MAPS, type MapDef, type NPCDef } from './maps';
 import { SOLID, tileCanvas } from './tiles';
 import { silhouette } from '../engine/pix';
 import { personSprite, itemSprite, monSprite, boulderSprite, barrierSprite, type Pal } from './sprites';
-import { game, runtime } from './state';
+import { game, runtime, beatenAll } from './state';
 
 export interface Actor {
   x: number;
@@ -252,7 +252,7 @@ export class Overworld implements Scene {
     const p = this.player;
     for (const n of this.npcs) {
       const tr = n.def.trainer;
-      if (!tr || !n.def.sight || game.flags['tr_' + tr.id]) continue;
+      if (!tr || !n.def.sight || game.flags['tr_' + tr.id] || !beatenAll(n.def.requires)) continue;
       const [dx, dy] = DIRV[n.dir];
       for (let i = 1; i <= n.def.sight; i++) {
         const x = n.x + dx * i;

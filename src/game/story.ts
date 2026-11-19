@@ -49,6 +49,7 @@ export const PAL = {
   seori: { hair: '#e8f4ff', shirt: '#7ac0e8', pants: '#3a5a8a' },
   yongha: { hair: '#2a4a3a', shirt: '#c83a3a', pants: '#2a2a3a', hat: '#e8c040' },
   elder: { hair: '#f4f4f4', shirt: '#6a4a8a', pants: '#3a2a4a' },
+  sutgeom: { hair: '#3a2a22', shirt: '#7a3a2a', pants: '#2a1e1a', hat: '#a04a2a' },
   cloud: { hair: '#8a94c8', shirt: '#2e2e3a', pants: '#1e1e28', hat: '#626aa0' },
   skier: { hair: '#3a2a20', shirt: '#e84a6a', pants: '#3a4a7a', hat: '#ffffff' },
 } satisfies Record<string, Pal>;
@@ -77,10 +78,10 @@ function rivalDef(stage: 1 | 2 | 3 | 4): TrainerDef {
     stage === 1
       ? [[line[0], 5]]
       : stage === 2
-        ? [['baramsae', 14], ['pojani', 13], [line[1], 16]]
+        ? [['baramsae', 13], ['pojani', 12], [line[1], 15]]
         : stage === 3
-          ? [['hoeori', 28], ['nalgae', 27], ['jeolgu', 27], [line[1], 30]]
-          : [['hoeori', 50], ['wolgung', 49], ['cheonryong', 50], ['geosin', 49], ['bingsan', 49], [line[2], 53]];
+          ? [['baramsae', 23], ['kkomaryong', 22], ['jeolgu', 22], [line[1], 25]]
+          : [['hoeori', 53], ['wolgung', 53], ['cheonryong', 54], ['geosin', 53], ['bingsan', 54], [line[2], 57]];
   return {
     id: 'rival' + stage,
     cls: stage === 4 ? '챔피언' : '라이벌',
@@ -320,7 +321,7 @@ export async function bossScene() {
   await say('흑영: 방해한다면… 힘으로 치워 주마!');
   const t: TrainerDef = {
     id: 'boss', cls: '검은안개단 두목', name: '흑영', pal: PAL.boss,
-    team: [['dokdae', 26], ['dodug', 24], ['heukjang', 25], ['beongae', 25]], reward: 3000,
+    team: [['dodug', 22], ['heukjang', 21], ['beongae', 22], ['dokkae', 23]], reward: 3000,
     intro: '', defeat: '…이 힘은, 대체…', after: '',
     afterWin: bossWin,
   };
@@ -363,7 +364,7 @@ export async function whaleTalk() {
 export async function rival3Scene() {
   await rivalApproach('rival_t4');
   await say('은재: {name}! 별빛동굴에서 검은안개단 두목을 이겼다며!\n정말 굉장하다… 이제 너를 따라잡기도 힘들겠어.');
-  await say('은재: 하지만 마지막 배지 앞에서 너만 앞서가게 둘 순 없지.\n진짜 실력으로 승부다!');
+  await say('은재: 하지만 세 번째 배지 앞에서 너만 앞서가게 둘 순 없지.\n진짜 실력으로 승부다!');
   await rivalBattle(3);
   await say('은재: 별빛 수련관의 관장 하람 님은 전기 타입을 써.\n땅 타입 몬스터가 있으면 훨씬 유리할 거야!');
   await say('은재: 난 해솔 리그를 목표로 계속 수련할 거야. 거기서 다시 만나자!');
@@ -377,7 +378,7 @@ export const leader3Win = async () => {
   await say('관장 하람: 번개배지다. 번개보다 빠른 판단이었어!');
   await say('{name}은(는) 관장 하람에게서 번개배지를 받았다!');
   await giveItem('hyperpotion', 3);
-  await say('관장 하람: 세 수련관을 모두 이겨 냈구나.\n이제 해솔 리그에 도전할 자격이 생긴 거다.');
+  await say('관장 하람: 벌써 배지가 세 개로군.\n해솔 리그에 가려면 일곱 개가 필요하니, 아직 갈 길이 멀다!');
   await ending();
 };
 
@@ -385,7 +386,7 @@ async function ending() {
   await say('…그때, 한별 박사에게서 연락이 왔다!');
   await say('한별 박사: {name}! 소식 들었단다.\n검은안개단을 막고, 은하고래까지 지켜 내다니…');
   await say('한별 박사: 그런데 걱정되는 소식이 있구나. 동굴에서 달아난 흑영이\n동쪽 바다의 파도항구 쪽으로 향했다는구나.');
-  await say('한별 박사: 그리고 해솔 리그에 도전하려면 배지가 다섯 개 필요하단다.\n별빛시 동쪽 4번 도로를 따라 남쪽으로 가 보렴!');
+  await say('한별 박사: 그리고 해솔 리그에 도전하려면 배지가 일곱 개 필요하단다.\n별빛시 동쪽 4번 도로를 따라 남쪽으로 가 보렴!');
   await say('— 제3장 「별빛의 고래」 끝 —\n이야기는 4번 도로 너머로 계속됩니다.');
   game.flags.ending = true;
 }
@@ -397,7 +398,7 @@ const bellCount = () => ['bell_forest', 'bell_water', 'bell_rock'].filter((b) =>
 
 export async function sanjiTalk() {
   if (!game.flags.badge3) {
-    await say('산지기 할아버지: 허허, 젊은 트레이너로구먼.\n세 수련관의 배지를 모두 모으면 이 늙은이를 다시 찾아오게.');
+    await say('산지기 할아버지: 허허, 젊은 트레이너로구먼.\n배지를 세 개 모으면 이 늙은이를 다시 찾아오게.');
     return;
   }
   if (!game.flags.quest) {
@@ -529,6 +530,20 @@ export const leader4Win = async () => {
 // ---------------------------------------------------------------------------
 // 제5장 — 불꽃산의 심장
 
+/** 5번 도로: 불꽃석을 실어 나르던 간부 숯검정. 잿빛이 손을 뗀 뒤 흑영에게 남은 마지막 간부. */
+export const beachAdminWin = async () => {
+  await say('숯검정: 크윽… 잿빛 녀석이 왜 손을 뗐는지 이제야 알겠군.');
+  await say('숯검정: 이 불꽃석은 화산의 심장을 누르는 데 쓸 거였다.\n흑영 님은 이미 불꽃산 깊은 곳에서 준비를 하고 계시지.');
+  await say('숯검정: …흑영 님을 막을 수 있는 건 너뿐일지도 모르겠군.\n짐은 두고 가겠다. 마음대로 해라.');
+  await fadeTo(1, 10);
+  game.flags.beachDone = true;
+  world.refreshNPCs();
+  await wait(10);
+  await fadeTo(0, 10);
+  await say('검은안개단은 불꽃석 상자를 버려두고 떠났다.\n남쪽으로 가면 불꽃마을이다.');
+  await giveItem('fullrestore', 1, true);
+};
+
 export const leader5Win = async () => {
   game.flags.badge5 = true;
   await say('관장 화련: 화염배지다! 꺼지지 않는 불꽃 같은 승부였어!');
@@ -545,7 +560,7 @@ export async function volcanoBossScene() {
   await say('흑영: 이 결정을 화산의 심장에 꽂으면 모든 게 끝난다.\n비켜라. 이번엔 봐주지 않는다!');
   const t: TrainerDef = {
     id: 'boss2', cls: '검은안개단 두목', name: '흑영', pal: PAL.boss,
-    team: [['dokdae', 40], ['dodug', 39], ['geosin', 40], ['daewang', 41], ['hwasan', 42]], reward: 6000,
+    team: [['dodug', 38], ['geosin', 38], ['daewang', 39], ['hwasan', 39], ['dokdae', 41]], reward: 6000,
     intro: '', defeat: '…졌군. 완전히.', after: '', afterWin: volcanoWin,
   };
   await trainerBattle(t);
@@ -619,10 +634,36 @@ export async function iceIntroScene() {
   }
   await say('은재: {name}! 너도 왔구나. 이 눈보라, 벌써 열흘째래.\n원래 서리마을도 이렇게까지 춥진 않았대.');
   await say('은재: 마을 어르신 말로는 서쪽 용의 마을에서 무슨 일이 생긴 것 같대.\n용의 마을은 해솔 지방의 날씨를 지키는 곳이거든.');
-  await say('은재: 난 리그 가기 전에 용의 마을에서 수련할 생각이야.\n여기 수련관 관장 서리 님은 엄청 강하대. 너도 꼭 도전해 봐!');
+  await say('은재: 그리고 큰일이야. 마을 아이 눈송이가 도망친 아기북곰을 쫓아서\n북쪽 얼음굴로 들어갔대. 관장 서리 님이 찾으러 가셨는데 아직 소식이 없어.');
+  await say('은재: 난 마을 바깥쪽을 찾아볼게. 얼음굴은 네가 부탁해!\n얼음굴 입구는 마을 북동쪽이야.');
   await fadeTo(1, 8);
   world.refreshNPCs();
   await fadeTo(0, 8);
+}
+
+export async function iceCaveScene() {
+  const seori = world.npcs.find((n) => n.def.id === 'seori_cave');
+  if (seori) world.faceEachOther(seori);
+  await say('관장 서리: 당신은… 트레이너군요! 눈송이는 무사해요. 저기 있어요.\n그런데 빙산곰이 눈보라에 겁을 먹고 길을 막고 있어요.');
+  await say('관장 서리: 제 몬스터들은 아이를 지키느라 지쳐 버렸어요.\n부탁해요, 빙산곰을 진정시켜 주세요!');
+  await say('빙산곰: 크오오오——!');
+  const res = await wildBattle(createMon('bingsan', 42));
+  if (res === 'lose') return;
+  if (res === 'run') {
+    await say('빙산곰이 여전히 길을 막고 있다…');
+    return;
+  }
+  if (res === 'win') await say('빙산곰은 기운이 빠져 얌전해지더니,\n얼음굴 깊은 곳으로 천천히 걸어 들어갔다.');
+  await say('눈송이: 으앙… 무서웠어요! 아기북곰도 무사해요!');
+  await say('관장 서리: 정말 고마워요. 이 눈보라 때문에 얼음굴의 몬스터들까지 흥분했나 봐요.\n아이는 제가 데려갈게요. 수련관에서 기다릴게요!');
+  await fadeTo(1, 12);
+  game.flags.iceCaveDone = true;
+  world.load('town7', 5, 4, 'down');
+  await wait(12);
+  await fadeTo(0, 12);
+  await say('눈송이 엄마: 눈송이를 찾아 주셨군요! 정말… 정말 고마워요.\n이거, 얼마 안 되지만 받아 주세요.');
+  await giveItem('fullrestore', 2);
+  await say('관장 서리가 수련관으로 돌아갔다.\n이제 서리 수련관에 도전할 수 있다!');
 }
 
 export const leader6Win = async () => {
@@ -671,7 +712,7 @@ export async function denEntranceScene() {
   if (h) world.faceEachOther(h);
   await say('흑영: …또 만났군, {name}.');
   await say('흑영: 여의주를 훔친 건 내 옛 부하였던 먹구름이다. 검은안개단의 해산을 받아들이지 못하고\n남은 자들을 모아 날씨를 마음대로 부리려 하고 있지.');
-  await say('흑영: 이건 내가 남긴 빚이다. 둥지 입구의 잔당들은 내가 막겠다.\n안쪽의 먹구름은… 네게 부탁한다.');
+  await say('흑영: 이건 내가 남긴 빚이다. 둥지 밖으로 도망치는 녀석은 내가 막겠다.\n안쪽의 잔당들과 먹구름은… 네게 부탁한다.');
   await say('흑영: 둥지 안에는 커다란 바위가 길을 막고 있다. 잘 밀어서 길을 열어라.');
 }
 
