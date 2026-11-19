@@ -39,6 +39,13 @@ export const PAL = {
   grunt: { hair: '#2a2a30', shirt: '#2e2e3a', pants: '#1e1e28', hat: '#4a4a5a' },
   admin: { hair: '#c0c0c8', shirt: '#6a6a7a', pants: '#2a2a34' },
   boss: { hair: '#5a3a8a', shirt: '#1a1a24', pants: '#2a1a3a', hat: '#3a2a4a' },
+  sailor: { hair: '#3a2a20', shirt: '#ffffff', pants: '#2a4a8a', hat: '#ffffff' },
+  dalnim: { hair: '#d8d0f8', shirt: '#3a2a5a', pants: '#2a2040' },
+  hwaryeon: { hair: '#e84a2a', shirt: '#f0a030', pants: '#7a2a1a' },
+  monk: { hair: '#2a2a2a', shirt: '#c8a060', pants: '#6a5030' },
+  shadow: { hair: '#2a2a34', shirt: '#4a3a5a', pants: '#1e1e28' },
+  yongyeon: { hair: '#3aa890', shirt: '#2a4a6a', pants: '#1e2a3a', hat: '#e8c860' },
+  champ: { hair: '#d05a2a', shirt: '#f4f4f8', pants: '#2a2a3a', hat: '#ffd040' },
 } satisfies Record<string, Pal>;
 
 // ---------------------------------------------------------------------------
@@ -59,23 +66,25 @@ export function playerStarter(): string {
 
 const rivalLine = () => LINES[COUNTER[playerStarter()]];
 
-function rivalDef(stage: 1 | 2 | 3): TrainerDef {
+function rivalDef(stage: 1 | 2 | 3 | 4): TrainerDef {
   const line = rivalLine();
   const team: [string, number][] =
     stage === 1
       ? [[line[0], 5]]
       : stage === 2
         ? [['baramsae', 14], ['pojani', 13], [line[1], 16]]
-        : [['hoeori', 28], ['nalgae', 27], ['jeolgu', 27], [line[1], 30]];
+        : stage === 3
+          ? [['hoeori', 28], ['nalgae', 27], ['jeolgu', 27], [line[1], 30]]
+          : [['hoeori', 44], ['wolgung', 43], ['cheonryong', 44], ['geosin', 43], ['beotkkot', 43], [line[2], 46]];
   return {
     id: 'rival' + stage,
-    cls: '라이벌',
+    cls: stage === 4 ? '챔피언' : '라이벌',
     name: '은재',
-    pal: PAL.rival,
+    pal: stage === 4 ? PAL.champ : PAL.rival,
     team,
-    reward: stage * 400,
+    reward: stage === 4 ? 10000 : stage * 400,
     intro: '',
-    defeat: ['쳇, 처음이라 봐준 거야!', '…역시 너 대단하다.', '최고의 승부였어. 인정할게!'][stage - 1],
+    defeat: ['쳇, 처음이라 봐준 거야!', '…역시 너 대단하다.', '최고의 승부였어. 인정할게!', '…졌다. 진짜 졌어. 넌 정말 최고야, 친구!'][stage - 1],
     after: '',
   };
 }
@@ -108,7 +117,9 @@ export async function momTalk() {
   await say('엄마: 어머, {name}! 피곤해 보이는구나.\n잠깐 쉬었다 가렴.');
   await healParty();
   setLastHeal('home', 6, 3);
-  if (game.flags.badge3) await say('엄마: 세 번째 배지까지 모았다며? 우리 {name}, 정말 자랑스럽구나!');
+  if (game.flags.champion) await say('엄마: 우리 집 챔피언! 오늘 저녁은 네가 좋아하는 걸로 해 줄게.');
+  else if (game.flags.badge5) await say('엄마: 배지를 다섯 개나 모았다며? 리그가 바로 옆 고원에 있다니, 응원하러 갈게!');
+  else if (game.flags.badge3) await say('엄마: 세 번째 배지까지 모았다며? 우리 {name}, 정말 자랑스럽구나!');
   else if (game.flags.forestCleared) await say('엄마: 검은안개단이라는 무서운 사람들이 있다던데… 너무 무리하지 마렴.');
   else await say('엄마: 자, 다들 기운이 났지? 조심해서 다녀오렴!');
 }
@@ -145,9 +156,18 @@ export async function labProfessor() {
     return;
   }
   const total = SPECIES_LIST.length;
+  if (game.flags.champion) {
+    await say('한별 박사: 챔피언 {name}! 이 연구소에서 첫 몬스터를 받던 날이 엊그제 같구나.');
+    await say(`한별 박사: 도감은 ${game.caught.length}/${total}종류까지 채웠구나.\n해솔 지방의 모든 몬스터를 만나 보렴!`);
+    return;
+  }
+  if (game.flags.volcanoDone) {
+    await say('한별 박사: 흑영이 별빛결정을 맡기고 갔단다. 검은안개단도 해산했다지.\n이제 남은 건 해솔 리그뿐이구나. 솔빛마을 동쪽 해솔고원으로 가 보렴!');
+    return;
+  }
   if (game.flags.ending) {
-    await say('한별 박사: 세 개의 배지에, 검은안개단까지 막아 내다니…\n{name}, 넌 이 지방의 자랑이란다!');
-    await say(`한별 박사: 도감은 ${game.caught.length}/${total}종류까지 채웠구나.\n해솔 리그가 열리면 꼭 도전해 보렴!`);
+    await say('한별 박사: 별빛시 동쪽 4번 도로를 지나면 파도항구, 그 남쪽엔 불꽃마을이 있단다.\n길이 한 바퀴 돌아 솔빛마을 동쪽의 해솔고원으로 이어지지.');
+    await say(`한별 박사: 도감은 ${game.caught.length}/${total}종류까지 채웠구나. 힘내렴!`);
     return;
   }
   if (!game.flags.badge1) {
@@ -354,8 +374,9 @@ export const leader3Win = async () => {
 async function ending() {
   await say('…그때, 한별 박사에게서 연락이 왔다!');
   await say('한별 박사: {name}! 소식 들었단다.\n검은안개단을 막고, 은하고래까지 지켜 내다니…');
-  await say('한별 박사: 해솔 리그는 다음 봄에 열린단다.\n그때까지 동료들과 함께 더 강해지렴!');
-  await say('— 팜팜몬 제3장 「별빛의 고래」 끝 —\n플레이해 줘서 고마워요!');
+  await say('한별 박사: 그런데 걱정되는 소식이 있구나. 동굴에서 달아난 흑영이\n동쪽 바다의 파도항구 쪽으로 향했다는구나.');
+  await say('한별 박사: 그리고 해솔 리그에 도전하려면 배지가 다섯 개 필요하단다.\n별빛시 동쪽 4번 도로를 따라 남쪽으로 가 보렴!');
+  await say('— 제3장 「별빛의 고래」 끝 —\n이야기는 4번 도로 너머로 계속됩니다.');
   game.flags.ending = true;
 }
 
@@ -453,6 +474,125 @@ export async function potatoTalk() {
   await say('군고구마 아저씨: 수련관 배지를 가진 자네라면 잘 키워 주겠지.\n데려가 주게!');
   await giveMon('gungo', 10);
   game.flags.gotGungo = true;
+}
+
+// ---------------------------------------------------------------------------
+// 제4장 — 파도항구의 유령선
+
+export async function port1Scene() {
+  game.flags.portIntro = true;
+  await say('뱃사람: 이봐, 트레이너! 혹시 소문 들었나?\n밤마다 항구에 파란 불을 단 유령선이 나타난다네!');
+  await say('뱃사람: 그 뒤로 항구의 몬스터들이 하나둘 사라지고 있어.\n수련관 관장 달님 님이 조사하러 배에 올라가셨는데… 아직 소식이 없다네.');
+  await say('뱃사람: 유령선은 남쪽 부두 끝에 묶여 있어. 부탁하네!');
+}
+
+export async function dalnimShipTalk() {
+  if (!game.flags.shipDone) {
+    await say('관장 달님: 쉿… 이 배의 도깨비불은 진짜 유령이 아니에요.\n검은안개단이 몬스터들에게 도깨비불을 피우게 해서 사람들을 겁주고 있어요.');
+    await say('관장 달님: 배 가운데에서 지휘하는 간부를 쓰러뜨려야 해요.\n저는 붙잡힌 아이들을 지킬게요. 부탁해요!');
+    return;
+  }
+  await say('관장 달님: 고마워요. 수련관에서 기다릴게요!');
+}
+
+export const shipAdminWin = async () => {
+  await say('간부 잿빛: 세 번이나… 정말 지긋지긋한 꼬마로군.');
+  await say('간부 잿빛: …좋다, 알려 주지. 흑영 님은 남쪽 불꽃산으로 가셨다.\n화산의 심장에 남은 별빛결정을 꽂아 화산을 다스리시겠다고 하셨지.');
+  await say('간부 잿빛: 그분은… 원래 나쁜 분이 아니야. 십 년 전 화산 폭발로\n고향을 잃으셨지. 다시는 그런 일이 없게 하겠다고…');
+  await say('간부 잿빛: 난 이제 손 떼겠다. 붙잡은 몬스터들도 모두 풀어 주지.');
+  await fadeTo(1, 10);
+  game.flags.shipDone = true;
+  world.refreshNPCs();
+  await wait(10);
+  await fadeTo(0, 10);
+  await say('갇혀 있던 몬스터들이 풀려났다!\n관장 달님은 수련관으로 돌아갔다.');
+};
+
+export const leader4Win = async () => {
+  game.flags.badge4 = true;
+  await say('관장 달님: 달빛배지예요. 어둠 속에서도 길을 잃지 않는 마음의 증표랍니다.');
+  await say('{name}은(는) 관장 달님에게서 달빛배지를 받았다!');
+  await giveItem('hyperpotion', 3);
+  await say('관장 달님: 흑영이 불꽃산으로 갔다면… 불꽃마을의 관장 화련 님이 위험해요.\n항구 서쪽 해변길을 따라 남쪽으로 가세요!');
+};
+
+// ---------------------------------------------------------------------------
+// 제5장 — 불꽃산의 심장
+
+export const leader5Win = async () => {
+  game.flags.badge5 = true;
+  await say('관장 화련: 화염배지다! 꺼지지 않는 불꽃 같은 승부였어!');
+  await say('{name}은(는) 관장 화련에게서 화염배지를 받았다!');
+  await giveItem('fullrestore', 2);
+  await say('관장 화련: 그런데 큰일이야. 조금 전 검은 옷의 남자가 화산 안으로 들어갔어.\n화산 입구는 마을 동쪽이야. 막아 줘, {name}!');
+};
+
+export async function volcanoBossScene() {
+  const boss = world.npcs.find((n) => n.def.id === 'vboss');
+  if (boss) world.faceEachOther(boss);
+  await say('흑영: …또 너인가. 여기까지 따라오다니.');
+  await say('흑영: 십 년 전, 이 산이 폭발해 내 고향이 사라졌다.\n은하고래의 힘이든, 별빛결정이든… 이 화산을 영원히 잠재울 힘이 필요했다.');
+  await say('흑영: 이 결정을 화산의 심장에 꽂으면 모든 게 끝난다.\n비켜라. 이번엔 봐주지 않는다!');
+  const t: TrainerDef = {
+    id: 'boss2', cls: '검은안개단 두목', name: '흑영', pal: PAL.boss,
+    team: [['dokdae', 40], ['dodug', 39], ['geosin', 40], ['daewang', 41], ['hwasan', 42]], reward: 6000,
+    intro: '', defeat: '…졌군. 완전히.', after: '', afterWin: volcanoWin,
+  };
+  await trainerBattle(t);
+}
+
+async function volcanoWin() {
+  await say('흑영: …네 몬스터들은 억지로 끌려온 게 아니라, 스스로 너를 지키려 하는구나.');
+  await say('흑영: 나는 힘으로 산을 누르려고만 했다. 그런데 화산의 몬스터들은\n이 산과 함께 살아가고 있었지…');
+  await flashes(1);
+  await say('흑영은 손에 쥔 별빛결정을 화산의 심장에서 거두었다.\n화산의 떨림이 천천히 잦아든다…');
+  await say('흑영: 결정은 한별 박사에게 맡기겠다. 그리고 나는… 죗값을 치르겠다.\n검은안개단은 오늘로 해산이다.');
+  await say('흑영: …{name}. 해솔 리그에 간다면, 꼭 이겨라.');
+  await fadeTo(1, 12);
+  game.flags.volcanoDone = true;
+  world.refreshNPCs();
+  await wait(12);
+  await fadeTo(0, 12);
+  await say('검은안개단이 해산했다!\n불꽃마을 서쪽 6번 도로를 따라가면 해솔고원에 닿는다.');
+  await giveItem('maxrevive', 2);
+}
+
+// ---------------------------------------------------------------------------
+// 해솔 리그
+
+export const guardian1Win = async () => {
+  await say('리그 수호자 그림자: 다음 방으로 가라. 문이 열렸다.');
+};
+export const guardian2Win = async () => {
+  await say('리그 수호자 용연: 마지막 방에 챔피언이 기다린다. 후회 없는 승부를!');
+};
+
+export async function championScene() {
+  const c = world.npcs.find((n) => n.def.id === 'champ');
+  if (c) world.faceEachOther(c);
+  await say('은재: 왔구나, {name}! 놀랐지? 조금 전에 내가 챔피언을 이겼어.\n그러니까 지금 해솔 리그의 챔피언은… 바로 나야!');
+  await say('은재: 솔빛마을 연구소에서 처음 몬스터를 받은 날부터,\n언젠가 이 자리에서 너랑 싸우고 싶었어.');
+  await say('은재: 그럼 시작하자. 해솔 지방 최고의 트레이너를 정하는 승부를!');
+  const res = await trainerBattle(rivalDef(4), true);
+  if (res !== 'win') {
+    await say('은재: 하하, 아직 내가 챔피언이네! 언제든지 다시 도전해!');
+    return;
+  }
+  game.flags.champion = true;
+  await say('은재: …축하해, {name}. 오늘부터 네가 해솔 리그의 챔피언이야!');
+  await flashes(2);
+  await say('{name}과(와) 동료들의 이름이 명예의 전당에 새겨졌다!');
+  await say('은재: 자, 이제 집에 가자. 솔빛마을까지는 금방이잖아.\n이 길이 한 바퀴 돌아서 우리 마을로 이어져 있었다니, 신기하지?');
+  await fadeTo(1, 20);
+  world.load('home', 5, 3, 'up');
+  await wait(20);
+  await fadeTo(0, 20);
+  await say('엄마: 어서 오렴, {name}! 아니, 이제는 챔피언이라고 불러야 하나?');
+  await say('엄마: 떠날 때는 몬스터 한 마리뿐이었는데… 이렇게 많은 친구들과 돌아왔구나.\n정말 자랑스럽단다.');
+  await say('한별 박사: (전화) {name}! 챔피언 축하한다! 도감도 계속 채워 주렴.\n아직 만나지 못한 몬스터들이 해솔 지방 곳곳에 있단다.');
+  await say('— 팜팜몬 「해솔 지방 이야기」 끝 —\n플레이해 줘서 고마워요! 산군 퀘스트와 도감 완성에도 도전해 보세요.');
+  await healParty();
+  setLastHeal('home', 6, 3);
 }
 
 export function npcById(id: string): NPC | undefined {

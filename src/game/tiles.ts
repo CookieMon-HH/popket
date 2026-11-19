@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -147,6 +147,27 @@ function build(ch: string, anim: number): Pix {
     }
     case 'W':
       wall(p);
+      break;
+    case 'd':
+      // beach sand
+      p.rect(0, 0, 16, 16, '#f4e4b8');
+      for (const [x, y] of [[3, 2], [10, 5], [6, 9], [13, 12], [1, 13], [9, 14], [14, 3]]) p.set(x, y, '#e0cc98');
+      p.set(5, 5, '#ffffff'); p.set(12, 9, '#f8c8a8');
+      break;
+    case 'L': {
+      // lava (animated)
+      p.rect(0, 0, 16, 16, '#d8401a');
+      const o = anim * 3;
+      for (const [y, s] of [[3, 0], [8, 6], [13, 2]]) for (let i = 0; i < 5; i++) p.set((s + o + i) % 16, y, '#ffb040');
+      p.ell((5 + o) % 16, 11, 1.5, 1.2, '#ffe080');
+      p.ell((12 + o) % 16, 5, 1.2, 1, '#ffe080');
+      break;
+    }
+    case 'Z':
+      // ship hull / ship wall planks
+      p.rect(0, 0, 16, 16, '#5a3a26');
+      for (const y of [3, 7, 11, 15]) p.rect(0, y, 16, 1, '#3a2416');
+      for (const [x, y] of [[4, 1], [11, 5], [6, 9], [13, 13]]) p.set(x, y, '#7a5236');
       break;
     case ':':
       // pastel mint ground
@@ -394,7 +415,7 @@ function build(ch: string, anim: number): Pix {
 
 const cache = new Map<string, HTMLCanvasElement>();
 export function tileCanvas(ch: string, anim: number): HTMLCanvasElement {
-  const animated = ch === '~' || ch === 'f';
+  const animated = ch === '~' || ch === 'f' || ch === 'L';
   const key = animated ? ch + anim : ch;
   let c = cache.get(key);
   if (!c) {
