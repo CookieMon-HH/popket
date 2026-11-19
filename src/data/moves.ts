@@ -100,6 +100,7 @@ const list: MoveDef[] = [
   { id: 'soulwave', name: '혼령파동', type: '영혼', power: 70, acc: 100, pp: 15, desc: '혼령의 힘을 파동으로 쏜다.' },
   { id: 'nightdance', name: '한밤의춤', type: '영혼', power: 95, acc: 90, pp: 10, desc: '한밤중의 탈춤으로 혼을 흔든다.' },
   // 전설
+  { id: 'mountainroar', name: '산울림포효', type: '영혼', power: 90, acc: 100, pp: 10, effect: { kind: 'stat', target: 'foe', stat: 'atk', stages: -1, chance: 30 }, desc: '산 전체를 울리는 포효. 상대의 공격을 떨어뜨릴 때가 있다.' },
   { id: 'galaxy', name: '은하파동', type: '물', power: 110, acc: 90, pp: 5, desc: '별빛을 머금은 파도를 일으킨다.' },
 ];
 

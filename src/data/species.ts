@@ -19,6 +19,7 @@ export interface SpeciesDef {
   learnset: [number, string][];
   kind: string;
   desc: string;
+  rank?: '전설' | '준전설';
 }
 
 type L = [number, string][];
@@ -36,6 +37,7 @@ const TAL: L = [[1, 'spook'], [1, 'glare'], [6, 'bewitch'], [11, 'toxshot'], [18
 const PIRA: L = [[1, 'splash'], [1, 'tackle'], [5, 'bubble'], [10, 'dash'], [15, 'wave'], [20, 'gust'], [24, 'focus'], [30, 'tide']];
 const JINHEUK: L = [[1, 'tackle'], [1, 'curl'], [5, 'mudthrow'], [10, 'pebble'], [15, 'quake'], [21, 'press'], [27, 'breathe'], [33, 'earthsplit'], [40, 'rockstorm']];
 const DDAKKUM: L = [[1, 'scratch'], [1, 'growl'], [5, 'zap'], [9, 'dash'], [13, 'paralyze'], [17, 'sparkspike'], [23, 'focus'], [29, 'bolt'], [35, 'thunder']];
+const SANGUN: L = [[1, 'rockdrop'], [1, 'soulwave'], [30, 'focus'], [35, 'mountainroar'], [38, 'rockstorm']];
 const EUNHA: L = [[1, 'wave'], [1, 'gust'], [20, 'breathe'], [25, 'tide'], [30, 'galaxy'], [35, 'storm']];
 
 type Def = Omit<SpeciesDef, 'no'>;
@@ -122,8 +124,10 @@ const list: Def[] = [
   { id: 'noejeon', name: '뇌전고슴', types: ['전기'], base: { hp: 84, atk: 104, def: 82, spe: 108 }, catchRate: 45, baseExp: 228, learnset: DDAKKUM,
     kind: '뇌전', desc: '푸른 번개를 두른 가시는 바위도 뚫는다. 천둥이 치는 밤이면 산꼭대기에서 울부짖는다.' },
   // 전설
-  { id: 'eunha', name: '은하고래', types: ['물', '바람'], base: { hp: 120, atk: 110, def: 100, spe: 90 }, catchRate: 25, baseExp: 260, learnset: EUNHA,
+  { id: 'eunha', name: '은하고래', types: ['물', '바람'], base: { hp: 120, atk: 110, def: 100, spe: 90 }, catchRate: 25, baseExp: 260, learnset: EUNHA, rank: '전설',
     kind: '은하', desc: '별빛동굴 지하 호수에 잠든 전설의 몬스터. 깨어나면 밤하늘을 헤엄치며 별을 뿌린다고 전해진다.' },
+  { id: 'sangun', name: '산군', types: ['바위', '영혼'], base: { hp: 100, atk: 118, def: 92, spe: 110 }, catchRate: 20, baseExp: 250, learnset: SANGUN, rank: '준전설',
+    kind: '산신령', desc: '운무봉을 지키는 흰 호랑이의 정령. 숲·물·바위의 세 방울 소리를 들으면 서낭당으로 내려온다고 전해진다.' },
 ];
 
 export const SPECIES_LIST: SpeciesDef[] = list.map((s, i) => ({ ...s, no: i + 1 }));

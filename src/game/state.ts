@@ -42,9 +42,17 @@ function fresh(name: string): GameState {
 export const game: GameState = fresh('하루');
 
 /** Non-persistent runtime flags. */
-export const runtime = { busy: 0 };
+export const runtime = {
+  busy: 0,
+  /** game.frames at the last save/load. */
+  savedAt: 0,
+  /** True once this session's game is tied to the save slot (loaded or saved). */
+  ownsSave: false,
+};
 
 export function newGame(name: string) {
+  runtime.ownsSave = false;
+  runtime.savedAt = 0;
   for (const k of Object.keys(game)) delete (game as unknown as Record<string, unknown>)[k];
   Object.assign(game, fresh(name));
 }
@@ -60,6 +68,8 @@ export function hasSave() {
 export function saveGame(): boolean {
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+    runtime.savedAt = game.frames;
+    runtime.ownsSave = true;
     return true;
   } catch {
     return false;
@@ -73,6 +83,8 @@ export function loadGame(): boolean {
     const data = JSON.parse(raw) as GameState;
     newGame(data.name);
     Object.assign(game, data);
+    runtime.savedAt = game.frames;
+    runtime.ownsSave = true;
     return true;
   } catch {
     return false;

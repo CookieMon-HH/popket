@@ -14,8 +14,12 @@ import { partyMenu, bagMenu, DexView, TrainerCard, pickPartyMember } from './men
 import { learnMove, movesLearnedAt } from './learn';
 import { OPP, j, rand } from './common';
 import type { TrainerDef } from './maps';
+import { shrineTalk } from './story';
 
 export { world };
+
+/** Set by main.ts: returns to the title screen. */
+export const appHooks = { toTitle: () => {} };
 
 export function runScript(fn: () => Promise<void>) {
   runtime.busy++;
@@ -266,8 +270,17 @@ export async function tileTalk(ch: string) {
     if (itemCount('rod') > 0 && game.party.some((m) => m.hp > 0)) await fish();
     return;
   }
+  if (ch === 'J') {
+    await shrineTalk();
+    return;
+  }
+  if (ch === 'm') await say('몬스터 회복 장치다.\n캡슐 여섯 개를 한꺼번에 회복시킬 수 있다.');
+  else if (ch === 'Q') await say('회복소의 하트 마크다.\n「몬스터의 건강을 지킵니다」');
+  else if (ch === 'v') await say('잘 가꿔진 화분이다.');
+  else if (ch === 's') await say('푹신한 소파다. 차례를 기다리는 트레이너들이 앉는다.');
+  if ('mQvs'.includes(ch)) return;
   if (ch === 'P') {
-    if (world.map.id === 'center') await pcScript();
+    if (world.map.id.startsWith('center')) await pcScript();
     else await say('연구 자료가 잔뜩 들어 있는 컴퓨터다.');
   } else if (ch === 'k') await say('책이 빼곡하게 꽂혀 있다.\n「몬스터와 친해지는 100가지 방법」…');
   else if (ch === 'c') await say(game.flags.gotStarter ? '빈 캡슐이다.' : '캡슐 안에 몬스터가 들어 있다!\n박사님께 말을 걸어 보자.');
@@ -278,9 +291,28 @@ export async function tileTalk(ch: string) {
 export async function startMenu() {
   let idx = 0;
   for (;;) {
-    const items = ['도감', '동료', '가방', game.name, '저장', '닫기'];
+    const items = ['도감', '동료', '가방', game.name, '저장', '그만하기', '닫기'];
     idx = await ui.run(new Menu({ items, cancel: true, x: W - 80, y: 4, w: 76, index: idx }));
-    if (idx < 0 || idx === 5) return;
+    if (idx < 0 || idx === 6) return;
+    if (idx === 5) {
+      const unsaved = game.frames - runtime.savedAt > 60;
+      const r = await choose(
+        unsaved ? '그만하기 전에 지금까지의 모험을 저장할까요?' : '타이틀 화면으로 돌아갈까요?',
+        unsaved ? ['저장하고 그만하기', '저장하지 않고 그만하기', '취소'] : ['그만하기', '취소'],
+      );
+      const quit = unsaved ? r === 0 || r === 1 : r === 0;
+      if (!quit) continue;
+      if (unsaved && r === 0) {
+        world.syncState();
+        if (saveGame()) await say('{name}은(는) 모험을 기록했다!');
+        else {
+          await say('기록하지 못했다… 브라우저 저장소를 확인해 주세요.');
+          continue;
+        }
+      }
+      appHooks.toTitle();
+      return;
+    }
     if (idx === 0) {
       if (!game.flags.gotStarter) await say('아직 도감을 받지 않았다.');
       else await ui.run(new DexView());

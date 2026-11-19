@@ -81,6 +81,56 @@ class Input {
 
 export const input = new Input();
 
+/** Floating analog stick: touch anywhere in the zone, drag to move. */
+export function bindJoystick(zone: HTMLElement, base: HTMLElement, knob: HTMLElement) {
+  const R = 46;
+  const DEAD = 14;
+  let id: number | null = null;
+  let ox = 0;
+  let oy = 0;
+  let cur: Btn | null = null;
+  const set = (b: Btn | null) => {
+    if (b === cur) return;
+    if (cur) input.release(cur, 'stick');
+    cur = b;
+    if (b) input.press(b, 'stick');
+  };
+  const end = (e: PointerEvent) => {
+    if (e.pointerId !== id) return;
+    id = null;
+    set(null);
+    base.classList.remove('on');
+    base.style.left = '';
+    base.style.top = '';
+    knob.style.transform = '';
+  };
+  zone.addEventListener('pointerdown', (e) => {
+    if (id !== null) return;
+    e.preventDefault();
+    id = e.pointerId;
+    zone.setPointerCapture(id);
+    ox = e.clientX;
+    oy = e.clientY;
+    base.style.left = `${ox}px`;
+    base.style.top = `${oy}px`;
+    base.classList.add('on');
+  });
+  zone.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== id) return;
+    const dx = e.clientX - ox;
+    const dy = e.clientY - oy;
+    const d = Math.hypot(dx, dy);
+    const k = d > R ? R / d : 1;
+    knob.style.transform = `translate(calc(-50% + ${dx * k}px), calc(-50% + ${dy * k}px))`;
+    if (d < DEAD) set(null);
+    else if (Math.abs(dx) > Math.abs(dy)) set(dx > 0 ? 'right' : 'left');
+    else set(dy > 0 ? 'down' : 'up');
+  });
+  zone.addEventListener('pointerup', end);
+  zone.addEventListener('pointercancel', end);
+  zone.addEventListener('contextmenu', (e) => e.preventDefault());
+}
+
 export function bindTouchPad(root: HTMLElement) {
   root.querySelectorAll<HTMLButtonElement>('button[data-btn]').forEach((el) => {
     const b = el.dataset.btn as Btn;

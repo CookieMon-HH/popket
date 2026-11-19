@@ -6,7 +6,7 @@ import { healParty, setLastHeal, world } from './api';
 import { shopMenu } from './menus';
 import {
   PAL, momTalk, labProfessor, rivalLabTalk, chapter2Scene, leader1Win, grannyTalk, forestAdminWin,
-  rival2Scene, fisherTalk, leader2Win, bossScene, whaleTalk, rival3Scene, leader3Win,
+  rival2Scene, fisherTalk, leader2Win, bossScene, whaleTalk, rival3Scene, leader3Win, minerTalk, sanjiTalk,
 } from './story';
 
 export interface Warp {
@@ -58,6 +58,8 @@ export interface MapDef {
   warps: Warp[];
   npcs: NPCDef[];
   signs?: { x: number; y: number; text: string }[];
+  /** Name tags drawn over buildings (x, y in tile units; x is the tag's center). */
+  labels?: { x: number; y: number; text: string; color?: string; ink?: string }[];
   encounters?: { rate: number; table: Table; tiles?: string };
   fishing?: Table;
   triggers?: { x: number; y: number; when?: () => boolean; run: () => Promise<void> }[];
@@ -86,14 +88,14 @@ function makeCenter(id: string, name: string, town: string, tx: number, ty: numb
   return {
     id, name, indoor: true,
     tiles: [
-      'XXXXXXXXXX',
-      'XkooooookX',
-      'XTTTTTTTTX',
-      'XooooooooX',
-      'XoooooooPX',
-      'XooooooooX',
-      'XooooooooX',
-      'XXXXeeXXXX',
+      'qqqqQqqqqq',
+      'qvuuuummvq',
+      'qnnnnnnnnq',
+      'quuuuuuuuq',
+      'qsuuuuuuPq',
+      'qsuuuuuuvq',
+      'quuuuuuuuq',
+      'qqqqeeqqqq',
     ],
     warps: [
       { x: 4, y: 7, to: town, tx, ty, dir: 'down' },
@@ -192,6 +194,7 @@ const town1: MapDef = {
     { x: 9, y: 0, to: 'route1', tx: 9, ty: 22, dir: 'up' },
   ],
   signs: [{ x: 7, y: 7, text: '솔빛마을\n햇살이 가장 먼저 닿는 시작의 마을' }],
+  labels: [{ x: 4, y: 2.2, text: '우리 집' }, { x: 14.5, y: 2.2, text: '한별 연구소', color: '#e0f4e4', ink: '#2a6a3a' }],
   npcs: [
     {
       id: 't1girl', x: 12, y: 8, dir: 'down', pal: PAL.girl, move: 'wander',
@@ -308,6 +311,22 @@ const route1: MapDef = {
         after: '돌돌이처럼 단단한 몬스터에겐 물이나 풀 기술이 잘 통하지.',
       },
     },
+    {
+      id: 'r1doyun', x: 12, y: 6, dir: 'left', pal: PAL.kid, sight: 3,
+      trainer: {
+        id: 'r1kid', cls: '반바지소년', name: '현우', pal: PAL.kid, team: [['tosil', 4], ['jjaek', 5]], reward: 100,
+        intro: '반바지는 사계절 내내 입어야 제맛이지! 승부다!', defeat: '으, 다리가 시려…',
+        after: '들꽃마을 수련관에도 수련생들이 잔뜩 있대. 미리 연습해 둬!',
+      },
+    },
+    {
+      id: 'r1lass', x: 15, y: 20, dir: 'left', pal: PAL.girl, sight: 7,
+      trainer: {
+        id: 'r1lass', cls: '꼬마아가씨', name: '예린', pal: PAL.girl, team: [['kkomul', 4], ['ddakkum', 5]], reward: 110,
+        intro: '나랑 놀자! 몬스터 승부로!', defeat: '힝, 재밌었는데 졌다~',
+        after: '따끔이는 풀숲에 아주 가끔 나와. 운이 좋았지!',
+      },
+    },
     { id: 'r1potion', x: 18, y: 2, dir: 'down', item: { id: 'potion', qty: 1 } },
     { id: 'r1ball', x: 1, y: 21, dir: 'down', item: { id: 'ball', qty: 2 } },
     { id: 'r1cure', x: 18, y: 13, dir: 'down', item: { id: 'cure', qty: 1 } },
@@ -323,8 +342,8 @@ const town2: MapDef = {
     '#...WwWDWW....=....#',
     '#......=......=....#',
     '#..BBBB=..MMMM=....#',
-    '#..BBBB=..MMMM=....#',
-    '#..WDwW=..WwDW=....#',
+    '#..BHBB=..MMMM=....#',
+    '#..WEwW=..WwDW=....#',
     '#...===========....#',
     '#.......==.....S...#',
     '#.ff....==.......ff#',
@@ -341,6 +360,7 @@ const town2: MapDef = {
     { x: 12, y: 7, to: 'shop', tx: 4, ty: 6, dir: 'up' },
     { x: 14, y: 0, to: 'route2', tx: 9, ty: 26, dir: 'up' },
   ],
+  labels: [{ x: 5, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 12, y: 5.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 7, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
   signs: [{ x: 15, y: 9, text: '들꽃마을\n바람에 꽃향기가 실려 오는 마을  ·  북쪽: 2번 도로' }],
   npcs: [
     {
@@ -389,15 +409,31 @@ const dojo: MapDef = {
     {
       id: 'pupil', x: 2, y: 6, dir: 'right', pal: PAL.pupil, sight: 4,
       trainer: {
-        id: 'donghyun', cls: '수련생', name: '동현', pal: PAL.pupil, team: [['tosil', 8], ['doldol', 9]], reward: 400,
+        id: 'donghyun', cls: '수련생', name: '동현', pal: PAL.pupil, team: [['tosil', 7], ['doldol', 8]], reward: 400,
         intro: '관장님께 도전하려면 나부터 넘어서야지!', defeat: '으윽, 아직 수련이 부족했다…',
         after: '관장님의 바위갑옷은 정말 단단해.\n체력을 꼭 회복하고 도전해!',
       },
     },
     {
+      id: 'pupil2', x: 9, y: 4, dir: 'left', pal: PAL.pupil, sight: 4,
+      trainer: {
+        id: 'seoyeon', cls: '수련생', name: '서연', pal: PAL.pupil, team: [['jjaek', 6], ['doldol', 7]], reward: 280,
+        intro: '수련관에서는 기합이 생명이야! 이얍!', defeat: '기합이 모자랐나…',
+        after: '돌돌이는 몸을 웅크리면 방어가 더 올라가. 빨리 쓰러뜨리는 게 좋아!',
+      },
+    },
+    {
+      id: 'pupil3', x: 2, y: 2, dir: 'right', pal: PAL.pupil, sight: 3,
+      trainer: {
+        id: 'jiho', cls: '수련생', name: '지호', pal: PAL.pupil, team: [['tosil', 7], ['kkomul', 6]], reward: 260,
+        intro: '관장님 바로 앞이니까 마지막 시험이다!', defeat: '좋아, 지나가도 좋다!',
+        after: '관장님은 바위 타입이지만, 마음은 따뜻한 분이야.',
+      },
+    },
+    {
       id: 'leader', x: 5, y: 1, dir: 'down', pal: PAL.leader,
       trainer: {
-        id: 'leader1', cls: '관장', name: '단단', pal: PAL.leader, team: [['doldol', 10], ['bawi', 12]], reward: 1200,
+        id: 'leader1', cls: '관장', name: '단단', pal: PAL.leader, team: [['doldol', 9], ['bawi', 11]], reward: 1200,
         intro: '수련관에 잘 왔다! 나는 관장 단단.\n바위처럼 흔들리지 않는 마음으로 수련하고 있지.\n자, 네 실력을 보여 봐라!',
         defeat: '훌륭하다…! 바위를 깎아 내는 물방울 같은 끈기였다.',
         after: '북쪽 2번 도로 너머엔 더 넓은 세상이 있다.\n흔들리지 말고 나아가라!',
@@ -557,8 +593,8 @@ const town3: MapDef = {
     '#....WwWDWW...~~~~~~~#',
     '#.......=.....+++~~~~#',
     '#..BBBB.=..MMMM.~~~~~#',
-    '#..BBBB.=..MMMM.~~~~~#',
-    '#..WDwW.=..WwDW.~~~~~#',
+    '#..BHBB.=..MMMM.~~~~~#',
+    '#..WEwW.=..WwDW.~~~~~#',
     '#...==========........',
     '#.........=......S...#',
     '#~~~~.....=..........#',
@@ -575,6 +611,7 @@ const town3: MapDef = {
     { x: 13, y: 7, to: 'shop3', tx: 4, ty: 6, dir: 'up' },
     { x: 21, y: 8, to: 'route3', tx: 1, ty: 6, dir: 'right' },
   ],
+  labels: [{ x: 5, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 13, y: 5.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 8, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
   signs: [{ x: 17, y: 9, text: '물안개마을\n새벽마다 호수에 안개가 피어오르는 마을  ·  동쪽: 3번 도로' }],
   encounters: { rate: 0.1, table: [['pojani', 11, 13, 40], ['jinheuk', 11, 13, 30], ['baramsae', 12, 14, 30]] },
   npcs: [
@@ -654,7 +691,7 @@ const gym2: MapDef = {
 const route3: MapDef = {
   id: 'route3', name: '3번 도로',
   tiles: [
-    '##############################',
+    '#############=################',
     '#,,,,,....##....,,,,,..CCCCCC#',
     '#,,,,,....##....,,,,,..CCCCCC#',
     '#.........##...........CCCCCC#',
@@ -670,8 +707,13 @@ const route3: MapDef = {
   warps: [
     { x: 0, y: 6, to: 'town3', tx: 20, ty: 8, dir: 'left' },
     { x: 25, y: 5, to: 'cave', tx: 1, ty: 18, dir: 'up' },
+    { x: 13, y: 0, to: 'peak', tx: 9, ty: 19, dir: 'up' },
   ],
-  signs: [{ x: 19, y: 9, text: '3번 도로\n동쪽: 별빛동굴   서쪽: 물안개마을' }],
+  triggers: [{
+    x: 13, y: 1, when: () => !f('badge3'),
+    run: pushBack(['북쪽은 운무봉으로 가는 산길이다.\n입구에 금줄이 쳐져 있다.', '「신성한 산입니다. 세 수련관의 배지를 모은 분만 오르세요.」'], 'down'),
+  }],
+  signs: [{ x: 19, y: 9, text: '3번 도로\n동쪽: 별빛동굴  서쪽: 물안개마을  북쪽: 운무봉' }],
   encounters: {
     rate: 0.13,
     table: [['jinheuk', 14, 17, 18], ['ddakkum', 14, 17, 16], ['baramsae', 15, 17, 15], ['beoseot', 15, 17, 13], ['jjirit', 14, 16, 12], ['tongsil', 15, 17, 12], ['taldol', 15, 16, 8], ['beonjjeok', 16, 17, 6]],
@@ -753,6 +795,7 @@ const cave: MapDef = {
       id: 'cguard', x: 21, y: 2, dir: 'down', pal: PAL.grunt, hidden: () => f('bossDone'),
       talk: '검은안개단: 출구는 봉쇄했다! 두목님의 의식이 끝날 때까지\n아무도 못 나간다고!',
     },
+    { id: 'miner', x: 17, y: 5, dir: 'down', pal: PAL.hiker, hidden: () => !f('bossDone'), talk: () => minerTalk() },
     { id: 'csuperball', x: 1, y: 15, dir: 'down', item: { id: 'superball', qty: 3 } },
     { id: 'chyper', x: 22, y: 11, dir: 'down', item: { id: 'hyperpotion', qty: 1 } },
     { id: 'crevive', x: 3, y: 11, dir: 'down', item: { id: 'revive', qty: 1 } },
@@ -773,8 +816,8 @@ const town4: MapDef = {
     '#..WwWDWW....WwWWwW..#',
     '#l....=.......l......#',
     '#.BBBB=..MMMM........#',
-    '#.BBBB=..MMMM........#',
-    '#.WDwW=..WwDW........#',
+    '#.BHBB=..MMMM........#',
+    '#.WEwW=..WwDW........#',
     '#.===========......l.#',
     '#.........=.....S....#',
     '#.ff......=..........#',
@@ -790,6 +833,7 @@ const town4: MapDef = {
     { x: 3, y: 7, to: 'center4', tx: 4, ty: 6, dir: 'up' },
     { x: 11, y: 7, to: 'shop4', tx: 4, ty: 6, dir: 'up' },
   ],
+  labels: [{ x: 4, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 11, y: 5.1, text: '백화점', color: '#fff2c8', ink: '#8a5a10' }, { x: 6, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }, { x: 16, y: 1.1, text: '리그 사무국' }],
   signs: [{ x: 16, y: 9, text: '별빛시\n밤에도 별처럼 불빛이 반짝이는 도시  ·  별빛 수련관' }],
   npcs: [
     {
@@ -807,6 +851,7 @@ const town4: MapDef = {
       id: 't4eng', x: 18, y: 10, dir: 'left', pal: PAL.engineer, move: 'look',
       talk: '별빛 수련관 관장 하람 님은 발전소 기술자 출신이야.\n전기 타입은 땅 타입 몬스터한테 기술이 통하지 않아!',
     },
+    { id: 'sanji', x: 20, y: 13, dir: 'left', pal: PAL.oldman, talk: () => sanjiTalk() },
     { id: 'rival_t4', x: 10, y: 10, dir: 'down', pal: PAL.rival, hidden: () => f('rival3') },
   ],
   triggers: [{ x: 10, y: 12, when: () => !f('rival3'), run: rival3Scene }],
@@ -869,10 +914,63 @@ center4.warps = [
   { x: 5, y: 7, to: 'town4', tx: 3, ty: 8, dir: 'down' },
 ];
 
+const peak: MapDef = {
+  id: 'peak', name: '운무봉',
+  tiles: [
+    'CCCCCCCCCCCCCCCCCC',
+    'CCCCCC..J...CCCCCC',
+    'CCCCC........CCCCC',
+    'CCCC..ffffff..CCCC',
+    'CCCC..........CCCC',
+    'CCCCCCC..CCCCCCCCC',
+    'C,,,,,...,,,,,,,,C',
+    'C,,,,,...,,,,,,,,C',
+    'C.......CCCCC....C',
+    'C.CCCC..CCCCC.CC.C',
+    'C......,,,,,.....C',
+    'C......,,,,,.....C',
+    'CCCCC.......CCCCCC',
+    'C,,,,.......,,,,,C',
+    'C,,,,..CCC..,,,,,C',
+    'C......CCC.......C',
+    'CCC.............CC',
+    'C.......~~~......C',
+    'C.......~~~......C',
+    'C................C',
+    'CCCCCCCCC=CCCCCCCC',
+  ],
+  warps: [{ x: 9, y: 20, to: 'route3', tx: 13, ty: 1, dir: 'down' }],
+  signs: [],
+  encounters: {
+    rate: 0.13,
+    table: [['baramsae', 27, 30, 18], ['hoeori', 29, 31, 10], ['bawi', 28, 31, 15], ['heukjang', 28, 30, 15], ['talgwang', 28, 31, 15], ['beonjjeok', 28, 30, 15], ['beoseot', 28, 30, 12]],
+  },
+  fishing: [['banjjak', 25, 30, 60], ['eungeo', 28, 32, 40]],
+  npcs: [
+    {
+      id: 'monk1', x: 2, y: 10, dir: 'right', pal: PAL.pupil, sight: 4,
+      trainer: {
+        id: 'monk1', cls: '수행자', name: '무명', pal: PAL.pupil, team: [['talgwang', 29], ['bawi', 30]], reward: 1100,
+        intro: '산을 오르는 자여, 마음을 시험하겠다.', defeat: '마음이 맑구나…', after: '정상의 서낭당은 산군님을 모시는 곳이다.',
+      },
+    },
+    {
+      id: 'monk2', x: 15, y: 13, dir: 'left', pal: PAL.pupil, sight: 3,
+      trainer: {
+        id: 'monk2', cls: '수행자', name: '청운', pal: PAL.pupil, team: [['hoeori', 30], ['heukjang', 30], ['beoseot', 31]], reward: 1200,
+        intro: '안개 속에서 길을 잃지 않으려면, 강해져야 한다!', defeat: '안개가 걷히는구나.',
+        after: '세 개의 방울이 함께 울릴 때, 산군님이 내려오신다고 하지.',
+      },
+    },
+    { id: 'phyper', x: 16, y: 10, dir: 'down', item: { id: 'hyperpotion', qty: 2 } },
+    { id: 'pball', x: 1, y: 19, dir: 'down', item: { id: 'superball', qty: 3 } },
+  ],
+};
+
 export const MAPS: Record<string, MapDef> = {
   home, town1, lab, route1, town2, center, shop, dojo,
   route2, forest, town3, center3, shop3, gym2,
-  route3, cave, town4, center4, shop4, gym3,
+  route3, cave, town4, center4, shop4, gym3, peak,
 };
 
 // Validate map rows and warp targets in development.

@@ -47,6 +47,7 @@ export class Overworld implements Scene {
   private turnHold = 0;
   private idle = 99;
   bannerT = 0;
+  private cam: [number, number] = [0, 0];
 
   load(id: string, x: number, y: number, dir: Dir) {
     this.map = MAPS[id];
@@ -187,7 +188,7 @@ export class Overworld implements Scene {
     const fy = p.y + dy;
     const t = this.tileAt(fx, fy);
     let npc = this.npcAt(fx, fy);
-    if (!npc && (t === 'T' || t === 'c')) npc = this.npcAt(fx + dx, fy + dy);
+    if (!npc && (t === 'T' || t === 'c' || t === 'n')) npc = this.npcAt(fx + dx, fy + dy);
     if (npc) {
       const target = npc;
       this.hooks.run(() => this.hooks.interact(target));
@@ -198,7 +199,7 @@ export class Overworld implements Scene {
       if (s) this.hooks.run(() => this.hooks.sign(s.text));
       return;
     }
-    if (t === 'P' || t === 'k' || t === 'c' || t === 'r' || t === 'b' || t === '~') this.hooks.run(() => this.hooks.tile(t));
+    if ('Pkcrb~mvsQJ'.includes(t)) this.hooks.run(() => this.hooks.tile(t));
   }
 
   /** Called when the player finishes a step. Returns true when an event took over. */
@@ -297,6 +298,7 @@ export class Overworld implements Scene {
 
   drawWorld(g: Ctx) {
     const [cx, cy] = this.camera();
+    this.cam = [cx, cy];
     g.fillStyle = '#000';
     g.fillRect(0, 0, W, H);
     const anim = Math.floor(clock.frame / 32) % 2;
@@ -356,6 +358,21 @@ export class Overworld implements Scene {
   }
 
   drawUI(ctx: Ctx) {
+    const [cx, cy] = this.cam;
+    for (const l of this.map.labels ?? []) {
+      const x = l.x * 16 - cx;
+      const y = l.y * 16 - cy;
+      if (x < -40 || x > W + 40 || y < -20 || y > H + 20) continue;
+      const w = measure(l.text, 8) + 10;
+      ctx.beginPath();
+      ctx.roundRect(x - w / 2, y, w, 12, 3);
+      ctx.fillStyle = l.color ?? '#ffffff';
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = '#2a2e48';
+      ctx.stroke();
+      text(ctx, l.text, x, y + 1, { size: 8, align: 'center', color: l.ink ?? '#2a2e48', shadow: false });
+    }
     if (this.bannerT <= 0 || ui.active) return;
     const t = this.bannerT;
     const y = t > 130 ? -24 + (150 - t) * 1.4 : t < 20 ? 4 - (20 - t) * 1.4 : 4;

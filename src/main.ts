@@ -1,11 +1,11 @@
 import { W, H, text, drawSprite, type Ctx } from './engine/draw';
-import { input, bindTouchPad } from './engine/input';
-import { ui, Menu, MessageBox, setTextFormatter, say } from './engine/ui';
+import { input, bindTouchPad, bindJoystick } from './engine/input';
+import { ui, Menu, MessageBox, setTextFormatter, say, yesNo } from './engine/ui';
 import { clock, tickTasks } from './engine/timing';
 import { scenes, fx, fadeTo, type Scene } from './engine/scene';
 import { world } from './game/overworld';
-import { installHooks, runScript } from './game/api';
-import { game, hasSave, loadGame, newGame } from './game/state';
+import { installHooks, runScript, appHooks } from './game/api';
+import { game, hasSave, loadGame, newGame, saveGame, runtime } from './game/state';
 import { monSprite } from './game/sprites';
 import { j } from './game/common';
 
@@ -19,11 +19,10 @@ lctx.imageSmoothingEnabled = false;
 
 function resize() {
   const wrap = document.getElementById('screen-wrap')!;
-  const aw = wrap.clientWidth - 16;
-  const ah = wrap.clientHeight - 16;
-  let s = Math.min(aw / W, ah / H);
-  if (s >= 2) s = Math.floor(s);
-  s = Math.max(1, s);
+  const cs = getComputedStyle(wrap);
+  const aw = wrap.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const ah = wrap.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  const s = Math.max(1, Math.min(aw / W, ah / H));
   const dpr = window.devicePixelRatio || 1;
   canvas.style.width = `${Math.floor(W * s)}px`;
   canvas.style.height = `${Math.floor(H * s)}px`;
@@ -32,7 +31,9 @@ function resize() {
 }
 window.addEventListener('resize', resize);
 resize();
-bindTouchPad(document.getElementById('pad')!);
+bindTouchPad(document.getElementById('touch')!);
+bindJoystick(document.getElementById('stick-zone')!, document.getElementById('stick')!, document.getElementById('knob')!);
+window.addEventListener('orientationchange', () => setTimeout(resize, 200));
 
 setTextFormatter((s) => s.replace(/\{name\}은\(는\)/g, j(game.name, '은/는')).replace(/\{name\}/g, game.name));
 installHooks();
@@ -75,6 +76,10 @@ async function titleFlow() {
   await fadeTo(0, 20);
   const items = hasSave() ? ['이어하기', '새로 시작'] : ['새로 시작'];
   const r = await ui.run(new Menu({ items, x: W / 2 - 48, y: 146, w: 96 }));
+  if (items[r] === '새로 시작' && hasSave()) {
+    const ok = await yesNo('새로 시작하면, 저장할 때 이전 기록을 덮어써요.\n그래도 새로 시작할까요?');
+    if (!ok) return titleFlow();
+  }
   await fadeTo(1, 16);
   if (items[r] === '이어하기' && loadGame()) {
     world.load(game.map, game.x, game.y, game.dir);
@@ -145,6 +150,32 @@ function frame() {
 
 fx.fade = 1;
 requestAnimationFrame(frame);
+
+appHooks.toTitle = () =>
+  runScript(async () => {
+    await fadeTo(1, 16);
+    await titleFlow();
+  });
+
+const inWorld = () => scenes.current === world && game.flags.gotStarter;
+
+// Closing the tab with unsaved progress: ask the browser to confirm.
+window.addEventListener('beforeunload', (e) => {
+  if (inWorld() && game.frames - runtime.savedAt > 600) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+// Phones rarely show that prompt, so when the app goes to the background
+// we quietly update a save that already belongs to this game.
+function backgroundSave() {
+  if (document.visibilityState !== 'hidden' || !runtime.ownsSave || !inWorld() || runtime.busy || ui.active) return;
+  world.syncState();
+  saveGame();
+}
+document.addEventListener('visibilitychange', backgroundSave);
+window.addEventListener('pagehide', backgroundSave);
 
 const fontReady = (document as Document & { fonts?: FontFaceSet }).fonts?.load('700 11px "Noto Sans KR"') ?? Promise.resolve();
 Promise.race([fontReady, new Promise((r) => setTimeout(r, 1500))]).finally(() => runScript(titleFlow));

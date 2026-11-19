@@ -10,6 +10,7 @@ import { effectiveness, TYPE_COLOR } from '../data/types';
 import { game, removeItem, markSeen, markCaught, addMon } from './state';
 import { monName, maxHp, calcStats, expFor, expRatio, type Mon } from './monster';
 import { monSprite, personSprite, capsuleSprite, type Pal } from './sprites';
+import { silhouette } from '../engine/pix';
 import { BagView, pickPartyMember, useItemOn } from './menus';
 import { learnMove, movesLearnedAt } from './learn';
 import { j, pick, rand, clamp } from './common';
@@ -38,6 +39,7 @@ class View {
   eBox = false; pBox = false;
   trainer: Pal | null = null; tX = 0;
   ball = { x: 0, y: 0, vis: false, rot: 0 };
+  enemyTeam: Mon[] | null = null;
   shake = 0;
 }
 
@@ -96,6 +98,8 @@ class BattleScene implements Scene {
 
   drawUI(ctx: Ctx) {
     const v = this.v;
+    if (v.enemyTeam) teamRow(ctx, v.enemyTeam, 10, 47, '상대');
+    if (v.pBox || v.pVis) teamRow(ctx, game.party, 132, 84, '나');
     if (v.eBox && v.enemy) {
       box(ctx, 6, 8, 122, 36);
       text(ctx, monName(v.enemy), 14, 13, { size: 10 });
@@ -124,6 +128,21 @@ class BattleScene implements Scene {
       ctx.fillRect(137, 137, 106 * v.pExp, 1.5);
     }
   }
+}
+
+/** A row of capsules: one per monster, grey when fainted. */
+function teamRow(ctx: Ctx, team: Mon[], x: number, y: number, label: string) {
+  const w = 22 + team.length * 11;
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, 12, 6);
+  ctx.fillStyle = 'rgba(40,46,72,0.78)';
+  ctx.fill();
+  text(ctx, label, x + 4, y + 2, { size: 7, color: '#ffffff', shadow: false });
+  const cap = capsuleSprite();
+  team.forEach((m, i) => {
+    const img = m.hp > 0 ? cap : silhouette(cap, '#7a7e90');
+    drawSprite(ctx, img, x + 20 + i * 11, y + 1.5, 9, 9);
+  });
 }
 
 function statusChip(ctx: Ctx, m: Mon, x: number, y: number) {
@@ -176,6 +195,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
   scenes.current = new BattleScene(v);
   const wild = o.kind === 'wild';
   const tr = o.trainer;
+  if (o.kind === 'trainer') v.enemyTeam = o.enemies;
   let enemyIdx = 0;
   let enemy = new BMon(o.enemies[0], 'foe');
   let me = new BMon(game.party.find((m) => m.hp > 0)!, 'me');
@@ -270,7 +290,8 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     await fadeTo(0, 12);
     await tween(30, (p) => (v.eX = 140 * (1 - p)));
     v.eBox = true;
-    if (SPECIES[enemy.mon.species].catchRate <= 25) await say(`전설의 몬스터 ${j(monName(enemy.mon), '이/가')} 모습을 드러냈다!`);
+    const rank = SPECIES[enemy.mon.species].rank;
+    if (rank) await say(`${rank} 몬스터 ${j(monName(enemy.mon), '이/가')} 모습을 드러냈다!`);
     else await say(`앗! ${j(L(enemy), '이/가')} 튀어나왔다!`);
   } else {
     v.trainer = tr!.pal;

@@ -2,7 +2,7 @@ import { say, yesNo } from '../engine/ui';
 import { wait } from '../engine/timing';
 import { fadeTo, flashes } from '../engine/scene';
 import { SPECIES, SPECIES_LIST } from '../data/species';
-import { game, markCaught } from './state';
+import { game, markCaught, itemCount, removeItem } from './state';
 import { createMon } from './monster';
 import { j } from './common';
 import { world, healParty, setLastHeal, giveItem, giveMon, trainerBattle, wildBattle } from './api';
@@ -198,7 +198,23 @@ export async function grannyTalk() {
     game.flags.gotTal = true;
     return;
   }
+  if (game.flags.quest && !game.flags.bellForest) {
+    if (inParty('beoseot', 'beoseotking')) {
+      await say('숲지기 할머니: 오오, 이 향긋한 포자 냄새…\n버섯돌이가 이렇게 건강하게 자랐구나. 숲이 다시 살아났다는 증거란다.');
+      await say('숲지기 할머니: 산군님 이야기를 들었구나. 이 방울을 가져가렴.\n옛날부터 우리 집안이 지켜 온 숲의 방울이란다.');
+      await giveItem('bell_forest');
+      game.flags.bellForest = true;
+    } else {
+      await say('숲지기 할머니: 숲의 방울 말이니? 그건 숲이 건강하다는 걸\n보여 주는 사람에게만 줄 수 있단다.');
+      await say('숲지기 할머니: 포자니를 버섯돌이까지 키워서 데려와 보렴.\n버섯돌이의 포자 향기를 맡으면 숲이 건강한지 알 수 있거든.');
+    }
+    return;
+  }
   await say('숲지기 할머니: 탈돌이는 옛날부터 이 숲을 지켜 온 아이란다.\n소중히 대해 주렴.');
+}
+
+function inParty(...ids: string[]) {
+  return game.party.some((m) => ids.includes(m.species));
 }
 
 export const forestAdminWin = async () => {
@@ -235,6 +251,18 @@ export async function fisherTalk() {
     await giveItem('rod');
     game.flags.rod = true;
     await say('낚시꾼: 물가를 바라보고 A 버튼을 누르면 낚싯대를 던질 수 있다네.');
+    return;
+  }
+  if (game.flags.quest && !game.flags.bellWater) {
+    if (inParty('eungeo')) {
+      await say('낚시꾼: 이, 이건 은빛잉어 아닌가! 금빛 지느러미까지…\n자네, 진정한 낚시꾼이로구먼!');
+      await say('낚시꾼: 우리 마을 호수 바닥에서 건진 방울이라네.\n산군님께 가져간다면 기꺼이 주지.');
+      await giveItem('bell_water');
+      game.flags.bellWater = true;
+    } else {
+      await say('낚시꾼: 물의 방울? 허허, 그건 호수의 보물이라네.\n은빛잉어를 데려와서 보여 준다면 생각해 보지!');
+      await say('낚시꾼: 반짝피라를 낚아서 키우면 은빛잉어가 된다네.\n동굴 호수나 산속 연못에선 처음부터 은빛잉어가 걸리기도 하지.');
+    }
     return;
   }
   await say('낚시꾼: 강이나 바다, 동굴 호수에서도 낚시를 해 보게.\n어떤 녀석이 걸릴지 모르는 게 낚시의 재미지!');
@@ -328,6 +356,87 @@ async function ending() {
   await say('한별 박사: 해솔 리그는 다음 봄에 열린단다.\n그때까지 동료들과 함께 더 강해지렴!');
   await say('— Popket 제3장 「별빛의 고래」 끝 —\n플레이해 줘서 고마워요!');
   game.flags.ending = true;
+}
+
+// ---------------------------------------------------------------------------
+// 특별 퀘스트 — 산군의 세 방울
+
+const bellCount = () => ['bell_forest', 'bell_water', 'bell_rock'].filter((b) => itemCount(b) > 0).length;
+
+export async function sanjiTalk() {
+  if (!game.flags.badge3) {
+    await say('산지기 할아버지: 허허, 젊은 트레이너로구먼.\n세 수련관의 배지를 모두 모으면 이 늙은이를 다시 찾아오게.');
+    return;
+  }
+  if (!game.flags.quest) {
+    await say('산지기 할아버지: 오, 배지 셋을 모은 트레이너라…\n자네라면 이 이야기를 들려줘도 되겠구먼.');
+    await say('산지기 할아버지: 3번 도로 북쪽, 늘 안개에 덮인 운무봉이라는 산이 있지.\n그 정상에는 산군님을 모신 서낭당이 있다네.');
+    await say('산지기 할아버지: 산군님은 아주 먼 옛날부터 해솔 지방의 산을 지켜 온\n흰 호랑이의 정령이라네. 평소엔 안개 속에 숨어 모습을 보이지 않지.');
+    await say('산지기 할아버지: 하지만 숲·물·바위, 세 방울의 소리를 한꺼번에 들으면\n서낭당으로 내려와 방울 주인의 힘을 시험한다고 전해진다네.');
+    await say('산지기 할아버지: 숲의 방울은 속삭임숲의 숲지기 할머니가,\n물의 방울은 물안개마을의 낚시꾼이 가지고 있을 걸세.');
+    await say('산지기 할아버지: 바위의 방울은… 별빛동굴의 광부들이 캐냈다는 소문이 있지.\n세 방울을 모아 운무봉 서낭당에 가 보게!');
+    game.flags.quest = true;
+    return;
+  }
+  if (game.flags.sangun) {
+    await say('산지기 할아버지: 산군님이 자네를 인정하셨다고?\n허허, 살다 보니 이런 날이 오는구먼… 부디 잘 모시게.');
+    return;
+  }
+  await say(`산지기 할아버지: 방울은 ${bellCount()}개 모았구먼.\n숲지기 할머니, 물안개마을 낚시꾼, 별빛동굴 광부를 찾아가 보게.`);
+}
+
+export async function minerTalk() {
+  if (!game.flags.quest) {
+    await say('광부 대장 석두: 검은안개단을 쫓아내 줘서 고맙네!\n덕분에 다시 별빛결정을 캘 수 있게 됐지.');
+    return;
+  }
+  if (game.flags.bellRock) {
+    await say('광부 대장 석두: 그 방울, 소중히 쓰게나. 산군님께 안부 전해 주게!');
+    return;
+  }
+  await say('광부 대장 석두: 바위의 방울 말인가? 확실히 갱도 깊은 곳에서 캐낸 게 있지.\n하지만 바위의 방울은 바위보다 단단한 자만이 가질 수 있어!');
+  const t: TrainerDef = {
+    id: 'miner', cls: '광부 대장', name: '석두', pal: PAL.hiker,
+    team: [['heukjang', 31], ['bawi', 32], ['daeji', 33]], reward: 2000,
+    intro: '', defeat: '허허, 내 몬스터들보다 단단하구먼!', after: '',
+  };
+  const res = await trainerBattle(t);
+  if (res !== 'win') return;
+  await say('광부 대장 석두: 약속대로 이 방울을 주지.\n산군님도 자네라면 반겨 주실 걸세.');
+  await giveItem('bell_rock');
+  game.flags.bellRock = true;
+}
+
+export async function shrineTalk() {
+  if (!game.flags.quest) {
+    await say('돌을 쌓아 만든 오래된 서낭당이다.\n오색 천이 안개 속에서 조용히 나부끼고 있다.');
+    return;
+  }
+  if (game.flags.sangun) {
+    await say('서낭당에 오색 천이 나부끼고 있다.\n어디선가 산군의 숨결이 느껴지는 것 같다.');
+    return;
+  }
+  const n = bellCount();
+  if (n < 3) {
+    await say(`서낭당 앞에 방울을 걸어 두는 자리가 세 군데 있다.\n(가지고 있는 방울: ${n}/3)`);
+    return;
+  }
+  if (!(await yesNo('서낭당 앞에 방울을 걸어 두는 자리가 세 군데 있다.\n세 방울을 걸어 볼까?'))) return;
+  await say('{name}은(는) 숲의방울, 물의방울, 바위의방울을 서낭당에 걸었다.');
+  await say('딸랑… 딸랑…\n바람도 없는데 세 방울이 저절로 울리기 시작했다!');
+  await flashes(2);
+  await say('짙은 안개가 산꼭대기를 뒤덮었다…\n안개 속에서 두 개의 푸른 눈이 빛난다!');
+  await say('산군: 크르르릉…\n방울을 울린 자여. 숲과 물과 바위가 그대를 인정하였구나.');
+  await say('산군: 이 산을 지켜 온 천 년의 힘으로 그대를 시험하겠다.\n그대의 동료들과 함께 맞서라!');
+  const res = await wildBattle(createMon('sangun', 38));
+  if (res === 'caught') {
+    game.flags.sangun = true;
+    for (const b of ['bell_forest', 'bell_water', 'bell_rock']) removeItem(b);
+    await say('세 개의 방울이 빛이 되어 사라졌다.\n산군이 {name}의 동료가 되었다!');
+    return;
+  }
+  if (res === 'lose') return;
+  await say('산군은 안개 속으로 모습을 감췄다…\n방울은 아직 서낭당에 걸려 있다. 다시 울리면 돌아올 것 같다.');
 }
 
 export function npcById(id: string): NPC | undefined {

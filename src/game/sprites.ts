@@ -491,6 +491,29 @@ const DRAW: Record<string, (p: Pix) => void> = {
     p.rect(13, 18, 6, 1, EYE);
   },
 
+  // --- 준전설 ---
+  sangun(p) {
+    const Wt = '#f4f4f8', G = '#c8ccd8', St = '#3a4a6a', Mist = '#a8d0e8', Eye = '#7ae0ff', R = '#e85a5a', Gd = '#ffd040';
+    p.ell(4, 26, 4, 3, Mist); p.ell(28, 26, 4, 3, Mist); p.ell(16, 30, 9, 2, Mist);
+    p.tri(24, 17, 31, 10, 29, 20, Wt);
+    p.ell(16, 21, 11, 8, Wt);
+    p.rect(7, 26, 5, 5, Wt); p.rect(20, 26, 5, 5, Wt);
+    p.rect(7, 26, 5, 1, Gd); p.rect(20, 26, 5, 1, Gd);
+    p.ell(6.5, 4.5, 3, 3, Wt); p.ell(25.5, 4.5, 3, 3, Wt);
+    p.ell(6.5, 4.5, 1.5, 1.5, G); p.ell(25.5, 4.5, 1.5, 1.5, G);
+    p.ell(16, 11, 10, 8, Wt);
+    p.ell(10, 16, 4, 3, Wt); p.ell(22, 16, 4, 3, Wt);
+    for (const [x0, y0, x1, y1] of [[14, 3, 15, 7], [18, 3, 17, 7], [16, 4, 16, 7], [7, 10, 10, 11], [25, 10, 22, 11], [7, 13, 9, 13], [25, 13, 23, 13], [9, 20, 11, 23], [23, 20, 21, 23], [13, 25, 14, 28], [19, 25, 18, 28]]) p.line(x0, y0, x1, y1, St);
+    p.rect(11, 10, 3, 2, Eye); p.rect(18, 10, 3, 2, Eye);
+    p.set(11, 10, '#ffffff'); p.set(18, 10, '#ffffff');
+    p.line(10, 9, 13, 9, St); p.line(22, 9, 19, 9, St);
+    p.ell(16, 15, 3, 2, G);
+    p.rect(15, 14, 2, 1, R);
+    p.rect(14, 17, 4, 1, St); p.set(13, 16, St); p.set(18, 16, St);
+    p.set(14, 18, '#ffffff'); p.set(17, 18, '#ffffff');
+    p.tri(14.5, 1, 17.5, 1, 16, -2, Mist);
+  },
+
   // --- 전설 ---
   eunha(p) {
     const B = '#2a3a8a', Bd = '#1a2460', L = '#8ab0f0', St = '#fff8c8', G = '#7ae0ff';
