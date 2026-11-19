@@ -131,6 +131,52 @@ export function bindJoystick(zone: HTMLElement, base: HTMLElement, knob: HTMLEle
   zone.addEventListener('contextmenu', (e) => e.preventDefault());
 }
 
+/** Cross-shaped D-pad: slide a finger between arms to change direction. */
+export function bindDpad(pad: HTMLElement) {
+  let id: number | null = null;
+  let cur: Btn | null = null;
+  const arms: Record<string, HTMLElement | null> = {
+    up: pad.querySelector('.up'), down: pad.querySelector('.down'), left: pad.querySelector('.left'), right: pad.querySelector('.right'),
+  };
+  const set = (b: Btn | null) => {
+    if (b === cur) return;
+    if (cur) {
+      input.release(cur, 'dpad');
+      arms[cur]?.classList.remove('on');
+    }
+    cur = b;
+    if (b) {
+      input.press(b, 'dpad');
+      arms[b]?.classList.add('on');
+    }
+  };
+  const aim = (e: PointerEvent) => {
+    const r = pad.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width / 2);
+    const dy = e.clientY - (r.top + r.height / 2);
+    if (Math.hypot(dx, dy) < 10) return set(null);
+    set(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'down' : 'up');
+  };
+  pad.addEventListener('pointerdown', (e) => {
+    if (id !== null) return;
+    e.preventDefault();
+    id = e.pointerId;
+    pad.setPointerCapture(id);
+    aim(e);
+  });
+  pad.addEventListener('pointermove', (e) => {
+    if (e.pointerId === id) aim(e);
+  });
+  const end = (e: PointerEvent) => {
+    if (e.pointerId !== id) return;
+    id = null;
+    set(null);
+  };
+  pad.addEventListener('pointerup', end);
+  pad.addEventListener('pointercancel', end);
+  pad.addEventListener('contextmenu', (e) => e.preventDefault());
+}
+
 export function bindTouchPad(root: HTMLElement) {
   root.querySelectorAll<HTMLButtonElement>('button[data-btn]').forEach((el) => {
     const b = el.dataset.btn as Btn;

@@ -1,5 +1,5 @@
 import { ui, Menu, say, yesNo } from '../engine/ui';
-import { W } from '../engine/draw';
+import { OX, BW } from '../engine/draw';
 import { MOVES } from '../data/moves';
 import { SPECIES } from '../data/species';
 import { monName, type Mon } from './monster';
@@ -22,7 +22,7 @@ export async function learnMove(m: Mon, id: string) {
   for (;;) {
     if (await yesNo(`다른 기술을 잊고 ${j(mv.name, '을/를')} 배우게 할까?`)) {
       const items = [...m.moves.map((s) => MOVES[s.id].name), '그만두기'];
-      const r = await ui.run(new Menu({ items, cancel: true, x: W - 110, y: 50 }));
+      const r = await ui.run(new Menu({ items, cancel: true, x: OX + BW - 110, y: 50 }));
       if (r >= 0 && r < 4) {
         const old = MOVES[m.moves[r].id].name;
         m.moves[r] = { id, pp: mv.pp };

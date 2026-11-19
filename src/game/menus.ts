@@ -1,4 +1,4 @@
-import { W, H, box, text, hpBar, panel, cursor, typeChip, drawSprite, wrap, type Ctx } from '../engine/draw';
+import { W as SW, BW as W, OX, H, box, text, hpBar, panel, cursor, typeChip, drawSprite, wrap, centered, type Ctx } from '../engine/draw';
 import { input } from '../engine/input';
 import { ui, Widget, Menu, MessageBox, say, yesNo } from '../engine/ui';
 import { silhouette } from '../engine/pix';
@@ -37,6 +37,10 @@ export class PartyView extends Widget<number> {
   }
 
   draw(ctx: Ctx) {
+    centered(ctx, () => this.paint(ctx));
+  }
+
+  paint(ctx: Ctx) {
     panel(ctx, '#dfe8f4');
     game.party.forEach((m, i) => {
       const y = 4 + i * 26;
@@ -93,7 +97,7 @@ export async function partyMenu() {
   for (;;) {
     const i = await pv.promise;
     if (i < 0) break;
-    const c = await ui.run(new Menu({ items: ['상태 보기', '순서 바꾸기', '닫기'], cancel: true, x: W - 92, y: 100 }));
+    const c = await ui.run(new Menu({ items: ['상태 보기', '순서 바꾸기', '닫기'], cancel: true, x: OX + W - 92, y: 100 }));
     if (c === 0) await ui.run(new SummaryView(i));
     else if (c === 1 && game.party.length > 1) {
       pv.swapFrom = i;
@@ -121,6 +125,10 @@ export class SummaryView extends Widget<void> {
   }
 
   draw(ctx: Ctx) {
+    centered(ctx, () => this.paint(ctx));
+  }
+
+  paint(ctx: Ctx) {
     const m = game.party[this.idx];
     const sp = SPECIES[m.species];
     const st = calcStats(m);
@@ -192,6 +200,10 @@ export class BagView extends Widget<string | null> {
   }
 
   draw(ctx: Ctx) {
+    centered(ctx, () => this.paint(ctx));
+  }
+
+  paint(ctx: Ctx) {
     panel(ctx, '#f4e6cc');
     ctx.fillStyle = '#c89a5a';
     ctx.fillRect(0, 0, W, 22);
@@ -261,7 +273,7 @@ export async function bagMenu() {
     } else if (!game.party.length) {
       await say('사용할 몬스터가 없다.');
     } else {
-      const c = await ui.run(new Menu({ items: ['사용한다', '그만둔다'], cancel: true, x: W - 90, y: 100 }));
+      const c = await ui.run(new Menu({ items: ['사용한다', '그만둔다'], cancel: true, x: OX + W - 90, y: 100 }));
       if (c === 0) {
         const i = await pickPartyMember(`누구에게 ${j(ITEMS[id].name, '을/를')} 쓸까요?`);
         if (i >= 0) await useItemOn(id, game.party[i]);
@@ -287,6 +299,10 @@ export class DexView extends Widget<void> {
   }
 
   draw(ctx: Ctx) {
+    centered(ctx, () => this.paint(ctx));
+  }
+
+  paint(ctx: Ctx) {
     panel(ctx, '#e04a4a');
     ctx.fillStyle = '#b8323a';
     ctx.fillRect(0, 0, W, 22);
@@ -350,6 +366,10 @@ class Quantity extends Widget<number> {
     else if (input.pressed('b')) this.finish(0);
   }
   draw(ctx: Ctx) {
+    centered(ctx, () => this.paint(ctx));
+  }
+
+  paint(ctx: Ctx) {
     box(ctx, W - 124, 100, 120, 40);
     text(ctx, `× ${String(this.n).padStart(2, '0')}`, W - 112, 113);
     text(ctx, `${(this.n * this.price).toLocaleString()}원`, W - 14, 113, { align: 'right' });
@@ -369,6 +389,10 @@ class ShopView extends Widget<number> {
     else if (input.pressed('b')) this.finish(-1, false);
   }
   draw(ctx: Ctx) {
+    centered(ctx, () => this.paint(ctx));
+  }
+
+  paint(ctx: Ctx) {
     box(ctx, 4, 4, 100, 24);
     text(ctx, `${game.money.toLocaleString()}원`, 96, 10, { align: 'right' });
     const rows = [...this.stock, null];
@@ -429,8 +453,12 @@ export class StarterView extends Widget<number> {
     if (input.pressed('a')) this.finish(this.idx, false);
   }
   draw(ctx: Ctx) {
+    centered(ctx, () => this.paint(ctx));
+  }
+
+  paint(ctx: Ctx) {
     ctx.fillStyle = 'rgba(20,24,40,0.55)';
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(-OX, 0, SW, H);
     box(ctx, 6, 4, W - 12, 136);
     text(ctx, '함께 모험할 몬스터를 골라 주세요', W / 2, 11, { align: 'center' });
     this.ids.forEach((id, i) => {
@@ -474,6 +502,10 @@ export class TrainerCard extends Widget<void> {
     if (input.pressed('a') || input.pressed('b')) this.finish();
   }
   draw(ctx: Ctx) {
+    centered(ctx, () => this.paint(ctx));
+  }
+
+  paint(ctx: Ctx) {
     panel(ctx, '#d8e4f4');
     box(ctx, 16, 20, W - 32, 140);
     text(ctx, '트레이너 카드', W / 2, 30, { align: 'center' });

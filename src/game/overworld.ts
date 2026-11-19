@@ -161,7 +161,7 @@ export class Overworld implements Scene {
       this.hooks.run(() => this.hooks.menu());
       return;
     }
-    const dir = DIRS.find((d) => input.isHeld(d));
+    const dir = DIRS.find((d) => input.isHeld(d)) ?? DIRS.find((d) => input.pressed(d));
     if (!dir) {
       this.turnHold = 0;
       this.idle++;
@@ -305,7 +305,7 @@ export class Overworld implements Scene {
     const x0 = Math.floor(cx / 16);
     const y0 = Math.floor(cy / 16);
     for (let ty = y0; ty <= y0 + 12; ty++) {
-      for (let tx = x0; tx <= x0 + 16; tx++) {
+      for (let tx = x0; tx <= x0 + Math.ceil(W / 16); tx++) {
         const ch = this.tileAt(tx, ty);
         if (ch === ' ') continue;
         g.drawImage(tileCanvas(ch, anim), tx * 16 - cx, ty * 16 - cy);

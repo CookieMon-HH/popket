@@ -55,6 +55,36 @@ html, body {
 }
 
 /* Floating touch controls (shown on touch screens only) */
+body[data-controls="dpad"] #stick-zone,
+body[data-controls="dpad"] #stick { display: none; }
+body[data-controls="stick"] #dpad { display: none; }
+
+#dpad {
+  position: absolute;
+  left: calc(env(safe-area-inset-left, 0px) + 14px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+  width: 138px;
+  height: 138px;
+  pointer-events: auto;
+  touch-action: none;
+}
+#dpad .arm, #dpad .hub {
+  position: absolute;
+  background: rgba(30, 34, 54, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.32);
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+#dpad .arm.on { background: rgba(120, 130, 190, 0.75); }
+#dpad .up { left: 46px; top: 0; width: 46px; height: 50px; border-radius: 8px 8px 0 0; border-bottom: none; }
+#dpad .down { left: 46px; bottom: 0; width: 46px; height: 50px; border-radius: 0 0 8px 8px; border-top: none; }
+#dpad .left { left: 0; top: 46px; width: 50px; height: 46px; border-radius: 8px 0 0 8px; border-right: none; }
+#dpad .right { right: 0; top: 46px; width: 50px; height: 46px; border-radius: 0 8px 8px 0; border-left: none; }
+#dpad .hub { left: 46px; top: 46px; width: 46px; height: 46px; border: none; background: rgba(30, 34, 54, 0.55); }
+
 #touch {
   display: none;
   position: fixed;

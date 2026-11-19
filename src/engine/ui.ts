@@ -1,5 +1,5 @@
 import { input } from './input';
-import { W, box, text, wrap, cursor, measure, type Ctx } from './draw';
+import { BW, OX, box, text, wrap, cursor, measure, type Ctx } from './draw';
 import { clock } from './timing';
 
 let formatter = (s: string) => s;
@@ -88,7 +88,7 @@ export class MessageBox extends Widget<void> {
 
   constructor(s: string, private opts: MessageOpts = {}) {
     super();
-    const lines = wrap(formatter(s), W - 26, 11);
+    const lines = wrap(formatter(s), BW - 26, 11);
     for (let i = 0; i < lines.length; i += 2) this.pages.push(lines.slice(i, i + 2));
     if (!this.pages.length) this.pages.push(['']);
     if (opts.instant) this.shown = 9999;
@@ -119,20 +119,20 @@ export class MessageBox extends Widget<void> {
   }
 
   draw(ctx: Ctx) {
-    box(ctx, 0, 144, W, 48);
+    box(ctx, OX, 144, BW, 48);
     let left = Math.floor(this.shown);
     this.pages[this.page].forEach((line, i) => {
       const s = line.slice(0, Math.max(0, left));
       left -= line.length;
-      text(ctx, s, 12, 152 + i * 17);
+      text(ctx, s, OX + 12, 152 + i * 17);
     });
     const waiting = this.shown >= this.pageLen && !this.done && !this.opts.persist;
     if (waiting && Math.floor(clock.frame / 16) % 2 === 0) {
       ctx.fillStyle = '#e04a5a';
       ctx.beginPath();
-      ctx.moveTo(238, 179);
-      ctx.lineTo(246, 179);
-      ctx.lineTo(242, 184);
+      ctx.moveTo(OX + 238, 179);
+      ctx.lineTo(OX + 246, 179);
+      ctx.lineTo(OX + 242, 184);
       ctx.closePath();
       ctx.fill();
     }
@@ -189,7 +189,7 @@ export class Menu extends Widget<number> {
     const valW = this.o.values ? Math.max(...this.o.values.map((s) => measure(s, size))) + 12 : 0;
     const w = this.o.w ?? (widest + 24 + valW) * this.cols + 6;
     const h = this.o.h ?? this.visRows * this.rowH + 14;
-    const x = this.o.x ?? W - w - 2;
+    const x = this.o.x ?? OX + BW - w - 2;
     const y = this.o.y ?? 144 - h - 2;
     return { x, y, w, h, colW: (w - 6) / this.cols };
   }

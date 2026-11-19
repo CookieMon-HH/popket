@@ -1,4 +1,4 @@
-import { W, H, box, text, hpBar, typeChip, drawSprite, cursor, type Ctx } from '../engine/draw';
+import { W, H, OX, box, text, hpBar, typeChip, drawSprite, cursor, centered, type Ctx } from '../engine/draw';
 import { input } from '../engine/input';
 import { ui, Widget, Menu, MessageBox, say } from '../engine/ui';
 import { tween, wait } from '../engine/timing';
@@ -55,6 +55,8 @@ class BattleScene implements Scene {
     grad.addColorStop(1, '#b8dc98');
     g.fillStyle = grad;
     g.fillRect(0, 0, W, H);
+    g.save();
+    g.translate(OX, 0);
     g.fillStyle = '#a6d088';
     g.beginPath();
     g.ellipse(184, 76, 50, 11, 0, 0, Math.PI * 2);
@@ -94,9 +96,14 @@ class BattleScene implements Scene {
       g.drawImage(capsuleSprite(), -5, -5);
       g.restore();
     }
+    g.restore();
   }
 
   drawUI(ctx: Ctx) {
+    centered(ctx, () => this.paintUI(ctx));
+  }
+
+  private paintUI(ctx: Ctx) {
     const v = this.v;
     if (v.enemyTeam) teamRow(ctx, v.enemyTeam, 10, 47, '상대');
     if (v.pBox || v.pVis) teamRow(ctx, game.party, 132, 84, '나');
@@ -172,19 +179,26 @@ class MoveMenu extends Widget<number> {
     } else if (input.pressed('b')) this.finish(-1);
   }
   draw(ctx: Ctx) {
-    box(ctx, 0, 144, 172, 48);
+    centered(ctx, () => this.paint(ctx));
+  }
+
+  private paint(ctx: Ctx) {
+    const W = 256;
+    const iw = 84;
+    const mw = W - iw;
+    box(ctx, 0, 144, mw, 48);
     this.m.moves.forEach((s, i) => {
-      const x = 18 + (i % 2) * 78;
+      const x = 18 + (i % 2) * Math.floor((mw - 16) / 2);
       const y = 152 + Math.floor(i / 2) * 18;
       text(ctx, MOVES[s.id].name, x, y, { size: 10, color: s.pp > 0 ? undefined : '#a0a2b0' });
       if (i === this.idx) cursor(ctx, x - 10, y + 2);
     });
     const s = this.m.moves[this.idx];
     const mv = MOVES[s.id];
-    box(ctx, 172, 144, 84, 48);
-    text(ctx, `PP ${s.pp}/${mv.pp}`, 248, 152, { size: 10, align: 'right', color: s.pp === 0 ? '#e04a4a' : undefined });
-    typeChip(ctx, mv.type, TYPE_COLOR[mv.type], 182, 172);
-    text(ctx, mv.power ? `위력 ${mv.power}` : '변화', 248, 172, { size: 8, align: 'right' });
+    box(ctx, mw, 144, iw, 48);
+    text(ctx, `PP ${s.pp}/${mv.pp}`, W - 8, 152, { size: 10, align: 'right', color: s.pp === 0 ? '#e04a4a' : undefined });
+    typeChip(ctx, mv.type, TYPE_COLOR[mv.type], mw + 10, 172);
+    text(ctx, mv.power ? `위력 ${mv.power}` : '변화', W - 8, 172, { size: 8, align: 'right' });
   }
 }
 
@@ -572,7 +586,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
       const msg = new MessageBox(`${j(monName(me.mon), '은/는')}\n무엇을 할까?`, { persist: true, instant: true });
       ui.run(msg);
       await msg.promise;
-      const a = await ui.run(new Menu({ items: ['싸운다', '가방', '동료', '도망'], cols: 2, x: 132, y: 144, w: 124, h: 48, index: lastAction }));
+      const a = await ui.run(new Menu({ items: ['싸운다', '가방', '동료', '도망'], cols: 2, x: OX + 132, y: 144, w: 124, h: 48, index: lastAction }));
       msg.close();
       lastAction = a;
       if (a === 0) {

@@ -1,4 +1,4 @@
-import { W, H, drawSprite, type Ctx } from '../engine/draw';
+import { W, H, drawSprite, type Ctx, OX, BW } from '../engine/draw';
 import { ui, Backdrop, Menu, say, yesNo, choose } from '../engine/ui';
 import { wait, tween } from '../engine/timing';
 import { scenes, fadeTo, flashes, fx } from '../engine/scene';
@@ -15,6 +15,7 @@ import { learnMove, movesLearnedAt } from './learn';
 import { OPP, j, rand } from './common';
 import type { TrainerDef } from './maps';
 import { shrineTalk } from './story';
+import { settings, setControls } from './settings';
 
 export { world };
 
@@ -292,10 +293,14 @@ export async function tileTalk(ch: string) {
 export async function startMenu() {
   let idx = 0;
   for (;;) {
-    const items = ['도감', '동료', '가방', game.name, '저장', '그만하기', '닫기'];
-    idx = await ui.run(new Menu({ items, cancel: true, x: W - 80, y: 4, w: 76, index: idx }));
-    if (idx < 0 || idx === 6) return;
+    const items = ['도감', '동료', '가방', game.name, '저장', '설정', '그만하기', '닫기'];
+    idx = await ui.run(new Menu({ items, cancel: true, x: OX + BW - 80, y: 2, w: 76, rowH: 15, index: idx }));
+    if (idx < 0 || idx === 7) return;
     if (idx === 5) {
+      await settingsMenu();
+      continue;
+    }
+    if (idx === 6) {
       const unsaved = game.frames - runtime.savedAt > 60;
       const r = await choose(
         unsaved ? '그만하기 전에 지금까지의 모험을 저장할까요?' : '타이틀 화면으로 돌아갈까요?',
@@ -327,6 +332,17 @@ export async function startMenu() {
         else await say('기록하지 못했다… 브라우저 저장소를 확인해 주세요.');
       }
     }
+  }
+}
+
+async function settingsMenu() {
+  let i = 0;
+  for (;;) {
+    const label = settings.controls === 'dpad' ? '방향키' : '조이스틱';
+    i = await ui.run(new Menu({ items: [`조작 방식: ${label}`, '닫기'], cancel: true, x: OX + BW - 150, y: 40, w: 146, index: i }));
+    if (i !== 0) return;
+    setControls(settings.controls === 'dpad' ? 'stick' : 'dpad');
+    await say(settings.controls === 'dpad' ? '조작 방식을 방향키로 바꿨어요.' : '조작 방식을 조이스틱으로 바꿨어요.\n화면 왼쪽을 누르고 끌어서 움직여요.');
   }
 }
 

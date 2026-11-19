@@ -1,5 +1,23 @@
-export const W = 256;
+/** Logical screen width: grows with the phone's aspect ratio (height is fixed). */
+export let W = 256;
 export const H = 192;
+/** Width of fixed layouts (menus, battle) that are centered on wide screens. */
+export const BW = 256;
+/** Left offset of a centered 256-wide layout. */
+export let OX = 0;
+
+export function setLogicalWidth(w: number) {
+  W = w;
+  OX = Math.floor((w - BW) / 2);
+}
+
+/** Draw a fixed 256-wide layout centered on the screen. */
+export function centered(ctx: CanvasRenderingContext2D, fn: () => void) {
+  ctx.save();
+  ctx.translate(OX, 0);
+  fn();
+  ctx.restore();
+}
 export type Ctx = CanvasRenderingContext2D;
 
 export const FONT_FAMILY = `"Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif`;
@@ -117,11 +135,13 @@ export function drawSprite(
   ctx.restore();
 }
 
+/** Full-screen background; works inside centered() too. */
 export function panel(ctx: Ctx, color = '#e9eef8') {
+  const x0 = -OX - 16;
   ctx.fillStyle = color;
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(x0, 0, W + 32, H);
   ctx.fillStyle = 'rgba(80,100,160,0.07)';
-  for (let y = 0; y < H; y += 8) for (let x = (y / 8) % 2 ? 0 : 8; x < W; x += 16) ctx.fillRect(x, y, 8, 8);
+  for (let y = 0; y < H; y += 8) for (let x = x0 + ((y / 8) % 2 ? 0 : 8); x < W; x += 16) ctx.fillRect(x, y, 8, 8);
 }
 
 export function typeChip(ctx: Ctx, label: string, color: string, x: number, y: number) {

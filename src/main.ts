@@ -1,5 +1,6 @@
-import { W, H, text, drawSprite, type Ctx } from './engine/draw';
-import { input, bindTouchPad, bindJoystick } from './engine/input';
+import { W, H, OX, BW, text, drawSprite, setLogicalWidth, type Ctx } from './engine/draw';
+import { input, bindTouchPad, bindJoystick, bindDpad } from './engine/input';
+import { loadSettings } from './game/settings';
 import { ui, Menu, MessageBox, setTextFormatter, say, yesNo } from './engine/ui';
 import { clock, tickTasks } from './engine/timing';
 import { scenes, fx, fadeTo, type Scene } from './engine/scene';
@@ -22,7 +23,13 @@ function resize() {
   const cs = getComputedStyle(wrap);
   const aw = wrap.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
   const ah = wrap.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-  const s = Math.max(1, Math.min(aw / W, ah / H));
+  // Fill the screen: height stays 192, width follows the aspect ratio.
+  const lw = Math.max(256, Math.min(456, Math.round(((aw / ah) * H) / 2) * 2));
+  setLogicalWidth(lw);
+  low.width = W;
+  low.height = H;
+  lctx.imageSmoothingEnabled = false;
+  const s = Math.max(0.5, Math.min(aw / W, ah / H));
   const dpr = window.devicePixelRatio || 1;
   canvas.style.width = `${Math.floor(W * s)}px`;
   canvas.style.height = `${Math.floor(H * s)}px`;
@@ -31,7 +38,9 @@ function resize() {
 }
 window.addEventListener('resize', resize);
 resize();
+loadSettings();
 bindTouchPad(document.getElementById('touch')!);
+bindDpad(document.getElementById('dpad')!);
 bindJoystick(document.getElementById('stick-zone')!, document.getElementById('stick')!, document.getElementById('knob')!);
 window.addEventListener('orientationchange', () => setTimeout(resize, 200));
 
@@ -53,7 +62,7 @@ class TitleScene implements Scene {
     const t = clock.frame;
     ['modak', 'pong', 'saesun'].forEach((id, i) => {
       const bob = Math.round(Math.sin(t / 18 + i * 2) * 3);
-      drawSprite(g, monSprite(id), 8 + i * 80, 76 + bob, 80, 80);
+      drawSprite(g, monSprite(id), OX + 8 + i * 80, 76 + bob, 80, 80);
     });
     g.fillStyle = 'rgba(255,255,255,0.8)';
     for (let i = 0; i < 4; i++) {
@@ -99,7 +108,7 @@ async function titleFlow() {
     const m = new MessageBox('주인공의 이름을 골라 주세요.', { persist: true, instant: true });
     ui.run(m);
     await m.promise;
-    const k = await ui.run(new Menu({ items: names, x: W - 76, y: 20, w: 72 }));
+    const k = await ui.run(new Menu({ items: names, x: OX + BW - 76, y: 20, w: 72 }));
     m.close();
     name = names[k];
     await fadeTo(1, 12);
