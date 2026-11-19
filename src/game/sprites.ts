@@ -1,0 +1,347 @@
+import { Pix } from '../engine/pix';
+import type { Dir } from './common';
+
+const OUT = '#26263a';
+const EYE = '#1c1c28';
+
+function eye(p: Pix, x: number, y: number, h = 3) {
+  p.rect(x, y, 2, h, EYE);
+  p.set(x, y, '#ffffff');
+}
+
+// ---------------------------------------------------------------------------
+// Original monster designs (32x32)
+
+const DRAW: Record<string, (p: Pix) => void> = {
+  modak(p) {
+    const B = '#f28a3a', D = '#c8601e', L = '#ffd8a0', R = '#e8402a', Y = '#ffd040';
+    p.ell(26.5, 21, 3, 4.5, R); p.ell(26.5, 22.5, 1.5, 2.2, Y);
+    p.ell(9.5, 12.5, 2.8, 2.8, B); p.ell(22.5, 12.5, 2.8, 2.8, B);
+    p.ell(9.5, 12.5, 1.3, 1.3, D); p.ell(22.5, 12.5, 1.3, 1.3, D);
+    p.ell(16, 9, 3.6, 4.2, R); p.ell(16, 5.5, 2, 2.6, R); p.ell(16, 10, 2, 2.4, Y);
+    p.ell(16, 20, 9.5, 8.5, B);
+    p.ell(16, 23.5, 5.5, 4.5, L);
+    p.ell(7, 22, 2.2, 3, B); p.ell(25, 22, 2.2, 3, B);
+    p.rect(10, 27, 4, 3, D); p.rect(18, 27, 4, 3, D);
+    eye(p, 12, 16); eye(p, 18, 16);
+    p.rect(15, 20, 2, 1, '#7a2a10');
+    p.set(10, 19, '#ff9a7a'); p.set(21, 19, '#ff9a7a');
+  },
+  hwaro(p) {
+    const B = '#e0702c', D = '#a84a18', L = '#ffd090', R = '#e8402a', Y = '#ffd040';
+    p.ell(5.5, 9, 3, 5, R); p.ell(26.5, 9, 3, 5, R); p.ell(16, 4, 3.5, 4, R);
+    p.ell(5.5, 10, 1.5, 2.5, Y); p.ell(26.5, 10, 1.5, 2.5, Y); p.ell(16, 5, 1.8, 2, Y);
+    p.ell(9, 9, 3, 3, B); p.ell(23, 9, 3, 3, B);
+    p.ell(16, 18.5, 12, 11, B);
+    p.ell(16, 22, 7.5, 6.5, L);
+    p.ell(4.5, 20, 3, 5, B); p.ell(27.5, 20, 3, 5, B);
+    p.rect(3, 24, 3, 2, '#fff4e0'); p.rect(26, 24, 3, 2, '#fff4e0');
+    p.rect(8, 28, 6, 3, D); p.rect(18, 28, 6, 3, D);
+    eye(p, 11, 13); eye(p, 19, 13);
+    p.rect(10, 12, 4, 1, D); p.rect(18, 12, 4, 1, D);
+    p.rect(14, 17, 4, 1, '#7a2a10');
+    p.ell(16, 22.5, 2, 2.6, R); p.ell(16, 23, 1, 1.4, Y);
+  },
+  pong(p) {
+    const B = '#5aa8e8', D = '#3a78c0', L = '#e0f4ff', C = '#a8dcff';
+    p.ell(16, 9.5, 2, 3, C); p.set(16, 6, C); p.set(15, 6, C);
+    p.ell(26.5, 25.5, 4, 2.5, D);
+    p.ell(16, 20, 10, 8.5, B);
+    p.ell(16, 23, 6.5, 4.5, L);
+    p.ell(6.5, 24.5, 3, 2, D); p.ell(25.5, 24.5, 3, 2, D);
+    eye(p, 11, 16, 4); eye(p, 19, 16, 4);
+    p.rect(15, 20, 2, 1, '#203050');
+    p.set(9, 21, '#203050'); p.set(8, 20, '#203050'); p.set(22, 21, '#203050'); p.set(23, 20, '#203050');
+    p.set(10, 19, '#ff9ab0'); p.set(21, 19, '#ff9ab0');
+  },
+  mulbora(p) {
+    const B = '#4a96e0', D = '#2e68b0', L = '#e8f6ff', C = '#a8dcff';
+    p.ell(9.5, 8, 4, 4, L); p.ell(16, 5.5, 4.5, 4, L); p.ell(22.5, 8, 4, 4, L);
+    p.ell(9.5, 9, 2.5, 2.5, C); p.ell(16, 6.5, 3, 2.5, C); p.ell(22.5, 9, 2.5, 2.5, C);
+    p.ell(27.5, 26, 4.5, 3, D); p.ell(29, 21.5, 2, 3, D);
+    p.ell(16, 19, 12, 10, B);
+    p.ell(16, 22.5, 7, 6, L);
+    p.ell(4, 22, 3.5, 2.5, D); p.ell(28, 22, 3.5, 2.5, D);
+    eye(p, 11, 14); eye(p, 19, 14);
+    p.rect(10, 13, 3, 1, D); p.rect(19, 13, 3, 1, D);
+    p.ell(16, 11, 1.5, 1.5, '#ffffff');
+    p.rect(14, 18, 4, 1, '#203050');
+  },
+  saesun(p) {
+    const B = '#78c858', D = '#4a9a3a', L = '#c8f0a0', F = '#3aa848';
+    p.rect(16, 5, 1, 6, D);
+    p.ell(13, 5.5, 3, 1.6, F); p.ell(20, 4.5, 3, 1.6, F);
+    p.ell(7, 13.5, 3.5, 2, F); p.ell(25, 13.5, 3.5, 2, F);
+    p.ell(16, 20, 9.5, 8.5, B);
+    p.ell(16, 23.5, 5.5, 4.5, L);
+    p.rect(10, 27, 4, 3, D); p.rect(18, 27, 4, 3, D);
+    eye(p, 12, 16); eye(p, 18, 16);
+    p.rect(15, 20, 2, 1, '#2a5020');
+    p.set(10, 19, '#ffa8a0'); p.set(21, 19, '#ffa8a0');
+    p.set(11, 24, D); p.set(21, 23, D);
+  },
+  kkot(p) {
+    const B = '#5ab048', D = '#3a8030', L = '#c8f0a0', F = '#2e9a40', P = '#f088b8', Y = '#ffe060';
+    p.ell(4.5, 17, 4, 2.5, F); p.ell(27.5, 17, 4, 2.5, F);
+    p.ell(6.5, 10, 3.5, 2, F); p.ell(25.5, 10, 3.5, 2, F);
+    p.ell(16, 19.5, 11.5, 10.5, B);
+    p.ell(10, 12, 3.5, 3, D); p.ell(22, 12, 3.5, 3, D);
+    p.ell(16, 23, 6.5, 5.5, L);
+    p.ell(12.5, 5.5, 2.5, 2.5, P); p.ell(19.5, 5.5, 2.5, 2.5, P);
+    p.ell(16, 2.8, 2.5, 2.5, P); p.ell(16, 8.2, 2.5, 2.5, P);
+    p.ell(16, 5.5, 1.8, 1.8, Y);
+    p.rect(8, 28, 6, 3, D); p.rect(18, 28, 6, 3, D);
+    eye(p, 11, 15); eye(p, 19, 15);
+    p.rect(14, 19, 4, 1, '#2a5020');
+  },
+  tosil(p) {
+    const B = '#e0b078', D = '#b8844a', L = '#fff0d8', P = '#f8b8b0';
+    p.ell(9, 10, 3, 3, B); p.ell(23, 10, 3, 3, B);
+    p.ell(9, 10, 1.5, 1.5, P); p.ell(23, 10, 1.5, 1.5, P);
+    p.ell(16, 19.5, 10, 9.5, B);
+    p.ell(8.5, 21, 3.5, 3, L); p.ell(23.5, 21, 3.5, 3, L);
+    p.ell(16, 24.5, 5, 4, L);
+    eye(p, 12, 16); eye(p, 18, 16);
+    p.rect(15, 19, 2, 1, '#6a3a2a');
+    p.rect(15, 21, 2, 2, '#ffffff');
+    p.rect(10, 27, 3, 2, D); p.rect(19, 27, 3, 2, D);
+  },
+  tongsil(p) {
+    const B = '#d49a5e', D = '#9a6a34', L = '#fff0d8', P = '#f8b8b0';
+    p.ell(27, 17, 4.5, 7, D); p.ell(27, 17, 3, 5.5, '#e8c490');
+    p.ell(8.5, 8.5, 3.5, 3.5, B); p.ell(23.5, 8.5, 3.5, 3.5, B);
+    p.ell(8.5, 8.5, 1.8, 1.8, P); p.ell(23.5, 8.5, 1.8, 1.8, P);
+    p.ell(16, 19, 12, 11, B);
+    p.rect(15, 9, 2, 4, D); p.rect(12, 10, 1, 3, D); p.rect(19, 10, 1, 3, D);
+    p.ell(7.5, 21, 3.5, 3.5, L); p.ell(24.5, 21, 3.5, 3.5, L);
+    p.ell(16, 24, 6, 5, L);
+    eye(p, 11, 15); eye(p, 19, 15);
+    p.rect(10, 14, 3, 1, D); p.rect(19, 14, 3, 1, D);
+    p.rect(15, 18, 2, 1, '#6a3a2a');
+    p.rect(14, 20, 4, 2, '#ffffff');
+    p.rect(9, 28, 5, 3, D); p.rect(18, 28, 5, 3, D);
+  },
+  jjaek(p) {
+    const B = '#b07848', D = '#7a4a28', L = '#f8e0b8', K = '#f0a030';
+    p.ell(14, 7, 1.5, 3, D); p.ell(17.5, 6.5, 1.5, 3.5, D);
+    p.ell(16, 18, 8.5, 9, B);
+    p.ell(16, 21, 5, 5.5, L);
+    p.ell(8, 19, 2.5, 5, D); p.ell(24, 19, 2.5, 5, D);
+    eye(p, 12, 14); eye(p, 18, 14);
+    p.tri(13.5, 17, 18.5, 17, 16, 20.5, K);
+    p.rect(12, 27, 2, 3, K); p.rect(18, 27, 2, 3, K);
+  },
+  hoeori(p) {
+    const B = '#8a6a4a', W = '#f4f0e8', D = '#5a3a20', K = '#f0b030', A = '#68a8d8';
+    p.ell(5, 16, 5, 9, D); p.ell(27, 16, 5, 9, D);
+    p.ell(3, 24, 2, 3, D); p.ell(29, 24, 2, 3, D);
+    p.ell(5, 14, 3, 6, B); p.ell(27, 14, 3, 6, B);
+    p.ell(16, 19.5, 8, 10, B);
+    p.ell(16, 22, 4.5, 6, W);
+    p.ell(16, 10, 6, 5.5, W);
+    p.ell(14, 4, 2, 2.5, A); p.ell(18.5, 3.5, 2, 2.5, A); p.set(16, 2, A);
+    p.rect(12, 9, 2, 2, EYE); p.rect(18, 9, 2, 2, EYE);
+    p.rect(11, 8, 3, 1, D); p.rect(18, 8, 3, 1, D);
+    p.tri(13.5, 12, 18.5, 12, 16, 16.5, K);
+    p.rect(12, 28, 2, 3, K); p.rect(18, 28, 2, 3, K);
+  },
+  kkomul(p) {
+    const B = '#a8d850', D = '#78a830', Y = '#ffe060', P = '#f07878';
+    p.ell(6.5, 25.5, 4, 4, B); p.ell(12, 23.5, 4.5, 4.5, B); p.ell(18, 21.5, 5, 5, B);
+    p.ell(22.5, 14, 6.5, 6, B);
+    p.ell(6.5, 24.5, 1.3, 1.3, Y); p.ell(12, 22.5, 1.4, 1.4, Y); p.ell(18, 20.5, 1.6, 1.6, Y);
+    p.line(20, 8, 18, 4, D); p.line(25, 8, 27, 4, D);
+    p.ell(18, 3.5, 1.3, 1.3, P); p.ell(27, 3.5, 1.3, 1.3, P);
+    p.rect(5, 29, 2, 1, D); p.rect(11, 28, 2, 1, D); p.rect(17, 26, 2, 1, D);
+    eye(p, 19, 13); eye(p, 24, 13);
+    p.rect(21, 17, 2, 1, '#305020');
+  },
+  naphul(p) {
+    const Wg = '#c8a8f0', Wd = '#9a78d0', S = '#fff0a0', Bd = '#6a5a7a', F = '#f8f0ff';
+    p.ell(7, 12, 7, 7, Wg); p.ell(25, 12, 7, 7, Wg);
+    p.ell(9, 22, 5, 5, Wd); p.ell(23, 22, 5, 5, Wd);
+    p.ell(6, 11, 2.4, 2.4, S); p.ell(26, 11, 2.4, 2.4, S);
+    p.ell(6, 11, 1, 1, Wd); p.ell(26, 11, 1, 1, Wd);
+    p.ell(9, 23, 1.5, 1.5, S); p.ell(23, 23, 1.5, 1.5, S);
+    p.ell(16, 18, 3.5, 8, Bd);
+    p.ell(16, 12.5, 4.5, 3, F);
+    p.ell(16, 9, 3.5, 3, Bd);
+    p.rect(14, 8, 1, 2, '#ffe060'); p.rect(17, 8, 1, 2, '#ffe060');
+    p.line(15, 6, 11, 2, Bd); p.line(16, 6, 20, 2, Bd);
+    p.set(10, 2, Bd); p.set(21, 2, Bd);
+  },
+  jjirit(p) {
+    const Y = '#ffe04a', D = '#e0a820', W = '#fffbd0';
+    p.line(12, 9, 10, 6, D); p.line(10, 6, 12, 4, D); p.line(12, 4, 10, 1, D);
+    p.line(19, 9, 21, 6, D); p.line(21, 6, 19, 4, D); p.line(19, 4, 21, 1, D);
+    p.tri(10.5, 21, 14.5, 21, 12.5, 28.5, D); p.tri(17.5, 21, 21.5, 21, 19.5, 28.5, D);
+    p.ell(16, 16, 9, 9, Y);
+    p.ell(12.5, 12, 3, 2, W);
+    p.ell(6, 17, 2, 1.5, Y); p.ell(26, 17, 2, 1.5, Y);
+    eye(p, 12, 14); eye(p, 18, 14);
+    p.set(14, 19, EYE); p.set(15, 20, EYE); p.set(16, 19, EYE); p.set(17, 20, EYE);
+  },
+  beongae(p) {
+    const C = '#8a94c8', Cd = '#626aa0', Cl = '#b8c0e8', Y = '#ffe04a';
+    p.tri(7, 21, 12, 21, 8, 27, Y); p.tri(8, 26, 11, 26, 7, 31, Y);
+    p.tri(20, 21, 25, 21, 22, 27, Y); p.tri(21, 26, 24, 26, 24, 31, Y);
+    p.ell(8.5, 15, 6, 5.5, C); p.ell(23.5, 15, 6, 5.5, C);
+    p.ell(16, 11, 7.5, 7, C); p.ell(16, 18, 10.5, 5, C);
+    p.ell(13.5, 7.5, 3, 2, Cl); p.ell(7, 12.5, 2, 1.5, Cl);
+    p.rect(11, 14, 3, 2, Y); p.rect(18, 14, 3, 2, Y);
+    p.line(10, 12, 13, 13, Cd); p.line(21, 12, 18, 13, Cd);
+    p.rect(14, 19, 4, 1, Cd);
+  },
+  doldol(p) {
+    const S = '#9aa0a8', Sd = '#6a7078', Sl = '#c8ccd4', F = '#d8b890', Fd = '#a88a60';
+    p.ell(16, 18, 12, 10, S);
+    p.ell(12, 12, 4, 2.5, Sl);
+    p.rect(8, 17, 2, 2, Sd); p.rect(14, 12, 2, 2, Sd); p.rect(20, 14, 2, 2, Sd); p.rect(23, 19, 2, 2, Sd); p.rect(18, 9, 2, 1, Sd);
+    p.ell(16, 23, 6, 4.5, F);
+    p.ell(11, 19.5, 1.5, 1.5, F); p.ell(21, 19.5, 1.5, 1.5, F);
+    eye(p, 13, 21, 2); eye(p, 17, 21, 2);
+    p.rect(15, 24, 2, 1, '#4a3020');
+    p.rect(8, 27, 4, 3, Fd); p.rect(20, 27, 4, 3, Fd);
+  },
+  bawi(p) {
+    const S = '#8a9098', Sd = '#5a6068', Sl = '#c0c4cc', F = '#d0ae84', Fd = '#a08058', Cr = '#78d8f0';
+    p.tri(6, 13, 11, 13, 7.5, 3, Sd); p.tri(12.5, 9, 19.5, 9, 16, 0, Sd); p.tri(21, 13, 26, 13, 24.5, 3, Sd);
+    p.ell(4, 22, 3, 4, Fd); p.ell(28, 22, 3, 4, Fd);
+    p.ell(16, 17.5, 13.5, 11, S);
+    p.ell(11, 11, 4, 2.5, Sl);
+    p.rect(7, 18, 2, 2, Sd); p.rect(23, 17, 2, 2, Sd); p.rect(19, 10, 2, 2, Sd); p.rect(9, 13, 2, 1, Sd);
+    p.ell(16, 23.5, 7, 5, F);
+    p.tri(14, 15.5, 18, 15.5, 16, 10.5, Cr); p.set(15, 14, '#ffffff');
+    eye(p, 12, 21, 2); eye(p, 18, 21, 2);
+    p.rect(11, 20, 3, 1, Fd); p.rect(18, 20, 3, 1, Fd);
+    p.rect(14, 25, 4, 1, '#4a3020');
+    p.rect(7, 28, 5, 3, Fd); p.rect(20, 28, 5, 3, Fd);
+  },
+};
+
+const monCache = new Map<string, HTMLCanvasElement>();
+export function monSprite(species: string): HTMLCanvasElement {
+  let c = monCache.get(species);
+  if (!c) {
+    const p = new Pix(32, 32);
+    (DRAW[species] ?? DRAW.tosil)(p);
+    p.outline(OUT);
+    c = p.toCanvas();
+    monCache.set(species, c);
+  }
+  return c;
+}
+
+// ---------------------------------------------------------------------------
+// People (16x20)
+
+export interface Pal {
+  hair: string;
+  shirt: string;
+  pants: string;
+  skin?: string;
+  hat?: string;
+}
+
+const personCache = new Map<string, HTMLCanvasElement>();
+
+function drawPerson(pal: Pal, dir: 'down' | 'up' | 'left', frame: number): Pix {
+  const p = new Pix(16, 20);
+  const S = pal.skin ?? '#f8d0a8';
+  const shoe = '#383848';
+  if (dir === 'left') {
+    const fwd = frame === 1 ? -1 : frame === 3 ? 1 : 0;
+    if (fwd === 0) {
+      p.rect(6, 15, 4, 4, pal.pants);
+      p.rect(6, 18, 4, 1, shoe);
+    } else {
+      p.rect(7 + fwd, 15, 2, 4, pal.pants);
+      p.rect(7 - fwd, 15, 2, 3, pal.pants);
+      p.rect(7 + fwd, 18, 2, 1, shoe);
+    }
+    p.rect(5, 10, 6, 6, pal.shirt);
+    p.rect(7 - fwd, 11, 2, 4, pal.shirt);
+    p.set(7 - fwd, 14, S);
+    p.ell(8, 6.5, 5, 5, S);
+    p.ell(8.5, 4.5, 5, 3.6, pal.hair);
+    p.rect(9, 5, 4, 4, pal.hair);
+    p.rect(4, 7, 1, 2, EYE);
+    if (pal.hat) {
+      p.ell(8.5, 3.5, 5, 2.6, pal.hat);
+      p.rect(2, 5, 5, 1, pal.hat);
+    }
+  } else {
+    const lUp = frame === 1 ? 1 : 0;
+    const rUp = frame === 3 ? 1 : 0;
+    p.rect(5, 15, 2, 4 - lUp, pal.pants);
+    p.rect(9, 15, 2, 4 - rUp, pal.pants);
+    p.rect(5, 18 - lUp, 2, 1, shoe);
+    p.rect(9, 18 - rUp, 2, 1, shoe);
+    p.rect(4, 10, 8, 6, pal.shirt);
+    p.rect(3, 11, 1, 3, pal.shirt);
+    p.rect(12, 11, 1, 3, pal.shirt);
+    p.set(3, 14, S);
+    p.set(12, 14, S);
+    p.ell(8, 6.5, 5, 5, S);
+    if (dir === 'down') {
+      p.ell(8, 4.5, 5.2, 3.6, pal.hair);
+      p.rect(3, 5, 1, 3, pal.hair);
+      p.rect(12, 5, 1, 3, pal.hair);
+      p.rect(6, 7, 1, 2, EYE);
+      p.rect(9, 7, 1, 2, EYE);
+      if (pal.hat) {
+        p.ell(8, 3.5, 5.4, 2.8, pal.hat);
+        p.rect(4, 5, 8, 1, pal.hat);
+      }
+    } else {
+      p.ell(8, 6, 5.2, 5, pal.hair);
+      if (pal.hat) p.ell(8, 3.5, 5.4, 2.8, pal.hat);
+    }
+  }
+  return p.outline(OUT);
+}
+
+export function personSprite(pal: Pal, dir: Dir, frame: number): HTMLCanvasElement {
+  const key = `${pal.hair}${pal.shirt}${pal.pants}${pal.skin}${pal.hat}|${dir}|${frame}`;
+  let c = personCache.get(key);
+  if (!c) {
+    const base = drawPerson(pal, dir === 'right' ? 'left' : dir, frame);
+    c = (dir === 'right' ? base.flipped() : base).toCanvas();
+    personCache.set(key, c);
+  }
+  return c;
+}
+
+// ---------------------------------------------------------------------------
+// Small objects
+
+let sackC: HTMLCanvasElement | null = null;
+export function itemSprite(): HTMLCanvasElement {
+  if (!sackC) {
+    const p = new Pix(16, 16);
+    p.ell(8, 10.5, 5, 4.5, '#c8945a');
+    p.ell(8, 5, 3, 1.5, '#c8945a');
+    p.rect(6, 6, 4, 2, '#8a5a30');
+    p.ell(6, 9, 1.5, 1.2, '#e8bc84');
+    p.outline(OUT);
+    sackC = p.toCanvas();
+  }
+  return sackC;
+}
+
+let capsuleC: HTMLCanvasElement | null = null;
+/** 포획구 — a lantern-shaped capture capsule. */
+export function capsuleSprite(): HTMLCanvasElement {
+  if (!capsuleC) {
+    const p = new Pix(10, 10);
+    p.rect(2, 1, 6, 8, '#3aa8a0');
+    p.rect(1, 2, 8, 6, '#3aa8a0');
+    p.rect(2, 3, 6, 4, '#d8fff6');
+    p.rect(3, 4, 2, 1, '#ffffff');
+    p.rect(1, 1, 8, 1, '#ffc840');
+    p.rect(1, 8, 8, 1, '#ffc840');
+    p.outline(OUT);
+    capsuleC = p.toCanvas();
+  }
+  return capsuleC;
+}

@@ -1,0 +1,112 @@
+import type { Mon } from './monster';
+import type { Dir } from './common';
+
+export interface GameState {
+  name: string;
+  map: string;
+  x: number;
+  y: number;
+  dir: Dir;
+  money: number;
+  party: Mon[];
+  box: Mon[];
+  bag: Record<string, number>;
+  flags: Record<string, boolean>;
+  seen: string[];
+  caught: string[];
+  lastHeal: { map: string; x: number; y: number };
+  frames: number;
+}
+
+const SAVE_KEY = 'popket-save-v1';
+
+function fresh(name: string): GameState {
+  return {
+    name,
+    map: 'home',
+    x: 2,
+    y: 5,
+    dir: 'down',
+    money: 3000,
+    party: [],
+    box: [],
+    bag: { potion: 2 },
+    flags: {},
+    seen: [],
+    caught: [],
+    lastHeal: { map: 'home', x: 6, y: 3 },
+    frames: 0,
+  };
+}
+
+export const game: GameState = fresh('하루');
+
+/** Non-persistent runtime flags. */
+export const runtime = { busy: 0 };
+
+export function newGame(name: string) {
+  for (const k of Object.keys(game)) delete (game as unknown as Record<string, unknown>)[k];
+  Object.assign(game, fresh(name));
+}
+
+export function hasSave() {
+  try {
+    return !!localStorage.getItem(SAVE_KEY);
+  } catch {
+    return false;
+  }
+}
+
+export function saveGame(): boolean {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function loadGame(): boolean {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw) as GameState;
+    newGame(data.name);
+    Object.assign(game, data);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export const itemCount = (id: string) => game.bag[id] ?? 0;
+
+export function addItem(id: string, n = 1) {
+  game.bag[id] = Math.min(99, itemCount(id) + n);
+}
+
+export function removeItem(id: string, n = 1) {
+  game.bag[id] = Math.max(0, itemCount(id) - n);
+  if (game.bag[id] === 0) delete game.bag[id];
+}
+
+export function markSeen(id: string) {
+  if (!game.seen.includes(id)) game.seen.push(id);
+}
+
+/** Returns true when this is a new dex entry. */
+export function markCaught(id: string): boolean {
+  markSeen(id);
+  if (game.caught.includes(id)) return false;
+  game.caught.push(id);
+  return true;
+}
+
+export function addMon(m: Mon): 'party' | 'box' {
+  if (game.party.length < 6) {
+    game.party.push(m);
+    return 'party';
+  }
+  game.box.push(m);
+  return 'box';
+}
