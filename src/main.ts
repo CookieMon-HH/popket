@@ -72,7 +72,7 @@ class TitleScene implements Scene {
     }
   }
   drawUI(c: Ctx) {
-    text(c, 'POPKET', W / 2, 26, { size: 36, weight: 900, align: 'center', color: '#ffd84a', shadow: '#2a4a8a' });
+    text(c, '팜팜몬', W / 2, 22, { size: 40, weight: 900, align: 'center', color: '#ffd84a', shadow: '#2a4a8a' });
     text(c, '몬스터 수집 RPG', W / 2, 68, { size: 11, align: 'center', color: '#ffffff', shadow: '#2a4a8a' });
     if (!ui.active && Math.floor(clock.frame / 30) % 2 === 0) {
       text(c, 'Z / Enter 를 눌러 시작', W / 2, 160, { size: 10, align: 'center', color: '#ffffff', shadow: '#2a5a2a' });

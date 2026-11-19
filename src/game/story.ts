@@ -355,7 +355,7 @@ async function ending() {
   await say('…그때, 한별 박사에게서 연락이 왔다!');
   await say('한별 박사: {name}! 소식 들었단다.\n검은안개단을 막고, 은하고래까지 지켜 내다니…');
   await say('한별 박사: 해솔 리그는 다음 봄에 열린단다.\n그때까지 동료들과 함께 더 강해지렴!');
-  await say('— Popket 제3장 「별빛의 고래」 끝 —\n플레이해 줘서 고마워요!');
+  await say('— 팜팜몬 제3장 「별빛의 고래」 끝 —\n플레이해 줘서 고마워요!');
   game.flags.ending = true;
 }
 
