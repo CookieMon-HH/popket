@@ -240,6 +240,16 @@ export async function useItemOn(id: string, m: Mon): Promise<boolean> {
     await say(`${n}의 체력이 ${m.hp - before} 회복되었다!`);
     return true;
   }
+  if (it.kind === 'full') {
+    if (m.hp <= 0) return say(`${j(n, '은/는')} 기절해서 효과가 없다…`).then(() => false);
+    if (m.hp >= mh && !m.status) return say('효과가 없을 것 같다.').then(() => false);
+    m.hp = mh;
+    m.status = null;
+    m.sleep = 0;
+    removeItem(id);
+    await say(`${n}의 체력이 모두 회복되고 몸이 가뿐해졌다!`);
+    return true;
+  }
   if (it.kind === 'cure') {
     if (!m.status || m.hp <= 0) return say('효과가 없을 것 같다.').then(() => false);
     m.status = null;
@@ -250,7 +260,7 @@ export async function useItemOn(id: string, m: Mon): Promise<boolean> {
   }
   if (it.kind === 'revive') {
     if (m.hp > 0) return say('효과가 없을 것 같다.').then(() => false);
-    m.hp = Math.floor(mh / 2);
+    m.hp = it.fullRevive ? mh : Math.floor(mh / 2);
     m.status = null;
     removeItem(id);
     await say(`${j(n, '이/가')} 기운을 되찾았다!`);
@@ -396,13 +406,20 @@ class ShopView extends Widget<number> {
     box(ctx, 4, 4, 100, 24);
     text(ctx, `${game.money.toLocaleString()}원`, 96, 10, { align: 'right' });
     const rows = [...this.stock, null];
-    box(ctx, 108, 4, 144, rows.length * 15 + 14);
-    rows.forEach((id, i) => {
-      const y = 11 + i * 15;
+    const VIS = 8;
+    const vis = Math.min(VIS, rows.length);
+    const start = Math.max(0, Math.min(this.idx - VIS + 2, rows.length - vis));
+    box(ctx, 108, 4, 144, vis * 15 + 14);
+    rows.slice(start, start + vis).forEach((id, k) => {
+      const i = start + k;
+      const y = 11 + k * 15;
       text(ctx, id ? ITEMS[id].name : '그만두기', 126, y);
       if (id) text(ctx, `${ITEMS[id].price}`, 244, y, { align: 'right' });
       if (i === this.idx && !this.done) cursor(ctx, 115, y + 2);
     });
+    ctx.fillStyle = '#e04a5a';
+    if (start > 0) ctx.fillRect(178, 6, 6, 2);
+    if (start + vis < rows.length) ctx.fillRect(178, vis * 15 + 14, 6, 2);
     box(ctx, 0, 144, W, 48);
     const id = this.stock[this.idx];
     const lines = id ? [...wrap(ITEMS[id].desc, W - 24, 10).slice(0, 1), `가지고 있는 수: ${itemCount(id)}`] : ['또 오세요!'];
@@ -410,8 +427,28 @@ class ShopView extends Widget<number> {
   }
 }
 
-export async function shopMenu(stock: string[]) {
-  await say('어서 오세요! 필요한 물건이 있으신가요?');
+/** Shop stock grows as the story progresses. Returns [stock, newest tier]. */
+export function shopStock(): [string[], number] {
+  const f = game.flags;
+  const tiers = [
+    ['ball', 'potion'],
+    f.badge1 ? ['superball', 'superpotion', 'cure'] : [],
+    f.badge2 ? ['revive', 'hyperpotion'] : [],
+    f.badge3 ? ['hyperball', 'fullrestore'] : [],
+    f.ending ? ['maxrevive'] : [],
+  ];
+  const tier = tiers.reduce((t, list, i) => (list.length ? i : t), 0);
+  const ids = new Set(tiers.flat());
+  return [ITEM_ORDER.filter((id) => ids.has(id)), tier];
+}
+
+export async function shopMenu() {
+  const [stock, tier] = shopStock();
+  const seen = Object.keys(game.flags).filter((k) => k.startsWith('shopTier') && game.flags[k]).length;
+  if (tier > 0 && !game.flags['shopTier' + tier]) {
+    for (let t = 1; t <= tier; t++) game.flags['shopTier' + t] = true;
+    await say(seen < tier ? '어서 오세요! 마침 새로운 물건이 들어왔어요.\n천천히 구경하세요!' : '어서 오세요! 필요한 물건이 있으신가요?');
+  } else await say('어서 오세요! 필요한 물건이 있으신가요?');
   const sv = new ShopView(stock);
   ui.run(sv);
   for (;;) {

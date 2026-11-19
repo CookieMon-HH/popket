@@ -124,7 +124,7 @@ function makeCenter(id: string, name: string, town: string, tx: number, ty: numb
   };
 }
 
-function makeShop(id: string, name: string, town: string, tx: number, ty: number, stock: string[], customer: string): MapDef {
+function makeShop(id: string, name: string, town: string, tx: number, ty: number, customer: string): MapDef {
   return {
     id, name, indoor: true,
     tiles: [
@@ -142,7 +142,7 @@ function makeShop(id: string, name: string, town: string, tx: number, ty: number
       { x: 5, y: 7, to: town, tx, ty, dir: 'down' },
     ],
     npcs: [
-      { id: id + '_clerk', x: 2, y: 1, dir: 'down', pal: PAL.clerk, talk: () => shopMenu(stock) },
+      { id: id + '_clerk', x: 2, y: 1, dir: 'down', pal: PAL.clerk, talk: () => shopMenu() },
       { id: id + '_customer', x: 7, y: 5, dir: 'left', pal: PAL.lady, move: 'wander', talk: customer },
     ],
   };
@@ -388,7 +388,7 @@ const town2: MapDef = {
 };
 
 const center = makeCenter('center', '들꽃마을 회복소', 'town2', 4, 8, '오른쪽 PC로 몬스터를 맡기거나 찾을 수 있어.\n동료는 여섯 마리까지만 데리고 다닐 수 있거든.');
-const shop = makeShop('shop', '들꽃마을 상점', 'town2', 12, 8, ['ball', 'superball', 'potion', 'superpotion', 'cure', 'revive'], '수련관에 가기 전에 회복약을 넉넉히 사 두는 게 좋아요.');
+const shop = makeShop('shop', '들꽃마을 상점', 'town2', 12, 8, '수련관에 가기 전에 회복약을 넉넉히 사 두는 게 좋아요.');
 
 const dojo: MapDef = {
   id: 'dojo', name: '들꽃 수련관', indoor: true,
@@ -638,7 +638,7 @@ const town3: MapDef = {
 };
 
 const center3 = makeCenter('center3', '물안개마을 회복소', 'town3', 4, 8, '물 타입 몬스터는 전기 기술에 약해.\n관장님께 도전하기 전에 잘 준비해!');
-const shop3 = makeShop('shop3', '물안개마을 상점', 'town3', 13, 8, ['ball', 'superball', 'potion', 'superpotion', 'cure', 'revive'], '물가에서는 낚싯대로 물속 몬스터를 낚을 수 있대요.');
+const shop3 = makeShop('shop3', '물안개마을 상점', 'town3', 13, 8, '물가에서는 낚싯대로 물속 몬스터를 낚을 수 있대요.');
 
 const gym2: MapDef = {
   id: 'gym2', name: '물안개 수련관', indoor: true,
@@ -862,7 +862,7 @@ const town4: MapDef = {
 };
 
 const center4: MapDef = makeCenter('center4', '별빛시 회복소', 'town4', 3, 8, '해솔 리그에 나가려면 배지 여덟 개가 필요하대.\n이 지방에 있는 건 셋뿐이니… 다른 지방도 가 봐야겠지?');
-const shop4 = makeShop('shop4', '별빛시 백화점', 'town4', 11, 8, ['ball', 'superball', 'potion', 'superpotion', 'hyperpotion', 'cure', 'revive'], '특급회복약은 여기서만 팔아요. 관장님께 가기 전에 챙겨 두세요!');
+const shop4 = makeShop('shop4', '별빛시 백화점', 'town4', 11, 8, '상점 물건은 배지를 모을수록 점점 좋아진대요.\n관장님께 도전하기 전에 꼭 둘러보세요!');
 
 const gym3: MapDef = {
   id: 'gym3', name: '별빛 수련관', indoor: true,
