@@ -131,3 +131,48 @@ export function capsuleSprite(): HTMLCanvasElement {
   }
   return capsuleC;
 }
+
+// ---------------------------------------------------------------------------
+// Puzzle objects
+
+let boulderC: HTMLCanvasElement | null = null;
+export function boulderSprite(): HTMLCanvasElement {
+  if (!boulderC) {
+    const p = new Pix(16, 16);
+    p.ell(8, 9, 7, 6.5, '#7a7680');
+    p.ell(8, 8.5, 6, 5.5, '#9a96a0');
+    p.ell(5.5, 6, 2.5, 1.6, '#c8c4cc');
+    p.rect(9, 10, 3, 1, '#6a6670'); p.rect(4, 11, 2, 1, '#6a6670');
+    p.outline(OUT);
+    boulderC = p.toCanvas();
+  }
+  return boulderC;
+}
+
+const barrierCache = new Map<string, HTMLCanvasElement>();
+export function barrierSprite(kind: 'water' | 'electric' | 'stone', frame: number): HTMLCanvasElement {
+  const f = kind === 'electric' ? Math.floor(frame / 8) % 2 : 0;
+  const key = kind + f;
+  let c = barrierCache.get(key);
+  if (!c) {
+    const p = new Pix(16, 16);
+    if (kind === 'water') {
+      p.rect(0, 2, 16, 13, '#2a5a8a');
+      for (const x of [1, 5, 9, 13]) p.rect(x, 2, 2, 13, '#7ac0f0');
+      p.rect(0, 2, 16, 2, '#4a6a8a'); p.rect(0, 13, 16, 2, '#4a6a8a');
+    } else if (kind === 'electric') {
+      p.rect(1, 1, 2, 15, '#6a6a7a'); p.rect(13, 1, 2, 15, '#6a6a7a');
+      p.ell(2, 1.5, 1.8, 1.5, '#ffe040'); p.ell(14, 1.5, 1.8, 1.5, '#ffe040');
+      for (const y of [4, 8, 12]) for (let x = 3; x < 13; x++) p.set(x, y + ((x + f) % 2), f ? '#fff6a0' : '#ffd040');
+    } else {
+      p.rect(0, 0, 16, 16, '#5a4a6a');
+      p.rect(1, 1, 14, 14, '#7a6a8a');
+      p.ell(8, 8, 4, 4, '#e8c860'); p.ell(8, 8, 2, 2, '#7a6a8a');
+      p.rect(0, 7, 16, 2, '#3a2e48');
+    }
+    p.outline(OUT);
+    c = p.toCanvas();
+    barrierCache.set(key, c);
+  }
+  return c;
+}

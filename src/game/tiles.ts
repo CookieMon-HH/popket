@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -147,6 +147,56 @@ function build(ch: string, anim: number): Pix {
     }
     case 'W':
       wall(p);
+      break;
+    case 'i':
+      // slippery ice floor
+      p.rect(0, 0, 16, 16, '#c8ecf8');
+      p.rect(0, 0, 16, 1, '#e8f8ff'); p.rect(0, 0, 1, 16, '#e8f8ff');
+      p.line(3, 11, 7, 7, '#ffffff'); p.line(9, 5, 12, 2, '#ffffff');
+      p.set(12, 12, '#a8d8f0'); p.set(4, 3, '#a8d8f0');
+      break;
+    case '*':
+      // teleport pad
+      p.rect(0, 0, 16, 16, '#3a3450');
+      p.ell(8, 8, 7, 7, '#6a5aa8');
+      p.ell(8, 8, 5, 5, anim ? '#b8a8ff' : '#9a88e8');
+      p.ell(8, 8, 2.5, 2.5, '#f0e8ff');
+      break;
+    case '^':
+      // floor lever / switch
+      p.rect(0, 0, 16, 16, '#c8b898');
+      p.rect(0, 0, 16, 1, '#e0d4b8');
+      p.rect(3, 9, 10, 5, '#5a5a6a'); p.rect(4, 10, 8, 3, '#8a8a9a');
+      p.line(8, 10, 11, 3, '#4a4a58'); p.ell(11.5, 3, 2, 2, '#e84a4a');
+      break;
+    case '`':
+      // snow ground
+      p.rect(0, 0, 16, 16, '#f0f6fc');
+      for (const [x, y] of [[2, 3], [9, 1], [13, 6], [5, 10], [11, 12], [1, 14], [7, 7]]) p.set(x, y, '#d4e2f0');
+      break;
+    case 'j': {
+      // snowy tall grass
+      p.rect(0, 0, 16, 16, '#dce8f0');
+      let row = 0;
+      for (const by of [4, 9, 14]) {
+        for (const bx of row % 2 ? [3, 11] : [-1, 7, 15]) {
+          p.set(bx, by, '#6a9a8a');
+          p.set(bx + 1, by - 2, '#6a9a8a');
+          p.set(bx + 1, by - 1, '#ffffff');
+          p.set(bx + 2, by - 1, '#6a9a8a');
+          p.set(bx + 3, by, '#6a9a8a');
+        }
+        row++;
+      }
+      break;
+    }
+    case 'h':
+      // snowy pine tree
+      p.rect(0, 0, 16, 16, '#f0f6fc');
+      p.rect(7, 12, 2, 4, '#6a4a32');
+      p.tri(1, 13, 15, 13, 8, 4, '#2e6a58');
+      p.tri(3, 8, 13, 8, 8, 0, '#3a8068');
+      p.tri(4, 8, 8, 8, 7, 3, '#ffffff'); p.rect(2, 12, 5, 1, '#ffffff'); p.rect(9, 12, 5, 1, '#ffffff');
       break;
     case 'd':
       // beach sand
@@ -415,7 +465,7 @@ function build(ch: string, anim: number): Pix {
 
 const cache = new Map<string, HTMLCanvasElement>();
 export function tileCanvas(ch: string, anim: number): HTMLCanvasElement {
-  const animated = ch === '~' || ch === 'f' || ch === 'L';
+  const animated = ch === '~' || ch === 'f' || ch === 'L' || ch === '*';
   const key = animated ? ch + anim : ch;
   let c = cache.get(key);
   if (!c) {

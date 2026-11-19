@@ -24,6 +24,7 @@ const list: ItemDef[] = [
   { id: 'bell_forest', name: '숲의방울', price: 0, kind: 'key', desc: '숲지기 할머니에게 받은 초록빛 방울. 흔들면 나뭇잎 소리가 난다.' },
   { id: 'bell_water', name: '물의방울', price: 0, kind: 'key', desc: '물안개마을 낚시꾼에게 받은 푸른 방울. 흔들면 물방울 소리가 난다.' },
   { id: 'bell_rock', name: '바위의방울', price: 0, kind: 'key', desc: '별빛동굴 광부 대장에게 받은 잿빛 방울. 흔들면 돌 구르는 소리가 난다.' },
+  { id: 'pearl', name: '여의주', price: 0, kind: 'key', desc: '용의 마을의 보물. 은은한 빛을 내며 하늘의 날씨를 다스린다고 한다.' },
   { id: 'rod', name: '낚싯대', price: 0, kind: 'key', desc: '물가를 바라보고 A 버튼을 누르면 낚시를 할 수 있다.' },
 ];
 

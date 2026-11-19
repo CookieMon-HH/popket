@@ -62,6 +62,8 @@ const DUCK: L = [[1, 'peck'], [1, 'splash'], [6, 'growl'], [11, 'bubble'], [16, 
 const PETAL: L = [[1, 'peck'], [1, 'growl'], [6, 'vine'], [11, 'gust'], [16, 'leafcut'], [22, 'wingcut'], [28, 'bloom'], [34, 'storm']];
 const SNAIL: L = [[1, 'tackle'], [1, 'curl'], [6, 'absorb'], [11, 'bubble'], [16, 'sleeppowder'], [22, 'wave'], [28, 'bloom'], [34, 'forestwrath']];
 const BING: L = [[1, 'tackle'], [1, 'frostbreath'], [6, 'twinkle'], [11, 'curl'], [16, 'icefang'], [22, 'moondust'], [28, 'avalanche']];
+const BUKGOM: L = [[1, 'tackle'], [1, 'frostbreath'], [6, 'jab'], [12, 'icefang'], [18, 'focus'], [24, 'straight'], [30, 'avalanche'], [36, 'upper']];
+const HYEON: L = [[1, 'tackle'], [1, 'curl'], [6, 'splash'], [12, 'dragonbreath'], [18, 'ironwall'], [24, 'wave'], [30, 'dragontail'], [36, 'tide'], [42, 'skyfury']];
 const SANGUN: L = [[1, 'rockdrop'], [1, 'soulwave'], [30, 'focus'], [35, 'mountainroar'], [38, 'rockstorm']];
 const EUNHA: L = [[1, 'wave'], [1, 'gust'], [20, 'breathe'], [25, 'tide'], [30, 'galaxy'], [35, 'storm']];
 
@@ -168,6 +170,11 @@ const list: Def[] = [
   s('jangma', '장마달팽', ['풀', '물'], [90, 72, 104, 40], 70, 160, SNAIL, '장마달팽이', '수국 꽃다발 같은 껍데기를 이고 다닌다. 장마철이면 더듬이 끝에 빗방울이 맺힌다.'),
   s('bingsu', '빙수방울', ['얼음'], [48, 46, 52, 46], 180, 58, BING, '빙수', '컵 속의 눈꽃빙수에 깃든 몬스터. 시럽 색이 기분에 따라 바뀐다.', [26, 'wangbingsu']),
   s('wangbingsu', '왕빙수', ['얼음', '페어리'], [86, 84, 90, 70], 60, 165, BING, '왕빙수', '딸기와 망고, 떡을 잔뜩 얹은 왕빙수. 더운 날 나타나 모두에게 시원함을 나눠 준다.'),
+  // 서리마을 · 용의 마을
+  s('agibuk', '아기북곰', ['얼음'], [60, 60, 54, 36], 120, 66, BUKGOM, '아기북극곰', '눈밭에서 데굴데굴 구르며 노는 아기 북극곰. 차가운 물고기를 제일 좋아한다.', [30, 'bingsan']),
+  s('bingsan', '빙산곰', ['얼음', '격투'], [104, 118, 92, 58], 45, 236, BUKGOM, '빙산곰', '등에 빙산 같은 얼음 갑옷을 두른 거대한 곰. 주먹 한 번에 얼음벽이 무너진다.'),
+  s('hyeonmuk', '꼬마현무', ['물'], [56, 50, 66, 34], 45, 70, HYEON, '아기거북', '등딱지에 작은 뱀 무늬가 있는 아기 거북. 용의 마을의 연못에서만 알을 깬다.', [36, 'hyeonmu']),
+  s('hyeonmu', '현무', ['물', '드래곤'], [108, 96, 122, 54], 45, 240, HYEON, '현무', '등딱지를 감싼 검은 뱀과 함께 다니는 거북. 북쪽 바다를 지키는 수호자라고 전해진다.'),
   // 특별한 몬스터
   s('sangun', '산군', ['바위', '고스트'], [100, 118, 92, 110], 20, 250, SANGUN, '산신령', '운무봉을 지키는 흰 호랑이의 정령. 숲·물·바위의 세 방울 소리를 들으면 서낭당으로 내려온다고 전해진다.', undefined, { special: true }),
   s('eunha', '은하고래', ['물', '비행'], [120, 110, 100, 90], 25, 260, EUNHA, '은하', '별빛동굴 지하 호수에 잠든 전설의 몬스터. 깨어나면 밤하늘을 헤엄치며 별을 뿌린다고 전해진다.', undefined, { legend: true }),
@@ -190,6 +197,7 @@ const ORDER = [
   'mongmong', 'wangmong', 'ggorichim', 'dokjeongal', 'bueong', 'olppaemi',
   'makarong', 'makatop', 'jelly', 'aurora', 'agiyuni', 'mujigae', 'byeolkkum',
   'pongduck', 'ubiduck', 'kkotip', 'beotkkot', 'suguk', 'jangma', 'bingsu', 'wangbingsu',
+  'agibuk', 'bingsan', 'hyeonmuk', 'hyeonmu',
   'kkomaryong', 'nalgae', 'cheonryong',
   'sangun', 'eunha',
 ];

@@ -6,7 +6,8 @@ import type { Scene } from '../engine/scene';
 import { DIRS, DIRV, OPP, pick, rand, clamp, type Dir } from './common';
 import { MAPS, type MapDef, type NPCDef } from './maps';
 import { SOLID, tileCanvas } from './tiles';
-import { personSprite, itemSprite, monSprite, type Pal } from './sprites';
+import { silhouette } from '../engine/pix';
+import { personSprite, itemSprite, monSprite, boulderSprite, barrierSprite, type Pal } from './sprites';
 import { game, runtime } from './state';
 
 export interface Actor {
@@ -95,6 +96,17 @@ export class Overworld implements Scene {
   tryMove(a: Actor, dir: Dir): boolean {
     a.dir = dir;
     const [dx, dy] = DIRV[dir];
+    if (a === this.player) {
+      // Push a boulder if one is in the way and the space behind it is free.
+      const rock = this.npcs.find((n) => n.def.boulder && n.x === a.x + dx && n.y === a.y + dy);
+      if (rock) {
+        const bx = rock.x + dx;
+        const by = rock.y + dy;
+        const onWarp = this.map.warps.some((w) => w.x === bx && w.y === by);
+        if (rock.moving || onWarp || this.blocked(bx, by, rock)) return false;
+        this.tryMove(rock, dir);
+      }
+    }
     if (this.blocked(a.x + dx, a.y + dy, a)) return false;
     a.x += dx;
     a.y += dy;
@@ -203,8 +215,16 @@ export class Overworld implements Scene {
   }
 
   /** Called when the player finishes a step. Returns true when an event took over. */
+  sliding = false;
+
   private onArrive(): boolean {
     const p = this.player;
+    // Ice floors keep you sliding until something stops you.
+    if (this.tileAt(p.x, p.y) === 'i' && this.tryMove(p, p.dir)) {
+      this.sliding = true;
+      return true;
+    }
+    this.sliding = false;
     const warp = this.map.warps.find((w) => w.x === p.x && w.y === p.y);
     if (warp) {
       this.hooks.run(() => this.hooks.warp(warp.to, warp.tx, warp.ty, warp.dir));
@@ -322,12 +342,30 @@ export class Overworld implements Scene {
         g.drawImage(itemSprite(), sx, sy);
         continue;
       }
-      if (npc?.def.mon) {
-        const bob = Math.round(Math.sin(clock.frame / 24) * 1.5);
-        g.drawImage(monSprite(npc.def.mon), sx - 12, sy - 24 + bob);
+      if (npc?.def.boulder) {
+        g.drawImage(boulderSprite(), sx, sy);
         continue;
       }
-      const frame = a.moving > STEP / 2 ? (a.step % 2 ? 1 : 3) : 0;
+      if (npc?.def.barrier) {
+        g.drawImage(barrierSprite(npc.def.barrier, clock.frame), sx, sy);
+        continue;
+      }
+      if (npc?.def.mon) {
+        const spr = monSprite(npc.def.mon);
+        if (npc.def.statue) {
+          g.fillStyle = '#6a6470';
+          g.fillRect(sx - 1, sy + 10, 18, 6);
+          g.drawImage(silhouette(spr, '#9a96a2'), sx - 12, sy - 26);
+          g.globalAlpha = 0.35;
+          g.drawImage(silhouette(spr, '#5a5662'), sx - 11, sy - 25);
+          g.globalAlpha = 1;
+        } else {
+          const bob = Math.round(Math.sin(clock.frame / 24) * 1.5);
+          g.drawImage(spr, sx - 12, sy - 24 + bob);
+        }
+        continue;
+      }
+      const frame = a === this.player && this.sliding ? 0 : a.moving > STEP / 2 ? (a.step % 2 ? 1 : 3) : 0;
       const pal = npc ? npc.def.pal ?? PLAYER_PAL : PLAYER_PAL;
       g.drawImage(personSprite(pal, a.dir, frame), sx, sy - 5);
       if (this.tileAt(a.x, a.y) === ',' && a.moving < STEP / 2) {

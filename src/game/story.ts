@@ -1,4 +1,4 @@
-import { say, yesNo } from '../engine/ui';
+import { say, yesNo, choose } from '../engine/ui';
 import { wait } from '../engine/timing';
 import { fadeTo, flashes } from '../engine/scene';
 import { SPECIES, SPECIES_LIST } from '../data/species';
@@ -46,6 +46,11 @@ export const PAL = {
   shadow: { hair: '#2a2a34', shirt: '#4a3a5a', pants: '#1e1e28' },
   yongyeon: { hair: '#3aa890', shirt: '#2a4a6a', pants: '#1e2a3a', hat: '#e8c860' },
   champ: { hair: '#d05a2a', shirt: '#f4f4f8', pants: '#2a2a3a', hat: '#ffd040' },
+  seori: { hair: '#e8f4ff', shirt: '#7ac0e8', pants: '#3a5a8a' },
+  yongha: { hair: '#2a4a3a', shirt: '#c83a3a', pants: '#2a2a3a', hat: '#e8c040' },
+  elder: { hair: '#f4f4f4', shirt: '#6a4a8a', pants: '#3a2a4a' },
+  cloud: { hair: '#8a94c8', shirt: '#2e2e3a', pants: '#1e1e28', hat: '#626aa0' },
+  skier: { hair: '#3a2a20', shirt: '#e84a6a', pants: '#3a4a7a', hat: '#ffffff' },
 } satisfies Record<string, Pal>;
 
 // ---------------------------------------------------------------------------
@@ -75,7 +80,7 @@ function rivalDef(stage: 1 | 2 | 3 | 4): TrainerDef {
         ? [['baramsae', 14], ['pojani', 13], [line[1], 16]]
         : stage === 3
           ? [['hoeori', 28], ['nalgae', 27], ['jeolgu', 27], [line[1], 30]]
-          : [['hoeori', 44], ['wolgung', 43], ['cheonryong', 44], ['geosin', 43], ['beotkkot', 43], [line[2], 46]];
+          : [['hoeori', 50], ['wolgung', 49], ['cheonryong', 50], ['geosin', 49], ['bingsan', 49], [line[2], 53]];
   return {
     id: 'rival' + stage,
     cls: stage === 4 ? '챔피언' : '라이벌',
@@ -118,7 +123,8 @@ export async function momTalk() {
   await healParty();
   setLastHeal('home', 6, 3);
   if (game.flags.champion) await say('엄마: 우리 집 챔피언! 오늘 저녁은 네가 좋아하는 걸로 해 줄게.');
-  else if (game.flags.badge5) await say('엄마: 배지를 다섯 개나 모았다며? 리그가 바로 옆 고원에 있다니, 응원하러 갈게!');
+  else if (game.flags.badge7) await say('엄마: 배지를 일곱 개나 모았다며? 리그가 바로 옆 고원에 있다니, 응원하러 갈게!');
+  else if (game.flags.badge5) await say('엄마: 서리마을은 엄청 춥다던데, 따뜻하게 입고 다니렴!');
   else if (game.flags.badge3) await say('엄마: 세 번째 배지까지 모았다며? 우리 {name}, 정말 자랑스럽구나!');
   else if (game.flags.forestCleared) await say('엄마: 검은안개단이라는 무서운 사람들이 있다던데… 너무 무리하지 마렴.');
   else await say('엄마: 자, 다들 기운이 났지? 조심해서 다녀오렴!');
@@ -161,8 +167,12 @@ export async function labProfessor() {
     await say(`한별 박사: 도감은 ${game.caught.length}/${total}종류까지 채웠구나.\n해솔 지방의 모든 몬스터를 만나 보렴!`);
     return;
   }
+  if (game.flags.pearlReturned) {
+    await say('한별 박사: 용의 마을의 여의주를 되찾았다고? 정말 장하구나!\n이제 해솔고원의 해솔 리그만 남았구나.');
+    return;
+  }
   if (game.flags.volcanoDone) {
-    await say('한별 박사: 흑영이 별빛결정을 맡기고 갔단다. 검은안개단도 해산했다지.\n이제 남은 건 해솔 리그뿐이구나. 솔빛마을 동쪽 해솔고원으로 가 보렴!');
+    await say('한별 박사: 흑영이 별빛결정을 맡기고 갔단다. 검은안개단도 해산했다지.\n서리마을과 용의 마을을 지나면 해솔고원이란다. 배지는 일곱 개가 필요해!');
     return;
   }
   if (game.flags.ending) {
@@ -553,7 +563,7 @@ async function volcanoWin() {
   world.refreshNPCs();
   await wait(12);
   await fadeTo(0, 12);
-  await say('검은안개단이 해산했다!\n불꽃마을 서쪽 6번 도로를 따라가면 해솔고원에 닿는다.');
+  await say('검은안개단이 해산했다!\n불꽃마을 서쪽 6번 도로를 따라가면 눈 덮인 서리마을이 나온다고 한다.');
   await giveItem('maxrevive', 2);
 }
 
@@ -593,6 +603,138 @@ export async function championScene() {
   await say('— 팜팜몬 「해솔 지방 이야기」 끝 —\n플레이해 줘서 고마워요! 산군 퀘스트와 도감 완성에도 도전해 보세요.');
   await healParty();
   setLastHeal('home', 6, 3);
+}
+
+// ---------------------------------------------------------------------------
+// 제6장 — 서리마을의 눈보라
+
+export async function iceIntroScene() {
+  game.flags.iceIntro = true;
+  await say('휘이잉… 매서운 눈보라가 마을을 휘감고 있다.');
+  const r = world.npcs.find((n) => n.def.id === 'rival_t7');
+  if (r) {
+    r.bubble = 30;
+    await wait(34);
+    await world.approachAny(r);
+  }
+  await say('은재: {name}! 너도 왔구나. 이 눈보라, 벌써 열흘째래.\n원래 서리마을도 이렇게까지 춥진 않았대.');
+  await say('은재: 마을 어르신 말로는 서쪽 용의 마을에서 무슨 일이 생긴 것 같대.\n용의 마을은 해솔 지방의 날씨를 지키는 곳이거든.');
+  await say('은재: 난 리그 가기 전에 용의 마을에서 수련할 생각이야.\n여기 수련관 관장 서리 님은 엄청 강하대. 너도 꼭 도전해 봐!');
+  await fadeTo(1, 8);
+  world.refreshNPCs();
+  await fadeTo(0, 8);
+}
+
+export const leader6Win = async () => {
+  game.flags.badge6 = true;
+  await say('관장 서리: 얼음배지예요. 미끄러져도 다시 일어서는 마음의 증표랍니다.');
+  await say('{name}은(는) 관장 서리에게서 얼음배지를 받았다!');
+  await giveItem('hyperball', 5);
+  await say('관장 서리: 이 눈보라는 자연의 것이 아니에요. 용의 마을의 여의주에\n무슨 일이 생긴 거예요. 서쪽 설원 산길을 지나 용의 마을로 가 주세요!');
+};
+
+// ---------------------------------------------------------------------------
+// 제7장 — 용의 마을과 여의주
+
+export async function dragonIntroScene() {
+  game.flags.dragonIntro = true;
+  await say('용의 마을 사람: 트레이너인가! 큰일이야, 마을의 보물 여의주가 도둑맞았어!');
+  await say('용의 마을 사람: 여의주가 사라진 뒤로 해솔 지방 곳곳의 날씨가 엉망이야.\n촌장님께서 사당에 계시니 가 보게나!');
+}
+
+export async function elderTalk() {
+  if (!game.flags.dragonIntro) {
+    await say('촌장: 이 사당은 해솔 지방의 하늘을 지키는 천룡님을 모신 곳이라네.');
+    return;
+  }
+  if (game.flags.pearlReturned) {
+    await say('촌장: 여의주가 돌아오니 하늘이 맑아졌구먼. 고맙네, 젊은이.\n천룡님도 자네를 지켜보고 계실 걸세.');
+    return;
+  }
+  if (game.flags.denDone) {
+    await say('촌장: 오오… 이 은은한 빛은! 여의주를 되찾아 왔구먼!');
+    await flashes(2);
+    await say('{name}은(는) 사당에 여의주를 바쳤다.\n하늘을 덮고 있던 먹구름이 거짓말처럼 걷혔다!');
+    game.flags.pearlReturned = true;
+    await say('촌장: 이 은혜를 어찌 갚을꼬… 그래, 사당 연못에서 깨어난 이 아이를 데려가게.\n천룡님과 함께 북쪽 바다를 지킨다는 현무의 새끼라네.');
+    await giveMon('hyeonmuk', 38);
+    await say('촌장: 수련관의 용하도 이제 돌아올 걸세. 마음껏 겨뤄 보게나!');
+    return;
+  }
+  await say('촌장: 여의주를 훔쳐 간 자들은 마을 북쪽의 용의 둥지로 들어갔다네.\n먹구름이라 불리는 자가 우두머리라고 하더군…');
+  await say('촌장: 수련관 관장 용하도 녀석들을 쫓아 둥지로 들어갔네. 부디 도와주게!');
+}
+
+export async function denEntranceScene() {
+  game.flags.heukHelp = true;
+  const h = world.npcs.find((n) => n.def.id === 'heuk_t8');
+  if (h) world.faceEachOther(h);
+  await say('흑영: …또 만났군, {name}.');
+  await say('흑영: 여의주를 훔친 건 내 옛 부하였던 먹구름이다. 검은안개단의 해산을 받아들이지 못하고\n남은 자들을 모아 날씨를 마음대로 부리려 하고 있지.');
+  await say('흑영: 이건 내가 남긴 빚이다. 둥지 입구의 잔당들은 내가 막겠다.\n안쪽의 먹구름은… 네게 부탁한다.');
+  await say('흑영: 둥지 안에는 커다란 바위가 길을 막고 있다. 잘 밀어서 길을 열어라.');
+}
+
+export const cloudWin = async () => {
+  await say('먹구름: 마, 말도 안 돼… 여의주의 힘까지 썼는데…!');
+  await say('그때, 둥지 입구 쪽에서 발소리가 들려왔다.');
+  await say('흑영: 끝이다, 먹구름. 우리는 힘으로 하늘을 다스릴 수 없다.\n…나도 그걸 깨닫는 데 오래 걸렸지.');
+  await say('먹구름: 두목님… 아니, 흑영 님… 죄송합니다…');
+  await fadeTo(1, 12);
+  game.flags.denDone = true;
+  world.refreshNPCs();
+  await wait(12);
+  await fadeTo(0, 12);
+  await say('{name}은(는) 여의주를 되찾았다!\n흑영은 먹구름과 잔당들을 데리고 떠났다.');
+  await giveItem('pearl');
+  await say('관장 용하: 고맙다, 트레이너. 덕분에 여의주를 되찾았군.\n촌장님께 여의주를 돌려 드린 뒤, 수련관으로 와라. 제대로 겨뤄 보자!');
+};
+
+export const leader7Win = async () => {
+  game.flags.badge7 = true;
+  await say('관장 용하: 용린배지다. 용의 시험을 모두 통과한 자의 증표!');
+  await say('{name}은(는) 관장 용하에게서 용린배지를 받았다!');
+  await giveItem('maxrevive', 2);
+  await say('관장 용하: 배지 일곱 개를 모았으니 해솔 리그에 도전할 자격이 있다.\n마을 서쪽 8번 도로를 따라가면 해솔고원이다. 가라, 챔피언을 향해!');
+};
+
+// ---------------------------------------------------------------------------
+// 수련관 퍼즐
+
+/** A lever that opens something once. */
+export function lever(flag: string, text: string) {
+  return async () => {
+    if (game.flags[flag]) return;
+    game.flags[flag] = true;
+    await say('철컥!');
+    await say(text);
+  };
+}
+
+/** A floor switch that flips a flag every time it is stepped on. */
+export function toggleSwitch(flag: string) {
+  return async () => {
+    game.flags[flag] = !game.flags[flag];
+    await say('찰칵! 스위치를 밟았다.\n지지직… 전기 울타리의 배치가 바뀌었다!');
+  };
+}
+
+/** A dragon statue that asks a question; the right answer opens a gate. */
+export function quiz(flag: string, question: string, options: string[], answer: number) {
+  return async () => {
+    if (game.flags[flag]) {
+      await say('용 석상이 조용히 길을 비켜 주고 있다.');
+      return;
+    }
+    await say('용 석상: 용의 시험에 도전하는 자여, 답하라.');
+    const r = await choose(question, [...options, '그만두기'], options.length);
+    if (r === options.length) return;
+    if (r === answer) {
+      game.flags[flag] = true;
+      await say('용 석상: …옳도다. 길을 열어 주마.');
+      await say('쿠구궁… 용의 문이 열렸다!');
+    } else await say('용 석상: 틀렸도다. 다시 생각해 보거라.');
+  };
 }
 
 export function npcById(id: string): NPC | undefined {

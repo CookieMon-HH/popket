@@ -552,7 +552,7 @@ export class TrainerCard extends Widget<void> {
       ['소지금', `${game.money.toLocaleString()}원`],
       ['도감', `${game.caught.length}마리 포획 / ${game.seen.length}마리 발견`],
       ['플레이 시간', `${Math.floor(secs / 3600)}:${String(Math.floor(secs / 60) % 60).padStart(2, '0')}`],
-      ['배지', `${['badge1', 'badge2', 'badge3', 'badge4', 'badge5'].filter((b) => game.flags[b]).length}개 / 5개${game.flags.champion ? '  ★챔피언' : ''}`],
+      ['배지', `${['badge1', 'badge2', 'badge3', 'badge4', 'badge5', 'badge6', 'badge7'].filter((b) => game.flags[b]).length}개 / 7개${game.flags.champion ? '  ★챔피언' : ''}`],
     ];
     rows.forEach(([k, v], i) => {
       text(ctx, k, 32, 54 + i * 19, { size: 10, color: '#5a6080' });
