@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -8,7 +8,26 @@ const ROOF: Record<string, [string, string]> = {
   B: ['#4a7ad8', '#3058a8'],
   M: ['#e8a83a', '#b87e20'],
   K: ['#7a5a8a', '#56406a'],
+  Y: ['#6a7a9a', '#4a5878'],
+  A: ['#3ab0b0', '#228888'],
 };
+
+function caveWall(p: Pix) {
+  p.rect(0, 0, 16, 16, '#5a4a48');
+  p.ell(4, 4, 4, 3, '#6e5e58');
+  p.ell(12, 10, 4.5, 3.5, '#6e5e58');
+  p.ell(3, 4, 1.5, 1, '#8a7a70');
+  p.ell(11, 9, 1.8, 1, '#8a7a70');
+  p.rect(0, 15, 16, 1, '#3a2e2c');
+  p.rect(7, 0, 1, 5, '#3a2e2c');
+  p.rect(1, 12, 5, 1, '#3a2e2c');
+}
+
+function caveFloor(p: Pix) {
+  p.rect(0, 0, 16, 16, '#8a7a6a');
+  for (const [x, y] of [[2, 3], [10, 2], [6, 8], [13, 11], [3, 13], [9, 14]]) p.set(x, y, '#76685a');
+  for (const [x, y] of [[12, 6], [5, 5], [1, 10]]) p.set(x, y, '#9e8e7e');
+}
 
 function grass(p: Pix) {
   p.rect(0, 0, 16, 16, '#8ad46e');
@@ -102,7 +121,7 @@ function build(ch: string, anim: number): Pix {
       p.rect(4, 4, 8, 1, '#7a4a24');
       p.rect(4, 6, 6, 1, '#7a4a24');
       break;
-    case 'R': case 'G': case 'B': case 'M': case 'K': {
+    case 'R': case 'G': case 'B': case 'M': case 'K': case 'Y': case 'A': {
       const [base, dark] = ROOF[ch];
       p.rect(0, 0, 16, 16, base);
       for (let y = 0; y < 16; y += 4) {
@@ -114,6 +133,41 @@ function build(ch: string, anim: number): Pix {
     }
     case 'W':
       wall(p);
+      break;
+    case 'C':
+      caveWall(p);
+      break;
+    case '_':
+      caveFloor(p);
+      break;
+    case 'O':
+      caveWall(p);
+      p.ell(8, 10, 6, 7, '#26201e');
+      p.rect(2, 10, 12, 6, '#26201e');
+      p.ell(8, 10, 4.5, 5.5, '#100c0c');
+      p.rect(3.5, 10, 9, 6, '#100c0c');
+      break;
+    case 'z':
+      caveFloor(p);
+      p.tri(3, 14, 8, 14, 5, 3, '#5ab8d8');
+      p.tri(7, 14, 13, 14, 10, 1, '#78d8f0');
+      p.tri(9, 14, 11, 14, 10, 5, '#c8f4ff');
+      p.set(5, 7, '#ffffff');
+      break;
+    case '+': {
+      p.rect(0, 0, 16, 16, '#4a9ee6');
+      p.rect(0, 1, 16, 14, '#b8864a');
+      for (const y of [4, 8, 12]) p.rect(0, y, 16, 1, '#8a5e32');
+      p.rect(0, 1, 16, 1, '#d8a66a');
+      p.set(3, 2, '#6a4422'); p.set(12, 6, '#6a4422'); p.set(7, 10, '#6a4422');
+      break;
+    }
+    case 'l':
+      grass(p);
+      p.rect(7, 5, 2, 10, '#3a3a4a');
+      p.rect(5, 14, 6, 2, '#3a3a4a');
+      p.ell(8, 3.5, 3.5, 3, '#3a3a4a');
+      p.ell(8, 3.5, 2.5, 2, '#ffe880');
       break;
     case 'w':
       wall(p);

@@ -2,7 +2,7 @@ export interface ItemDef {
   id: string;
   name: string;
   price: number;
-  kind: 'heal' | 'cure' | 'revive' | 'ball';
+  kind: 'heal' | 'cure' | 'revive' | 'ball' | 'key';
   amount?: number;
   ballMul?: number;
   desc: string;
@@ -13,8 +13,10 @@ const list: ItemDef[] = [
   { id: 'superball', name: '슈퍼포획구', price: 600, kind: 'ball', ballMul: 1.5, desc: '포획구보다 잘 잡히는 고급 캡슐.' },
   { id: 'potion', name: '회복약', price: 300, kind: 'heal', amount: 20, desc: '몬스터의 체력을 20 회복한다.' },
   { id: 'superpotion', name: '고급회복약', price: 700, kind: 'heal', amount: 60, desc: '몬스터의 체력을 60 회복한다.' },
+  { id: 'hyperpotion', name: '특급회복약', price: 1200, kind: 'heal', amount: 150, desc: '몬스터의 체력을 150 회복한다.' },
   { id: 'cure', name: '만병통치약', price: 400, kind: 'cure', desc: '화상·독·마비·수면을 모두 낫게 한다.' },
   { id: 'revive', name: '기운의조각', price: 1500, kind: 'revive', desc: '쓰러진 몬스터를 체력 절반으로 되살린다.' },
+  { id: 'rod', name: '낚싯대', price: 0, kind: 'key', desc: '물가를 바라보고 A 버튼을 누르면 낚시를 할 수 있다.' },
 ];
 
 export const ITEMS: Record<string, ItemDef> = Object.fromEntries(list.map((i) => [i.id, i]));

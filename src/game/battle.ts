@@ -270,7 +270,8 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     await fadeTo(0, 12);
     await tween(30, (p) => (v.eX = 140 * (1 - p)));
     v.eBox = true;
-    await say(`앗! ${j(L(enemy), '이/가')} 튀어나왔다!`);
+    if (SPECIES[enemy.mon.species].catchRate <= 25) await say(`전설의 몬스터 ${j(monName(enemy.mon), '이/가')} 모습을 드러냈다!`);
+    else await say(`앗! ${j(L(enemy), '이/가')} 튀어나왔다!`);
   } else {
     v.trainer = tr!.pal;
     v.tX = 120;
@@ -287,6 +288,17 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
 
   // --- core move execution ---
   async function applyEffect(e: Effect, user: BMon, target: BMon, primary: boolean) {
+    if (e.kind === 'heal') {
+      const mh = maxHp(user.mon);
+      if (user.mon.hp >= mh) {
+        await say(`그러나 ${L(user)}의 체력은 이미 가득하다!`);
+        return;
+      }
+      user.mon.hp = Math.min(mh, user.mon.hp + Math.ceil(mh / 2));
+      await animHp(user);
+      await say(`${j(L(user), '은/는')} 숨을 고르며 체력을 회복했다!`);
+      return;
+    }
     if (e.kind === 'stat') {
       const who = e.target === 'self' ? user : target;
       if (who.mon.hp <= 0) return;
@@ -305,7 +317,10 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
       const t = target.mon;
       if (t.hp <= 0) return;
       const types = SPECIES[t.species].types;
-      const immune = (e.status === 'brn' && types.includes('불')) || (e.status === 'par' && types.includes('전기'));
+      const immune =
+        (e.status === 'brn' && types.includes('불')) ||
+        (e.status === 'par' && types.includes('전기')) ||
+        (e.status === 'psn' && types.includes('독'));
       if (t.status || immune) {
         if (primary) await say(`그러나 ${L(target)}에게는 효과가 없었다!`);
         return;
@@ -341,7 +356,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     if (slot !== null) m.moves[slot].pp = Math.max(0, m.moves[slot].pp - 1);
     await say(`${L(user)}의 ${mv.name}!`, { instant: false });
 
-    const selfMove = mv.power === 0 && mv.effect?.kind === 'stat' && mv.effect.target === 'self';
+    const selfMove = mv.power === 0 && (mv.effect?.kind === 'heal' || (mv.effect?.kind === 'stat' && mv.effect.target === 'self'));
     if (!selfMove && mv.acc > 0 && Math.random() * 100 >= mv.acc * stageMul(user.stages.acc)) {
       await say(`그러나 ${L(user)}의 공격은 빗나갔다!`);
       return;
@@ -494,7 +509,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
   type Act = { kind: 'move'; slot: number | null } | { kind: 'turn' } | { kind: 'end'; result: BattleResult };
 
   async function battleBag(): Promise<Act | null> {
-    const bv = new BagView();
+    const bv = new BagView((id) => ITEMS[id].kind !== 'key');
     ui.run(bv);
     const id = await bv.promise;
     bv.close();
@@ -597,6 +612,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
       if (mv.power > 0) {
         sc = mv.power * effectiveness(mv.type, SPECIES[me.mon.species].types) * (SPECIES[enemy.mon.species].types.includes(mv.type) ? 1.5 : 1) * (mv.acc || 100) / 100;
       } else if (mv.effect?.kind === 'status') sc = me.mon.status ? 0 : 50;
+      else if (mv.effect?.kind === 'heal') sc = enemy.mon.hp < maxHp(enemy.mon) / 2 ? 70 : 0;
       else sc = 25;
       sc *= 0.85 + Math.random() * 0.3;
       if (sc > score) {

@@ -6,7 +6,7 @@ import type { Scene } from '../engine/scene';
 import { DIRS, DIRV, OPP, pick, rand, clamp, type Dir } from './common';
 import { MAPS, type MapDef, type NPCDef } from './maps';
 import { SOLID, tileCanvas } from './tiles';
-import { personSprite, itemSprite, type Pal } from './sprites';
+import { personSprite, itemSprite, monSprite, type Pal } from './sprites';
 import { game, runtime } from './state';
 
 export interface Actor {
@@ -198,7 +198,7 @@ export class Overworld implements Scene {
       if (s) this.hooks.run(() => this.hooks.sign(s.text));
       return;
     }
-    if (t === 'P' || t === 'k' || t === 'c' || t === 'r' || t === 'b') this.hooks.run(() => this.hooks.tile(t));
+    if (t === 'P' || t === 'k' || t === 'c' || t === 'r' || t === 'b' || t === '~') this.hooks.run(() => this.hooks.tile(t));
   }
 
   /** Called when the player finishes a step. Returns true when an event took over. */
@@ -220,7 +220,7 @@ export class Overworld implements Scene {
       return true;
     }
     const enc = this.map.encounters;
-    if (enc && this.tileAt(p.x, p.y) === ',' && game.party.some((m) => m.hp > 0) && Math.random() < enc.rate) {
+    if (enc && (enc.tiles ?? ',').includes(this.tileAt(p.x, p.y)) && game.party.some((m) => m.hp > 0) && Math.random() < enc.rate) {
       this.hooks.run(() => this.hooks.encounter(enc.table));
       return true;
     }
@@ -241,6 +241,33 @@ export class Overworld implements Scene {
       }
     }
     return null;
+  }
+
+  /** Walk an NPC toward the player along open ground, then face each other. */
+  async approachAny(n: NPC) {
+    const p = this.player;
+    for (let guard = 0; guard < 24; guard++) {
+      const dx = p.x - n.x;
+      const dy = p.y - n.y;
+      if (Math.abs(dx) + Math.abs(dy) <= 1) break;
+      const h: Dir = dx > 0 ? 'right' : 'left';
+      const v: Dir = dy > 0 ? 'down' : 'up';
+      const first = Math.abs(dx) >= Math.abs(dy) ? h : v;
+      const second = first === h ? v : h;
+      if (await this.walk(n, first)) continue;
+      if ((first === h ? dy : dx) !== 0 && (await this.walk(n, second))) continue;
+      break;
+    }
+    this.faceEachOther(n);
+  }
+
+  faceEachOther(n: NPC) {
+    const p = this.player;
+    const dx = p.x - n.x;
+    const dy = p.y - n.y;
+    n.dir = Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'down' : 'up';
+    p.dir = OPP[n.dir];
+    this.syncState();
   }
 
   /** Walk an NPC up to the player and face each other. */
@@ -293,6 +320,11 @@ export class Overworld implements Scene {
         g.drawImage(itemSprite(), sx, sy);
         continue;
       }
+      if (npc?.def.mon) {
+        const bob = Math.round(Math.sin(clock.frame / 24) * 1.5);
+        g.drawImage(monSprite(npc.def.mon), sx - 8, sy - 16 + bob);
+        continue;
+      }
       const frame = a.moving > STEP / 2 ? (a.step % 2 ? 1 : 3) : 0;
       const pal = npc ? npc.def.pal ?? PLAYER_PAL : PLAYER_PAL;
       g.drawImage(personSprite(pal, a.dir, frame), sx, sy - 5);
@@ -309,6 +341,18 @@ export class Overworld implements Scene {
         g.fillRect(sx + 7, sy - 11, 2, 2);
       }
     }
+    if (this.map.dark) this.drawDark(g, cx, cy);
+  }
+
+  private drawDark(g: Ctx, cx: number, cy: number) {
+    const p = this.player;
+    const px = p.x * 16 + p.offX - cx + 8;
+    const py = p.y * 16 + p.offY - cy + 8;
+    const grad = g.createRadialGradient(px, py, 28, px, py, 110);
+    grad.addColorStop(0, 'rgba(8,6,20,0)');
+    grad.addColorStop(1, 'rgba(8,6,20,0.82)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, W, H);
   }
 
   drawUI(ctx: Ctx) {

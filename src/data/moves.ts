@@ -16,7 +16,8 @@ export type Effect =
   | { kind: 'stat'; target: 'self' | 'foe'; stat: StatKey; stages: number; chance?: number }
   | { kind: 'status'; status: Status; chance?: number }
   | { kind: 'drain' }
-  | { kind: 'recoil' };
+  | { kind: 'recoil' }
+  | { kind: 'heal' };
 
 export interface MoveDef {
   id: string;
@@ -75,6 +76,31 @@ const list: MoveDef[] = [
   { id: 'gust', name: '돌개바람', type: '바람', power: 40, acc: 100, pp: 35, desc: '세찬 바람을 일으킨다.' },
   { id: 'wingcut', name: '날개베기', type: '바람', power: 60, acc: 100, pp: 20, desc: '날개를 칼처럼 휘두른다.' },
   { id: 'dive', name: '급강하', type: '바람', power: 85, acc: 90, pp: 10, desc: '하늘 높이서 내리꽂힌다.' },
+  { id: 'storm', name: '폭풍날개', type: '바람', power: 100, acc: 85, pp: 5, desc: '날개로 폭풍을 일으켜 휩쓴다.' },
+  // 강화 기술
+  { id: 'breathe', name: '숨고르기', type: '노말', power: 0, acc: 0, pp: 10, effect: { kind: 'heal' }, desc: '숨을 고르며 체력을 절반 회복한다.' },
+  { id: 'fullcharge', name: '전력돌격', type: '노말', power: 90, acc: 100, pp: 10, desc: '온 힘을 다해 들이받는다.' },
+  { id: 'lava', name: '용암분출', type: '불', power: 100, acc: 85, pp: 5, effect: { kind: 'status', status: 'brn', chance: 30 }, desc: '끓는 용암을 뿜어낸다.' },
+  { id: 'bigwave', name: '대해일', type: '물', power: 100, acc: 85, pp: 5, desc: '바다를 통째로 일으켜 덮친다.' },
+  { id: 'forestwrath', name: '숲의분노', type: '풀', power: 100, acc: 85, pp: 5, desc: '숲 전체의 힘을 모아 내리친다.' },
+  { id: 'thunder', name: '천둥벼락', type: '전기', power: 95, acc: 85, pp: 10, effect: { kind: 'status', status: 'par', chance: 20 }, desc: '거대한 벼락을 떨어뜨린다.' },
+  { id: 'sparkspike', name: '전기가시', type: '전기', power: 60, acc: 100, pp: 20, effect: { kind: 'status', status: 'par', chance: 20 }, desc: '전기를 두른 가시로 찌른다.' },
+  { id: 'rockstorm', name: '암석폭풍', type: '바위', power: 100, acc: 85, pp: 5, desc: '바위 조각을 폭풍처럼 퍼붓는다.' },
+  // 땅
+  { id: 'mudthrow', name: '진흙뿌리기', type: '땅', power: 40, acc: 100, pp: 25, effect: { kind: 'stat', target: 'foe', stat: 'acc', stages: -1, chance: 30 }, desc: '진흙을 뿌린다. 명중률을 떨어뜨릴 때가 있다.' },
+  { id: 'quake', name: '땅울림', type: '땅', power: 65, acc: 100, pp: 15, desc: '땅을 울려 충격을 준다.' },
+  { id: 'earthsplit', name: '대지가르기', type: '땅', power: 90, acc: 90, pp: 10, desc: '대지를 갈라 상대를 삼킨다.' },
+  // 독
+  { id: 'poisonspore', name: '독포자', type: '독', power: 0, acc: 80, pp: 20, effect: { kind: 'status', status: 'psn' }, desc: '독이 든 포자를 뿌려 독에 걸리게 한다.' },
+  { id: 'toxshot', name: '독물총', type: '독', power: 45, acc: 100, pp: 25, effect: { kind: 'status', status: 'psn', chance: 30 }, desc: '독액을 쏜다. 독에 걸릴 때가 있다.' },
+  { id: 'toxblast', name: '맹독폭발', type: '독', power: 85, acc: 90, pp: 10, effect: { kind: 'status', status: 'psn', chance: 30 }, desc: '독 포자를 한꺼번에 터뜨린다.' },
+  // 영혼
+  { id: 'spook', name: '놀래기', type: '영혼', power: 40, acc: 100, pp: 25, desc: '갑자기 나타나 상대를 놀래 준다.' },
+  { id: 'bewitch', name: '홀리기', type: '영혼', power: 0, acc: 90, pp: 15, effect: { kind: 'stat', target: 'foe', stat: 'atk', stages: -2 }, desc: '기묘한 춤으로 홀려 공격을 크게 떨어뜨린다.' },
+  { id: 'soulwave', name: '혼령파동', type: '영혼', power: 70, acc: 100, pp: 15, desc: '혼령의 힘을 파동으로 쏜다.' },
+  { id: 'nightdance', name: '한밤의춤', type: '영혼', power: 95, acc: 90, pp: 10, desc: '한밤중의 탈춤으로 혼을 흔든다.' },
+  // 전설
+  { id: 'galaxy', name: '은하파동', type: '물', power: 110, acc: 90, pp: 5, desc: '별빛을 머금은 파도를 일으킨다.' },
 ];
 
 export const MOVES: Record<string, MoveDef> = Object.fromEntries(list.map((m) => [m.id, m]));

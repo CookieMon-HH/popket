@@ -6,11 +6,11 @@ import { silhouette } from '../engine/pix';
 import { SPECIES } from '../data/species';
 import { ITEMS } from '../data/items';
 import { world, type NPC } from './overworld';
-import { game, runtime, addItem, saveGame, markCaught } from './state';
+import { game, runtime, addItem, saveGame, markCaught, addMon, itemCount } from './state';
 import { createMon, healMon, monName, maxHp, type Mon } from './monster';
 import { runBattle, type BattleResult } from './battle';
 import { monSprite } from './sprites';
-import { partyMenu, bagMenu, DexView, TrainerCard, pickPartyMember, chooseStarter } from './menus';
+import { partyMenu, bagMenu, DexView, TrainerCard, pickPartyMember } from './menus';
 import { learnMove, movesLearnedAt } from './learn';
 import { OPP, j, rand } from './common';
 import type { TrainerDef } from './maps';
@@ -21,7 +21,10 @@ export function runScript(fn: () => Promise<void>) {
   runtime.busy++;
   fn()
     .catch((e) => console.error(e))
-    .finally(() => runtime.busy--);
+    .finally(() => {
+      runtime.busy--;
+      world.refreshNPCs();
+    });
 }
 
 export async function healParty() {
@@ -52,13 +55,16 @@ export async function warpTo(to: string, x: number, y: number, dir: Parameters<t
 // ---------------------------------------------------------------------------
 // Battles
 
-async function battle(opts: Parameters<typeof runBattle>[0]): Promise<BattleResult> {
+async function battle(opts: Parameters<typeof runBattle>[0], canLose = false): Promise<BattleResult> {
   await flashes(3);
   await fadeTo(1, 14);
   const result = await runBattle(opts);
   scenes.current = world;
   if (result === 'lose') {
-    await whiteout();
+    if (canLose) {
+      for (const m of game.party) healMon(m);
+      await fadeTo(0, 12);
+    } else await whiteout();
     return result;
   }
   for (const m of game.party) {
@@ -97,16 +103,48 @@ export async function randomEncounter(table: [string, number, number, number][])
   await battle({ kind: 'wild', enemies: [createMon(row[0], rand(row[1], row[2]))] });
 }
 
-async function trainerBattle(t: TrainerDef) {
-  const res = await battle({
-    kind: 'trainer',
-    enemies: t.team.map(([s, lv]) => createMon(s, lv)),
-    trainer: { cls: t.cls, name: t.name, reward: t.reward, defeat: t.defeat, pal: t.pal },
-  });
+export async function trainerBattle(t: TrainerDef, canLose = false): Promise<BattleResult> {
+  const res = await battle(
+    {
+      kind: 'trainer',
+      enemies: t.team.map(([s, lv]) => createMon(s, lv)),
+      trainer: { cls: t.cls, name: t.name, reward: t.reward, defeat: t.defeat, pal: t.pal },
+    },
+    canLose,
+  );
   if (res === 'win') {
     game.flags['tr_' + t.id] = true;
     if (t.afterWin) await t.afterWin();
   }
+  return res;
+}
+
+export async function wildBattle(mon: Mon): Promise<BattleResult> {
+  return battle({ kind: 'wild', enemies: [mon] });
+}
+
+export async function giveMon(species: string, level: number) {
+  const m = createMon(species, level);
+  const isNew = markCaught(species);
+  const where = addMon(m);
+  const n = SPECIES[species].name;
+  await say(`{name}은(는) ${j(n, '을/를')} 받았다!`);
+  if (isNew) await say(`${n}의 정보가 도감에 새로 기록되었다!`);
+  if (where === 'box') await say(`동료가 가득 차서 ${j(n, '은/는')} 보관함으로 보내졌다.`);
+}
+
+const DEFAULT_FISH: [string, number, number, number][] = [
+  ['banjjak', 6, 14, 92],
+  ['eungeo', 18, 20, 8],
+];
+
+async function fish() {
+  await say('{name}은(는) 낚싯대를 던졌다…');
+  await wait(rand(30, 90));
+  if (Math.random() < 0.7) {
+    await say('앗! 뭔가 걸렸다!');
+    await randomEncounter(world.map.fishing ?? DEFAULT_FISH);
+  } else await say('아무것도 걸리지 않았다…');
 }
 
 export async function trainerSpotted(npc: NPC) {
@@ -186,44 +224,6 @@ async function evolve(m: Mon) {
 // ---------------------------------------------------------------------------
 // Place scripts
 
-export async function momTalk() {
-  if (!game.flags.gotStarter) {
-    await say('엄마: {name}, 한별 박사님이 연구소로 와 달라고 하셨단다.\n연구소는 집을 나가서 오른쪽에 있어!');
-    return;
-  }
-  await say('엄마: 어머, {name}! 피곤해 보이는구나.\n잠깐 쉬었다 가렴.');
-  await healParty();
-  setLastHeal('home', 6, 3);
-  await say('엄마: 자, 다들 기운이 났지? 조심해서 다녀오렴!');
-}
-
-export async function labProfessor() {
-  if (!game.flags.gotStarter) {
-    await say('한별 박사: 오, {name}! 기다리고 있었단다.');
-    await say('이 세상에는 몬스터라고 불리는 신비한 생물들이 살고 있지.\n사람과 몬스터는 서로 도우며 함께 살아간단다.');
-    await say('내 앞의 캡슐에 몬스터 세 마리가 들어 있단다.\n마음에 드는 아이를 한 마리 골라 보렴!');
-    const id = await chooseStarter(['modak', 'pong', 'saesun']);
-    const mon = createMon(id, 5);
-    game.party.push(mon);
-    markCaught(id);
-    game.flags.gotStarter = true;
-    await say(`{name}은(는) 한별 박사에게서 ${j(SPECIES[id].name, '을/를')} 받았다!`);
-    await say(`한별 박사: ${j(SPECIES[id].name, '은/는')} 벌써 너를 마음에 들어 하는 것 같구나!`);
-    await say('한별 박사: 몬스터를 잡을 때 쓰는 포획구도 가져가렴.');
-    await giveItem('ball', 5);
-    await say('한별 박사: 북쪽 1번 도로를 지나면 들꽃마을이 나온단다.\n그곳 수련관의 관장에게 도전해 보렴!');
-    await say('한별 박사: 지칠 땐 집에 들러 쉬거나 회복소를 찾아가렴.\nX 키로 메뉴를 열어 저장하는 것도 잊지 말고!');
-    return;
-  }
-  if (!game.flags.badge1) {
-    await say('한별 박사: 북쪽으로 가면 들꽃마을이 있단다.\n수련관의 관장 단단에게 도전해 보렴!');
-    await say(`한별 박사: 지금까지 ${game.caught.length}종류의 몬스터를 잡았구나.\n도감을 채워 주면 연구에 큰 도움이 된단다!`);
-    return;
-  }
-  await say('한별 박사: 바위배지를 받았다고? 정말 대단하구나, {name}!');
-  await say(`한별 박사: 도감은 ${game.caught.length}/16종류까지 채웠구나.\n앞으로의 모험도 기대하고 있으마!`);
-}
-
 export async function pcScript() {
   await say('{name}은(는) PC를 켰다.');
   for (;;) {
@@ -262,6 +262,10 @@ export async function pcScript() {
 }
 
 export async function tileTalk(ch: string) {
+  if (ch === '~') {
+    if (itemCount('rod') > 0 && game.party.some((m) => m.hp > 0)) await fish();
+    return;
+  }
   if (ch === 'P') {
     if (world.map.id === 'center') await pcScript();
     else await say('연구 자료가 잔뜩 들어 있는 컴퓨터다.');

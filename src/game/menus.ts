@@ -254,7 +254,9 @@ export async function bagMenu() {
   for (;;) {
     const id = await bv.promise;
     if (!id) break;
-    if (ITEMS[id].kind === 'ball') {
+    if (ITEMS[id].kind === 'key') {
+      await say(ITEMS[id].desc);
+    } else if (ITEMS[id].kind === 'ball') {
       await say('여기서는 쓸 수 없다. 야생 몬스터와 싸울 때 던지자!');
     } else if (!game.party.length) {
       await say('사용할 몬스터가 없다.');
@@ -481,7 +483,7 @@ export class TrainerCard extends Widget<void> {
       ['소지금', `${game.money.toLocaleString()}원`],
       ['도감', `${game.caught.length}마리 포획 / ${game.seen.length}마리 발견`],
       ['플레이 시간', `${Math.floor(secs / 3600)}:${String(Math.floor(secs / 60) % 60).padStart(2, '0')}`],
-      ['배지', game.flags.badge1 ? '바위배지' : '없음'],
+      ['배지', [game.flags.badge1 && '바위', game.flags.badge2 && '물결', game.flags.badge3 && '번개'].filter(Boolean).join(' · ') || '없음'],
     ];
     rows.forEach(([k, v], i) => {
       text(ctx, k, 32, 54 + i * 19, { size: 10, color: '#5a6080' });

@@ -2,8 +2,12 @@ import type { Dir } from './common';
 import type { Pal } from './sprites';
 import { say, yesNo } from '../engine/ui';
 import { game } from './state';
-import { healParty, giveItem, setLastHeal, labProfessor, momTalk, world } from './api';
+import { healParty, setLastHeal, world } from './api';
 import { shopMenu } from './menus';
+import {
+  PAL, momTalk, labProfessor, rivalLabTalk, chapter2Scene, leader1Win, grannyTalk, forestAdminWin,
+  rival2Scene, fisherTalk, leader2Win, bossScene, whaleTalk, rival3Scene, leader3Win,
+} from './story';
 
 export interface Warp {
   x: number;
@@ -33,6 +37,8 @@ export interface NPCDef {
   y: number;
   dir: Dir;
   pal?: Pal;
+  /** Draw as a monster instead of a person. */
+  mon?: string;
   move?: 'still' | 'wander' | 'look';
   talk?: string | (() => Promise<void>);
   trainer?: TrainerDef;
@@ -41,45 +47,108 @@ export interface NPCDef {
   hidden?: () => boolean;
 }
 
+type Table = [string, number, number, number][];
+
 export interface MapDef {
   id: string;
   name: string;
   indoor?: boolean;
+  dark?: boolean;
   tiles: string[];
   warps: Warp[];
   npcs: NPCDef[];
   signs?: { x: number; y: number; text: string }[];
-  encounters?: { rate: number; table: [string, number, number, number][] };
+  encounters?: { rate: number; table: Table; tiles?: string };
+  fishing?: Table;
   triggers?: { x: number; y: number; when?: () => boolean; run: () => Promise<void> }[];
 }
 
-// ---------------------------------------------------------------------------
-// Palettes
+const f = (k: string) => !!game.flags[k];
 
-const PAL = {
-  mom: { hair: '#7a4a2a', shirt: '#f0a0b0', pants: '#6a6aa0' },
-  prof: { hair: '#c8c8d0', shirt: '#f4f4f8', pants: '#6a5a48' },
-  aide: { hair: '#3a3040', shirt: '#7ac8e0', pants: '#404860' },
-  girl: { hair: '#6a3a2a', shirt: '#f080a0', pants: '#5060a0' },
-  oldman: { hair: '#e0e0e0', shirt: '#8a9a6a', pants: '#5a4a3a' },
-  bugkid: { hair: '#303030', shirt: '#60b060', pants: '#a07040', hat: '#f0d040' },
-  picnic: { hair: '#e0a040', shirt: '#ffffff', pants: '#e07070' },
-  hiker: { hair: '#4a3020', shirt: '#b06a30', pants: '#5a6a40', hat: '#7a5a3a' },
-  man: { hair: '#2a2a3a', shirt: '#5a8ad0', pants: '#3a3a4a' },
-  nurse: { hair: '#f0a0c0', shirt: '#ffffff', pants: '#f0c0d0' },
-  clerk: { hair: '#3a2a20', shirt: '#4ab0a0', pants: '#3a4a5a' },
-  kid: { hair: '#2a2a2a', shirt: '#f0c040', pants: '#4a6ab0' },
-  lady: { hair: '#a05a3a', shirt: '#b0d0f0', pants: '#7a5a8a' },
-  pupil: { hair: '#2a2a2a', shirt: '#f0f0f0', pants: '#3a3a3a' },
-  leader: { hair: '#5a5a64', shirt: '#8a6a4a', pants: '#3a3a44' },
-} satisfies Record<string, Pal>;
+function pushBack(text: string[], dir: Dir) {
+  return async () => {
+    for (const t of text) await say(t);
+    await world.walk(world.player, dir);
+  };
+}
+
+function grunt(id: string, x: number, y: number, dir: Dir, sight: number, team: [string, number][], intro: string, defeat: string, after: string): NPCDef {
+  return {
+    id, x, y, dir, pal: PAL.grunt, sight,
+    trainer: { id, cls: '검은안개단', name: '조무래기', pal: PAL.grunt, team, reward: 300, intro, defeat, after },
+  };
+}
 
 // ---------------------------------------------------------------------------
+// Shared interiors
+
+function makeCenter(id: string, name: string, town: string, tx: number, ty: number, visitor: string): MapDef {
+  return {
+    id, name, indoor: true,
+    tiles: [
+      'XXXXXXXXXX',
+      'XkooooookX',
+      'XTTTTTTTTX',
+      'XooooooooX',
+      'XoooooooPX',
+      'XooooooooX',
+      'XooooooooX',
+      'XXXXeeXXXX',
+    ],
+    warps: [
+      { x: 4, y: 7, to: town, tx, ty, dir: 'down' },
+      { x: 5, y: 7, to: town, tx, ty, dir: 'down' },
+    ],
+    npcs: [
+      {
+        id: id + '_nurse', x: 4, y: 1, dir: 'down', pal: PAL.nurse,
+        talk: async () => {
+          if (!game.party.length) {
+            await say('어서 오세요! 몬스터 회복소입니다.\n몬스터를 데려오시면 회복시켜 드려요.');
+            return;
+          }
+          if (await yesNo('어서 오세요! 몬스터 회복소입니다.\n동료들의 체력을 회복시킬까요?')) {
+            await say('그럼 잠시 맡아 둘게요…');
+            await healParty();
+            setLastHeal(id, 4, 3);
+            await say('기다리셨습니다! 모두 건강해졌어요.\n또 오세요!');
+          } else await say('또 오세요!');
+        },
+      },
+      { id: id + '_visitor', x: 2, y: 5, dir: 'right', pal: PAL.man, move: 'look', talk: visitor },
+    ],
+  };
+}
+
+function makeShop(id: string, name: string, town: string, tx: number, ty: number, stock: string[], customer: string): MapDef {
+  return {
+    id, name, indoor: true,
+    tiles: [
+      'XXXXXXXXXX',
+      'XookkkkkkX',
+      'XTTToooooX',
+      'XooooooooX',
+      'XooookkooX',
+      'XooooooooX',
+      'XooooooooX',
+      'XXXXeeXXXX',
+    ],
+    warps: [
+      { x: 4, y: 7, to: town, tx, ty, dir: 'down' },
+      { x: 5, y: 7, to: town, tx, ty, dir: 'down' },
+    ],
+    npcs: [
+      { id: id + '_clerk', x: 2, y: 1, dir: 'down', pal: PAL.clerk, talk: () => shopMenu(stock) },
+      { id: id + '_customer', x: 7, y: 5, dir: 'left', pal: PAL.lady, move: 'wander', talk: customer },
+    ],
+  };
+}
+
+// ---------------------------------------------------------------------------
+// 제1장 — 솔빛마을 · 1번 도로 · 들꽃마을
 
 const home: MapDef = {
-  id: 'home',
-  name: '우리 집',
-  indoor: true,
+  id: 'home', name: '우리 집', indoor: true,
   tiles: [
     'XXXXXXXXXX',
     'XkkooooTTX',
@@ -98,8 +167,7 @@ const home: MapDef = {
 };
 
 const town1: MapDef = {
-  id: 'town1',
-  name: '솔빛마을',
+  id: 'town1', name: '솔빛마을',
   tiles: [
     '########==##########',
     '#ff.....==........f#',
@@ -131,25 +199,21 @@ const town1: MapDef = {
     },
     {
       id: 't1old', x: 5, y: 12, dir: 'up', pal: PAL.oldman, move: 'look',
-      talk: '연못에 비친 햇살이 참 곱지?\n그래서 이 마을 이름이 솔빛마을이라네.',
+      talk: async () => {
+        if (f('rod')) await say('오, 낚싯대를 얻었구먼! 이 연못에도 반짝피라가 산다네.');
+        else await say('연못에 비친 햇살이 참 곱지?\n그래서 이 마을 이름이 솔빛마을이라네.');
+      },
     },
   ],
   triggers: [8, 9].map((x) => ({
-    x,
-    y: 1,
-    when: () => !game.flags.gotStarter,
-    run: async () => {
-      await say('한별 박사: 잠깐, {name}! 몬스터 없이 풀숲에 들어가면 위험해!');
-      await say('먼저 오른쪽 연구소에 들러 주렴.');
-      await world.walk(world.player, 'down');
-    },
+    x, y: 1,
+    when: () => !f('gotStarter'),
+    run: pushBack(['한별 박사: 잠깐, {name}! 몬스터 없이 풀숲에 들어가면 위험해!', '먼저 오른쪽 연구소에 들러 주렴.'], 'down'),
   })),
 };
 
 const lab: MapDef = {
-  id: 'lab',
-  name: '한별 연구소',
-  indoor: true,
+  id: 'lab', name: '한별 연구소', indoor: true,
   tiles: [
     'XXXXXXXXXX',
     'XkkkoookkX',
@@ -166,10 +230,11 @@ const lab: MapDef = {
   ],
   npcs: [
     { id: 'prof', x: 4, y: 2, dir: 'down', pal: PAL.prof, talk: () => labProfessor() },
+    { id: 'rival_lab', x: 6, y: 2, dir: 'down', pal: PAL.rival, hidden: () => f('gotStarter'), talk: () => rivalLabTalk() },
     {
       id: 'aide', x: 7, y: 5, dir: 'left', pal: PAL.aide, move: 'wander',
       talk: async () => {
-        if (!game.flags.gotStarter) await say('박사님 앞에 있는 캡슐에 몬스터가 들어 있어요.\n박사님께 말을 걸어 보세요!');
+        if (!f('gotStarter')) await say('박사님 앞에 있는 캡슐에 몬스터가 들어 있어요.\n박사님께 말을 걸어 보세요!');
         else await say('몬스터를 약하게 만든 다음 포획구를 던지면 잡기 쉬워요.\n잠들거나 마비된 몬스터는 더 잘 잡혀요!');
       },
     },
@@ -177,8 +242,7 @@ const lab: MapDef = {
 };
 
 const route1: MapDef = {
-  id: 'route1',
-  name: '1번 도로',
+  id: 'route1', name: '1번 도로',
   tiles: [
     '########==##########',
     '#,,,,,..==..,,,,,,,#',
@@ -214,46 +278,33 @@ const route1: MapDef = {
   signs: [{ x: 7, y: 22, text: '1번 도로\n북쪽: 들꽃마을   남쪽: 솔빛마을' }],
   encounters: {
     rate: 0.12,
-    table: [
-      ['tosil', 2, 4, 35],
-      ['jjaek', 2, 4, 30],
-      ['kkomul', 2, 4, 25],
-      ['jjirit', 3, 5, 7],
-      ['doldol', 3, 5, 3],
-    ],
+    table: [['tosil', 2, 4, 33], ['jjaek', 2, 4, 28], ['kkomul', 2, 4, 24], ['ddakkum', 3, 4, 7], ['jjirit', 3, 5, 5], ['doldol', 3, 5, 3]],
   },
   npcs: [
     {
       id: 'r1tip', x: 11, y: 4, dir: 'down', pal: PAL.man, move: 'look',
-      talk: '들꽃마을 수련관의 관장은 바위 타입을 쓴다더군.\n바위 타입은 물과 풀 기술에 약하지!',
+      talk: '들꽃마을 수련관의 관장은 바위 타입을 쓴다더군.\n바위 타입은 물과 풀, 땅 기술에 약하지!',
     },
     {
       id: 'r1minsu', x: 4, y: 9, dir: 'right', pal: PAL.bugkid, sight: 4,
       trainer: {
-        id: 'minsu', cls: '곤충소년', name: '민수', pal: PAL.bugkid,
-        team: [['kkomul', 3], ['kkomul', 4]], reward: 120,
-        intro: '풀숲에서 직접 잡은 내 벌레 몬스터를 봐라!',
-        defeat: '으아, 내 꼬물이들이…!',
-        after: '꼬물이는 금방 진화한다고! 진짜야!',
+        id: 'minsu', cls: '곤충소년', name: '민수', pal: PAL.bugkid, team: [['kkomul', 3], ['kkomul', 4]], reward: 120,
+        intro: '풀숲에서 직접 잡은 내 벌레 몬스터를 봐라!', defeat: '으아, 내 꼬물이들이…!',
+        after: '꼬물이는 고치가 됐다가 금방 나풀이로 변해! 진짜야!',
       },
     },
     {
       id: 'r1haneul', x: 17, y: 11, dir: 'left', pal: PAL.picnic, sight: 4,
       trainer: {
-        id: 'haneul', cls: '소풍소녀', name: '하늘', pal: PAL.picnic,
-        team: [['jjaek', 4], ['tosil', 5]], reward: 160,
-        intro: '눈이 마주쳤으니 승부야!',
-        defeat: '에이, 졌다~',
-        after: '짹짹이는 언젠가 회오리를 일으키는 큰 새가 된대.',
+        id: 'haneul', cls: '소풍소녀', name: '하늘', pal: PAL.picnic, team: [['jjaek', 4], ['tosil', 5]], reward: 160,
+        intro: '눈이 마주쳤으니 승부야!', defeat: '에이, 졌다~', after: '짹짹이는 바람새를 거쳐 회오리매가 된대.',
       },
     },
     {
       id: 'r1hiker', x: 3, y: 17, dir: 'right', pal: PAL.hiker, sight: 5,
       trainer: {
-        id: 'cheolho', cls: '등산가', name: '철호', pal: PAL.hiker,
-        team: [['doldol', 6]], reward: 240,
-        intro: '하하! 산에서 단련한 내 돌돌이를 이길 수 있겠나?',
-        defeat: '튼튼한 돌돌이가 지다니!',
+        id: 'cheolho', cls: '등산가', name: '철호', pal: PAL.hiker, team: [['doldol', 6]], reward: 240,
+        intro: '하하! 산에서 단련한 내 돌돌이를 이길 수 있겠나?', defeat: '튼튼한 돌돌이가 지다니!',
         after: '돌돌이처럼 단단한 몬스터에겐 물이나 풀 기술이 잘 통하지.',
       },
     },
@@ -264,17 +315,16 @@ const route1: MapDef = {
 };
 
 const town2: MapDef = {
-  id: 'town2',
-  name: '들꽃마을',
+  id: 'town2', name: '들꽃마을',
   tiles: [
-    '####################',
-    '#f..KKKKKK......f..#',
-    '#...KKKKKK.........#',
-    '#...WwWDWW.........#',
-    '#......=...........#',
-    '#..BBBB=..MMMM.....#',
-    '#..BBBB=..MMMM.....#',
-    '#..WDwW=..WwDW.....#',
+    '##############=#####',
+    '#f..KKKKKK....=.f..#',
+    '#...KKKKKK....=....#',
+    '#...WwWDWW....=....#',
+    '#......=......=....#',
+    '#..BBBB=..MMMM=....#',
+    '#..BBBB=..MMMM=....#',
+    '#..WDwW=..WwDW=....#',
     '#...===========....#',
     '#.......==.....S...#',
     '#.ff....==.......ff#',
@@ -289,111 +339,36 @@ const town2: MapDef = {
     { x: 7, y: 3, to: 'dojo', tx: 5, ty: 8, dir: 'up' },
     { x: 4, y: 7, to: 'center', tx: 4, ty: 6, dir: 'up' },
     { x: 12, y: 7, to: 'shop', tx: 4, ty: 6, dir: 'up' },
+    { x: 14, y: 0, to: 'route2', tx: 9, ty: 26, dir: 'up' },
   ],
-  signs: [{ x: 15, y: 9, text: '들꽃마을\n바람에 꽃향기가 실려 오는 마을  ·  북쪽: 수련관' }],
+  signs: [{ x: 15, y: 9, text: '들꽃마을\n바람에 꽃향기가 실려 오는 마을  ·  북쪽: 2번 도로' }],
   npcs: [
     {
       id: 't2kid', x: 11, y: 10, dir: 'down', pal: PAL.kid, move: 'wander',
-      talk: '파란 지붕은 회복소, 노란 지붕은 상점이야!\n수련관은 저 위 보라색 지붕이고.',
+      talk: '파란 지붕은 회복소, 노란 지붕은 상점이야!\n보라색 지붕은 수련관이고.',
     },
     {
-      id: 't2lady', x: 15, y: 4, dir: 'down', pal: PAL.lady, move: 'look',
+      id: 't2lady', x: 16, y: 4, dir: 'down', pal: PAL.lady, move: 'look',
       talk: '봄이 되면 이 마을은 온통 들꽃으로 뒤덮여요.\n그때 꼭 다시 놀러 오세요.',
     },
     {
       id: 't2old', x: 5, y: 12, dir: 'right', pal: PAL.oldman,
       talk: '수련관 관장 단단은 바위처럼 흔들림이 없지.\n관장의 바위갑옷은 방어가 아주 높다네. 꾹 버텨야 해!',
     },
+    { id: 'rival_t2', x: 9, y: 6, dir: 'left', pal: PAL.rival, hidden: () => !f('badge1') || f('ch2') },
+  ],
+  triggers: [
+    { x: 14, y: 1, when: () => !f('badge1'), run: pushBack(['북쪽은 2번 도로다. 길목에 안내문이 붙어 있다.', '「이 앞은 야생 몬스터가 강합니다.\n수련관 배지를 가진 트레이너만 지나가 주세요.」'], 'down') },
+    { x: 7, y: 5, when: () => f('badge1') && !f('ch2'), run: chapter2Scene },
+    { x: 7, y: 6, when: () => f('badge1') && !f('ch2'), run: chapter2Scene },
   ],
 };
 
-const center: MapDef = {
-  id: 'center',
-  name: '들꽃마을 회복소',
-  indoor: true,
-  tiles: [
-    'XXXXXXXXXX',
-    'XkooooookX',
-    'XTTTTTTTTX',
-    'XooooooooX',
-    'XoooooooPX',
-    'XooooooooX',
-    'XooooooooX',
-    'XXXXeeXXXX',
-  ],
-  warps: [
-    { x: 4, y: 7, to: 'town2', tx: 4, ty: 8, dir: 'down' },
-    { x: 5, y: 7, to: 'town2', tx: 4, ty: 8, dir: 'down' },
-  ],
-  npcs: [
-    {
-      id: 'nurse', x: 4, y: 1, dir: 'down', pal: PAL.nurse,
-      talk: async () => {
-        if (!game.party.length) {
-          await say('어서 오세요! 몬스터 회복소입니다.\n몬스터를 데려오시면 회복시켜 드려요.');
-          return;
-        }
-        if (await yesNo('어서 오세요! 몬스터 회복소입니다.\n동료들의 체력을 회복시킬까요?')) {
-          await say('그럼 잠시 맡아 둘게요…');
-          await healParty();
-          setLastHeal('center', 4, 3);
-          await say('기다리셨습니다! 모두 건강해졌어요.\n또 오세요!');
-        } else await say('또 오세요!');
-      },
-    },
-    {
-      id: 'cvisitor', x: 2, y: 5, dir: 'right', pal: PAL.man, move: 'look',
-      talk: '오른쪽 PC로 몬스터를 맡기거나 찾을 수 있어.\n동료는 여섯 마리까지만 데리고 다닐 수 있거든.',
-    },
-  ],
-};
-
-const shop: MapDef = {
-  id: 'shop',
-  name: '들꽃마을 상점',
-  indoor: true,
-  tiles: [
-    'XXXXXXXXXX',
-    'XookkkkkkX',
-    'XTTToooooX',
-    'XooooooooX',
-    'XooookkooX',
-    'XooooooooX',
-    'XooooooooX',
-    'XXXXeeXXXX',
-  ],
-  warps: [
-    { x: 4, y: 7, to: 'town2', tx: 12, ty: 8, dir: 'down' },
-    { x: 5, y: 7, to: 'town2', tx: 12, ty: 8, dir: 'down' },
-  ],
-  npcs: [
-    { id: 'clerk', x: 2, y: 1, dir: 'down', pal: PAL.clerk, talk: () => shopMenu(['ball', 'superball', 'potion', 'superpotion', 'cure', 'revive']) },
-    {
-      id: 'customer', x: 7, y: 5, dir: 'left', pal: PAL.lady, move: 'wander',
-      talk: '수련관에 가기 전에 회복약을 넉넉히 사 두는 게 좋아요.',
-    },
-  ],
-};
-
-const leaderDef: TrainerDef = {
-  id: 'leader1', cls: '관장', name: '단단', pal: PAL.leader,
-  team: [['doldol', 10], ['bawi', 12]], reward: 1200,
-  intro: '수련관에 잘 왔다! 나는 관장 단단.\n바위처럼 흔들리지 않는 마음으로 수련하고 있지.\n자, 네 실력을 보여 봐라!',
-  defeat: '훌륭하다…! 바위를 깎아 내는 물방울 같은 끈기였다.',
-  after: '더 넓은 세상이 너를 기다리고 있다.\n(Popket 첫 번째 버전은 여기까지! 즐겁게 플레이해 줘서 고마워요)',
-  afterWin: async () => {
-    game.flags.badge1 = true;
-    await say('관장 단단: 이 바위배지를 받아라.\n내 수련관을 이겨 낸 증표다.');
-    await say('{name}은(는) 관장 단단에게서 바위배지를 받았다!');
-    await giveItem('superpotion', 2);
-    await say('관장 단단: 배지를 모으며 계속 강해져라.\n언젠가 다시 겨뤄 보자!');
-  },
-};
+const center = makeCenter('center', '들꽃마을 회복소', 'town2', 4, 8, '오른쪽 PC로 몬스터를 맡기거나 찾을 수 있어.\n동료는 여섯 마리까지만 데리고 다닐 수 있거든.');
+const shop = makeShop('shop', '들꽃마을 상점', 'town2', 12, 8, ['ball', 'superball', 'potion', 'superpotion', 'cure', 'revive'], '수련관에 가기 전에 회복약을 넉넉히 사 두는 게 좋아요.');
 
 const dojo: MapDef = {
-  id: 'dojo',
-  name: '들꽃 수련관',
-  indoor: true,
+  id: 'dojo', name: '들꽃 수련관', indoor: true,
   tiles: [
     'XXXXXXXXXXXX',
     'XroooooooorX',
@@ -414,24 +389,497 @@ const dojo: MapDef = {
     {
       id: 'pupil', x: 2, y: 6, dir: 'right', pal: PAL.pupil, sight: 4,
       trainer: {
-        id: 'donghyun', cls: '수련생', name: '동현', pal: PAL.pupil,
-        team: [['tosil', 8], ['doldol', 9]], reward: 400,
-        intro: '관장님께 도전하려면 나부터 넘어서야지!',
-        defeat: '으윽, 아직 수련이 부족했다…',
+        id: 'donghyun', cls: '수련생', name: '동현', pal: PAL.pupil, team: [['tosil', 8], ['doldol', 9]], reward: 400,
+        intro: '관장님께 도전하려면 나부터 넘어서야지!', defeat: '으윽, 아직 수련이 부족했다…',
         after: '관장님의 바위갑옷은 정말 단단해.\n체력을 꼭 회복하고 도전해!',
       },
     },
-    { id: 'leader', x: 5, y: 1, dir: 'down', pal: PAL.leader, trainer: leaderDef },
+    {
+      id: 'leader', x: 5, y: 1, dir: 'down', pal: PAL.leader,
+      trainer: {
+        id: 'leader1', cls: '관장', name: '단단', pal: PAL.leader, team: [['doldol', 10], ['bawi', 12]], reward: 1200,
+        intro: '수련관에 잘 왔다! 나는 관장 단단.\n바위처럼 흔들리지 않는 마음으로 수련하고 있지.\n자, 네 실력을 보여 봐라!',
+        defeat: '훌륭하다…! 바위를 깎아 내는 물방울 같은 끈기였다.',
+        after: '북쪽 2번 도로 너머엔 더 넓은 세상이 있다.\n흔들리지 말고 나아가라!',
+        afterWin: leader1Win,
+      },
+    },
   ],
 };
 
-export const MAPS: Record<string, MapDef> = { home, town1, lab, route1, town2, center, shop, dojo };
+// ---------------------------------------------------------------------------
+// 제2장 — 2번 도로 · 속삭임숲 · 물안개마을
 
-// Validate map rows in development.
+const route2: MapDef = {
+  id: 'route2', name: '2번 도로',
+  tiles: [
+    '#########=##########',
+    '#,,,,....=....,,,,,#',
+    '#,,,,....=....,,,,,#',
+    '#........=.........#',
+    '#..####..=..####...#',
+    '#..####..=..####...#',
+    '#........=.........#',
+    '#,,,,,,,,=,,,,,,,,,#',
+    '#,,,,,,,,=,,,,,,,,,#',
+    '#........=.........#',
+    '#...fff..=.........#',
+    '#........=====.....#',
+    '#~~~~~.......=.....#',
+    '#~~~~~.......=..,,,#',
+    '#~~~~~.......=..,,,#',
+    '#........=====..,,,#',
+    '#........=.........#',
+    '#.,,,,,,,=.........#',
+    '#.,,,,,,,=..####...#',
+    '#.,,,,,,,=..####...#',
+    '#........=.........#',
+    '#........=....fff..#',
+    '#..,,,,..=..,,,,,..#',
+    '#..,,,,..=..,,,,,..#',
+    '#........=.........#',
+    '#.......S=.........#',
+    '#........=.........#',
+    '#########=##########',
+  ],
+  warps: [
+    { x: 9, y: 27, to: 'town2', tx: 14, ty: 1, dir: 'down' },
+    { x: 9, y: 0, to: 'forest', tx: 10, ty: 24, dir: 'up' },
+  ],
+  signs: [{ x: 8, y: 25, text: '2번 도로\n북쪽: 속삭임숲   남쪽: 들꽃마을' }],
+  encounters: {
+    rate: 0.12,
+    table: [['tosil', 7, 9, 18], ['jjaek', 7, 9, 16], ['pojani', 7, 9, 22], ['jinheuk', 7, 9, 16], ['ddakkum', 7, 9, 16], ['kkomul', 6, 8, 7], ['doldol', 8, 9, 5]],
+  },
+  npcs: [
+    {
+      id: 'r2birder', x: 4, y: 3, dir: 'right', pal: PAL.birder, sight: 5,
+      trainer: {
+        id: 'taeo', cls: '새관찰가', name: '태오', pal: PAL.birder, team: [['jjaek', 10], ['baramsae', 12]], reward: 360,
+        intro: '쉿! 지금 바람새를 관찰하는 중이었다고!', defeat: '날아가 버렸네…', after: '바람새는 볏으로 바람 방향을 읽는대. 신기하지?',
+      },
+    },
+    {
+      id: 'r2sua', x: 14, y: 9, dir: 'left', pal: PAL.lady, sight: 5,
+      trainer: {
+        id: 'sua', cls: '아가씨', name: '수아', pal: PAL.lady, team: [['ddakkum', 10], ['pojani', 10]], reward: 340,
+        intro: '어머, 마침 심심했는데 잘됐다!', defeat: '어머머, 강하시네요.', after: '따끔이를 쓰다듬으면 따끔하지만 정말 귀여워요.',
+      },
+    },
+    grunt('r2grunt', 14, 16, 'left', 5, [['tosil', 9], ['pojani', 10]],
+      '뭘 봐? 검은안개단 일에 끼어들지 마라!', '이, 이럴 수가!', '흥, 숲에 가 봤자 소용없을걸. 간부님이 계시거든!'),
+    {
+      id: 'r2junho', x: 5, y: 20, dir: 'right', pal: PAL.kid, sight: 4,
+      trainer: {
+        id: 'junho', cls: '꼬마', name: '준호', pal: PAL.kid, team: [['jinheuk', 8], ['tosil', 9]], reward: 200,
+        intro: '진흙 놀이 하다가 잡은 내 몬스터 볼래?', defeat: '으앙, 옷만 버렸어!', after: '진흙이는 전기 기술을 맞아도 끄떡없어!',
+      },
+    },
+    { id: 'r2super', x: 18, y: 1, dir: 'down', item: { id: 'superpotion', qty: 1 } },
+    { id: 'r2ball', x: 17, y: 13, dir: 'down', item: { id: 'ball', qty: 3 } },
+    { id: 'r2potion', x: 1, y: 22, dir: 'down', item: { id: 'potion', qty: 2 } },
+  ],
+};
+
+const forest: MapDef = {
+  id: 'forest', name: '속삭임숲',
+  tiles: [
+    '##########=###########',
+    '##,,,,,,,#=#,,,,,,,,##',
+    '##,,,,,,,#=#,,,,,,,,##',
+    '##....###...###.....##',
+    '####..###...###..#####',
+    '#.......#...#........#',
+    '#.,,,,,.#...#.,,,,,,.#',
+    '#.,,,,,.#...#.,,,,,,.#',
+    '#.......#...#........#',
+    '#####.###...###.######',
+    '#,,,,.,,,...,,,.,,,,,#',
+    '#,,,,.,,,...,,,.,,,,,#',
+    '#.........f.........##',
+    '###...#########...####',
+    '#.....#.......#......#',
+    '#.,,,.#.......#.,,,,.#',
+    '#.,,,.#.......#.,,,,.#',
+    '#.....##.....##......#',
+    '####.####...####.#####',
+    '#,,,,,,,,...,,,,,,,,,#',
+    '#,,,,,,,,...,,,,,,,,,#',
+    '#...........#........#',
+    '#..###......#...###..#',
+    '#..###......#...###..#',
+    '#....................#',
+    '##########=###########',
+  ],
+  warps: [
+    { x: 10, y: 25, to: 'route2', tx: 9, ty: 1, dir: 'down' },
+    { x: 10, y: 0, to: 'town3', tx: 10, ty: 14, dir: 'up' },
+  ],
+  encounters: {
+    rate: 0.13,
+    table: [['pojani', 10, 12, 26], ['taldol', 10, 12, 14], ['kkomul', 9, 11, 10], ['dandan', 10, 11, 8], ['naphul', 12, 13, 5], ['ddakkum', 10, 12, 14], ['baramsae', 12, 13, 10], ['jjaek', 10, 11, 8], ['beoseot', 13, 14, 5]],
+  },
+  npcs: [
+    { id: 'granny', x: 5, y: 21, dir: 'down', pal: PAL.granny, talk: () => grannyTalk() },
+    {
+      id: 'fguard', x: 10, y: 2, dir: 'down', pal: PAL.grunt, hidden: () => f('forestCleared'),
+      talk: '검은안개단: 여긴 못 지나간다! 숲은 우리가 접수했다고.\n간부님은 숲 한가운데 공터에 계시지. 감히 갈 수 있으면 가 보시든가!',
+    },
+    grunt('fgrunt1', 1, 16, 'right', 4, [['pojani', 11], ['kkomul', 11]],
+      '숲의 몬스터는 전부 우리 차지다!', '크윽…', '간부님께 혼나겠군…'),
+    grunt('fgrunt2', 20, 16, 'left', 5, [['taldol', 12], ['tosil', 12]],
+      '꼬마가 여긴 왜 왔어? 썩 돌아가!', '말도 안 돼!', '간부 잿빛 님은 우리랑은 차원이 다르다고.'),
+    grunt('fgrunt3', 9, 6, 'right', 2, [['jinheuk', 12], ['pojani', 12]],
+      '여기서부터는 검은안개단 구역이다!', '쳇, 방심했다…', '별빛결정이라나 뭐라나… 높은 분들 생각은 잘 모르겠어.'),
+    {
+      id: 'fadmin', x: 10, y: 14, dir: 'down', pal: PAL.admin, sight: 3, hidden: () => f('forestCleared'),
+      trainer: {
+        id: 'admin1', cls: '검은안개단 간부', name: '잿빛', pal: PAL.admin, team: [['taldol', 13], ['pojani', 13], ['beoseot', 15]], reward: 1000,
+        intro: '흠, 조무래기들을 뚫고 여기까지 왔나.\n숲의 몬스터들은 우리 계획에 쓸 귀한 재료다. 돌려줄 순 없지!',
+        defeat: '이 내가… 꼬마에게…!', after: '…', afterWin: forestAdminWin,
+      },
+    },
+    { id: 'cage1', x: 8, y: 14, dir: 'down', mon: 'pojani', hidden: () => f('forestCleared'), talk: '포자니가 겁에 질려 떨고 있다…' },
+    { id: 'cage2', x: 12, y: 14, dir: 'down', mon: 'taldol', hidden: () => f('forestCleared'), talk: '탈돌이가 울상을 짓고 있다…' },
+    { id: 'cage3', x: 12, y: 16, dir: 'down', mon: 'kkomul', hidden: () => f('forestCleared'), talk: '꼬물이가 몸을 웅크리고 있다…' },
+    { id: 'fsuperball', x: 2, y: 1, dir: 'down', item: { id: 'superball', qty: 2 } },
+    { id: 'fpotion', x: 19, y: 6, dir: 'down', item: { id: 'superpotion', qty: 1 } },
+    { id: 'frevive', x: 20, y: 22, dir: 'down', item: { id: 'revive', qty: 1 } },
+  ],
+};
+
+const town3: MapDef = {
+  id: 'town3', name: '물안개마을',
+  tiles: [
+    '######################',
+    '#....AAAAAA...~~~~~~~#',
+    '#....AAAAAA...~~~~~~~#',
+    '#....WwWDWW...~~~~~~~#',
+    '#.......=.....+++~~~~#',
+    '#..BBBB.=..MMMM.~~~~~#',
+    '#..BBBB.=..MMMM.~~~~~#',
+    '#..WDwW.=..WwDW.~~~~~#',
+    '#...==========........',
+    '#.........=......S...#',
+    '#~~~~.....=..........#',
+    '#~~~~..ff.=...,,,,...#',
+    '#~~~~.....=...,,,,...#',
+    '#.........=..........#',
+    '#.........=..........#',
+    '##########=###########',
+  ],
+  warps: [
+    { x: 10, y: 15, to: 'forest', tx: 10, ty: 1, dir: 'down' },
+    { x: 8, y: 3, to: 'gym2', tx: 5, ty: 10, dir: 'up' },
+    { x: 4, y: 7, to: 'center3', tx: 4, ty: 6, dir: 'up' },
+    { x: 13, y: 7, to: 'shop3', tx: 4, ty: 6, dir: 'up' },
+    { x: 21, y: 8, to: 'route3', tx: 1, ty: 6, dir: 'right' },
+  ],
+  signs: [{ x: 17, y: 9, text: '물안개마을\n새벽마다 호수에 안개가 피어오르는 마을  ·  동쪽: 3번 도로' }],
+  encounters: { rate: 0.1, table: [['pojani', 11, 13, 40], ['jinheuk', 11, 13, 30], ['baramsae', 12, 14, 30]] },
+  npcs: [
+    { id: 'fisher', x: 15, y: 4, dir: 'right', pal: PAL.fisher, talk: () => fisherTalk() },
+    {
+      id: 't3guard', x: 20, y: 8, dir: 'left', pal: PAL.guard, hidden: () => f('badge2'),
+      talk: '경비: 동쪽 3번 도로는 지금 위험해. 검은안개단이 들락거리거든.\n수련관 관장 마루 님께 인정받은 트레이너만 보내 줄 수 있어.',
+    },
+    {
+      id: 't3kid', x: 6, y: 13, dir: 'up', pal: PAL.kid, move: 'wander',
+      talk: '물안개 수련관은 안에 물웅덩이가 가득해!\n나무 다리를 따라가야 관장님한테 갈 수 있어.',
+    },
+    {
+      id: 't3old', x: 3, y: 9, dir: 'down', pal: PAL.oldman, move: 'look',
+      talk: '옛날이야기 하나 해 줄까? 동쪽 별빛동굴 깊은 곳에는\n별을 삼킨 고래가 잠들어 있다네. 그 고래가 깨면 밤하늘에 별비가 내린다지.',
+    },
+    { id: 'rival_t3', x: 10, y: 11, dir: 'down', pal: PAL.rival, hidden: () => f('rival2') || !f('forestCleared') },
+  ],
+  triggers: [{ x: 10, y: 13, when: () => !f('rival2') && f('forestCleared'), run: rival2Scene }],
+};
+
+const center3 = makeCenter('center3', '물안개마을 회복소', 'town3', 4, 8, '물 타입 몬스터는 전기 기술에 약해.\n관장님께 도전하기 전에 잘 준비해!');
+const shop3 = makeShop('shop3', '물안개마을 상점', 'town3', 13, 8, ['ball', 'superball', 'potion', 'superpotion', 'cure', 'revive'], '물가에서는 낚싯대로 물속 몬스터를 낚을 수 있대요.');
+
+const gym2: MapDef = {
+  id: 'gym2', name: '물안개 수련관', indoor: true,
+  tiles: [
+    'XXXXXXXXXXXX',
+    'X~~ooooo~~~X',
+    'X~~ooooo~~~X',
+    'X~~~~+~~~~~X',
+    'X~~~~+~~~~~X',
+    'Xooo~+~~oooX',
+    'Xooo+++++ooX',
+    'X~~~~~~~+~~X',
+    'X~~~~~~~+~~X',
+    'Xooooooo+ooX',
+    'XooooooooooX',
+    'XXXXXeeXXXXX',
+  ],
+  warps: [
+    { x: 5, y: 11, to: 'town3', tx: 8, ty: 4, dir: 'down' },
+    { x: 6, y: 11, to: 'town3', tx: 8, ty: 4, dir: 'down' },
+  ],
+  fishing: [['banjjak', 12, 16, 85], ['eungeo', 20, 21, 15]],
+  npcs: [
+    {
+      id: 'swimA', x: 1, y: 6, dir: 'right', pal: PAL.swimmer, sight: 3,
+      trainer: {
+        id: 'swimA', cls: '수영선수', name: '바다', pal: PAL.swimmer, team: [['banjjak', 15], ['pong', 15]], reward: 600,
+        intro: '물 위에서 나를 이길 수 있을까?', defeat: '꼬르륵…', after: '관장님은 물처럼 유연하게 싸우셔.',
+      },
+    },
+    {
+      id: 'swimB', x: 3, y: 2, dir: 'right', pal: PAL.swimmer, sight: 3,
+      trainer: {
+        id: 'swimB', cls: '수영선수', name: '여울', pal: PAL.swimmer, team: [['banjjak', 16], ['banjjak', 16]], reward: 640,
+        intro: '관장님께 가려면 나를 넘어가야 해!', defeat: '파도에 휩쓸렸어…', after: '관장님의 은빛잉어는 정말 아름다워!',
+      },
+    },
+    {
+      id: 'maru', x: 5, y: 1, dir: 'down', pal: PAL.maru,
+      trainer: {
+        id: 'leader2', cls: '관장', name: '마루', pal: PAL.maru, team: [['banjjak', 16], ['mulbora', 17], ['eungeo', 19]], reward: 1900,
+        intro: '물안개 수련관에 온 걸 환영해! 나는 관장 마루.\n물은 막으면 돌아가고, 고이면 깊어지지.\n네 몬스터들이 얼마나 깊은지 보여 줘!',
+        defeat: '흐르는 물을 멈추게 하다니… 대단해!',
+        after: '검은안개단은 별빛동굴에 있어. 부디 조심해.',
+        afterWin: leader2Win,
+      },
+    },
+  ],
+};
+
+// ---------------------------------------------------------------------------
+// 제3장 — 3번 도로 · 별빛동굴 · 별빛시
+
+const route3: MapDef = {
+  id: 'route3', name: '3번 도로',
+  tiles: [
+    '##############################',
+    '#,,,,,....##....,,,,,..CCCCCC#',
+    '#,,,,,....##....,,,,,..CCCCCC#',
+    '#.........##...........CCCCCC#',
+    '#...,,,,......,,,,.....CCCCCC#',
+    '#...,,,,......,,,,.....CCOCCC#',
+    '==========================...#',
+    '#...,,,,......,,,,......~~~~~#',
+    '#...,,,,......,,,,......~~~~~#',
+    '#.......##.........S....~~~~~#',
+    '#,,,,,,.##..,,,,,,,.....~~~~~#',
+    '##############################',
+  ],
+  warps: [
+    { x: 0, y: 6, to: 'town3', tx: 20, ty: 8, dir: 'left' },
+    { x: 25, y: 5, to: 'cave', tx: 1, ty: 18, dir: 'up' },
+  ],
+  signs: [{ x: 19, y: 9, text: '3번 도로\n동쪽: 별빛동굴   서쪽: 물안개마을' }],
+  encounters: {
+    rate: 0.13,
+    table: [['jinheuk', 14, 17, 18], ['ddakkum', 14, 17, 16], ['baramsae', 15, 17, 15], ['beoseot', 15, 17, 13], ['jjirit', 14, 16, 12], ['tongsil', 15, 17, 12], ['taldol', 15, 16, 8], ['beonjjeok', 16, 17, 6]],
+  },
+  fishing: [['banjjak', 14, 20, 75], ['eungeo', 20, 23, 25]],
+  npcs: [
+    grunt('r3grunt', 12, 4, 'down', 2, [['jinheuk', 16], ['baramsae', 16]],
+      '동굴 쪽으로는 못 간다! 두목님의 중요한 작전 중이다!', '두, 두목님께 알려야 해!', '두목 흑영 님은 동굴 지하 호수에 계신다… 아, 말해 버렸다.'),
+    {
+      id: 'r3hiker', x: 20, y: 8, dir: 'up', pal: PAL.hiker, sight: 2,
+      trainer: {
+        id: 'dongsu', cls: '등산가', name: '동수', pal: PAL.hiker, team: [['doldol', 16], ['jinheuk', 17]], reward: 700,
+        intro: '별빛동굴에 가려고? 그럼 나부터 넘어 봐라!', defeat: '허허, 제법인걸.', after: '동굴 안은 어두우니 발밑을 조심하게.',
+      },
+    },
+    {
+      id: 'r3girl', x: 6, y: 9, dir: 'up', pal: PAL.picnic, sight: 3,
+      trainer: {
+        id: 'nari', cls: '소풍소녀', name: '나리', pal: PAL.picnic, team: [['ddakkum', 15], ['pojani', 16]], reward: 480,
+        intro: '도시락 먹기 전에 한판 어때?', defeat: '배고파서 졌다…', after: '동쪽 동굴을 지나면 별빛시가 나와. 엄청 큰 도시래!',
+      },
+    },
+    { id: 'r3hyper', x: 1, y: 1, dir: 'down', item: { id: 'hyperpotion', qty: 1 } },
+    { id: 'r3revive', x: 1, y: 10, dir: 'down', item: { id: 'revive', qty: 1 } },
+    { id: 'r3ball', x: 28, y: 6, dir: 'down', item: { id: 'superball', qty: 2 } },
+  ],
+};
+
+const cave: MapDef = {
+  id: 'cave', name: '별빛동굴', dark: true,
+  tiles: [
+    'CCCCCCCCCCCCCCCCCCCCCOCC',
+    'C~~~~~~~~~~~CCCCCCCCC_CC',
+    'C~~~~~~~~~~~CCCCCCCCC_CC',
+    'C~~~~~~~~~~~C__________C',
+    'C~~~~~~~~~~~C_CCCCCCCC_C',
+    'C___________C_C______C_C',
+    'C___________C_C_CCCC_C_C',
+    'C__z_____z__C__________C',
+    'CCCCC___C_CCCCCCC__CCCCC',
+    'C______________________C',
+    'C_CCCCC____CCCC___CCCC_C',
+    'C_C___C_z__C__C___C____C',
+    'C_C_C_C____C__C_C_C_CC_C',
+    'C___C______C__C_C___CC_C',
+    'CCCCCCCC_CCC__C_CCCCCC_C',
+    'C_z___________C________C',
+    'C_CCCCC_CCCCC_CCCCCCCC_C',
+    'C_____________z________C',
+    'C___CCCCCCCCCCCCCCCCCCCC',
+    'COCCCCCCCCCCCCCCCCCCCCCC',
+  ],
+  warps: [
+    { x: 1, y: 19, to: 'route3', tx: 25, ty: 6, dir: 'down' },
+    { x: 21, y: 0, to: 'town4', tx: 10, ty: 14, dir: 'up' },
+  ],
+  encounters: {
+    rate: 0.1,
+    tiles: '_',
+    table: [['doldol', 17, 19, 24], ['jinheuk', 17, 19, 20], ['taldol', 17, 19, 18], ['heukjang', 18, 20, 10], ['jjirit', 17, 19, 12], ['bawi', 19, 20, 6], ['beoseot', 18, 19, 6], ['talgwang', 19, 20, 4]],
+  },
+  fishing: [['banjjak', 18, 22, 60], ['eungeo', 21, 24, 40]],
+  npcs: [
+    grunt('cgrunt1', 7, 16, 'down', 1, [['doldol', 18], ['jinheuk', 18]],
+      '침입자다! 여기서 끝장내 주마!', '으악!', '이 동굴의 별빛결정은 전부 두목님 거다.'),
+    grunt('cgrunt2', 9, 8, 'down', 1, [['beoseot', 19], ['taldol', 19]],
+      '두목님의 의식을 방해하게 둘 순 없지!', '크윽…', '의식이 끝나면 은하고래가 우리 편이 될 거다…'),
+    {
+      id: 'cadmin', x: 5, y: 8, dir: 'right', pal: PAL.admin, sight: 2, hidden: () => f('bossDone'),
+      trainer: {
+        id: 'admin2', cls: '검은안개단 간부', name: '잿빛', pal: PAL.admin, team: [['talgwang', 20], ['beoseot', 21], ['heukjang', 21]], reward: 1600,
+        intro: '또 너냐! 숲에서 당한 빚, 여기서 갚아 주지!', defeat: '두 번이나… 말도 안 돼…',
+        after: '흑영 님은 호수 앞에 계신다… 하지만 넌 절대 못 이길 거다.',
+      },
+    },
+    { id: 'boss', x: 6, y: 5, dir: 'up', pal: PAL.boss, hidden: () => f('bossDone'), talk: () => bossScene() },
+    { id: 'whale', x: 6, y: 4, dir: 'down', mon: 'eunha', hidden: () => f('whale'), talk: () => whaleTalk() },
+    {
+      id: 'cguard', x: 21, y: 2, dir: 'down', pal: PAL.grunt, hidden: () => f('bossDone'),
+      talk: '검은안개단: 출구는 봉쇄했다! 두목님의 의식이 끝날 때까지\n아무도 못 나간다고!',
+    },
+    { id: 'csuperball', x: 1, y: 15, dir: 'down', item: { id: 'superball', qty: 3 } },
+    { id: 'chyper', x: 22, y: 11, dir: 'down', item: { id: 'hyperpotion', qty: 1 } },
+    { id: 'crevive', x: 3, y: 11, dir: 'down', item: { id: 'revive', qty: 1 } },
+  ],
+  triggers: [1, 2, 4, 5, 6, 7, 8, 10, 11].map((x) => ({
+    x, y: 7,
+    when: () => !f('bossDone'),
+    run: bossScene,
+  })),
+};
+
+const town4: MapDef = {
+  id: 'town4', name: '별빛시',
+  tiles: [
+    '######################',
+    '#..YYYYYY....YYYYYY..#',
+    '#..YYYYYY....YYYYYY..#',
+    '#..WwWDWW....WwWWwW..#',
+    '#l....=.......l......#',
+    '#.BBBB=..MMMM........#',
+    '#.BBBB=..MMMM........#',
+    '#.WDwW=..WwDW........#',
+    '#.===========......l.#',
+    '#.........=.....S....#',
+    '#.ff......=..........#',
+    '#l........=........l.#',
+    '#.........=..fff.....#',
+    '#.........=..........#',
+    '#.........=..........#',
+    '##########=###########',
+  ],
+  warps: [
+    { x: 10, y: 15, to: 'cave', tx: 21, ty: 1, dir: 'down' },
+    { x: 6, y: 3, to: 'gym3', tx: 5, ty: 10, dir: 'up' },
+    { x: 3, y: 7, to: 'center4', tx: 4, ty: 6, dir: 'up' },
+    { x: 11, y: 7, to: 'shop4', tx: 4, ty: 6, dir: 'up' },
+  ],
+  signs: [{ x: 16, y: 9, text: '별빛시\n밤에도 별처럼 불빛이 반짝이는 도시  ·  별빛 수련관' }],
+  npcs: [
+    {
+      id: 't4man', x: 15, y: 5, dir: 'down', pal: PAL.man, move: 'wander',
+      talk: '오른쪽 큰 건물은 해솔 리그 사무국이야.\n리그는 다음 봄에 열린다던데… 아직은 문이 닫혀 있어.',
+    },
+    {
+      id: 't4lady', x: 4, y: 12, dir: 'right', pal: PAL.lady, move: 'look',
+      talk: async () => {
+        if (f('bossDone')) await say('별빛동굴에서 검은안개단을 쫓아낸 게 당신이에요?\n요즘 밤하늘에 별똥별이 부쩍 많아졌대요!');
+        else await say('별빛동굴 쪽이 요즘 시끄러워서 걱정이에요.');
+      },
+    },
+    {
+      id: 't4eng', x: 18, y: 10, dir: 'left', pal: PAL.engineer, move: 'look',
+      talk: '별빛 수련관 관장 하람 님은 발전소 기술자 출신이야.\n전기 타입은 땅 타입 몬스터한테 기술이 통하지 않아!',
+    },
+    { id: 'rival_t4', x: 10, y: 10, dir: 'down', pal: PAL.rival, hidden: () => f('rival3') },
+  ],
+  triggers: [{ x: 10, y: 12, when: () => !f('rival3'), run: rival3Scene }],
+};
+
+const center4: MapDef = makeCenter('center4', '별빛시 회복소', 'town4', 3, 8, '해솔 리그에 나가려면 배지 여덟 개가 필요하대.\n이 지방에 있는 건 셋뿐이니… 다른 지방도 가 봐야겠지?');
+const shop4 = makeShop('shop4', '별빛시 백화점', 'town4', 11, 8, ['ball', 'superball', 'potion', 'superpotion', 'hyperpotion', 'cure', 'revive'], '특급회복약은 여기서만 팔아요. 관장님께 가기 전에 챙겨 두세요!');
+
+const gym3: MapDef = {
+  id: 'gym3', name: '별빛 수련관', indoor: true,
+  tiles: [
+    'XXXXXXXXXXXX',
+    'XPooooooooPX',
+    'XooooooooooX',
+    'XPPPPoPPPPPX',
+    'XooooooooooX',
+    'XPPoPPPPPPPX',
+    'XooooooooooX',
+    'XPPPPPPPoPPX',
+    'XooooooooooX',
+    'XooooooooooX',
+    'XooooooooooX',
+    'XXXXXeeXXXXX',
+  ],
+  warps: [
+    { x: 5, y: 11, to: 'town4', tx: 6, ty: 4, dir: 'down' },
+    { x: 6, y: 11, to: 'town4', tx: 6, ty: 4, dir: 'down' },
+  ],
+  npcs: [
+    {
+      id: 'eng1', x: 1, y: 8, dir: 'right', pal: PAL.engineer, sight: 7,
+      trainer: {
+        id: 'eng1', cls: '기술자', name: '건우', pal: PAL.engineer, team: [['ddakkum', 23], ['jjirit', 23], ['beonjjeok', 24]], reward: 900,
+        intro: '찌릿찌릿! 전압 검사 시작이다!', defeat: '퓨즈가 나갔다…', after: '기계들 사이로 길을 찾아 올라가 봐.',
+      },
+    },
+    {
+      id: 'eng2', x: 10, y: 4, dir: 'left', pal: PAL.engineer, sight: 6,
+      trainer: {
+        id: 'eng2', cls: '기술자', name: '미르', pal: PAL.engineer, team: [['beongae', 24], ['beonjjeok', 25]], reward: 960,
+        intro: '하람 님께 가는 길은 내가 지킨다!', defeat: '합선이야…', after: '하람 님의 뇌전고슴은 정말 빨라. 각오해!',
+      },
+    },
+    {
+      id: 'haram', x: 5, y: 1, dir: 'down', pal: PAL.haram,
+      trainer: {
+        id: 'leader3', cls: '관장', name: '하람', pal: PAL.haram, team: [['jjirit', 25], ['beonjjeok', 26], ['beongae', 27], ['noejeon', 29]], reward: 2900,
+        intro: '별빛 수련관에 온 걸 환영한다. 나는 관장 하람.\n이 도시의 불빛은 전부 내 몬스터들의 전기로 켜지지.\n너의 번뜩임을 보여 줘!',
+        defeat: '번개보다 빠른 판단… 완벽한 패배다.',
+        after: '배지 셋을 모은 너라면 리그에서도 통할 거다.',
+        afterWin: leader3Win,
+      },
+    },
+  ],
+};
+
+// center4's door is at x=3, so arrivals land one tile to the right of the usual spot.
+center4.warps = [
+  { x: 4, y: 7, to: 'town4', tx: 3, ty: 8, dir: 'down' },
+  { x: 5, y: 7, to: 'town4', tx: 3, ty: 8, dir: 'down' },
+];
+
+export const MAPS: Record<string, MapDef> = {
+  home, town1, lab, route1, town2, center, shop, dojo,
+  route2, forest, town3, center3, shop3, gym2,
+  route3, cave, town4, center4, shop4, gym3,
+};
+
+// Validate map rows and warp targets in development.
 for (const m of Object.values(MAPS)) {
   const w = m.tiles[0].length;
   m.tiles.forEach((row, y) => {
     if (row.length !== w) console.error(`map ${m.id} row ${y} has width ${row.length}, expected ${w}`);
   });
+  for (const wp of m.warps) if (!MAPS[wp.to]) console.error(`map ${m.id} warps to unknown ${wp.to}`);
 }
-
