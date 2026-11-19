@@ -55,6 +55,13 @@ const NYANG: L = [[1, 'scratch'], [1, 'frostbreath'], [6, 'dash'], [11, 'bite'],
 const MONG: L = [[1, 'tackle'], [1, 'twinkle'], [5, 'growl'], [10, 'bite'], [15, 'dreamsong'], [20, 'moondust'], [27, 'fullcharge']];
 const CHIM: L = [[1, 'scratch'], [1, 'sting'], [6, 'glare'], [11, 'toxshot'], [17, 'poisontail'], [23, 'quake'], [29, 'toxblast']];
 const BUEONG: L = [[1, 'peck'], [1, 'hoot'], [6, 'telekinesis'], [11, 'gust'], [16, 'psybeam'], [22, 'wingcut'], [28, 'moonsign']];
+const MAKA: L = [[1, 'tackle'], [1, 'twinkle'], [6, 'growl'], [10, 'curl'], [15, 'dreamsong'], [20, 'moondust'], [27, 'press'], [33, 'breathe']];
+const JELLY: L = [[1, 'bubble'], [1, 'twinkle'], [6, 'paralyze'], [11, 'tentacle'], [16, 'moondust'], [22, 'wave'], [28, 'breathe'], [34, 'bigwave']];
+const UNI: L = [[1, 'tackle'], [1, 'twinkle'], [6, 'dash'], [11, 'telekinesis'], [16, 'moondust'], [22, 'psybeam'], [28, 'dreamsong'], [34, 'moonsign'], [40, 'fullcharge']];
+const DUCK: L = [[1, 'peck'], [1, 'splash'], [6, 'growl'], [11, 'bubble'], [16, 'gust'], [22, 'wave'], [28, 'wingcut'], [34, 'tide']];
+const PETAL: L = [[1, 'peck'], [1, 'growl'], [6, 'vine'], [11, 'gust'], [16, 'leafcut'], [22, 'wingcut'], [28, 'bloom'], [34, 'storm']];
+const SNAIL: L = [[1, 'tackle'], [1, 'curl'], [6, 'absorb'], [11, 'bubble'], [16, 'sleeppowder'], [22, 'wave'], [28, 'bloom'], [34, 'forestwrath']];
+const BING: L = [[1, 'tackle'], [1, 'frostbreath'], [6, 'twinkle'], [11, 'curl'], [16, 'icefang'], [22, 'moondust'], [28, 'avalanche']];
 const SANGUN: L = [[1, 'rockdrop'], [1, 'soulwave'], [30, 'focus'], [35, 'mountainroar'], [38, 'rockstorm']];
 const EUNHA: L = [[1, 'wave'], [1, 'gust'], [20, 'breathe'], [25, 'tide'], [30, 'galaxy'], [35, 'storm']];
 
@@ -145,6 +152,22 @@ const list: Def[] = [
   s('dokjeongal', '독전갈', ['독', '땅'], [76, 98, 100, 66], 60, 168, CHIM, '독전갈', '커다란 집게로 바위를 부수고, 꼬리의 독침으로 모래 폭풍 속 먹잇감을 노린다.'),
   s('bueong', '부엉꼬마', ['비행', '에스퍼'], [52, 44, 46, 56], 170, 58, BUEONG, '아기부엉이', '밤이 되면 동그란 눈이 빛난다. 고개를 한 바퀴 돌리며 주위를 살핀다.', [22, 'olppaemi']),
   s('olppaemi', '달빛올빼미', ['비행', '에스퍼'], [84, 80, 72, 96], 60, 168, BUEONG, '달빛올빼미', '가슴의 초승달 무늬로 달빛을 모은다. 달빛올빼미가 우는 밤엔 좋은 꿈을 꾼다고 한다.'),
+  // 파스텔 몬스터 — 솜사탕언덕
+  s('makarong', '마카롱이', ['페어리'], [50, 46, 56, 44], 190, 58, MAKA, '마카롱', '분홍 껍질 사이에 달콤한 크림이 들어 있다. 기분이 좋으면 몸에서 딸기 향이 난다.', [24, 'makatop']),
+  s('makatop', '마카롱탑', ['페어리'], [88, 76, 96, 62], 70, 160, MAKA, '마카롱탑', '분홍, 민트, 보라 마카롱 세 개가 쌓였다. 꼭대기의 딸기를 지키려고 힘을 합친다.'),
+  s('jelly', '몽글해파리', ['물', '페어리'], [50, 40, 46, 56], 180, 58, JELLY, '솜사탕해파리', '솜사탕 같은 갓을 동동 띄우고 떠다닌다. 리본 같은 다리에 닿으면 살짝 찌릿하다.', [26, 'aurora']),
+  s('aurora', '오로라해파리', ['물', '페어리'], [90, 76, 80, 84], 60, 166, JELLY, '오로라해파리', '갓에 분홍, 민트, 보랏빛 오로라가 일렁인다. 밤바다에 떠오르면 바다가 무지갯빛으로 빛난다.'),
+  s('agiyuni', '아기유니', ['페어리'], [46, 52, 44, 60], 120, 64, UNI, '아기유니콘', '아직 뿔이 말랑한 아기 유니콘. 파스텔빛 갈기를 살랑이며 꽃밭을 뛰어다닌다.', [18, 'mujigae']),
+  s('mujigae', '무지개유니', ['페어리'], [70, 80, 66, 86], 60, 150, UNI, '무지개유니콘', '달릴 때마다 갈기에서 무지개가 흘러나온다. 비 온 뒤에 가장 기운이 넘친다.', [34, 'byeolkkum']),
+  s('byeolkkum', '별꿈유니', ['페어리', '에스퍼'], [92, 104, 86, 106], 45, 238, UNI, '별꿈유니콘', '별 모양 뿔로 잠든 아이들에게 좋은 꿈을 보내 준다고 한다. 밤하늘빛 갈기에 별이 반짝인다.'),
+  s('pongduck', '퐁퐁오리', ['물'], [48, 46, 46, 50], 200, 54, DUCK, '아기오리', '노란 솜털에 파란 장화를 신은 아기 오리. 물웅덩이만 보면 퐁퐁 뛰어든다.', [22, 'ubiduck']),
+  s('ubiduck', '우비오리', ['물', '비행'], [80, 78, 72, 84], 80, 150, DUCK, '우비오리', '노란 우비를 입고 작은 우산을 든다. 우산을 펼치고 바람을 타 하늘을 날아다닌다.'),
+  s('kkotip', '꽃잎새', ['풀', '비행'], [42, 46, 40, 64], 190, 54, PETAL, '꽃잎새', '머리에 벚꽃잎 볏이 달린 작은 새. 봄이 오면 가장 먼저 노래한다.', [24, 'beotkkot']),
+  s('beotkkot', '벚꽃새', ['풀', '비행'], [72, 82, 66, 98], 70, 158, PETAL, '벚꽃새', '날개를 펼치면 벚꽃잎이 흩날린다. 벚꽃새가 지나간 길에는 꽃비가 내린다.'),
+  s('suguk', '수국달팽', ['풀'], [52, 40, 66, 24], 190, 56, SNAIL, '수국달팽이', '껍데기에 수국 꽃이 피어 있는 달팽이. 비가 오면 꽃 색깔이 바뀐다.', [26, 'jangma']),
+  s('jangma', '장마달팽', ['풀', '물'], [90, 72, 104, 40], 70, 160, SNAIL, '장마달팽이', '수국 꽃다발 같은 껍데기를 이고 다닌다. 장마철이면 더듬이 끝에 빗방울이 맺힌다.'),
+  s('bingsu', '빙수방울', ['얼음'], [48, 46, 52, 46], 180, 58, BING, '빙수', '컵 속의 눈꽃빙수에 깃든 몬스터. 시럽 색이 기분에 따라 바뀐다.', [26, 'wangbingsu']),
+  s('wangbingsu', '왕빙수', ['얼음', '페어리'], [86, 84, 90, 70], 60, 165, BING, '왕빙수', '딸기와 망고, 떡을 잔뜩 얹은 왕빙수. 더운 날 나타나 모두에게 시원함을 나눠 준다.'),
   // 특별한 몬스터
   s('sangun', '산군', ['바위', '고스트'], [100, 118, 92, 110], 20, 250, SANGUN, '산신령', '운무봉을 지키는 흰 호랑이의 정령. 숲·물·바위의 세 방울 소리를 들으면 서낭당으로 내려온다고 전해진다.', undefined, { special: true }),
   s('eunha', '은하고래', ['물', '비행'], [120, 110, 100, 90], 25, 260, EUNHA, '은하', '별빛동굴 지하 호수에 잠든 전설의 몬스터. 깨어나면 밤하늘을 헤엄치며 별을 뿌린다고 전해진다.', undefined, { legend: true }),
@@ -165,6 +188,8 @@ const ORDER = [
   'banjjak', 'eungeo', 'munu', 'meokmul', 'daewang', 'agipeng', 'eolpeng', 'nunnyang', 'seolpyo',
   'gungo', 'jangjak', 'agigom', 'satba', 'jangsa', 'ggangtong', 'cheolgap', 'geosin',
   'mongmong', 'wangmong', 'ggorichim', 'dokjeongal', 'bueong', 'olppaemi',
+  'makarong', 'makatop', 'jelly', 'aurora', 'agiyuni', 'mujigae', 'byeolkkum',
+  'pongduck', 'ubiduck', 'kkotip', 'beotkkot', 'suguk', 'jangma', 'bingsu', 'wangbingsu',
   'kkomaryong', 'nalgae', 'cheonryong',
   'sangun', 'eunha',
 ];

@@ -1132,6 +1132,242 @@ export const MON_DRAW: Record<string, (p: Pix) => void> = {
     for (const [x, y] of [[4, 6], [36, 5], [6, 36], [34, 37]] as const) { p.set(x, y, Mn); p.set(x + 1, y, Mn); }
   },
 
+  // ── 파스텔: 마카롱 2단 ─────────────────────────────────────
+  makarong(p) {
+    const Pk = '#ffbcd2', Pd = '#f090b0', Cr = '#fff8f0', Cd = '#f0e0d0';
+    p.ell(14, 37, 3, 1.4, Pd); p.ell(26, 37, 3, 1.4, Pd);
+    p.ell(20, 30, 14, 6, Pk);
+    for (let x = 7; x <= 33; x += 2) p.set(x, 25, Pd);
+    p.ell(20, 24, 13.5, 2.8, Cr);
+    p.ell(20, 17, 14, 8, Pk);
+    for (let x = 7; x <= 33; x += 2) p.set(x, 22, Pd);
+    p.ell(14, 12, 3.5, 1.6, '#ffe0ea');
+    bigEye(p, 14, 16, '#6a3a5a'); bigEye(p, 23, 16, '#6a3a5a');
+    p.set(19, 21, '#6a3a5a'); p.set(20, 21, '#6a3a5a');
+    p.set(12, 20, '#ff8ab0'); p.set(28, 20, '#ff8ab0');
+    p.ell(29, 9, 2, 2, '#ff6a8a'); p.set(29, 7, '#58b048');
+    p.ell(20, 24, 1.5, 0.8, Cd);
+  },
+  makatop(p) {
+    const Pk = '#ffbcd2', Pd = '#f090b0', Mt = '#b8f0dc', Md = '#80d0b8', Lv = '#d8c8f8', Ld = '#a898d8', Cr = '#fff8f0', St = '#ff5a7a';
+    p.ell(20, 33, 14, 5, Lv); p.ell(20, 29, 13.5, 2, Cr); p.ell(20, 26, 14, 4.5, Lv);
+    for (let x = 7; x <= 33; x += 2) { p.set(x, 30, Ld); p.set(x, 28, Ld); }
+    p.ell(20, 22, 12, 4, Mt); p.ell(20, 19, 11.5, 1.8, Cr); p.ell(20, 16, 12, 4, Mt);
+    for (let x = 9; x <= 31; x += 2) { p.set(x, 20, Md); p.set(x, 18, Md); }
+    p.ell(20, 12, 10, 3.5, Pk); p.ell(20, 9.5, 9.5, 1.6, Cr); p.ell(20, 7, 10, 3.5, Pk);
+    for (let x = 11; x <= 29; x += 2) { p.set(x, 11, Pd); p.set(x, 9, Pd); }
+    p.ell(20, 2.5, 3.5, 3, St); p.set(19, 1, '#ffffff'); p.tri(18, 0, 22, 0, 20, -2, '#58b048');
+    bigEye(p, 14, 15, '#3a6a5a'); bigEye(p, 23, 15, '#3a6a5a');
+    p.set(19, 20, '#3a6a5a'); p.set(20, 21, '#3a6a5a'); p.set(21, 20, '#3a6a5a');
+    p.line(6, 26, 1, 22, Cr); p.line(34, 26, 39, 22, Cr); p.ell(1, 21, 1.6, 1.6, Cr); p.ell(39, 21, 1.6, 1.6, Cr);
+  },
+
+  // ── 파스텔: 해파리 2단 ─────────────────────────────────────
+  jelly(p) {
+    const Bl = '#f8c8e8', Bd = '#e0a0d0', Rm = '#fff0fa', R1 = '#b8f0dc', R2 = '#ffe8a0', R3 = '#c8d8ff';
+    for (const [x, c] of [[12, R1], [17, R2], [23, R3], [28, R1]] as const) {
+      chain(p, [[x, 22], [x - 2, 27], [x + 1, 31], [x - 1, 36]], 1.2, c);
+    }
+    p.ell(20, 15, 13, 10, Bl);
+    p.ell(20, 22, 13, 2.5, Rm);
+    for (let x = 8; x <= 32; x += 3) p.set(x, 23, Bd);
+    p.ell(14, 9, 4, 2.5, Rm);
+    bigEye(p, 14, 14, '#7a4a8a'); bigEye(p, 23, 14, '#7a4a8a');
+    p.set(19, 19, '#7a4a8a'); p.set(20, 20, '#7a4a8a'); p.set(21, 19, '#7a4a8a');
+    p.set(11, 18, '#ff90c0'); p.set(29, 18, '#ff90c0');
+  },
+  aurora(p) {
+    const P = '#ffc8e4', M = '#b8f0dc', L = '#d4c8ff', Rm = '#fff6fc', R2 = '#ffe8a0', Sp = '#ffffff';
+    for (const [x, c] of [[7, M], [12, L], [17, R2], [23, P], [28, M], [33, L]] as const) {
+      chain(p, [[x, 22], [x - 3, 28], [x + 1, 33], [x - 2, 39]], 1.1, c);
+    }
+    p.ell(20, 14, 16, 11, P);
+    paint(p, 0, 8, 40, 4, M); paint(p, 0, 13, 40, 4, L); paint(p, 0, 18, 40, 3, P);
+    p.ell(20, 22, 16, 2.6, Rm);
+    for (const x of [6, 13, 20, 27, 34]) p.tri(x - 2, 4, x + 2, 4, x, -1, Rm);
+    p.ell(13, 7, 4, 2, Rm);
+    p.rect(13, 13, 3, 4, '#6a4a9a'); p.rect(24, 13, 3, 4, '#6a4a9a'); p.set(13, 13, Sp); p.set(24, 13, Sp);
+    p.set(19, 18, '#6a4a9a'); p.set(20, 19, '#6a4a9a'); p.set(21, 18, '#6a4a9a');
+    for (const [x, y] of [[2, 6], [38, 8], [3, 30], [37, 32]] as const) { p.set(x, y, Sp); p.set(x - 1, y, Sp); p.set(x + 1, y, Sp); p.set(x, y - 1, Sp); p.set(x, y + 1, Sp); }
+  },
+
+  // ── 파스텔: 유니콘 3단 ─────────────────────────────────────
+  agiyuni(p) {
+    const W = '#fffaff', Ws = '#e8e0f4', M1 = '#ffc0d8', M2 = '#c8e8ff', M3 = '#d8f8c8', Hn = '#ffe8a0', Hf = '#e0c8f0';
+    p.rect(15, 28, 3, 8, Ws); p.rect(27, 28, 3, 8, Ws);
+    p.ell(33, 22, 3, 3.5, M1); p.ell(35, 25, 2, 2.5, M2);
+    p.ell(23, 24, 10, 6, W);
+    p.ell(14, 17, 4, 6, W);
+    p.ell(11, 12, 6, 5.5, W);
+    p.ell(7, 14.5, 3.5, 2.8, '#fff0f6');
+    p.ell(15, 7, 3, 2.5, M1); p.ell(18, 10, 2.8, 2.5, M2); p.ell(18, 15, 2.6, 2.5, M3); p.ell(16, 19, 2.2, 2.2, M1);
+    p.tri(9, 7, 12, 7, 11, 1, Hn); p.set(10, 5, '#ffffff');
+    p.tri(13, 8, 16, 7, 15, 3, W);
+    bigEye(p, 8, 10, '#8a5ab0');
+    p.set(5, 15, '#c890b0'); p.set(11, 15, '#ffa8c8');
+    p.rect(12, 28, 3, 9, W); p.rect(24, 28, 3, 9, W);
+    p.rect(12, 36, 3, 1, Hf); p.rect(24, 36, 3, 1, Hf); p.rect(15, 35, 3, 1, Hf); p.rect(27, 35, 3, 1, Hf);
+  },
+  mujigae(p) {
+    const W = '#fffaff', Ws = '#e8e0f4', R = ['#ffb0c8', '#ffd8a8', '#fff0a0', '#c8f0c0', '#b8d8ff', '#d8c0ff'], Hn = '#ffd860', Hf = '#d8c0f0';
+    p.rect(16, 25, 3, 12, Ws); p.rect(30, 25, 3, 12, Ws);
+    R.forEach((c, i) => p.ell(35 + i * 0.6, 17 + i * 2.6, 2.6, 2.2, c));
+    p.ell(25, 21, 11, 6.5, W);
+    p.ell(14, 15, 4, 7, W);
+    p.ell(10, 9, 6, 5, W);
+    p.ell(5.5, 11.5, 3.5, 2.8, '#fff0f6');
+    R.forEach((c, i) => p.ell(15 + (i % 2) * 2, 4 + i * 3, 3, 2.2, c));
+    p.tri(7, 5, 10, 5, 7, -2, Hn); p.line(8, 4, 8, 1, '#fff6c8');
+    bigEye(p, 7, 7, '#7a4ab0');
+    p.set(4, 12, '#c890b0');
+    p.rect(12, 25, 3, 13, W); p.rect(26, 25, 3, 13, W);
+    p.rect(12, 37, 3, 1, Hf); p.rect(26, 37, 3, 1, Hf);
+  },
+  byeolkkum(p) {
+    const W = '#f8f6ff', Ws = '#d8d4f0', Mn = '#5a6ad8', Md = '#3a4aa8', St = '#fff6a8', Hn = '#ffe070', Wg = '#e8e4ff';
+    p.tri(18, 14, 34, 0, 32, 14, Wg); p.tri(22, 15, 38, 4, 34, 17, Wg);
+    p.line(30, 4, 22, 14, Ws); p.line(35, 7, 25, 15, Ws);
+    p.rect(17, 25, 3, 12, Ws); p.rect(31, 25, 3, 12, Ws);
+    chain(p, [[34, 20], [38, 25], [37, 32]], 2.4, Mn);
+    p.ell(26, 22, 11, 6.5, W);
+    p.ell(15, 15, 4, 7, W);
+    p.ell(10, 9, 6, 5, W);
+    p.ell(5.5, 11.5, 3.5, 2.8, '#f8f0ff');
+    chain(p, [[13, 3], [17, 8], [17, 14], [15, 20]], 2.6, Mn);
+    for (const [x, y] of [[14, 4], [17, 10], [16, 16], [37, 26], [36, 31]] as const) p.set(x, y, St);
+    p.tri(7, 5, 10, 5, 7, -2, Hn);
+    p.set(7, -1, '#ffffff'); p.ell(7, 0, 1.4, 1.4, St);
+    p.rect(6, 8, 3, 2, Md); p.set(6, 8, '#ffffff');
+    p.line(5, 7, 9, 7, Md);
+    p.rect(13, 25, 3, 13, W); p.rect(27, 25, 3, 13, W);
+    p.rect(13, 37, 3, 1, St); p.rect(27, 37, 3, 1, St);
+    for (const [x, y] of [[2, 22], [22, 3], [38, 38], [3, 33]] as const) { p.set(x, y, St); p.set(x - 1, y, St); p.set(x + 1, y, St); p.set(x, y - 1, St); p.set(x, y + 1, St); }
+  },
+
+  // ── 파스텔: 아기오리 2단 ───────────────────────────────────
+  pongduck(p) {
+    const Y = '#fff0a0', Yd = '#f0d070', Bk = '#ffb060', Bt = '#9ad0f8', Wt = '#c8ecff';
+    p.ell(20, 37, 12, 2, Wt);
+    p.rect(13, 32, 5, 5, Bt); p.rect(22, 32, 5, 5, Bt); p.rect(13, 32, 5, 1, '#c8e8ff'); p.rect(22, 32, 5, 1, '#c8e8ff');
+    p.ell(20, 25, 10, 8, Y);
+    p.ell(29, 22, 3.5, 2.5, Y);
+    p.ell(11, 25, 3, 4, Yd);
+    p.ell(18, 14, 7.5, 7, Y);
+    p.tri(17, 6, 19, 6, 18, 3, Yd); p.tri(19, 7, 21, 7, 22, 4, Yd);
+    bigEye(p, 13, 12, '#5a4a3a'); bigEye(p, 20, 12, '#5a4a3a');
+    p.ell(17, 18, 4.5, 2, Bk); p.line(13, 18, 21, 18, '#e8904a');
+    p.set(11, 16, '#ffb0b0'); p.set(24, 16, '#ffb0b0');
+    for (const [x, y] of [[5, 35], [35, 35], [7, 33]] as const) p.set(x, y, Wt);
+  },
+  ubiduck(p) {
+    const Y = '#fff0a0', Co = '#ffd860', Cd = '#e8b840', Bk = '#ffb060', Um = '#b8dcff', Ud = '#80b8e8', Bt = '#9ad0f8';
+    p.tri(24, 4, 40, 4, 32, -2, Um); p.ell(32, 4, 8, 2, Um);
+    for (const x of [26, 32, 38]) p.set(x, 5, Ud);
+    p.line(32, 5, 32, 22, '#8a6a4a'); p.line(32, 22, 30, 23, '#8a6a4a');
+    p.rect(12, 33, 5, 4, Bt); p.rect(21, 33, 5, 4, Bt);
+    p.ell(18, 26, 10, 9, Co);
+    p.rect(17, 19, 2, 14, Cd);
+    for (const y of [22, 26, 30]) p.ell(20, y, 1, 1, '#ffffff');
+    p.ell(29, 22, 3, 2.5, Co);
+    p.ell(8, 25, 3, 5, Cd);
+    p.ell(17, 13, 8, 7, Co);
+    p.ell(16, 14, 6, 5.5, Y);
+    p.rect(9, 9, 16, 2, Cd);
+    bigEye(p, 12, 12, '#5a4a3a'); bigEye(p, 18, 12, '#5a4a3a');
+    p.ell(15, 18, 4.5, 2, Bk); p.line(11, 18, 19, 18, '#e8904a');
+    for (const [x, y] of [[4, 8], [8, 3], [2, 15], [38, 12]] as const) { p.set(x, y, Ud); p.set(x, y + 1, Ud); }
+  },
+
+  // ── 파스텔: 벚꽃새 2단 ─────────────────────────────────────
+  kkotip(p) {
+    const B = '#ffd0e0', D = '#f0a0c0', L = '#fff6fa', Pt = '#ffb8d0', Kb = '#ffb060';
+    p.tri(28, 22, 37, 19, 34, 27, D);
+    p.ell(20, 24, 9, 8, B);
+    p.ell(18, 27, 5.5, 4.5, L);
+    p.ell(24, 23, 5.5, 4, D);
+    p.ell(15, 15, 6.5, 6, B);
+    p.ell(13, 8, 2.5, 3.5, Pt); p.ell(17, 7, 2.5, 3.5, Pt); p.ell(15, 9, 1, 1, '#ffe060');
+    bigEye(p, 11, 13, '#7a4a6a');
+    p.set(10, 18, '#ff90b0');
+    p.tri(6, 16, 9, 14, 9, 18, Kb);
+    p.line(18, 31, 17, 37, Kb); p.line(22, 31, 23, 37, Kb);
+    p.line(15, 37, 19, 37, Kb); p.line(21, 37, 25, 37, Kb);
+  },
+  beotkkot(p) {
+    const B = '#ffd8e8', D = '#f0a8c8', L = '#fff8fc', Pt = '#ffb0cc', Pc = '#ffe060', Kb = '#ffa860';
+    for (const [x, y] of [[26, 26], [31, 29], [35, 33], [38, 37]] as const) { p.ell(x, y, 2.4, 1.8, Pt); p.set(x, y, Pc); }
+    p.tri(14, 20, 2, 4, 20, 16, D); p.tri(22, 18, 34, 2, 28, 20, D);
+    for (const [x, y] of [[5, 7], [10, 11], [31, 5], [27, 11]] as const) { p.ell(x, y, 2, 1.6, Pt); p.set(x, y, Pc); }
+    p.ell(19, 22, 8, 6, B);
+    p.ell(17, 24.5, 5, 3, L);
+    p.ell(12, 15, 5.5, 5, B);
+    p.ell(10, 8, 2.2, 3, Pt); p.ell(14, 7, 2.2, 3, Pt); p.ell(12, 9, 1, 1, Pc);
+    p.rect(9, 13, 2, 2, '#6a3a5a'); p.set(9, 13, '#ffffff');
+    p.tri(3, 16, 7, 14, 7, 18, Kb);
+    p.line(17, 28, 16, 33, Kb); p.line(21, 28, 22, 33, Kb);
+  },
+
+  // ── 파스텔: 수국달팽이 2단 ─────────────────────────────────
+  suguk(p) {
+    const Bd = '#c8e8b0', Bdd = '#98c880', H1 = '#b8d0ff', H2 = '#d8c0f8', H3 = '#ffc8e8', Lf = '#78c068';
+    p.ell(18, 33, 15, 4.5, Bd);
+    p.ell(7, 26, 5, 6, Bd);
+    p.line(5, 21, 3, 15, Bdd); p.line(9, 21, 10, 15, Bdd);
+    p.ell(3, 14, 1.6, 1.6, Bdd); p.ell(10, 14, 1.6, 1.6, Bdd);
+    p.ell(24, 22, 11, 10, H1);
+    const flowers: [number, number, string][] = [[18, 17, H2], [24, 14, H3], [30, 18, H2], [21, 23, H3], [28, 25, H1], [33, 23, H3], [17, 27, H2], [25, 29, H2], [31, 30, H3]];
+    for (const [x, y, c] of flowers) {
+      p.ell(x, y, 2.6, 2.6, c);
+      p.set(x, y, '#ffffff');
+    }
+    p.ell(14, 13, 3, 1.6, Lf);
+    bigEye(p, 4, 24, '#4a6a3a'); bigEye(p, 8, 24, '#4a6a3a');
+    p.set(6, 29, '#4a6a3a'); p.set(7, 30, '#4a6a3a'); p.set(8, 29, '#4a6a3a');
+  },
+  jangma(p) {
+    const Bd = '#b8e0a0', Bdd = '#88b870', H1 = '#a8c4ff', H2 = '#ccb0f8', H3 = '#ffbce0', Lf = '#5ab058', Rd = '#a8e0ff';
+    p.ell(19, 34, 17, 5, Bd);
+    p.ell(6, 26, 6, 7, Bd);
+    p.line(4, 20, 1, 12, Bdd); p.line(9, 20, 11, 12, Bdd);
+    p.ell(1, 11, 1.8, 2.4, Rd); p.ell(11, 11, 1.8, 2.4, Rd); p.set(1, 10, '#ffffff'); p.set(11, 10, '#ffffff');
+    p.ell(25, 20, 14, 13, H1);
+    const fl: [number, number, string][] = [[17, 13, H2], [24, 9, H3], [31, 12, H2], [36, 18, H3], [20, 19, H3], [27, 16, H1], [33, 24, H2], [18, 26, H2], [25, 24, H3], [30, 30, H1], [22, 31, H3], [36, 30, H2], [14, 20, H1]];
+    for (const [x, y, c] of fl) { p.ell(x, y, 3, 3, c); p.set(x, y, '#ffffff'); }
+    p.ell(12, 7, 6, 2.6, Lf); p.line(12, 7, 15, 13, '#3a8a3a');
+    p.rect(3, 24, 2, 3, '#3a5a2a'); p.rect(8, 24, 2, 3, '#3a5a2a'); p.set(3, 24, '#ffffff'); p.set(8, 24, '#ffffff');
+    p.rect(5, 29, 3, 1, '#3a5a2a');
+  },
+
+  // ── 파스텔: 빙수 2단 ───────────────────────────────────────
+  bingsu(p) {
+    const Cup = '#c8e8ff', Cd = '#90c0e8', Ic = '#ffffff', Is = '#e8f0f8', Sy = '#ffb0c8', Rb = '#a8585a';
+    p.tri(8, 26, 32, 26, 26, 38, Cup); p.tri(8, 26, 14, 38, 26, 38, Cup);
+    p.rect(9, 26, 22, 2, Cd); p.rect(13, 36, 14, 2, Cd);
+    p.ell(20, 19, 12, 9, Ic);
+    p.ell(14, 14, 4, 3, Is); p.ell(26, 15, 3, 2.5, Is);
+    p.ell(20, 12, 7, 3, Sy); p.tri(14, 13, 16, 13, 15, 20, Sy); p.tri(23, 13, 25, 13, 24, 18, Sy);
+    for (const [x, y] of [[13, 21], [27, 20], [20, 24], [17, 23]] as const) p.ell(x, y, 1.2, 1, Rb);
+    bigEye(p, 14, 17, '#4a5a7a'); bigEye(p, 23, 17, '#4a5a7a');
+    p.set(19, 22, '#4a5a7a'); p.set(20, 23, '#4a5a7a'); p.set(21, 22, '#4a5a7a');
+    p.set(12, 21, '#ffa0b8'); p.set(28, 21, '#ffa0b8');
+  },
+  wangbingsu(p) {
+    const Gl = '#d8f0ff', Gd = '#a0c8e8', Ic = '#ffffff', Is = '#e8f0f8', Sb = '#ff6a8a', Mg = '#ffc860', Mc = '#f8e0e8', Rb = '#a8585a', Sp = '#c8d0e0';
+    p.ell(20, 36, 12, 2.5, Gd);
+    p.rect(17, 31, 6, 5, Gl);
+    p.ell(20, 27, 16, 5.5, Gl);
+    p.ell(20, 23, 16, 2.5, Gd);
+    p.ell(20, 16, 14, 10, Ic);
+    p.ell(13, 11, 4, 3, Is);
+    p.ell(14, 6, 3, 3, Sb); p.set(13, 5, '#ffffff'); p.tri(12, 3, 16, 3, 14, 1, '#58b048');
+    p.rect(22, 3, 5, 4, Mg); p.rect(28, 6, 4, 4, Mg); p.rect(18, 2, 3, 3, Mg);
+    p.ell(9, 13, 2.5, 2.2, Mc); p.ell(30, 13, 2.5, 2.2, Mc);
+    for (const [x, y] of [[10, 18], [28, 19], [19, 22], [24, 21]] as const) p.ell(x, y, 1.3, 1, Rb);
+    bigEye(p, 14, 14, '#4a5a7a'); bigEye(p, 23, 14, '#4a5a7a');
+    p.rect(18, 19, 4, 1, '#4a5a7a');
+    p.line(34, 30, 38, 18, Sp); p.ell(38, 17, 1.8, 2.4, Sp);
+  },
+
   // ── 특별: 산군 (흰 호랑이 정령) ────────────────────────────
   sangun(p) {
     const W = '#f6f6fa', G = '#c8ccd8', St = '#3a4a6a', Ey = '#7ae0ff', Mi = '#a8d0e8', Gd = '#ffd040';

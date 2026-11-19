@@ -54,6 +54,8 @@ export interface MapDef {
   name: string;
   indoor?: boolean;
   dark?: boolean;
+  /** Tile drawn beyond the map edge (outdoor maps default to trees). */
+  edge?: string;
   tiles: string[];
   warps: Warp[];
   npcs: NPCDef[];
@@ -602,10 +604,11 @@ const town3: MapDef = {
     '#~~~~..ff.=...,,,,...#',
     '#~~~~.....=...,,,,...#',
     '#.........=..........#',
-    '#.........=..........#',
+    '..........=..........#',
     '##########=###########',
   ],
   warps: [
+    { x: 0, y: 14, to: 'pastel', tx: 20, ty: 10, dir: 'left' },
     { x: 10, y: 15, to: 'forest', tx: 10, ty: 1, dir: 'down' },
     { x: 8, y: 3, to: 'gym2', tx: 5, ty: 10, dir: 'up' },
     { x: 4, y: 7, to: 'center3', tx: 4, ty: 6, dir: 'up' },
@@ -613,7 +616,7 @@ const town3: MapDef = {
     { x: 21, y: 8, to: 'route3', tx: 1, ty: 6, dir: 'right' },
   ],
   labels: [{ x: 5, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 13, y: 5.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 8, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
-  signs: [{ x: 17, y: 9, text: '물안개마을\n새벽마다 호수에 안개가 피어오르는 마을  ·  동쪽: 3번 도로' }],
+  signs: [{ x: 17, y: 9, text: '물안개마을\n새벽마다 호수에 안개가 피어오르는 마을\n동쪽: 3번 도로  ·  서쪽: 솜사탕언덕' }],
   encounters: { rate: 0.1, table: [['pojani', 11, 13, 25], ['jinheuk', 11, 13, 20], ['baramsae', 12, 14, 20], ['dalto', 11, 13, 18], ['kkwae', 11, 13, 17], ['mongmong', 11, 13, 12]] },
   npcs: [
     { id: 'fisher', x: 15, y: 4, dir: 'right', pal: PAL.fisher, talk: () => fisherTalk() },
@@ -968,10 +971,62 @@ const peak: MapDef = {
   ],
 };
 
+const pastel: MapDef = {
+  id: 'pastel', name: '솜사탕언덕', edge: 'g',
+  tiles: [
+    'gggggggggggggggggggggg',
+    'g;;;;;::::ff::::;;;;;g',
+    'g;;;;;::::::::::;;;;;g',
+    'g::::gg::;;;;::gg::::g',
+    'g::::gg::;;;;::gg::::g',
+    'g::f:::::::~~:::::f::g',
+    'g;;;:::::::~~::::::;;g',
+    'g;;;::ff::::::::::;;;g',
+    'g::::::::;;;;::::::::g',
+    'g::gg::::;;;;::::gg::g',
+    'g::::::::::::::::::::=',
+    'g;;;;;::ff::::;;;;;;;g',
+    'g;;;;;::::::::;;;;;;;g',
+    'gggggggggggggggggggggg',
+  ],
+  warps: [{ x: 21, y: 10, to: 'town3', tx: 1, ty: 14, dir: 'right' }],
+  signs: [],
+  encounters: {
+    rate: 0.13,
+    tiles: ';',
+    table: [['makarong', 12, 15, 16], ['kkotip', 12, 15, 16], ['pongduck', 12, 15, 14], ['suguk', 12, 15, 14], ['bingsu', 12, 15, 12], ['agiyuni', 13, 15, 8], ['monsil', 12, 14, 10], ['mongmong', 12, 14, 10]],
+  },
+  fishing: [['jelly', 12, 16, 60], ['pongduck', 12, 15, 25], ['banjjak', 12, 15, 15]],
+  npcs: [
+    {
+      id: 'patissier', x: 6, y: 10, dir: 'right', pal: { hair: '#f8f0f0', shirt: '#ffffff', pants: '#f0b8d0', hat: '#ffffff' }, sight: 4,
+      trainer: {
+        id: 'patissier', cls: '파티시에', name: '달콤', pal: { hair: '#f8f0f0', shirt: '#ffffff', pants: '#f0b8d0', hat: '#ffffff' },
+        team: [['makarong', 15], ['bingsu', 15]], reward: 520,
+        intro: '갓 구운 마카롱처럼 달콤한 승부를 보여 줄게!', defeat: '어머, 크림이 다 녹아 버렸네…',
+        after: '이 언덕의 몬스터들은 모두 파스텔빛이야. 아기유니는 정말 드물게 나타난대!',
+      },
+    },
+    {
+      id: 'pastelkid', x: 15, y: 7, dir: 'down', pal: { hair: '#c8a0e0', shirt: '#ffd8e8', pants: '#b8d8ff' }, sight: 3,
+      trainer: {
+        id: 'pastelkid', cls: '꼬마아가씨', name: '봄이', pal: { hair: '#c8a0e0', shirt: '#ffd8e8', pants: '#b8d8ff' },
+        team: [['kkotip', 14], ['pongduck', 14], ['suguk', 15]], reward: 300,
+        intro: '꽃잎새랑 퐁퐁오리랑 수국달팽이랑 놀자!', defeat: '힝, 다들 지쳐 버렸어~',
+        after: '연못에서 낚시를 하면 몽글해파리가 올라온대!',
+      },
+    },
+    { id: 'pastelcafe', x: 11, y: 3, dir: 'down', pal: { hair: '#8a5a4a', shirt: '#b8f0dc', pants: '#f0d0e0' }, move: 'look',
+      talk: '여기는 솜사탕언덕이에요. 하늘도 풀도 몬스터도 모두 파스텔빛이죠.\n물안개마을에서 서쪽으로 오면 되니까 자주 놀러 오세요!' },
+    { id: 'pastelpotion', x: 1, y: 1, dir: 'down', item: { id: 'superpotion', qty: 2 } },
+    { id: 'pastelball', x: 20, y: 12, dir: 'down', item: { id: 'superball', qty: 2 } },
+  ],
+};
+
 export const MAPS: Record<string, MapDef> = {
   home, town1, lab, route1, town2, center, shop, dojo,
   route2, forest, town3, center3, shop3, gym2,
-  route3, cave, town4, center4, shop4, gym3, peak,
+  route3, cave, town4, center4, shop4, gym3, peak, pastel,
 };
 
 // Validate map rows and warp targets in development.

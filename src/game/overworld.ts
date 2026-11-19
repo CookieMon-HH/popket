@@ -77,7 +77,7 @@ export class Overworld implements Scene {
 
   tileAt(x: number, y: number): string {
     const row = this.map.tiles[y];
-    if (!row || x < 0 || x >= row.length) return this.map.indoor ? ' ' : '#';
+    if (!row || x < 0 || x >= row.length) return this.map.edge ?? (this.map.indoor ? ' ' : '#');
     return row[x];
   }
 

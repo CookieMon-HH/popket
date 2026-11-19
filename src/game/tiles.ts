@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -147,6 +147,37 @@ function build(ch: string, anim: number): Pix {
     }
     case 'W':
       wall(p);
+      break;
+    case ':':
+      // pastel mint ground
+      p.rect(0, 0, 16, 16, '#d4f4e4');
+      for (const [x, y] of [[2, 3], [9, 1], [13, 6], [5, 10], [11, 12], [1, 14], [7, 7]]) p.set(x, y, '#b8e8d0');
+      p.set(12, 3, '#ffd8e8'); p.set(4, 13, '#e8dcff');
+      break;
+    case ';': {
+      // pastel lavender tall grass
+      p.rect(0, 0, 16, 16, '#e4d8fa');
+      let row = 0;
+      for (const by of [4, 9, 14]) {
+        for (const bx of row % 2 ? [3, 11] : [-1, 7, 15]) {
+          p.set(bx, by, '#b8a0e8');
+          p.set(bx + 1, by - 2, '#b8a0e8');
+          p.set(bx + 1, by - 1, '#ffd0e8');
+          p.set(bx + 2, by - 1, '#b8a0e8');
+          p.set(bx + 3, by, '#b8a0e8');
+        }
+        row++;
+      }
+      break;
+    }
+    case 'g':
+      // cotton-candy tree
+      p.rect(0, 0, 16, 16, '#d4f4e4');
+      p.rect(7, 12, 2, 4, '#c8a8a0');
+      p.ell(8, 7, 8, 7, '#f0a8c8');
+      p.ell(8, 6.5, 7, 6, '#ffc8e0');
+      p.ell(5, 5, 3, 2.5, '#ffe4f0');
+      p.ell(11, 9, 2.5, 2, '#e8c8ff');
       break;
     case 'C':
       caveWall(p);
