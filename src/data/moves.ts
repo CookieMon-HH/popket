@@ -130,6 +130,14 @@ const list: MoveDef[] = [
   { id: 'psybeam', name: '사이코광선', type: '에스퍼', power: 75, acc: 100, pp: 15, desc: '기묘한 빛줄기를 쏜다.' },
   { id: 'moonsign', name: '달의계시', type: '에스퍼', power: 95, acc: 90, pp: 10, desc: '보름달의 힘을 모아 내리꽂는다.' },
   { id: 'meditate', name: '명상', type: '에스퍼', power: 0, acc: 0, pp: 20, effect: { kind: 'stat', target: 'self', stat: 'atk', stages: 1 }, desc: '마음을 가라앉혀 공격을 올린다.' },
+  // 추가 기술
+  { id: 'inkspray', name: '먹물뿌리기', type: '악', power: 0, acc: 100, pp: 20, effect: { kind: 'stat', target: 'foe', stat: 'acc', stages: -1 }, desc: '먹물을 뿌려 명중률을 떨어뜨린다.' },
+  { id: 'tentacle', name: '휘감기', type: '물', power: 55, acc: 100, pp: 20, effect: { kind: 'stat', target: 'foe', stat: 'spe', stages: -1, chance: 30 }, desc: '다리로 휘감는다. 스피드를 떨어뜨릴 때가 있다.' },
+  { id: 'deulbaeji', name: '들배지기', type: '격투', power: 90, acc: 90, pp: 10, desc: '샅바를 잡고 번쩍 들어 메친다.' },
+  { id: 'steelbeam', name: '강철광선', type: '강철', power: 90, acc: 90, pp: 10, desc: '눈에서 강철빛 광선을 쏜다.' },
+  { id: 'poisontail', name: '독꼬리', type: '독', power: 70, acc: 100, pp: 15, effect: { kind: 'status', status: 'psn', chance: 30 }, desc: '독침이 달린 꼬리로 찌른다.' },
+  { id: 'hotsteam', name: '뜨거운김', type: '불', power: 55, acc: 100, pp: 20, effect: { kind: 'status', status: 'brn', chance: 20 }, desc: '모락모락 뜨거운 김을 내뿜는다.' },
+  { id: 'hoot', name: '부엉울음', type: '에스퍼', power: 0, acc: 60, pp: 15, effect: { kind: 'status', status: 'slp' }, desc: '낮은 울음소리로 잠들게 한다.' },
   // 전설
   { id: 'mountainroar', name: '산울림포효', type: '고스트', power: 90, acc: 100, pp: 10, effect: { kind: 'stat', target: 'foe', stat: 'atk', stages: -1, chance: 30 }, desc: '산 전체를 울리는 포효. 상대의 공격을 떨어뜨릴 때가 있다.' },
   { id: 'galaxy', name: '은하파동', type: '물', power: 110, acc: 90, pp: 5, desc: '별빛을 머금은 파도를 일으킨다.' },

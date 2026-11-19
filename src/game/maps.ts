@@ -6,7 +6,7 @@ import { healParty, setLastHeal, world } from './api';
 import { shopMenu } from './menus';
 import {
   PAL, momTalk, labProfessor, rivalLabTalk, chapter2Scene, leader1Win, grannyTalk, forestAdminWin,
-  rival2Scene, fisherTalk, leader2Win, bossScene, whaleTalk, rival3Scene, leader3Win, minerTalk, sanjiTalk,
+  rival2Scene, fisherTalk, leader2Win, bossScene, whaleTalk, rival3Scene, leader3Win, minerTalk, sanjiTalk, potatoTalk,
 } from './story';
 
 export interface Warp {
@@ -375,6 +375,7 @@ const town2: MapDef = {
       id: 't2old', x: 5, y: 12, dir: 'right', pal: PAL.oldman,
       talk: '수련관 관장 단단은 바위처럼 흔들림이 없지.\n관장의 바위갑옷은 방어가 아주 높다네. 꾹 버텨야 해!',
     },
+    { id: 't2potato', x: 17, y: 11, dir: 'left', pal: PAL.hiker, talk: () => potatoTalk() },
     { id: 'rival_t2', x: 9, y: 6, dir: 'left', pal: PAL.rival, hidden: () => !f('badge1') || f('ch2') },
   ],
   triggers: [
@@ -485,7 +486,7 @@ const route2: MapDef = {
   signs: [{ x: 8, y: 25, text: '2번 도로\n북쪽: 속삭임숲   남쪽: 들꽃마을' }],
   encounters: {
     rate: 0.12,
-    table: [['tosil', 7, 9, 18], ['jjaek', 7, 9, 16], ['pojani', 7, 9, 22], ['jinheuk', 7, 9, 16], ['ddakkum', 7, 9, 16], ['kkomul', 6, 8, 5], ['doldol', 8, 9, 4], ['kkaeng', 7, 9, 8], ['monsil', 7, 9, 5], ['dalto', 8, 9, 4]],
+    table: [['tosil', 7, 9, 18], ['jjaek', 7, 9, 16], ['pojani', 7, 9, 22], ['jinheuk', 7, 9, 16], ['ddakkum', 7, 9, 16], ['kkomul', 6, 8, 5], ['doldol', 8, 9, 4], ['kkaeng', 7, 9, 8], ['monsil', 7, 9, 5], ['dalto', 8, 9, 4], ['mongmong', 7, 9, 5], ['agigom', 8, 9, 4]],
   },
   npcs: [
     {
@@ -553,7 +554,7 @@ const forest: MapDef = {
   ],
   encounters: {
     rate: 0.13,
-    table: [['pojani', 10, 12, 22], ['dokbul', 10, 12, 12], ['soejip', 10, 12, 12], ['kkwae', 10, 12, 12], ['kkomul', 9, 11, 8], ['dandan', 10, 11, 6], ['ddakkum', 10, 12, 10], ['baramsae', 12, 13, 8], ['naphul', 12, 13, 4], ['beoseot', 13, 14, 6]],
+    table: [['pojani', 10, 12, 22], ['dokbul', 10, 12, 12], ['soejip', 10, 12, 12], ['kkwae', 10, 12, 12], ['kkomul', 9, 11, 8], ['dandan', 10, 11, 6], ['ddakkum', 10, 12, 10], ['baramsae', 12, 13, 8], ['naphul', 12, 13, 4], ['beoseot', 13, 14, 6], ['bueong', 10, 12, 10], ['agigom', 11, 12, 5]],
   },
   npcs: [
     { id: 'granny', x: 5, y: 21, dir: 'down', pal: PAL.granny, talk: () => grannyTalk() },
@@ -613,7 +614,7 @@ const town3: MapDef = {
   ],
   labels: [{ x: 5, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 13, y: 5.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 8, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
   signs: [{ x: 17, y: 9, text: '물안개마을\n새벽마다 호수에 안개가 피어오르는 마을  ·  동쪽: 3번 도로' }],
-  encounters: { rate: 0.1, table: [['pojani', 11, 13, 25], ['jinheuk', 11, 13, 20], ['baramsae', 12, 14, 20], ['dalto', 11, 13, 18], ['kkwae', 11, 13, 17]] },
+  encounters: { rate: 0.1, table: [['pojani', 11, 13, 25], ['jinheuk', 11, 13, 20], ['baramsae', 12, 14, 20], ['dalto', 11, 13, 18], ['kkwae', 11, 13, 17], ['mongmong', 11, 13, 12]] },
   npcs: [
     { id: 'fisher', x: 15, y: 4, dir: 'right', pal: PAL.fisher, talk: () => fisherTalk() },
     {
@@ -656,7 +657,7 @@ const gym2: MapDef = {
     { x: 5, y: 11, to: 'town3', tx: 8, ty: 4, dir: 'down' },
     { x: 6, y: 11, to: 'town3', tx: 8, ty: 4, dir: 'down' },
   ],
-  fishing: [['banjjak', 12, 16, 85], ['eungeo', 20, 21, 15]],
+  fishing: [['banjjak', 12, 16, 65], ['munu', 12, 15, 25], ['eungeo', 20, 21, 10]],
   npcs: [
     {
       id: 'swimA', x: 1, y: 6, dir: 'right', pal: PAL.swimmer, sight: 3,
@@ -668,7 +669,7 @@ const gym2: MapDef = {
     {
       id: 'swimB', x: 3, y: 2, dir: 'right', pal: PAL.swimmer, sight: 3,
       trainer: {
-        id: 'swimB', cls: '수영선수', name: '여울', pal: PAL.swimmer, team: [['banjjak', 16], ['banjjak', 16]], reward: 640,
+        id: 'swimB', cls: '수영선수', name: '여울', pal: PAL.swimmer, team: [['banjjak', 16], ['munu', 16]], reward: 640,
         intro: '관장님께 가려면 나를 넘어가야 해!', defeat: '파도에 휩쓸렸어…', after: '관장님의 은빛잉어는 정말 아름다워!',
       },
     },
@@ -716,23 +717,23 @@ const route3: MapDef = {
   signs: [{ x: 19, y: 9, text: '3번 도로\n동쪽: 별빛동굴  서쪽: 물안개마을  북쪽: 운무봉' }],
   encounters: {
     rate: 0.13,
-    table: [['jinheuk', 14, 17, 15], ['ddakkum', 14, 17, 13], ['baramsae', 15, 17, 12], ['beoseot', 15, 17, 10], ['jjirit', 14, 16, 10], ['tongsil', 15, 17, 9], ['kkaeng', 15, 16, 10], ['dalto', 14, 16, 9], ['kkwae', 15, 17, 6], ['beonjjeok', 16, 17, 4], ['soejip', 15, 17, 2]],
+    table: [['jinheuk', 14, 17, 15], ['ddakkum', 14, 17, 13], ['baramsae', 15, 17, 12], ['beoseot', 15, 17, 10], ['jjirit', 14, 16, 10], ['tongsil', 15, 17, 9], ['kkaeng', 15, 16, 10], ['dalto', 14, 16, 9], ['kkwae', 15, 17, 6], ['beonjjeok', 16, 17, 4], ['soejip', 15, 17, 2], ['agigom', 15, 17, 7], ['ggorichim', 15, 17, 7], ['ggangtong', 14, 16, 5]],
   },
-  fishing: [['banjjak', 14, 20, 75], ['eungeo', 20, 23, 25]],
+  fishing: [['banjjak', 14, 20, 55], ['munu', 15, 18, 25], ['eungeo', 20, 23, 15], ['meokmul', 19, 21, 5]],
   npcs: [
-    grunt('r3grunt', 12, 4, 'down', 2, [['jinheuk', 16], ['baramsae', 16]],
+    grunt('r3grunt', 12, 4, 'down', 2, [['ggorichim', 16], ['baramsae', 16]],
       '동굴 쪽으로는 못 간다! 두목님의 중요한 작전 중이다!', '두, 두목님께 알려야 해!', '두목 흑영 님은 동굴 지하 호수에 계신다… 아, 말해 버렸다.'),
     {
       id: 'r3hiker', x: 20, y: 8, dir: 'up', pal: PAL.hiker, sight: 2,
       trainer: {
-        id: 'dongsu', cls: '등산가', name: '동수', pal: PAL.hiker, team: [['doldol', 16], ['jinheuk', 17]], reward: 700,
+        id: 'dongsu', cls: '등산가', name: '동수', pal: PAL.hiker, team: [['agigom', 16], ['doldol', 16], ['jinheuk', 17]], reward: 700,
         intro: '별빛동굴에 가려고? 그럼 나부터 넘어 봐라!', defeat: '허허, 제법인걸.', after: '동굴 안은 어두우니 발밑을 조심하게.',
       },
     },
     {
       id: 'r3girl', x: 6, y: 9, dir: 'up', pal: PAL.picnic, sight: 3,
       trainer: {
-        id: 'nari', cls: '소풍소녀', name: '나리', pal: PAL.picnic, team: [['ddakkum', 15], ['pojani', 16]], reward: 480,
+        id: 'nari', cls: '소풍소녀', name: '나리', pal: PAL.picnic, team: [['mongmong', 15], ['ddakkum', 15], ['pojani', 16]], reward: 480,
         intro: '도시락 먹기 전에 한판 어때?', defeat: '배고파서 졌다…', after: '동쪽 동굴을 지나면 별빛시가 나와. 엄청 큰 도시래!',
       },
     },
@@ -773,11 +774,11 @@ const cave: MapDef = {
   encounters: {
     rate: 0.1,
     tiles: '_',
-    table: [['doldol', 17, 19, 20], ['jinheuk', 17, 19, 17], ['dokbul', 17, 19, 15], ['agipeng', 17, 19, 13], ['heukjang', 18, 20, 9], ['jjirit', 17, 19, 9], ['bawi', 19, 20, 5], ['beoseot', 18, 19, 5], ['dokkae', 19, 20, 4], ['kkomaryong', 18, 19, 3]],
+    table: [['doldol', 17, 19, 20], ['jinheuk', 17, 19, 17], ['dokbul', 17, 19, 15], ['agipeng', 17, 19, 13], ['heukjang', 18, 20, 9], ['jjirit', 17, 19, 9], ['bawi', 19, 20, 5], ['beoseot', 18, 19, 5], ['dokkae', 19, 20, 4], ['kkomaryong', 18, 19, 3], ['ggangtong', 17, 19, 8], ['ggorichim', 17, 19, 6], ['nunnyang', 17, 19, 7]],
   },
-  fishing: [['banjjak', 18, 22, 60], ['eungeo', 21, 24, 40]],
+  fishing: [['banjjak', 18, 22, 40], ['eungeo', 21, 24, 30], ['munu', 18, 20, 15], ['meokmul', 21, 23, 15]],
   npcs: [
-    grunt('cgrunt1', 7, 16, 'down', 1, [['doldol', 18], ['jinheuk', 18]],
+    grunt('cgrunt1', 7, 16, 'down', 1, [['ggorichim', 18], ['meokmul', 18]],
       '침입자다! 여기서 끝장내 주마!', '으악!', '이 동굴의 별빛결정은 전부 두목님 거다.'),
     grunt('cgrunt2', 9, 8, 'down', 1, [['beoseot', 19], ['dokbul', 19]],
       '두목님의 의식을 방해하게 둘 순 없지!', '크윽…', '의식이 끝나면 은하고래가 우리 편이 될 거다…'),
@@ -884,7 +885,7 @@ const gym3: MapDef = {
     {
       id: 'eng1', x: 1, y: 8, dir: 'right', pal: PAL.engineer, sight: 7,
       trainer: {
-        id: 'eng1', cls: '기술자', name: '건우', pal: PAL.engineer, team: [['ddakkum', 23], ['jjirit', 23], ['beonjjeok', 24]], reward: 900,
+        id: 'eng1', cls: '기술자', name: '건우', pal: PAL.engineer, team: [['ggangtong', 23], ['jjirit', 23], ['cheolgap', 24]], reward: 900,
         intro: '찌릿찌릿! 전압 검사 시작이다!', defeat: '퓨즈가 나갔다…', after: '기계들 사이로 길을 찾아 올라가 봐.',
       },
     },
@@ -943,9 +944,9 @@ const peak: MapDef = {
   signs: [],
   encounters: {
     rate: 0.13,
-    table: [['baramsae', 27, 30, 14], ['hoeori', 29, 31, 8], ['bawi', 28, 31, 12], ['heukjang', 28, 30, 12], ['dokkae', 28, 31, 10], ['jeolgu', 27, 30, 10], ['eolpeng', 28, 30, 9], ['kwontu', 28, 30, 9], ['beonjjeok', 28, 30, 8], ['nalgae', 28, 30, 4], ['monggeul', 27, 29, 4]],
+    table: [['baramsae', 27, 30, 14], ['hoeori', 29, 31, 8], ['bawi', 28, 31, 12], ['heukjang', 28, 30, 12], ['dokkae', 28, 31, 10], ['jeolgu', 27, 30, 10], ['eolpeng', 28, 30, 9], ['kwontu', 28, 30, 9], ['beonjjeok', 28, 30, 8], ['nalgae', 28, 30, 4], ['monggeul', 27, 29, 4], ['seolpyo', 28, 30, 6], ['satba', 28, 30, 6], ['cheolgap', 27, 30, 5], ['olppaemi', 28, 30, 5], ['dokjeongal', 28, 30, 5], ['wangmong', 27, 29, 3]],
   },
-  fishing: [['banjjak', 25, 30, 60], ['eungeo', 28, 32, 40]],
+  fishing: [['banjjak', 25, 30, 40], ['eungeo', 28, 32, 30], ['meokmul', 27, 31, 20], ['daewang', 34, 36, 10]],
   npcs: [
     {
       id: 'monk1', x: 2, y: 10, dir: 'right', pal: PAL.pupil, sight: 4,

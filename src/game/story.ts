@@ -440,6 +440,21 @@ export async function shrineTalk() {
   await say('산군은 안개 속으로 모습을 감췄다…\n방울은 아직 서낭당에 걸려 있다. 다시 울리면 돌아올 것 같다.');
 }
 
+export async function potatoTalk() {
+  if (game.flags.gotGungo) {
+    await say('군고구마 아저씨: 군고미는 잘 지내나?\n추운 날엔 군고미 옆에 꼭 붙어 있으라고!');
+    return;
+  }
+  if (!game.flags.badge1) {
+    await say('군고구마 아저씨: 군고구마 사세요~ 따끈따끈 군고구마!\n…어라, 드럼통 속에서 뭔가 꼼지락거리는데?');
+    return;
+  }
+  await say('군고구마 아저씨: 이봐, 트레이너! 글쎄 군고구마 하나가\n눈을 뜨고 꼼지락거리지 뭔가. 몬스터였어!');
+  await say('군고구마 아저씨: 수련관 배지를 가진 자네라면 잘 키워 주겠지.\n데려가 주게!');
+  await giveMon('gungo', 10);
+  game.flags.gotGungo = true;
+}
+
 export function npcById(id: string): NPC | undefined {
   return world.npcs.find((n) => n.def.id === id);
 }

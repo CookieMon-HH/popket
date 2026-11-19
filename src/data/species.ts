@@ -47,6 +47,14 @@ const DALTO: L = [[1, 'tackle'], [1, 'telekinesis'], [6, 'growl'], [10, 'meditat
 const PIRA: L = [[1, 'splash'], [1, 'tackle'], [5, 'bubble'], [10, 'dash'], [15, 'wave'], [20, 'bite'], [24, 'focus'], [30, 'tide']];
 const PENG: L = [[1, 'peck'], [1, 'frostbreath'], [6, 'splash'], [11, 'curl'], [16, 'icefang'], [22, 'wave'], [28, 'avalanche']];
 const RYONG: L = [[1, 'scratch'], [1, 'growl'], [6, 'dragonbreath'], [12, 'dash'], [18, 'wingcut'], [25, 'dragontail'], [32, 'focus'], [40, 'skyfury']];
+const GUNGO: L = [[1, 'tackle'], [1, 'growl'], [5, 'ember'], [9, 'curl'], [13, 'hotsteam'], [18, 'press'], [24, 'ironwall'], [28, 'firestorm'], [34, 'steelbeam']];
+const MUNU: L = [[1, 'splash'], [1, 'inkspray'], [6, 'bubble'], [11, 'tentacle'], [16, 'bite'], [22, 'wave'], [28, 'nightveil'], [34, 'tide'], [40, 'bigwave']];
+const GOM: L = [[1, 'tackle'], [1, 'growl'], [6, 'jab'], [10, 'focus'], [15, 'bite'], [20, 'straight'], [27, 'press'], [33, 'deulbaeji'], [40, 'upper']];
+const TONG: L = [[1, 'tackle'], [1, 'ironwall'], [6, 'zap'], [10, 'ironclaw'], [15, 'paralyze'], [21, 'bolt'], [27, 'steelbeam'], [34, 'thunder']];
+const NYANG: L = [[1, 'scratch'], [1, 'frostbreath'], [6, 'dash'], [11, 'bite'], [17, 'icefang'], [23, 'focus'], [29, 'avalanche']];
+const MONG: L = [[1, 'tackle'], [1, 'twinkle'], [5, 'growl'], [10, 'bite'], [15, 'dreamsong'], [20, 'moondust'], [27, 'fullcharge']];
+const CHIM: L = [[1, 'scratch'], [1, 'sting'], [6, 'glare'], [11, 'toxshot'], [17, 'poisontail'], [23, 'quake'], [29, 'toxblast']];
+const BUEONG: L = [[1, 'peck'], [1, 'hoot'], [6, 'telekinesis'], [11, 'gust'], [16, 'psybeam'], [22, 'wingcut'], [28, 'moonsign']];
 const SANGUN: L = [[1, 'rockdrop'], [1, 'soulwave'], [30, 'focus'], [35, 'mountainroar'], [38, 'rockstorm']];
 const EUNHA: L = [[1, 'wave'], [1, 'gust'], [20, 'breathe'], [25, 'tide'], [30, 'galaxy'], [35, 'storm']];
 
@@ -117,6 +125,26 @@ const list: Def[] = [
   s('kkomaryong', '꼬마룡', ['드래곤'], [46, 58, 48, 52], 45, 70, RYONG, '아기용', '알껍데기를 바지처럼 입고 다니는 아기 용. 작은 날개로는 아직 날지 못한다.', [25, 'nalgae']),
   s('nalgae', '날개룡', ['드래곤'], [70, 86, 70, 76], 45, 150, RYONG, '날개용', '단단한 비늘과 넓은 날개가 자랐다. 하늘을 나는 연습을 하다 산을 들이받기도 한다.', [40, 'cheonryong']),
   s('cheonryong', '천룡', ['드래곤', '비행'], [100, 124, 92, 92], 45, 270, RYONG, '천룡', '구름 사이를 헤엄치는 용. 여의주를 쥐고 있으며, 천룡이 나는 날에는 단비가 내린다.'),
+  // 추가 몬스터
+  s('gungo', '군고미', ['불'], [52, 54, 58, 36], 120, 64, GUNGO, '군고구마', '겨울 길거리에서 태어난 군고구마 몬스터. 갈라진 껍질 틈으로 달콤한 김이 모락모락 난다.', [24, 'jangjak']),
+  s('jangjak', '장작고미', ['불', '강철'], [88, 90, 104, 50], 60, 170, GUNGO, '드럼통화로', '드럼통 화로에 들어앉은 군고미. 추운 날이면 사람들이 모여들어 손을 녹인다.'),
+  s('munu', '꼬마문어', ['물'], [46, 50, 46, 56], 190, 58, MUNU, '꼬마문어', '동글동글한 머리에 짧은 다리 네 개. 놀라면 먹물을 찍 뿌리고 도망친다.', [18, 'meokmul']),
+  s('meokmul', '먹물문어', ['물', '악'], [70, 80, 64, 72], 90, 140, MUNU, '먹물문어', '먹물로 바다에 그림을 그리며 논다. 장난을 들키면 먹물 속으로 쏙 숨는다.', [34, 'daewang']),
+  s('daewang', '대왕문어', ['물', '악'], [100, 108, 88, 74], 45, 230, MUNU, '대왕문어', '배 한 척을 다리 여덟 개로 들어 올린다. 선장 모자처럼 생긴 머리 지느러미가 자랑이다.'),
+  s('agigom', '아기곰돌', ['격투'], [58, 64, 50, 40], 150, 64, GOM, '아기곰', '씨름 흉내를 내며 나무를 밀어 댄다. 아직은 나무가 이긴다.', [18, 'satba']),
+  s('satba', '샅바곰', ['격투'], [84, 92, 72, 54], 80, 150, GOM, '씨름곰', '허리에 흰 샅바를 두른 곰. 마을 씨름판에 나타나 모래판을 휩쓴다.', [36, 'jangsa']),
+  s('jangsa', '장사곰', ['격투', '땅'], [112, 124, 96, 58], 45, 240, GOM, '천하장사', '금빛 샅바를 두른 천하장사. 한 번 들배지기를 하면 산도 들썩인다고 한다.'),
+  s('ggangtong', '깡통이', ['강철'], [44, 48, 64, 46], 160, 62, TONG, '깡통로봇', '버려진 깡통에 전기가 깃들어 움직이기 시작했다. 바퀴 하나로 데굴데굴 굴러다닌다.', [16, 'cheolgap']),
+  s('cheolgap', '철갑봇', ['강철'], [66, 80, 96, 58], 80, 145, TONG, '철갑로봇', '두 팔이 생겨 무거운 짐을 척척 나른다. 눈의 바이저가 깜빡이면 기분이 좋다는 뜻이다.', [32, 'geosin']),
+  s('geosin', '거신봇', ['강철', '전기'], [92, 112, 124, 66], 45, 236, TONG, '거신로봇', '가슴의 번개 엔진이 돌면 하늘로 날아오른다. 아이들의 영웅이다.'),
+  s('nunnyang', '눈냥이', ['얼음'], [44, 54, 42, 72], 160, 60, NYANG, '아기눈고양이', '꼬리 끝에 눈송이가 달린 아기 고양이. 눈 위를 뛰어다녀도 발자국이 남지 않는다.', [26, 'seolpyo']),
+  s('seolpyo', '설표', ['얼음'], [80, 104, 70, 112], 60, 172, NYANG, '설표', '눈 덮인 산을 소리 없이 달린다. 얼음 결정 같은 꼬리로 눈보라를 일으킨다.'),
+  s('mongmong', '몽몽이', ['페어리'], [56, 50, 50, 56], 180, 60, MONG, '솜뭉치강아지', '털이 솜뭉치처럼 둥근 강아지. 리본을 매 주면 하루 종일 꼬리를 흔든다.', [22, 'wangmong']),
+  s('wangmong', '왕몽이', ['페어리'], [96, 88, 82, 80], 60, 168, MONG, '왕관강아지', '머리털이 왕관처럼 솟았다. 하트 목걸이가 반짝이면 친구를 지키려는 신호다.'),
+  s('ggorichim', '꼬리침', ['독'], [44, 56, 56, 48], 160, 60, CHIM, '꼬마전갈', '말린 꼬리 끝의 독침을 자랑스럽게 치켜든다. 겁이 많아서 금방 숨어 버린다.', [24, 'dokjeongal']),
+  s('dokjeongal', '독전갈', ['독', '땅'], [76, 98, 100, 66], 60, 168, CHIM, '독전갈', '커다란 집게로 바위를 부수고, 꼬리의 독침으로 모래 폭풍 속 먹잇감을 노린다.'),
+  s('bueong', '부엉꼬마', ['비행', '에스퍼'], [52, 44, 46, 56], 170, 58, BUEONG, '아기부엉이', '밤이 되면 동그란 눈이 빛난다. 고개를 한 바퀴 돌리며 주위를 살핀다.', [22, 'olppaemi']),
+  s('olppaemi', '달빛올빼미', ['비행', '에스퍼'], [84, 80, 72, 96], 60, 168, BUEONG, '달빛올빼미', '가슴의 초승달 무늬로 달빛을 모은다. 달빛올빼미가 우는 밤엔 좋은 꿈을 꾼다고 한다.'),
   // 특별한 몬스터
   s('sangun', '산군', ['바위', '고스트'], [100, 118, 92, 110], 20, 250, SANGUN, '산신령', '운무봉을 지키는 흰 호랑이의 정령. 숲·물·바위의 세 방울 소리를 들으면 서낭당으로 내려온다고 전해진다.', undefined, { special: true }),
   s('eunha', '은하고래', ['물', '비행'], [120, 110, 100, 90], 25, 260, EUNHA, '은하', '별빛동굴 지하 호수에 잠든 전설의 몬스터. 깨어나면 밤하늘을 헤엄치며 별을 뿌린다고 전해진다.', undefined, { legend: true }),
@@ -134,7 +162,10 @@ const ORDER = [
   'doldol', 'bawi', 'geoam', 'jinheuk', 'heukjang', 'daeji', 'kkaeng', 'kwontu',
   'pojani', 'beoseot', 'beoseotking', 'soejip', 'gangjip', 'kkwae', 'dodug',
   'dokbul', 'dokkae', 'dokdae', 'dalto', 'jeolgu', 'wolgung',
-  'banjjak', 'eungeo', 'agipeng', 'eolpeng', 'kkomaryong', 'nalgae', 'cheonryong',
+  'banjjak', 'eungeo', 'munu', 'meokmul', 'daewang', 'agipeng', 'eolpeng', 'nunnyang', 'seolpyo',
+  'gungo', 'jangjak', 'agigom', 'satba', 'jangsa', 'ggangtong', 'cheolgap', 'geosin',
+  'mongmong', 'wangmong', 'ggorichim', 'dokjeongal', 'bueong', 'olppaemi',
+  'kkomaryong', 'nalgae', 'cheonryong',
   'sangun', 'eunha',
 ];
 const byId = Object.fromEntries(list.map((d) => [d.id, d]));

@@ -139,8 +139,9 @@ export async function giveMon(species: string, level: number) {
 }
 
 const DEFAULT_FISH: [string, number, number, number][] = [
-  ['banjjak', 6, 14, 92],
-  ['eungeo', 18, 20, 8],
+  ['banjjak', 6, 14, 75],
+  ['munu', 6, 12, 20],
+  ['eungeo', 18, 20, 5],
 ];
 
 async function fish() {
