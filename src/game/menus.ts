@@ -48,10 +48,10 @@ export class PartyView extends Widget<number> {
       ctx.lineWidth = sel ? 2 : 1;
       ctx.strokeStyle = sel ? '#e0605a' : '#9aabcc';
       ctx.stroke();
-      drawSprite(ctx, monSprite(m.species), 6, y - 6, 32, 32);
-      text(ctx, monName(m), 42, y + 2, { size: 10 });
-      text(ctx, `Lv${m.level}`, 42, y + 13, { size: 8 });
-      statusTag(ctx, m, 72, y + 12);
+      drawSprite(ctx, monSprite(m.species), 3, y - 11, 40, 40);
+      text(ctx, monName(m), 46, y + 2, { size: 10 });
+      text(ctx, `Lv${m.level}`, 46, y + 13, { size: 8 });
+      statusTag(ctx, m, 76, y + 12);
       const mh = maxHp(m);
       text(ctx, 'HP', 132, y + 3, { size: 8, color: '#e0605a', shadow: false });
       hpBar(ctx, 146, y + 6, 100, m.hp / mh);
@@ -133,7 +133,7 @@ export class SummaryView extends Widget<void> {
     ctx.ellipse(44, 84, 34, 8, 0, 0, Math.PI * 2);
     ctx.fillStyle = '#dccfa8';
     ctx.fill();
-    drawSprite(ctx, monSprite(m.species), 8, 18, 72, 72);
+    drawSprite(ctx, monSprite(m.species), 4, 12, 80, 80);
     let x = 8;
     for (const t of sp.types) x += typeChip(ctx, t, TYPE_COLOR[t], x, 96) + 3;
     statusTag(ctx, m, x + 2, 96);
@@ -313,21 +313,21 @@ export class DexView extends Widget<void> {
     const caught = game.caught.includes(sp.id);
     box(ctx, 120, 26, 132, 162);
     ctx.fillStyle = '#e8f0f8';
-    ctx.fillRect(126, 32, 120, 72);
+    ctx.fillRect(126, 32, 120, 82);
     if (seen) {
       const spr = monSprite(sp.id);
-      drawSprite(ctx, caught ? spr : silhouette(spr, '#4a5068'), 150, 36, 64, 64);
-      text(ctx, sp.name, 128, 108);
-      text(ctx, `${sp.kind} 몬스터`, 246, 110, { size: 8, align: 'right' });
+      drawSprite(ctx, caught ? spr : silhouette(spr, '#4a5068'), 146, 33, 80, 80);
+      text(ctx, sp.name, 128, 117);
+      text(ctx, `${sp.kind} 몬스터`, 246, 119, { size: 8, align: 'right' });
     } else {
       text(ctx, '?', 186, 52, { size: 30, align: 'center', color: '#9aa4c0', shadow: false });
     }
     if (caught) {
       let x = 128;
-      for (const t of sp.types) x += typeChip(ctx, t, TYPE_COLOR[t], x, 124) + 3;
-      wrap(sp.desc, 118, 8).slice(0, 4).forEach((l, i) => text(ctx, l, 128, 140 + i * 11, { size: 8 }));
+      for (const t of sp.types) x += typeChip(ctx, t, TYPE_COLOR[t], x, 132) + 3;
+      wrap(sp.desc, 118, 8).slice(0, 3).forEach((l, i) => text(ctx, l, 128, 147 + i * 11, { size: 8 }));
     } else if (seen) {
-      text(ctx, '아직 잡지 못했다.', 128, 128, { size: 9 });
+      text(ctx, '아직 잡지 못했다.', 128, 134, { size: 9 });
     }
   }
 }
@@ -431,24 +431,24 @@ export class StarterView extends Widget<number> {
   draw(ctx: Ctx) {
     ctx.fillStyle = 'rgba(20,24,40,0.55)';
     ctx.fillRect(0, 0, W, H);
-    box(ctx, 8, 10, W - 16, 128);
-    text(ctx, '함께 모험할 몬스터를 골라 주세요', W / 2, 18, { align: 'center' });
+    box(ctx, 6, 4, W - 12, 136);
+    text(ctx, '함께 모험할 몬스터를 골라 주세요', W / 2, 11, { align: 'center' });
     this.ids.forEach((id, i) => {
       const sp = SPECIES[id];
       const cx = 48 + i * 80;
       const sel = i === this.idx;
       ctx.beginPath();
-      ctx.roundRect(cx - 34, 36, 68, 94, 6);
+      ctx.roundRect(cx - 38, 26, 76, 108, 6);
       ctx.fillStyle = sel ? '#fff4d8' : '#eef2fa';
       ctx.fill();
       ctx.lineWidth = sel ? 2 : 1;
       ctx.strokeStyle = sel ? '#e0605a' : '#b0bcd8';
       ctx.stroke();
       const bob = sel ? Math.round(Math.sin(performance.now() / 160) * 2) : 0;
-      drawSprite(ctx, monSprite(id), cx - 28, 40 + bob, 56, 56);
-      text(ctx, sp.name, cx, 98, { align: 'center', size: 10 });
+      drawSprite(ctx, monSprite(id), cx - 40, 24 + bob, 80, 80);
+      text(ctx, sp.name, cx, 104, { align: 'center', size: 10 });
       const t = sp.types[0];
-      typeChip(ctx, t, TYPE_COLOR[t], cx - 10, 114);
+      typeChip(ctx, t, TYPE_COLOR[t], cx - 10, 119);
     });
   }
 }

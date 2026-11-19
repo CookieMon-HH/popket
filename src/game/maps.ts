@@ -92,9 +92,9 @@ function makeCenter(id: string, name: string, town: string, tx: number, ty: numb
       'qvuuuummvq',
       'qnnnnnnnnq',
       'quuuuuuuuq',
-      'qsuuuuuuPq',
-      'qsuuuuuuvq',
+      'qssuuuuuPq',
       'quuuuuuuuq',
+      'qyuuuuuuyq',
       'qqqqeeqqqq',
     ],
     warps: [
@@ -281,7 +281,7 @@ const route1: MapDef = {
   signs: [{ x: 7, y: 22, text: '1번 도로\n북쪽: 들꽃마을   남쪽: 솔빛마을' }],
   encounters: {
     rate: 0.12,
-    table: [['tosil', 2, 4, 33], ['jjaek', 2, 4, 28], ['kkomul', 2, 4, 24], ['ddakkum', 3, 4, 7], ['jjirit', 3, 5, 5], ['doldol', 3, 5, 3]],
+    table: [['tosil', 2, 4, 30], ['jjaek', 2, 4, 26], ['kkomul', 2, 4, 22], ['monsil', 3, 4, 7], ['ddakkum', 3, 4, 7], ['jjirit', 3, 5, 5], ['doldol', 3, 5, 3]],
   },
   npcs: [
     {
@@ -485,7 +485,7 @@ const route2: MapDef = {
   signs: [{ x: 8, y: 25, text: '2번 도로\n북쪽: 속삭임숲   남쪽: 들꽃마을' }],
   encounters: {
     rate: 0.12,
-    table: [['tosil', 7, 9, 18], ['jjaek', 7, 9, 16], ['pojani', 7, 9, 22], ['jinheuk', 7, 9, 16], ['ddakkum', 7, 9, 16], ['kkomul', 6, 8, 7], ['doldol', 8, 9, 5]],
+    table: [['tosil', 7, 9, 18], ['jjaek', 7, 9, 16], ['pojani', 7, 9, 22], ['jinheuk', 7, 9, 16], ['ddakkum', 7, 9, 16], ['kkomul', 6, 8, 5], ['doldol', 8, 9, 4], ['kkaeng', 7, 9, 8], ['monsil', 7, 9, 5], ['dalto', 8, 9, 4]],
   },
   npcs: [
     {
@@ -498,7 +498,7 @@ const route2: MapDef = {
     {
       id: 'r2sua', x: 14, y: 9, dir: 'left', pal: PAL.lady, sight: 5,
       trainer: {
-        id: 'sua', cls: '아가씨', name: '수아', pal: PAL.lady, team: [['ddakkum', 10], ['pojani', 10]], reward: 340,
+        id: 'sua', cls: '아가씨', name: '수아', pal: PAL.lady, team: [['ddakkum', 10], ['monsil', 10]], reward: 340,
         intro: '어머, 마침 심심했는데 잘됐다!', defeat: '어머머, 강하시네요.', after: '따끔이를 쓰다듬으면 따끔하지만 정말 귀여워요.',
       },
     },
@@ -507,7 +507,7 @@ const route2: MapDef = {
     {
       id: 'r2junho', x: 5, y: 20, dir: 'right', pal: PAL.kid, sight: 4,
       trainer: {
-        id: 'junho', cls: '꼬마', name: '준호', pal: PAL.kid, team: [['jinheuk', 8], ['tosil', 9]], reward: 200,
+        id: 'junho', cls: '꼬마', name: '준호', pal: PAL.kid, team: [['jinheuk', 8], ['kkaeng', 9]], reward: 200,
         intro: '진흙 놀이 하다가 잡은 내 몬스터 볼래?', defeat: '으앙, 옷만 버렸어!', after: '진흙이는 전기 기술을 맞아도 끄떡없어!',
       },
     },
@@ -553,7 +553,7 @@ const forest: MapDef = {
   ],
   encounters: {
     rate: 0.13,
-    table: [['pojani', 10, 12, 26], ['taldol', 10, 12, 14], ['kkomul', 9, 11, 10], ['dandan', 10, 11, 8], ['naphul', 12, 13, 5], ['ddakkum', 10, 12, 14], ['baramsae', 12, 13, 10], ['jjaek', 10, 11, 8], ['beoseot', 13, 14, 5]],
+    table: [['pojani', 10, 12, 22], ['dokbul', 10, 12, 12], ['soejip', 10, 12, 12], ['kkwae', 10, 12, 12], ['kkomul', 9, 11, 8], ['dandan', 10, 11, 6], ['ddakkum', 10, 12, 10], ['baramsae', 12, 13, 8], ['naphul', 12, 13, 4], ['beoseot', 13, 14, 6]],
   },
   npcs: [
     { id: 'granny', x: 5, y: 21, dir: 'down', pal: PAL.granny, talk: () => grannyTalk() },
@@ -563,20 +563,20 @@ const forest: MapDef = {
     },
     grunt('fgrunt1', 1, 16, 'right', 4, [['pojani', 11], ['kkomul', 11]],
       '숲의 몬스터는 전부 우리 차지다!', '크윽…', '간부님께 혼나겠군…'),
-    grunt('fgrunt2', 20, 16, 'left', 5, [['taldol', 12], ['tosil', 12]],
+    grunt('fgrunt2', 20, 16, 'left', 5, [['kkwae', 12], ['dokbul', 12]],
       '꼬마가 여긴 왜 왔어? 썩 돌아가!', '말도 안 돼!', '간부 잿빛 님은 우리랑은 차원이 다르다고.'),
     grunt('fgrunt3', 9, 6, 'right', 2, [['jinheuk', 12], ['pojani', 12]],
       '여기서부터는 검은안개단 구역이다!', '쳇, 방심했다…', '별빛결정이라나 뭐라나… 높은 분들 생각은 잘 모르겠어.'),
     {
       id: 'fadmin', x: 10, y: 14, dir: 'down', pal: PAL.admin, sight: 3, hidden: () => f('forestCleared'),
       trainer: {
-        id: 'admin1', cls: '검은안개단 간부', name: '잿빛', pal: PAL.admin, team: [['taldol', 13], ['pojani', 13], ['beoseot', 15]], reward: 1000,
+        id: 'admin1', cls: '검은안개단 간부', name: '잿빛', pal: PAL.admin, team: [['dokbul', 13], ['kkwae', 13], ['beoseot', 15]], reward: 1000,
         intro: '흠, 조무래기들을 뚫고 여기까지 왔나.\n숲의 몬스터들은 우리 계획에 쓸 귀한 재료다. 돌려줄 순 없지!',
         defeat: '이 내가… 꼬마에게…!', after: '…', afterWin: forestAdminWin,
       },
     },
     { id: 'cage1', x: 8, y: 14, dir: 'down', mon: 'pojani', hidden: () => f('forestCleared'), talk: '포자니가 겁에 질려 떨고 있다…' },
-    { id: 'cage2', x: 12, y: 14, dir: 'down', mon: 'taldol', hidden: () => f('forestCleared'), talk: '탈돌이가 울상을 짓고 있다…' },
+    { id: 'cage2', x: 12, y: 14, dir: 'down', mon: 'monsil', hidden: () => f('forestCleared'), talk: '몽실이가 털을 잔뜩 웅크리고 떨고 있다…' },
     { id: 'cage3', x: 12, y: 16, dir: 'down', mon: 'kkomul', hidden: () => f('forestCleared'), talk: '꼬물이가 몸을 웅크리고 있다…' },
     { id: 'fsuperball', x: 2, y: 1, dir: 'down', item: { id: 'superball', qty: 2 } },
     { id: 'fpotion', x: 19, y: 6, dir: 'down', item: { id: 'superpotion', qty: 1 } },
@@ -613,7 +613,7 @@ const town3: MapDef = {
   ],
   labels: [{ x: 5, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 13, y: 5.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 8, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
   signs: [{ x: 17, y: 9, text: '물안개마을\n새벽마다 호수에 안개가 피어오르는 마을  ·  동쪽: 3번 도로' }],
-  encounters: { rate: 0.1, table: [['pojani', 11, 13, 40], ['jinheuk', 11, 13, 30], ['baramsae', 12, 14, 30]] },
+  encounters: { rate: 0.1, table: [['pojani', 11, 13, 25], ['jinheuk', 11, 13, 20], ['baramsae', 12, 14, 20], ['dalto', 11, 13, 18], ['kkwae', 11, 13, 17]] },
   npcs: [
     { id: 'fisher', x: 15, y: 4, dir: 'right', pal: PAL.fisher, talk: () => fisherTalk() },
     {
@@ -661,7 +661,7 @@ const gym2: MapDef = {
     {
       id: 'swimA', x: 1, y: 6, dir: 'right', pal: PAL.swimmer, sight: 3,
       trainer: {
-        id: 'swimA', cls: '수영선수', name: '바다', pal: PAL.swimmer, team: [['banjjak', 15], ['pong', 15]], reward: 600,
+        id: 'swimA', cls: '수영선수', name: '바다', pal: PAL.swimmer, team: [['banjjak', 15], ['agipeng', 15]], reward: 600,
         intro: '물 위에서 나를 이길 수 있을까?', defeat: '꼬르륵…', after: '관장님은 물처럼 유연하게 싸우셔.',
       },
     },
@@ -716,7 +716,7 @@ const route3: MapDef = {
   signs: [{ x: 19, y: 9, text: '3번 도로\n동쪽: 별빛동굴  서쪽: 물안개마을  북쪽: 운무봉' }],
   encounters: {
     rate: 0.13,
-    table: [['jinheuk', 14, 17, 18], ['ddakkum', 14, 17, 16], ['baramsae', 15, 17, 15], ['beoseot', 15, 17, 13], ['jjirit', 14, 16, 12], ['tongsil', 15, 17, 12], ['taldol', 15, 16, 8], ['beonjjeok', 16, 17, 6]],
+    table: [['jinheuk', 14, 17, 15], ['ddakkum', 14, 17, 13], ['baramsae', 15, 17, 12], ['beoseot', 15, 17, 10], ['jjirit', 14, 16, 10], ['tongsil', 15, 17, 9], ['kkaeng', 15, 16, 10], ['dalto', 14, 16, 9], ['kkwae', 15, 17, 6], ['beonjjeok', 16, 17, 4], ['soejip', 15, 17, 2]],
   },
   fishing: [['banjjak', 14, 20, 75], ['eungeo', 20, 23, 25]],
   npcs: [
@@ -773,18 +773,18 @@ const cave: MapDef = {
   encounters: {
     rate: 0.1,
     tiles: '_',
-    table: [['doldol', 17, 19, 24], ['jinheuk', 17, 19, 20], ['taldol', 17, 19, 18], ['heukjang', 18, 20, 10], ['jjirit', 17, 19, 12], ['bawi', 19, 20, 6], ['beoseot', 18, 19, 6], ['talgwang', 19, 20, 4]],
+    table: [['doldol', 17, 19, 20], ['jinheuk', 17, 19, 17], ['dokbul', 17, 19, 15], ['agipeng', 17, 19, 13], ['heukjang', 18, 20, 9], ['jjirit', 17, 19, 9], ['bawi', 19, 20, 5], ['beoseot', 18, 19, 5], ['dokkae', 19, 20, 4], ['kkomaryong', 18, 19, 3]],
   },
   fishing: [['banjjak', 18, 22, 60], ['eungeo', 21, 24, 40]],
   npcs: [
     grunt('cgrunt1', 7, 16, 'down', 1, [['doldol', 18], ['jinheuk', 18]],
       '침입자다! 여기서 끝장내 주마!', '으악!', '이 동굴의 별빛결정은 전부 두목님 거다.'),
-    grunt('cgrunt2', 9, 8, 'down', 1, [['beoseot', 19], ['taldol', 19]],
+    grunt('cgrunt2', 9, 8, 'down', 1, [['beoseot', 19], ['dokbul', 19]],
       '두목님의 의식을 방해하게 둘 순 없지!', '크윽…', '의식이 끝나면 은하고래가 우리 편이 될 거다…'),
     {
       id: 'cadmin', x: 5, y: 8, dir: 'right', pal: PAL.admin, sight: 2, hidden: () => f('bossDone'),
       trainer: {
-        id: 'admin2', cls: '검은안개단 간부', name: '잿빛', pal: PAL.admin, team: [['talgwang', 20], ['beoseot', 21], ['heukjang', 21]], reward: 1600,
+        id: 'admin2', cls: '검은안개단 간부', name: '잿빛', pal: PAL.admin, team: [['dokkae', 20], ['kkwae', 20], ['heukjang', 21]], reward: 1600,
         intro: '또 너냐! 숲에서 당한 빚, 여기서 갚아 주지!', defeat: '두 번이나… 말도 안 돼…',
         after: '흑영 님은 호수 앞에 계신다… 하지만 넌 절대 못 이길 거다.',
       },
@@ -943,14 +943,14 @@ const peak: MapDef = {
   signs: [],
   encounters: {
     rate: 0.13,
-    table: [['baramsae', 27, 30, 18], ['hoeori', 29, 31, 10], ['bawi', 28, 31, 15], ['heukjang', 28, 30, 15], ['talgwang', 28, 31, 15], ['beonjjeok', 28, 30, 15], ['beoseot', 28, 30, 12]],
+    table: [['baramsae', 27, 30, 14], ['hoeori', 29, 31, 8], ['bawi', 28, 31, 12], ['heukjang', 28, 30, 12], ['dokkae', 28, 31, 10], ['jeolgu', 27, 30, 10], ['eolpeng', 28, 30, 9], ['kwontu', 28, 30, 9], ['beonjjeok', 28, 30, 8], ['nalgae', 28, 30, 4], ['monggeul', 27, 29, 4]],
   },
   fishing: [['banjjak', 25, 30, 60], ['eungeo', 28, 32, 40]],
   npcs: [
     {
       id: 'monk1', x: 2, y: 10, dir: 'right', pal: PAL.pupil, sight: 4,
       trainer: {
-        id: 'monk1', cls: '수행자', name: '무명', pal: PAL.pupil, team: [['talgwang', 29], ['bawi', 30]], reward: 1100,
+        id: 'monk1', cls: '수행자', name: '무명', pal: PAL.pupil, team: [['jeolgu', 29], ['kwontu', 30]], reward: 1100,
         intro: '산을 오르는 자여, 마음을 시험하겠다.', defeat: '마음이 맑구나…', after: '정상의 서낭당은 산군님을 모시는 곳이다.',
       },
     },

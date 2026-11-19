@@ -199,7 +199,7 @@ export class Overworld implements Scene {
       if (s) this.hooks.run(() => this.hooks.sign(s.text));
       return;
     }
-    if ('Pkcrb~mvsQJ'.includes(t)) this.hooks.run(() => this.hooks.tile(t));
+    if ('Pkcrb~mvsyQJ'.includes(t)) this.hooks.run(() => this.hooks.tile(t));
   }
 
   /** Called when the player finishes a step. Returns true when an event took over. */
@@ -324,7 +324,7 @@ export class Overworld implements Scene {
       }
       if (npc?.def.mon) {
         const bob = Math.round(Math.sin(clock.frame / 24) * 1.5);
-        g.drawImage(monSprite(npc.def.mon), sx - 8, sy - 16 + bob);
+        g.drawImage(monSprite(npc.def.mon), sx - 12, sy - 24 + bob);
         continue;
       }
       const frame = a.moving > STEP / 2 ? (a.step % 2 ? 1 : 3) : 0;

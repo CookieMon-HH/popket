@@ -71,12 +71,12 @@ const list: MoveDef[] = [
   { id: 'silk', name: '실뿜기', type: '벌레', power: 0, acc: 95, pp: 40, effect: { kind: 'stat', target: 'foe', stat: 'spe', stages: -2 }, desc: '실을 감아 스피드를 크게 떨어뜨린다.' },
   { id: 'bugbite', name: '깨물기', type: '벌레', power: 55, acc: 100, pp: 20, desc: '작은 턱으로 깨문다.' },
   { id: 'glitter', name: '반짝가루', type: '벌레', power: 60, acc: 100, pp: 15, effect: { kind: 'stat', target: 'foe', stat: 'acc', stages: -1, chance: 20 }, desc: '반짝이는 가루를 날린다.' },
-  // 바람
-  { id: 'peck', name: '콕쪼기', type: '바람', power: 35, acc: 100, pp: 35, desc: '부리로 콕 쪼아 댄다.' },
-  { id: 'gust', name: '돌개바람', type: '바람', power: 40, acc: 100, pp: 35, desc: '세찬 바람을 일으킨다.' },
-  { id: 'wingcut', name: '날개베기', type: '바람', power: 60, acc: 100, pp: 20, desc: '날개를 칼처럼 휘두른다.' },
-  { id: 'dive', name: '급강하', type: '바람', power: 85, acc: 90, pp: 10, desc: '하늘 높이서 내리꽂힌다.' },
-  { id: 'storm', name: '폭풍날개', type: '바람', power: 100, acc: 85, pp: 5, desc: '날개로 폭풍을 일으켜 휩쓴다.' },
+  // 비행
+  { id: 'peck', name: '콕쪼기', type: '비행', power: 35, acc: 100, pp: 35, desc: '부리로 콕 쪼아 댄다.' },
+  { id: 'gust', name: '돌개바람', type: '비행', power: 40, acc: 100, pp: 35, desc: '세찬 바람을 일으킨다.' },
+  { id: 'wingcut', name: '날개베기', type: '비행', power: 60, acc: 100, pp: 20, desc: '날개를 칼처럼 휘두른다.' },
+  { id: 'dive', name: '급강하', type: '비행', power: 85, acc: 90, pp: 10, desc: '하늘 높이서 내리꽂힌다.' },
+  { id: 'storm', name: '폭풍날개', type: '비행', power: 100, acc: 85, pp: 5, desc: '날개로 폭풍을 일으켜 휩쓴다.' },
   // 강화 기술
   { id: 'breathe', name: '숨고르기', type: '노말', power: 0, acc: 0, pp: 10, effect: { kind: 'heal' }, desc: '숨을 고르며 체력을 절반 회복한다.' },
   { id: 'fullcharge', name: '전력돌격', type: '노말', power: 90, acc: 100, pp: 10, desc: '온 힘을 다해 들이받는다.' },
@@ -94,13 +94,44 @@ const list: MoveDef[] = [
   { id: 'poisonspore', name: '독포자', type: '독', power: 0, acc: 80, pp: 20, effect: { kind: 'status', status: 'psn' }, desc: '독이 든 포자를 뿌려 독에 걸리게 한다.' },
   { id: 'toxshot', name: '독물총', type: '독', power: 45, acc: 100, pp: 25, effect: { kind: 'status', status: 'psn', chance: 30 }, desc: '독액을 쏜다. 독에 걸릴 때가 있다.' },
   { id: 'toxblast', name: '맹독폭발', type: '독', power: 85, acc: 90, pp: 10, effect: { kind: 'status', status: 'psn', chance: 30 }, desc: '독 포자를 한꺼번에 터뜨린다.' },
-  // 영혼
-  { id: 'spook', name: '놀래기', type: '영혼', power: 40, acc: 100, pp: 25, desc: '갑자기 나타나 상대를 놀래 준다.' },
-  { id: 'bewitch', name: '홀리기', type: '영혼', power: 0, acc: 90, pp: 15, effect: { kind: 'stat', target: 'foe', stat: 'atk', stages: -2 }, desc: '기묘한 춤으로 홀려 공격을 크게 떨어뜨린다.' },
-  { id: 'soulwave', name: '혼령파동', type: '영혼', power: 70, acc: 100, pp: 15, desc: '혼령의 힘을 파동으로 쏜다.' },
-  { id: 'nightdance', name: '한밤의춤', type: '영혼', power: 95, acc: 90, pp: 10, desc: '한밤중의 탈춤으로 혼을 흔든다.' },
+  // 고스트
+  { id: 'spook', name: '놀래기', type: '고스트', power: 40, acc: 100, pp: 25, desc: '갑자기 나타나 상대를 놀래 준다.' },
+  { id: 'bewitch', name: '홀리기', type: '고스트', power: 0, acc: 90, pp: 15, effect: { kind: 'stat', target: 'foe', stat: 'atk', stages: -2 }, desc: '기묘한 춤으로 홀려 공격을 크게 떨어뜨린다.' },
+  { id: 'soulwave', name: '혼령파동', type: '고스트', power: 70, acc: 100, pp: 15, desc: '혼령의 힘을 파동으로 쏜다.' },
+  { id: 'nightdance', name: '한밤의춤', type: '고스트', power: 95, acc: 90, pp: 10, desc: '한밤중의 탈춤으로 혼을 흔든다.' },
+  { id: 'willowisp', name: '도깨비불', type: '고스트', power: 0, acc: 85, pp: 15, effect: { kind: 'status', status: 'brn' }, desc: '푸른 도깨비불로 화상을 입힌다.' },
+  { id: 'club', name: '도깨비방망이', type: '악', power: 90, acc: 90, pp: 10, desc: '금빛 방망이로 힘껏 내리친다.' },
+  // 얼음
+  { id: 'frostbreath', name: '서리입김', type: '얼음', power: 40, acc: 100, pp: 25, desc: '차가운 입김을 불어 얼린다.' },
+  { id: 'icefang', name: '얼음송곳', type: '얼음', power: 65, acc: 100, pp: 15, desc: '날카로운 얼음 조각을 날린다.' },
+  { id: 'avalanche', name: '눈사태', type: '얼음', power: 90, acc: 90, pp: 10, desc: '거대한 눈덩이를 무너뜨린다.' },
+  // 격투
+  { id: 'jab', name: '연속펀치', type: '격투', power: 40, acc: 100, pp: 30, desc: '재빠른 주먹을 연달아 날린다.' },
+  { id: 'straight', name: '정권지르기', type: '격투', power: 70, acc: 100, pp: 15, desc: '온몸의 힘을 실은 정권을 지른다.' },
+  { id: 'upper', name: '필살어퍼컷', type: '격투', power: 100, acc: 85, pp: 5, desc: '아래에서 위로 힘껏 올려친다.' },
+  // 강철
+  { id: 'ironclaw', name: '쇠발톱', type: '강철', power: 50, acc: 100, pp: 25, desc: '강철처럼 단단한 발톱으로 할퀸다.' },
+  { id: 'steelpincer', name: '강철집게', type: '강철', power: 80, acc: 95, pp: 10, desc: '강철 집게로 꽉 집는다.' },
+  { id: 'ironwall', name: '철벽', type: '강철', power: 0, acc: 0, pp: 15, effect: { kind: 'stat', target: 'self', stat: 'def', stages: 2 }, desc: '몸을 강철처럼 굳혀 방어를 크게 올린다.' },
+  // 악
+  { id: 'bite', name: '물어뜯기', type: '악', power: 60, acc: 100, pp: 25, desc: '날카로운 이빨로 물어뜯는다.' },
+  { id: 'snatch', name: '도둑질', type: '악', power: 40, acc: 100, pp: 25, priority: 1, desc: '눈치채기 전에 먼저 공격한다.' },
+  { id: 'nightveil', name: '밤의장막', type: '악', power: 85, acc: 95, pp: 10, desc: '어둠의 장막으로 덮친다.' },
+  // 페어리
+  { id: 'twinkle', name: '반짝눈빛', type: '페어리', power: 40, acc: 100, pp: 25, desc: '반짝이는 눈빛을 쏘아 보낸다.' },
+  { id: 'moondust', name: '달빛가루', type: '페어리', power: 75, acc: 100, pp: 15, desc: '달빛을 머금은 가루를 흩뿌린다.' },
+  { id: 'dreamsong', name: '꿈결노래', type: '페어리', power: 0, acc: 60, pp: 15, effect: { kind: 'status', status: 'slp' }, desc: '포근한 노래로 잠들게 한다.' },
+  // 드래곤
+  { id: 'dragonbreath', name: '용의숨결', type: '드래곤', power: 60, acc: 100, pp: 20, effect: { kind: 'status', status: 'par', chance: 30 }, desc: '용의 숨결을 내뿜는다. 마비될 때가 있다.' },
+  { id: 'dragontail', name: '용꼬리치기', type: '드래곤', power: 80, acc: 100, pp: 10, desc: '굵은 꼬리로 후려친다.' },
+  { id: 'skyfury', name: '천룡의분노', type: '드래곤', power: 110, acc: 85, pp: 5, desc: '하늘을 가르는 용의 분노를 쏟아낸다.' },
+  // 에스퍼
+  { id: 'telekinesis', name: '염동력', type: '에스퍼', power: 50, acc: 100, pp: 25, desc: '보이지 않는 힘으로 들어 던진다.' },
+  { id: 'psybeam', name: '사이코광선', type: '에스퍼', power: 75, acc: 100, pp: 15, desc: '기묘한 빛줄기를 쏜다.' },
+  { id: 'moonsign', name: '달의계시', type: '에스퍼', power: 95, acc: 90, pp: 10, desc: '보름달의 힘을 모아 내리꽂는다.' },
+  { id: 'meditate', name: '명상', type: '에스퍼', power: 0, acc: 0, pp: 20, effect: { kind: 'stat', target: 'self', stat: 'atk', stages: 1 }, desc: '마음을 가라앉혀 공격을 올린다.' },
   // 전설
-  { id: 'mountainroar', name: '산울림포효', type: '영혼', power: 90, acc: 100, pp: 10, effect: { kind: 'stat', target: 'foe', stat: 'atk', stages: -1, chance: 30 }, desc: '산 전체를 울리는 포효. 상대의 공격을 떨어뜨릴 때가 있다.' },
+  { id: 'mountainroar', name: '산울림포효', type: '고스트', power: 90, acc: 100, pp: 10, effect: { kind: 'stat', target: 'foe', stat: 'atk', stages: -1, chance: 30 }, desc: '산 전체를 울리는 포효. 상대의 공격을 떨어뜨릴 때가 있다.' },
   { id: 'galaxy', name: '은하파동', type: '물', power: 110, acc: 90, pp: 5, desc: '별빛을 머금은 파도를 일으킨다.' },
 ];
 

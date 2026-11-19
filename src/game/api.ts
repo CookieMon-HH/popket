@@ -199,7 +199,7 @@ async function evolve(m: Mon) {
     ctx.fillStyle = `rgba(255,255,255,${st.bg})`;
     ctx.fillRect(0, 0, W, H);
     const spr = monSprite(st.showNew ? to.id : from.id);
-    drawSprite(ctx, st.white > 0 ? silhouette(spr, '#ffffff') : spr, W / 2 - 48, 26, 96, 96);
+    drawSprite(ctx, st.white > 0 ? silhouette(spr, '#ffffff') : spr, W / 2 - 60, 12, 120, 120);
   });
   ui.run(bd);
   await fadeTo(0, 12);
@@ -275,10 +275,11 @@ export async function tileTalk(ch: string) {
     return;
   }
   if (ch === 'm') await say('몬스터 회복 장치다.\n캡슐 여섯 개를 한꺼번에 회복시킬 수 있다.');
-  else if (ch === 'Q') await say('회복소의 하트 마크다.\n「몬스터의 건강을 지킵니다」');
+  else if (ch === 'Q') await say('회복소의 초록 십자 마크다.\n「몬스터의 건강을 책임집니다」');
   else if (ch === 'v') await say('잘 가꿔진 화분이다.');
-  else if (ch === 's') await say('푹신한 소파다. 차례를 기다리는 트레이너들이 앉는다.');
-  if ('mQvs'.includes(ch)) return;
+  else if (ch === 's') await say('대기실 의자다. 차례를 기다리는 트레이너들이 앉는다.');
+  else if (ch === 'y') await say('깨끗하게 정돈된 침대다.\n많이 다친 몬스터가 쉬어 가는 곳이다.');
+  if ('mQvsy'.includes(ch)) return;
   if (ch === 'P') {
     if (world.map.id.startsWith('center')) await pcScript();
     else await say('연구 자료가 잔뜩 들어 있는 컴퓨터다.');

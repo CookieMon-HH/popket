@@ -77,14 +77,14 @@ class BattleScene implements Scene {
       drawSprite(g, personSprite(v.trainer, 'down', 0), 160 + v.tX, 16, 48, 60);
     }
     if (v.enemy && v.eVis && !v.eBlink) {
-      const s = 64 * v.eScale;
+      const s = 80 * v.eScale;
       g.globalAlpha = v.eAlpha;
-      drawSprite(g, monSprite(v.enemy.species), 152 + v.eX + (64 - s) / 2 + sx, 14 + v.eY + (64 - s), s, s);
+      drawSprite(g, monSprite(v.enemy.species), 144 + v.eX + (80 - s) / 2 + sx, -4 + v.eY + (80 - s), s, s);
       g.globalAlpha = 1;
     }
     if (v.player && v.pVis && !v.pBlink) {
       g.globalAlpha = v.pAlpha;
-      drawSprite(g, monSprite(v.player.species), 16 + v.pX, 54 + v.pY, 96, 96, true);
+      drawSprite(g, monSprite(v.player.species), 6 + v.pX, 34 + v.pY, 120, 120, true);
       g.globalAlpha = 1;
     }
     if (v.ball.vis) {
@@ -290,8 +290,9 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     await fadeTo(0, 12);
     await tween(30, (p) => (v.eX = 140 * (1 - p)));
     v.eBox = true;
-    const rank = SPECIES[enemy.mon.species].rank;
-    if (rank) await say(`${rank} 몬스터 ${j(monName(enemy.mon), '이/가')} 모습을 드러냈다!`);
+    const spd = SPECIES[enemy.mon.species];
+    if (spd.legend) await say(`전설의 몬스터 ${j(monName(enemy.mon), '이/가')} 모습을 드러냈다!`);
+    else if (spd.special) await say(`${j(monName(enemy.mon), '이/가')} 모습을 드러냈다!`);
     else await say(`앗! ${j(L(enemy), '이/가')} 튀어나왔다!`);
   } else {
     v.trainer = tr!.pal;

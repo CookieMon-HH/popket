@@ -53,7 +53,7 @@ class TitleScene implements Scene {
     const t = clock.frame;
     ['modak', 'pong', 'saesun'].forEach((id, i) => {
       const bob = Math.round(Math.sin(t / 18 + i * 2) * 3);
-      drawSprite(g, monSprite(id), 40 + i * 64, 88 + bob, 48, 48);
+      drawSprite(g, monSprite(id), 8 + i * 80, 76 + bob, 80, 80);
     });
     g.fillStyle = 'rgba(255,255,255,0.8)';
     for (let i = 0; i < 4; i++) {

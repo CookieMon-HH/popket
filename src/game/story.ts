@@ -23,7 +23,7 @@ export const PAL = {
   picnic: { hair: '#e0a040', shirt: '#ffffff', pants: '#e07070' },
   hiker: { hair: '#4a3020', shirt: '#b06a30', pants: '#5a6a40', hat: '#7a5a3a' },
   man: { hair: '#2a2a3a', shirt: '#5a8ad0', pants: '#3a3a4a' },
-  nurse: { hair: '#f0a0c0', shirt: '#ffffff', pants: '#f0c0d0' },
+  nurse: { hair: '#4a3a3a', shirt: '#ffffff', pants: '#5aa898', hat: '#ffffff' },
   clerk: { hair: '#3a2a20', shirt: '#4ab0a0', pants: '#3a4a5a' },
   kid: { hair: '#2a2a2a', shirt: '#f0c040', pants: '#4a6ab0' },
   lady: { hair: '#a05a3a', shirt: '#b0d0f0', pants: '#7a5a8a' },
@@ -66,7 +66,7 @@ function rivalDef(stage: 1 | 2 | 3): TrainerDef {
       ? [[line[0], 5]]
       : stage === 2
         ? [['baramsae', 14], ['pojani', 13], [line[1], 16]]
-        : [['hoeori', 28], ['beoseot', 27], ['talgwang', 27], [line[1], 30]];
+        : [['hoeori', 28], ['nalgae', 27], ['jeolgu', 27], [line[1], 30]];
   return {
     id: 'rival' + stage,
     cls: '라이벌',
@@ -193,8 +193,9 @@ export async function grannyTalk() {
   }
   if (!game.flags.gotTal) {
     await say('숲지기 할머니: 고맙구나, 정말 고마워…\n숲의 아이들이 모두 무사히 돌아왔단다.');
-    await say('숲지기 할머니: 이 아이는 우리 집 처마에 걸린 탈에 깃든 정령이란다.\n너를 따라가고 싶어 하는구나. 데려가 주렴.');
-    await giveMon('taldol', 12);
+    await say('숲지기 할머니: 며칠 전 숲 깊은 곳에서 커다란 알을 하나 주웠는데,\n방금 깨어났지 뭐니. 글쎄 아기 용이지 뭐야!');
+    await say('숲지기 할머니: 이 녀석이 너를 졸졸 따라다니는구나.\n숲을 구해 준 답례로 데려가 주렴.');
+    await giveMon('kkomaryong', 12);
     game.flags.gotTal = true;
     return;
   }
@@ -210,7 +211,7 @@ export async function grannyTalk() {
     }
     return;
   }
-  await say('숲지기 할머니: 탈돌이는 옛날부터 이 숲을 지켜 온 아이란다.\n소중히 대해 주렴.');
+  await say('숲지기 할머니: 꼬마룡은 아직 알껍데기를 못 벗었지?\n크면 하늘을 나는 멋진 용이 될 거란다.');
 }
 
 function inParty(...ids: string[]) {
@@ -289,7 +290,7 @@ export async function bossScene() {
   await say('흑영: 방해한다면… 힘으로 치워 주마!');
   const t: TrainerDef = {
     id: 'boss', cls: '검은안개단 두목', name: '흑영', pal: PAL.boss,
-    team: [['taldae', 25], ['beoseot', 24], ['heukjang', 25], ['beongae', 26]], reward: 3000,
+    team: [['dokdae', 26], ['dodug', 24], ['heukjang', 25], ['beongae', 25]], reward: 3000,
     intro: '', defeat: '…이 힘은, 대체…', after: '',
     afterWin: bossWin,
   };

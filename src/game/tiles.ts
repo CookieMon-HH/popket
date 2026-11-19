@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'J', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -12,16 +12,18 @@ const ROOF: Record<string, [string, string]> = {
   A: ['#3ab0b0', '#228888'],
 };
 
-function heart(p: Pix, cx: number, cy: number, r: number, c: string) {
-  p.ell(cx - r * 0.5, cy - r * 0.2, r * 0.6, r * 0.6, c);
-  p.ell(cx + r * 0.5, cy - r * 0.2, r * 0.6, r * 0.6, c);
-  p.tri(cx - r * 1.1, cy, cx + r * 1.1, cy, cx, cy + r * 1.1, c);
+function centerFloor(p: Pix) {
+  p.rect(0, 0, 16, 16, '#eef3f4');
+  p.rect(0, 0, 16, 1, '#d4dee0');
+  p.rect(0, 8, 16, 1, '#d4dee0');
+  p.rect(0, 0, 1, 16, '#d4dee0');
+  p.rect(8, 0, 1, 16, '#d4dee0');
 }
 
-function centerFloor(p: Pix) {
-  p.rect(0, 0, 16, 16, '#f8eef2');
-  p.rect(0, 0, 8, 8, '#f0dce6');
-  p.rect(8, 8, 8, 8, '#f0dce6');
+function cross(p: Pix, cx: number, cy: number, r: number, c: string) {
+  const t = Math.max(1, Math.round(r * 0.55));
+  p.rect(cx - t, cy - r, t * 2, r * 2, c);
+  p.rect(cx - r, cy - t, r * 2, t * 2, c);
 }
 
 function caveWall(p: Pix) {
@@ -150,75 +152,87 @@ function build(ch: string, anim: number): Pix {
       caveWall(p);
       break;
     case 'H': {
-      // 회복소 roof emblem: white plate with a pink heart
+      // 회복소 roof sign: white plate with a green medical cross
       const [base, dark] = ROOF.B;
       p.rect(0, 0, 16, 16, base);
       p.rect(0, 3, 16, 1, dark);
       p.rect(0, 11, 16, 1, dark);
-      p.ell(8, 8, 7, 7, '#ffffff');
-      p.ell(8, 8, 6, 6, '#ffe8f0');
-      heart(p, 8, 7.5, 4, '#f05a8a');
-      p.set(6, 6, '#ffffff');
+      p.ell(8, 8, 7, 7, '#2a7a5a');
+      p.ell(8, 8, 6, 6, '#ffffff');
+      cross(p, 8, 8, 4, '#2eaa6a');
       break;
     }
     case 'E':
       // automatic glass door used by every 회복소
       wall(p);
-      p.rect(2, 2, 12, 14, '#3a5a8a');
-      p.rect(3, 3, 5, 13, '#a8e0f8');
-      p.rect(8, 3, 5, 13, '#a8e0f8');
+      p.rect(2, 2, 12, 14, '#3a5a7a');
+      p.rect(3, 3, 5, 13, '#c8ecf4');
+      p.rect(8, 3, 5, 13, '#c8ecf4');
       p.rect(4, 4, 1, 6, '#ffffff');
       p.rect(9, 4, 1, 6, '#ffffff');
-      heart(p, 8, 1.5, 1.6, '#f05a8a');
+      p.rect(7, 0, 2, 3, '#2eaa6a');
+      p.rect(6, 1, 4, 1, '#2eaa6a');
       break;
     case 'q':
-      p.rect(0, 0, 16, 16, '#fbe4ec');
-      for (let x = 0; x < 16; x += 4) p.rect(x, 0, 2, 12, '#f8d4e0');
-      p.rect(0, 12, 16, 4, '#e88aa8');
-      p.rect(0, 12, 16, 1, '#c86a88');
+      p.rect(0, 0, 16, 16, '#f4f8f8');
+      p.rect(0, 8, 16, 4, '#bfe6dc');
+      p.rect(0, 12, 16, 4, '#5aa898');
+      p.rect(0, 12, 16, 1, '#3a8878');
       break;
     case 'Q':
-      p.rect(0, 0, 16, 16, '#fbe4ec');
-      p.rect(0, 12, 16, 4, '#e88aa8');
-      p.rect(0, 12, 16, 1, '#c86a88');
-      p.ell(8, 6, 6, 5.5, '#ffffff');
-      heart(p, 8, 5.5, 3.5, '#f05a8a');
+      p.rect(0, 0, 16, 16, '#f4f8f8');
+      p.rect(0, 12, 16, 4, '#5aa898');
+      p.rect(0, 12, 16, 1, '#3a8878');
+      p.rect(2, 1, 12, 10, '#e8f0f0');
+      cross(p, 8, 6, 4, '#2eaa6a');
       break;
     case 'u':
       centerFloor(p);
       break;
     case 'n':
       centerFloor(p);
-      p.rect(0, 2, 16, 12, '#c86a88');
-      p.rect(0, 2, 16, 9, '#ffffff');
-      p.rect(0, 2, 16, 1, '#ffd8e4');
-      p.rect(0, 9, 16, 2, '#f8b8cc');
+      p.rect(0, 2, 16, 12, '#3a8878');
+      p.rect(0, 2, 16, 4, '#ffffff');
+      p.rect(0, 6, 16, 7, '#7ac8b8');
+      p.rect(0, 2, 16, 1, '#e8f4f4');
+      p.rect(7, 7, 2, 5, '#ffffff');
+      p.rect(5, 9, 6, 1, '#ffffff');
       break;
     case 'm':
       // healing machine with capsule slots
       centerFloor(p);
-      p.rect(1, 2, 14, 12, '#7a8aa0');
-      p.rect(2, 3, 12, 10, '#c8d4e4');
+      p.rect(1, 2, 14, 12, '#6a7a8a');
+      p.rect(2, 3, 12, 10, '#d8e4ec');
       for (const [x, y] of [[3, 4], [7, 4], [11, 4], [3, 8], [7, 8], [11, 8]]) {
         p.rect(x, y, 3, 3, '#3aa8a0');
         p.set(x + 1, y + 1, '#d8fff6');
       }
-      p.rect(2, 13, 12, 1, '#5a6a80');
+      p.rect(2, 13, 12, 1, '#4a5a6a');
       break;
     case 'v':
       centerFloor(p);
-      p.rect(5, 10, 6, 5, '#c87848');
-      p.rect(5, 10, 6, 1, '#e8985a');
+      p.rect(5, 10, 6, 5, '#e8e8e8');
+      p.rect(5, 10, 6, 1, '#ffffff');
       p.ell(8, 6, 5, 5, '#3a9448');
       p.ell(6, 4, 2, 1.5, '#5cb860');
       p.ell(10, 7, 2, 1.5, '#5cb860');
       break;
     case 's':
+      // waiting-room chair
       centerFloor(p);
-      p.rect(1, 3, 14, 11, '#d85a7a');
-      p.rect(2, 4, 12, 4, '#f08aa4');
-      p.rect(1, 3, 2, 11, '#b84a68');
-      p.rect(13, 3, 2, 11, '#b84a68');
+      p.rect(2, 3, 12, 5, '#4a6a8a');
+      p.rect(2, 8, 12, 4, '#6a8aa8');
+      p.rect(3, 12, 1, 3, '#8a9aaa');
+      p.rect(12, 12, 1, 3, '#8a9aaa');
+      break;
+    case 'y':
+      // hospital bed
+      centerFloor(p);
+      p.rect(1, 0, 14, 16, '#9aa8b4');
+      p.rect(2, 1, 12, 14, '#ffffff');
+      p.rect(3, 2, 10, 3, '#eef4f8');
+      p.rect(2, 7, 12, 8, '#8ad4c4');
+      p.rect(2, 7, 12, 1, '#b8e8dc');
       break;
     case 'J':
       // 서낭당: stone cairn with five-color ribbons
