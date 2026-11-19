@@ -138,7 +138,7 @@ export async function labProfessor() {
     await fadeTo(1, 8);
     world.refreshNPCs();
     await fadeTo(0, 8);
-    await say('한별 박사: 하하, 성격 급한 건 여전하구나.\n{name}, 몬스터를 잡을 때 쓰는 포획구도 가져가렴.');
+    await say('한별 박사: 하하, 성격 급한 건 여전하구나.\n{name}, 몬스터를 잡을 때 쓰는 팜팜볼도 가져가렴.');
     await giveItem('ball', 5);
     await say('한별 박사: 북쪽 1번 도로를 지나면 들꽃마을이 나온단다.\n그곳 수련관의 관장에게 도전해 보렴!');
     await say('한별 박사: 지칠 땐 집에 들러 쉬거나 회복소를 찾아가렴.\nB 버튼(X 키)으로 메뉴를 열어 저장하는 것도 잊지 말고!');

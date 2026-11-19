@@ -9,8 +9,8 @@ export interface ItemDef {
 }
 
 const list: ItemDef[] = [
-  { id: 'ball', name: '포획구', price: 200, kind: 'ball', ballMul: 1, desc: '야생 몬스터에게 던져서 잡는 캡슐.' },
-  { id: 'superball', name: '슈퍼포획구', price: 600, kind: 'ball', ballMul: 1.5, desc: '포획구보다 잘 잡히는 고급 캡슐.' },
+  { id: 'ball', name: '팜팜볼', price: 200, kind: 'ball', ballMul: 1, desc: '야생 몬스터에게 던져서 잡는 캡슐.' },
+  { id: 'superball', name: '슈퍼팜팜볼', price: 600, kind: 'ball', ballMul: 1.5, desc: '팜팜볼보다 잘 잡히는 고급 캡슐.' },
   { id: 'potion', name: '회복약', price: 300, kind: 'heal', amount: 20, desc: '몬스터의 체력을 20 회복한다.' },
   { id: 'superpotion', name: '고급회복약', price: 700, kind: 'heal', amount: 60, desc: '몬스터의 체력을 60 회복한다.' },
   { id: 'hyperpotion', name: '특급회복약', price: 1200, kind: 'heal', amount: 150, desc: '몬스터의 체력을 150 회복한다.' },

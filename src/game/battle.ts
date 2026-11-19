@@ -537,7 +537,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     v.ball.vis = false;
     v.eVis = true;
     await tween(10, (t) => (v.eScale = t));
-    await say(['앗! 몬스터가 포획구에서 나와 버렸다!', '아깝다! 잡은 줄 알았는데!', '아아! 조금만 더 하면 됐는데!', '으악! 거의 잡았는데!'][Math.min(3, shakes)]);
+    await say(['앗! 몬스터가 팜팜볼에서 나와 버렸다!', '아깝다! 잡은 줄 알았는데!', '아아! 조금만 더 하면 됐는데!', '으악! 거의 잡았는데!'][Math.min(3, shakes)]);
     return false;
   }
 

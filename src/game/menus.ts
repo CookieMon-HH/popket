@@ -429,7 +429,7 @@ export async function shopMenu(stock: string[]) {
         await say('감사합니다!');
         if (it.kind === 'ball' && n >= 10) {
           addItem('superball', 1);
-          await say('많이 사 주셔서 슈퍼포획구 하나를 덤으로 드릴게요!');
+          await say('많이 사 주셔서 슈퍼팜팜볼 하나를 덤으로 드릴게요!');
         }
       }
     }

@@ -240,7 +240,7 @@ const lab: MapDef = {
       id: 'aide', x: 7, y: 5, dir: 'left', pal: PAL.aide, move: 'wander',
       talk: async () => {
         if (!f('gotStarter')) await say('박사님 앞에 있는 캡슐에 몬스터가 들어 있어요.\n박사님께 말을 걸어 보세요!');
-        else await say('몬스터를 약하게 만든 다음 포획구를 던지면 잡기 쉬워요.\n잠들거나 마비된 몬스터는 더 잘 잡혀요!');
+        else await say('몬스터를 약하게 만든 다음 팜팜볼을 던지면 잡기 쉬워요.\n잠들거나 마비된 몬스터는 더 잘 잡혀요!');
       },
     },
   ],

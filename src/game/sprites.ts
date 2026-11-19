@@ -116,7 +116,7 @@ export function itemSprite(): HTMLCanvasElement {
 }
 
 let capsuleC: HTMLCanvasElement | null = null;
-/** 포획구 — a lantern-shaped capture capsule. */
+/** 팜팜볼 — a lantern-shaped capture capsule. */
 export function capsuleSprite(): HTMLCanvasElement {
   if (!capsuleC) {
     const p = new Pix(10, 10);
