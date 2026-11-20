@@ -19,6 +19,8 @@ export interface GameState {
   frames: number;
   /** Set while inside the safari: balls left and frames left. */
   safari?: { balls: number; left: number };
+  /** Wall-clock time of the last save (ms), used to pick the newer of local and cloud saves. */
+  savedAtMs?: number;
 }
 
 const SAVE_KEY = 'popket-save-v1';
@@ -70,6 +72,7 @@ export function hasSave() {
 
 export function saveGame(): boolean {
   try {
+    game.savedAtMs = Date.now();
     localStorage.setItem(SAVE_KEY, JSON.stringify(game));
     runtime.savedAt = game.frames;
     runtime.ownsSave = true;
@@ -93,6 +96,26 @@ export function loadGame(): boolean {
     Object.assign(game, data);
     runtime.savedAt = game.frames;
     runtime.ownsSave = true;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** savedAtMs of the save stored in this browser, or 0. */
+export function localSaveTime(): number {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    return raw ? ((JSON.parse(raw) as GameState).savedAtMs ?? 1) : 0;
+  } catch {
+    return 0;
+  }
+}
+
+/** Replace this browser's save with one downloaded from the cloud. */
+export function writeLocalSave(data: unknown): boolean {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
     return true;
   } catch {
     return false;

@@ -17,6 +17,7 @@ import type { TrainerDef } from './maps';
 import { shrineTalk } from './story';
 import { safariEnd } from './safari';
 import { canFly, flyMenu } from './fly';
+import { signedIn, uploadSave } from './cloud';
 import { settings, setControls } from './settings';
 
 export { world };
@@ -301,6 +302,20 @@ export async function tileTalk(ch: string) {
   else if (ch === 'b') await say('포근한 침대다.');
 }
 
+/** Save to this browser and, when signed in, to the cloud too. */
+async function saveWithMessage(): Promise<boolean> {
+  world.syncState();
+  if (!saveGame()) {
+    await say('기록하지 못했다… 브라우저 저장소를 확인해 주세요.');
+    return false;
+  }
+  if (signedIn()) {
+    if (await uploadSave(game)) await say('{name}은(는) 모험을 기록했다!\n(구글 계정에도 저장했어요)');
+    else await say('{name}은(는) 모험을 기록했다!\n하지만 인터넷 저장은 실패했어요. 이 기기에는 저장되었어요.');
+  } else await say('{name}은(는) 모험을 기록했다!');
+  return true;
+}
+
 export async function startMenu() {
   let idx = 0;
   for (;;) {
@@ -324,14 +339,7 @@ export async function startMenu() {
       );
       const quit = unsaved ? r === 0 || r === 1 : r === 0;
       if (!quit) continue;
-      if (unsaved && r === 0) {
-        world.syncState();
-        if (saveGame()) await say('{name}은(는) 모험을 기록했다!');
-        else {
-          await say('기록하지 못했다… 브라우저 저장소를 확인해 주세요.');
-          continue;
-        }
-      }
+      if (unsaved && r === 0 && !(await saveWithMessage())) continue;
       appHooks.toTitle();
       return;
     }
@@ -342,11 +350,7 @@ export async function startMenu() {
     else if (pick === '가방') await bagMenu();
     else if (pick === game.name) await ui.run(new TrainerCard());
     else if (pick === '저장') {
-      if (await yesNo('지금까지의 모험을 기록할까요?')) {
-        world.syncState();
-        if (saveGame()) await say('{name}은(는) 모험을 기록했다!');
-        else await say('기록하지 못했다… 브라우저 저장소를 확인해 주세요.');
-      }
+      if (await yesNo('지금까지의 모험을 기록할까요?')) await saveWithMessage();
     }
   }
 }

@@ -1,14 +1,15 @@
 import { W, H, OX, BW, setLogicalWidth } from './engine/draw';
 import { input, bindTouchPad, bindJoystick, bindDpad } from './engine/input';
 import { loadSettings } from './game/settings';
-import { ui, Menu, MessageBox, setTextFormatter, say, yesNo } from './engine/ui';
+import { ui, Menu, MessageBox, setTextFormatter, say, yesNo, choose } from './engine/ui';
 import { tickTasks } from './engine/timing';
 import { scenes, fx, fadeTo } from './engine/scene';
 import { world } from './game/overworld';
 import { installHooks, runScript, appHooks } from './game/api';
-import { game, hasSave, loadGame, newGame, saveGame, runtime } from './game/state';
+import { game, hasSave, loadGame, newGame, saveGame, runtime, localSaveTime, writeLocalSave } from './game/state';
 import { j } from './game/common';
 import { TitleScene } from './game/title';
+import { cloudAvailable, initCloud, signedIn, signInWithGoogle, signOut, deleteAccount, downloadSave, uploadSave } from './game/cloud';
 
 const canvas = document.getElementById('screen') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
@@ -49,14 +50,62 @@ installHooks();
 
 // ---------------------------------------------------------------------------
 
+/** When signed in, keep the newer of this device's save and the cloud save. */
+async function syncCloudSave() {
+  if (!signedIn()) return;
+  const cloud = await downloadSave();
+  if (cloud === 'error') {
+    await say('인터넷 기록을 불러오지 못했어요.\n이 기기에 저장된 기록으로 진행해요.');
+    return;
+  }
+  if (!cloud) return;
+  const cloudTime = (cloud.data.savedAtMs as number | undefined) ?? cloud.updatedAt;
+  if (cloudTime > localSaveTime() && writeLocalSave(cloud.data)) {
+    await say(hasSave() ? '구글 계정에 저장된 최신 기록을 불러왔어요!' : '구글 계정의 기록을 불러왔어요!');
+  }
+}
+
+async function accountMenu() {
+  const c = await choose('구글 계정으로 로그인되어 있어요.\n저장할 때마다 인터넷에도 기록돼요.', ['로그아웃', '계정 삭제', '닫기']);
+  if (c === 0) {
+    await signOut();
+    await say('로그아웃했어요. 이 기기에 저장된 기록은 그대로 남아 있어요.');
+  } else if (c === 1) {
+    if (!(await yesNo('계정을 삭제하면 인터넷에 저장된 게임 기록도 모두 지워져요.\n정말 삭제할까요?'))) return;
+    if (!(await yesNo('되돌릴 수 없어요. 그래도 삭제할까요?'))) return;
+    if (await deleteAccount()) await say('계정과 인터넷 기록을 삭제했어요.\n이 기기에 저장된 기록은 그대로 남아 있어요.');
+    else await say('삭제하지 못했어요. 잠시 후 다시 시도해 주세요.');
+  }
+}
+
 async function titleFlow() {
   const title = new TitleScene();
   scenes.current = title;
   await fadeTo(0, 20);
   await title.waitStart();
-  const items = hasSave() ? ['이어하기', '새로 시작'] : ['새로 시작'];
-  const r = await ui.run(new Menu({ items, x: W / 2 - 48, y: 130, w: 96 }));
+  await syncCloudSave();
+  let pick = '';
+  for (;;) {
+    const account = cloudAvailable ? [signedIn() ? '계정' : '구글로 로그인'] : [];
+    const items = [...(hasSave() ? ['이어하기'] : []), '새로 시작', ...account];
+    pick = items[await ui.run(new Menu({ items, x: W / 2 - 52, y: 192 - 14 - items.length * 16, w: 104 }))];
+    if (pick === '구글로 로그인') {
+      const ok = await yesNo('구글 계정으로 로그인할까요?\n로그인하면 게임 기록을 인터넷에도 저장해서 다른 기기에서 이어할 수 있어요.');
+      if (!ok) continue;
+      await say('게임에는 계정 번호와 게임 기록만 보관하고,\n이름이나 이메일 같은 개인정보는 따로 저장하지 않아요.');
+      title.dispose();
+      await signInWithGoogle(); // leaves the page for Google's sign-in
+      return;
+    }
+    if (pick === '계정') {
+      await accountMenu();
+      continue;
+    }
+    break;
+  }
   title.dispose();
+  const r = pick === '이어하기' ? 0 : 1;
+  const items = ['이어하기', '새로 시작'];
   if (items[r] === '새로 시작' && hasSave()) {
     const ok = await yesNo('새로 시작하면, 저장할 때 이전 기록을 덮어써요.\n그래도 새로 시작할까요?');
     if (!ok) return titleFlow();
@@ -153,13 +202,13 @@ window.addEventListener('beforeunload', (e) => {
 function backgroundSave() {
   if (document.visibilityState !== 'hidden' || !runtime.ownsSave || !inWorld() || runtime.busy || ui.active) return;
   world.syncState();
-  saveGame();
+  if (saveGame() && signedIn()) void uploadSave(game);
 }
 document.addEventListener('visibilitychange', backgroundSave);
 window.addEventListener('pagehide', backgroundSave);
 
 const fontReady = (document as Document & { fonts?: FontFaceSet }).fonts?.load('700 11px "Noto Sans KR"') ?? Promise.resolve();
-Promise.race([fontReady, new Promise((r) => setTimeout(r, 1500))]).finally(() => runScript(titleFlow));
+Promise.all([Promise.race([fontReady, new Promise((r) => setTimeout(r, 1500))]), initCloud()]).finally(() => runScript(titleFlow));
 
 if (import.meta.env.DEV) {
   (window as unknown as Record<string, unknown>).__popket = { game, world, ui, scenes };

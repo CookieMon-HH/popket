@@ -5,6 +5,7 @@ import { ui } from '../engine/ui';
 import type { Scene } from '../engine/scene';
 import { silhouette } from '../engine/pix';
 import { monSprite, capsuleSprite } from './sprites';
+import { signedIn } from './cloud';
 
 // ---------------------------------------------------------------------------
 // Title screen: dawn over the 해솔 region.
@@ -351,7 +352,8 @@ export class TitleScene implements Scene {
       text(c, label, cx, 168.5, { size: 8.5, weight: 800, align: 'center', color: '#fff6c8', shadow: false });
       c.globalAlpha = 1;
     }
-    text(c, 'ver 1.7', W - 4, H - 10, { size: 7, align: 'right', color: 'rgba(255,255,255,0.7)', shadow: false });
+    if (signedIn()) text(c, '● 구글 계정 연결됨', 4, H - 10, { size: 7, color: 'rgba(255,255,255,0.8)', shadow: false });
+    text(c, 'ver 1.8', W - 4, H - 10, { size: 7, align: 'right', color: 'rgba(255,255,255,0.7)', shadow: false });
   }
 }
 
