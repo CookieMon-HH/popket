@@ -5,7 +5,7 @@ import { ui, Menu, MessageBox, setTextFormatter, say, yesNo } from './engine/ui'
 import { tickTasks } from './engine/timing';
 import { scenes, fx, fadeTo } from './engine/scene';
 import { world } from './game/overworld';
-import { installHooks, runScript, appHooks } from './game/api';
+import { installHooks, runScript, appHooks, importSaveFlow } from './game/api';
 import { game, hasSave, loadGame, newGame, saveGame, runtime, localSaveTime, writeLocalSave } from './game/state';
 import { j } from './game/common';
 import { TitleScene } from './game/title';
@@ -75,8 +75,15 @@ async function titleFlow() {
   await fadeTo(0, 20);
   await title.waitStart();
   await syncCloudSave();
-  const menuItems = [...(hasSave() ? ['이어하기'] : []), '새로 시작'];
+  const menuItems = [...(hasSave() ? ['이어하기'] : []), '새로 시작', '기록 가져오기'];
   const pick = menuItems[await ui.run(new Menu({ items: menuItems, x: W / 2 - 52, y: 192 - 14 - menuItems.length * 16, w: 104 }))];
+  if (pick === '기록 가져오기') {
+    if (await importSaveFlow()) {
+      title.dispose();
+      return;
+    }
+    return titleFlow();
+  }
   title.dispose();
   const r = pick === '이어하기' ? 0 : 1;
   const items = ['이어하기', '새로 시작'];

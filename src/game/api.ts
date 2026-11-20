@@ -6,7 +6,7 @@ import { silhouette } from '../engine/pix';
 import { SPECIES } from '../data/species';
 import { ITEMS } from '../data/items';
 import { world, type NPC } from './overworld';
-import { game, runtime, addItem, saveGame, markCaught, addMon, itemCount, beatenAll } from './state';
+import { game, runtime, addItem, saveGame, markCaught, addMon, itemCount, beatenAll, readLocalSave, writeLocalSave, loadGame } from './state';
 import { createMon, healMon, monName, maxHp, type Mon } from './monster';
 import { runBattle, type BattleResult } from './battle';
 import { monSprite } from './sprites';
@@ -19,6 +19,7 @@ import { safariEnd } from './safari';
 import { canFly, flyMenu } from './fly';
 import { signedIn, uploadSave } from './cloud';
 import { offerServerSave, accountMenu, accountLabel } from './account';
+import { encodeSave, decodeSave, textDialog } from './transfer';
 import { settings, setControls } from './settings';
 
 export { world };
@@ -359,13 +360,74 @@ export async function startMenu() {
   }
 }
 
+/** Save, then show the save as a code to copy. */
+async function exportSaveFlow() {
+  if (!(await yesNo('지금 상태를 저장한 뒤 기록 코드를 만들까요?'))) return;
+  world.syncState();
+  const raw = saveGame() ? readLocalSave() : null;
+  if (!raw) {
+    await say('기록을 저장하지 못했어요… 브라우저 저장소를 확인해 주세요.');
+    return;
+  }
+  const code = await encodeSave(raw);
+  let copied = false;
+  try {
+    await navigator.clipboard.writeText(code);
+    copied = true;
+  } catch {
+    /* clipboard blocked: the player copies from the box */
+  }
+  await textDialog({
+    title: '기록 코드',
+    body: (copied ? '코드를 복사해 두었어요!\n' : '아래 코드를 길게 눌러 전체 선택 → 복사해 주세요.\n') + '옮길 곳의 팜팜몬에서 「기록 가져오기」를 누르고 붙여 넣으면 돼요.',
+    value: code,
+    ok: '닫기',
+    readOnly: true,
+  });
+}
+
+/** Paste a save code. Returns true when a save was loaded into the world. */
+export async function importSaveFlow(): Promise<boolean> {
+  const text = await textDialog({
+    title: '기록 가져오기',
+    body: '다른 곳의 팜팜몬에서 「기록 내보내기」로 만든 코드를 붙여 넣어 주세요.',
+    ok: '가져오기',
+    cancel: '취소',
+  });
+  if (!text) return false;
+  const json = await decodeSave(text);
+  if (!json) {
+    await say('올바른 기록 코드가 아니에요.\n코드 전체를 빠짐없이 복사했는지 확인해 주세요.');
+    return false;
+  }
+  const data = JSON.parse(json) as { name: string; party: unknown[] };
+  if (!(await yesNo(`「${data.name}」의 기록(동료 ${data.party.length}마리)을 가져올까요?\n이 기기에 있던 기록은 덮어써져요.`))) return false;
+  if (!writeLocalSave(data) || !loadGame()) {
+    await say('기록을 가져오지 못했어요… 다시 시도해 주세요.');
+    return false;
+  }
+  await fadeTo(1, 12);
+  world.load(game.map, game.x, game.y, game.dir);
+  scenes.current = world;
+  await fadeTo(0, 12);
+  await say('기록을 가져왔어요! 이어서 모험을 계속해요.');
+  if (signedIn() && (await uploadSave(game))) await say('가져온 기록을 서버에도 저장했어요.');
+  return true;
+}
+
 async function settingsMenu() {
   let i = 0;
   for (;;) {
     const label = settings.controls === 'dpad' ? '방향키' : '조이스틱';
-    i = await ui.run(new Menu({ items: [`조작 방식: ${label}`, accountLabel(), '닫기'], cancel: true, x: OX + BW - 150, y: 40, w: 146, index: i }));
+    i = await ui.run(new Menu({ items: [`조작 방식: ${label}`, accountLabel(), '기록 옮기기', '닫기'], cancel: true, x: OX + BW - 150, y: 40, w: 146, index: i }));
     if (i === 1) {
       await accountMenu();
+      continue;
+    }
+    if (i === 2) {
+      const c = await choose('다른 기기나 다른 주소의 팜팜몬으로 기록을 옮길 수 있어요.', ['기록 내보내기', '기록 가져오기', '닫기']);
+      if (c === 0) await exportSaveFlow();
+      else if (c === 1 && (await importSaveFlow())) return;
       continue;
     }
     if (i !== 0) return;

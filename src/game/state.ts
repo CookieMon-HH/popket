@@ -104,6 +104,15 @@ export function loadGame(): boolean {
   }
 }
 
+/** The raw save JSON stored in this browser, if any. */
+export function readLocalSave(): string | null {
+  try {
+    return localStorage.getItem(SAVE_KEY);
+  } catch {
+    return null;
+  }
+}
+
 /** savedAtMs of the save stored in this browser, or 0. */
 export function localSaveTime(): number {
   try {
