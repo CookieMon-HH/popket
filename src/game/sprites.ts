@@ -83,8 +83,8 @@ function drawPerson(pal: Pal, dir: 'down' | 'up' | 'left', frame: number): Pix {
       // Stride: front leg reaches out, back leg pushes off with the heel up.
       p.rect(7 + fwd * 2, 15, 2, 4, pal.pants);
       p.rect(7 + fwd * 2, 18, 2, 1, shoe);
-      p.rect(7 - fwd, 15, 2, 3, pal.pants);
-      p.rect(7 - fwd, 17, 2, 1, shoe);
+      p.rect(7 - fwd * 2, 15, 2, 4, pal.pants);
+      p.rect(7 - fwd * 2, 18, 2, 1, shoe);
     }
     p.rect(5, 10, 6, 6, pal.shirt);
     // Arm swings opposite to the front leg.
@@ -99,21 +99,19 @@ function drawPerson(pal: Pal, dir: 'down' | 'up' | 'left', frame: number): Pix {
       p.rect(2, 5, 5, 1, pal.hat);
     }
   } else {
-    // Bigger steps: the lifted leg rises 2px.
-    const lUp = frame === 1 ? 2 : 0;
-    const rUp = frame === 3 ? 2 : 0;
-    p.rect(5, 15, 2, 4 - lUp, pal.pants);
-    p.rect(9, 15, 2, 4 - rUp, pal.pants);
-    p.rect(5, 18 - lUp, 2, 1, shoe);
-    p.rect(9, 18 - rUp, 2, 1, shoe);
+    // Walking sways left and right only (nothing moves up or down):
+    // on each step one leg and the same-side arm swing outward.
+    const lOut = frame === 1 ? 1 : 0;
+    const rOut = frame === 3 ? 1 : 0;
+    p.rect(5 - lOut, 15, 2, 4, pal.pants);
+    p.rect(9 + rOut, 15, 2, 4, pal.pants);
+    p.rect(5 - lOut, 18, 2, 1, shoe);
+    p.rect(9 + rOut, 18, 2, 1, shoe);
     p.rect(4, 10, 8, 6, pal.shirt);
-    // Arms swing: the arm on the side of the lifted leg goes back (up), the other forward (down).
-    const la = lUp ? -1 : rUp ? 1 : 0;
-    const ra = rUp ? -1 : lUp ? 1 : 0;
-    p.rect(3, 11 + la, 1, 3, pal.shirt);
-    p.rect(12, 11 + ra, 1, 3, pal.shirt);
-    p.set(3, 14 + la, S);
-    p.set(12, 14 + ra, S);
+    p.rect(3 - lOut, 11, 1, 3, pal.shirt);
+    p.rect(12 + rOut, 11, 1, 3, pal.shirt);
+    p.set(3 - lOut, 14, S);
+    p.set(12 + rOut, 14, S);
     p.ell(8, 6.5, 5, 5, S);
     if (dir === 'down') {
       p.ell(8, 4.5, 5.2, 3.6, pal.hair);
