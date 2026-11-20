@@ -37,6 +37,7 @@ export interface WorldHooks {
   spotted(npc: NPC): Promise<void>;
   encounter(table: [string, number, number, number][]): Promise<void>;
   menu(): Promise<void>;
+  safariEnd(): Promise<void>;
   run(fn: () => Promise<void>): void;
 }
 
@@ -54,6 +55,7 @@ export class Overworld implements Scene {
     this.map = MAPS[id];
     Object.assign(this.player, { x, y, dir, offX: 0, offY: 0, moving: 0 });
     game.map = id;
+    game.flags['visit_' + id] = true;
     this.syncState();
     this.npcs = [];
     this.refreshNPCs();
@@ -153,6 +155,11 @@ export class Overworld implements Scene {
       }
     }
     if (this.bannerT > 0) this.bannerT--;
+    // Safari time only runs while the player is free to walk around.
+    if (this.map.safari && game.safari && canInput && !runtime.busy && !ui.active && --game.safari.left <= 0) {
+      this.hooks.run(() => this.hooks.safariEnd());
+      return;
+    }
 
     const arrived = this.stepActor(this.player);
     if (arrived) {
@@ -410,6 +417,13 @@ export class Overworld implements Scene {
       ctx.strokeStyle = '#2a2e48';
       ctx.stroke();
       text(ctx, l.text, x, y + 1, { size: 8, align: 'center', color: l.ink ?? '#2a2e48', shadow: false });
+    }
+    if (this.map.safari && game.safari) {
+      const sec = Math.max(0, Math.ceil(game.safari.left / 60));
+      const label = `남은 시간 ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}   사파리볼 ${game.safari.balls}개`;
+      const w = measure(label, 9) + 16;
+      box(ctx, W - w - 4, 4, w, 18);
+      text(ctx, label, W - w / 2 - 4, 8, { size: 9, align: 'center', color: sec <= 60 ? '#d83a4a' : '#30323f' });
     }
     if (this.bannerT <= 0 || ui.active) return;
     const t = this.bannerT;

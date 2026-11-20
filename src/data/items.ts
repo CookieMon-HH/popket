@@ -25,6 +25,8 @@ const list: ItemDef[] = [
   { id: 'bell_water', name: '물의방울', price: 0, kind: 'key', desc: '물안개마을 낚시꾼에게 받은 푸른 방울. 흔들면 물방울 소리가 난다.' },
   { id: 'bell_rock', name: '바위의방울', price: 0, kind: 'key', desc: '별빛동굴 광부 대장에게 받은 잿빛 방울. 흔들면 돌 구르는 소리가 난다.' },
   { id: 'pearl', name: '여의주', price: 0, kind: 'key', desc: '용의 마을의 보물. 은은한 빛을 내며 하늘의 날씨를 다스린다고 한다.' },
+  { id: 'safariticket', name: '사파리입장권', price: 1500, kind: 'key', desc: '파도항구 팜팜 사파리에 한 번 들어갈 수 있는 입장권. 10분 동안 사파리볼 30개로 몬스터를 잡을 수 있다.' },
+  { id: 'windwhistle', name: '바람피리', price: 0, kind: 'key', desc: '바람 조련사 솔바람에게 받은 피리. 메뉴의 「날아가기」로 한 번 가 본 마을까지 회오리매가 데려다준다.' },
   { id: 'rod', name: '낚싯대', price: 0, kind: 'key', desc: '물가를 바라보고 A 버튼을 누르면 낚시를 할 수 있다.' },
 ];
 

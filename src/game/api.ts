@@ -15,6 +15,8 @@ import { learnMove, movesLearnedAt } from './learn';
 import { OPP, j, rand } from './common';
 import type { TrainerDef } from './maps';
 import { shrineTalk } from './story';
+import { safariEnd } from './safari';
+import { canFly, flyMenu } from './fly';
 import { settings, setControls } from './settings';
 
 export { world };
@@ -83,7 +85,9 @@ async function battle(opts: Parameters<typeof runBattle>[0], canLose = false): P
 }
 
 async function whiteout() {
-  const lost = Math.floor(game.money / 2);
+  // A small penalty only: 10% of your money, capped by progress.
+  const badges = Object.keys(game.flags).filter((k) => /^badge\d$/.test(k) && game.flags[k]).length;
+  const lost = Math.min(Math.floor(game.money / 10), 200 + badges * 100);
   game.money -= lost;
   for (const m of game.party) healMon(m);
   const h = game.lastHeal;
@@ -105,7 +109,9 @@ export async function randomEncounter(table: [string, number, number, number][])
       break;
     }
   }
-  await battle({ kind: 'wild', enemies: [createMon(row[0], rand(row[1], row[2]))] });
+  const safari = !!world.map.safari && !!game.safari;
+  await battle({ kind: 'wild', enemies: [createMon(row[0], rand(row[1], row[2]))], safari });
+  if (safari && game.safari && game.safari.balls <= 0) await safariEnd('balls');
 }
 
 export async function trainerBattle(t: TrainerDef, canLose = false): Promise<BattleResult> {
@@ -298,14 +304,19 @@ export async function tileTalk(ch: string) {
 export async function startMenu() {
   let idx = 0;
   for (;;) {
-    const items = ['도감', '동료', '가방', game.name, '저장', '설정', '그만하기', '닫기'];
+    const items = ['도감', '동료', '가방', ...(canFly() ? ['날아가기'] : []), game.name, '저장', '설정', '그만하기', '닫기'];
     idx = await ui.run(new Menu({ items, cancel: true, x: OX + BW - 80, y: 2, w: 76, rowH: 15, index: idx }));
-    if (idx < 0 || idx === 7) return;
-    if (idx === 5) {
+    const pick = items[idx];
+    if (idx < 0 || pick === '닫기') return;
+    if (pick === '날아가기') {
+      if (await flyMenu()) return;
+      continue;
+    }
+    if (pick === '설정') {
       await settingsMenu();
       continue;
     }
-    if (idx === 6) {
+    if (pick === '그만하기') {
       const unsaved = game.frames - runtime.savedAt > 60;
       const r = await choose(
         unsaved ? '그만하기 전에 지금까지의 모험을 저장할까요?' : '타이틀 화면으로 돌아갈까요?',
@@ -324,13 +335,13 @@ export async function startMenu() {
       appHooks.toTitle();
       return;
     }
-    if (idx === 0) {
+    if (pick === '도감') {
       if (!game.flags.gotStarter) await say('아직 도감을 받지 않았다.');
       else await ui.run(new DexView());
-    } else if (idx === 1) await partyMenu();
-    else if (idx === 2) await bagMenu();
-    else if (idx === 3) await ui.run(new TrainerCard());
-    else if (idx === 4) {
+    } else if (pick === '동료') await partyMenu();
+    else if (pick === '가방') await bagMenu();
+    else if (pick === game.name) await ui.run(new TrainerCard());
+    else if (pick === '저장') {
       if (await yesNo('지금까지의 모험을 기록할까요?')) {
         world.syncState();
         if (saveGame()) await say('{name}은(는) 모험을 기록했다!');
@@ -360,6 +371,7 @@ export function installHooks() {
     spotted: trainerSpotted,
     encounter: randomEncounter,
     menu: startMenu,
+    safariEnd: () => safariEnd('time'),
     run: runScript,
   };
 }

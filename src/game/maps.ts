@@ -10,6 +10,8 @@ import {
   port1Scene, dalnimShipTalk, shipAdminWin, leader4Win, leader5Win, volcanoBossScene, guardian1Win, guardian2Win, championScene,
   iceIntroScene, iceCaveScene, beachAdminWin, leader6Win, dragonIntroScene, elderTalk, denEntranceScene, cloudWin, leader7Win, lever, toggleSwitch, quiz,
 } from './story';
+import { keeperTalk, escapeeTalk, safariExitTile } from './safari';
+import { windTamerTalk } from './fly';
 
 export interface Warp {
   x: number;
@@ -62,6 +64,8 @@ export interface NPCDef {
 type Table = [string, number, number, number][];
 
 export interface MapDef {
+  /** Safari rules: timer, safari balls and safari-style battles. */
+  safari?: boolean;
   id: string;
   name: string;
   indoor?: boolean;
@@ -1077,6 +1081,7 @@ const PAL2 = {
   medium: { hair: '#4a3a6a', shirt: '#6a5a8a', pants: '#3a2a4a' },
   firefighter: { hair: '#2a2a2a', shirt: '#e8c040', pants: '#5a3a2a', hat: '#e84a2a' },
   surfer: { hair: '#f0c040', shirt: '#38b0e0', pants: '#f0a030' },
+  ranger: { hair: '#5a3a20', shirt: '#6aa84a', pants: '#8a6a3a', hat: '#c8a860' },
 } satisfies Record<string, Pal>;
 
 function tr(id: string, cls: string, name: string, pal: Pal, team: [string, number][], reward: number, intro: string, defeat: string, after: string, afterWin?: () => Promise<void>): TrainerDef {
@@ -1128,6 +1133,8 @@ const route4: MapDef = {
     { id: 'r4beauty', x: 17, y: 14, dir: 'left', pal: PAL2.beauty, sight: 9, trainer: tr('r4beauty', '아가씨', '보라', PAL2.beauty, [['wangmong', 29], ['monggeul', 30]], 900, '어머, 승부할래요?', '멋진 승부였어요~', '항구의 유령선 얘기 들었어요? 으으, 무서워!') },
     { id: 'r4hiker', x: 16, y: 21, dir: 'left', pal: PAL.hiker, sight: 5, trainer: tr('r4hiker', '등산가', '바위', PAL.hiker, [['geoam', 31], ['heukjang', 30]], 1100, '하하! 산사나이의 힘을 보여 주지!', '허허, 젊은 사람이 대단해!', '항구까지 조금만 더 가면 된다네.') },
     { id: 'r4hyper', x: 18, y: 1, dir: 'down', item: { id: 'hyperball', qty: 2 } },
+    { id: 'lost_yuni', x: 3, y: 15, dir: 'down', mon: 'agiyuni', hidden: () => !f('safariQuest') || f('lost_yuni'), talk: () => escapeeTalk('lost_yuni', '아기유니') },
+    { id: 'lost_gom', x: 13, y: 7, dir: 'down', mon: 'agigom', hidden: () => !f('safariQuest') || f('lost_gom'), talk: () => escapeeTalk('lost_gom', '아기곰돌') },
     { id: 'r4full', x: 1, y: 14, dir: 'down', item: { id: 'fullrestore', qty: 1 } },
   ],
 };
@@ -1135,22 +1142,22 @@ const route4: MapDef = {
 const town5: MapDef = {
   id: 'town5', name: '파도항구',
   tiles: [
-    '###########=############',
-    '#..KKKKK...=...MMMM....#',
-    '#..KKKKK...=...MMMM....#',
-    '#..WwDwW...=...WDwW....#',
-    '#....=.....=....=......#',
-    '#....============......#',
-    '#..BBBB....=...........#',
-    '#..BHBB....=....l......#',
-    '#..WEwW....=...........#',
-    '====================...#',
-    '#..................+...#',
-    '#~~~~~~~~~~~~~~~~~~+~~~#',
-    '#~~~~~~~~~~~~~~~~~~+~~~#',
-    '#~~~~~~~~~ZZZZZZZZZDZZ~#',
-    '#~~~~~~~~~ZZZZZZZZZZZZ~#',
-    '########################',
+    '###########=#################',
+    '#..KKKKK...=...MMMM.....GGGG#',
+    '#..KKKKK...=...MMMM.....GGGG#',
+    '#..WwDwW...=...WDwW.....WDwW#',
+    '#....=.....=....=........=..#',
+    '#....=====================..#',
+    '#..BBBB....=................#',
+    '#..BHBB....=....l...........#',
+    '#..WEwW....=................#',
+    '====================........#',
+    '#..................+........#',
+    '#~~~~~~~~~~~~~~~~~~+~~~~~~~~#',
+    '#~~~~~~~~~~~~~~~~~~+~~~~~~~~#',
+    '#~~~~~~~~~ZZZZZZZZZDZZ~~~~~~#',
+    '#~~~~~~~~~ZZZZZZZZZZZZ~~~~~~#',
+    '#############################',
   ],
   warps: [
     { x: 11, y: 0, to: 'route4', tx: 11, ty: 24, dir: 'up' },
@@ -1159,10 +1166,12 @@ const town5: MapDef = {
     { x: 4, y: 8, to: 'center5', tx: 4, ty: 6, dir: 'up' },
     { x: 19, y: 13, to: 'ship', tx: 6, ty: 7, dir: 'up' },
     { x: 0, y: 9, to: 'route5', tx: 24, ty: 3, dir: 'left' },
+    { x: 25, y: 3, to: 'safarigate', tx: 4, ty: 6, dir: 'up' },
   ],
   labels: [
     { x: 5, y: 6.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
     { x: 17, y: 1.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
+    { x: 26, y: 1.1, text: '사파리', color: '#e0f8d0', ink: '#2a6a2a' },
     { x: 5.5, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' },
     { x: 16, y: 13.1, text: '유령선', color: '#d8d0f8', ink: '#3a2a6a' },
   ],
@@ -1172,6 +1181,12 @@ const town5: MapDef = {
     { id: 't5sailor', x: 13, y: 2, dir: 'left', pal: PAL2.sailor, talk: '뱃사람: 유령선은 남쪽 부두 끝에 있다네.\n파란 도깨비불이 둥둥 떠다니니 조심하게!' },
     { id: 't5old', x: 20, y: 6, dir: 'down', pal: PAL.oldman, move: 'look', talk: '이 항구에서 서쪽 해변길을 따라 남쪽으로 가면 불꽃마을이 나온다네.\n뜨끈한 온천이 아주 좋지!' },
     { id: 't5kid', x: 8, y: 10, dir: 'right', pal: PAL.kid, move: 'wander', talk: '아빠가 그러는데, 바다 깊은 곳엔 배만 한 대왕문어가 산대!' },
+    { id: 't5safarifan', x: 23, y: 6, dir: 'down', pal: PAL.girl, move: 'look', talk: async () => {
+      if (f('safariOpen')) await say('사파리에는 꼬마룡이나 무지개유니 같은 귀한 몬스터도 산대!\n연못에서 낚시를 하면 신기한 게 걸린다던데?');
+      else await say('저기 초록 지붕이 팜팜 사파리 입구야.\n그런데 요즘 문을 닫았대. 무슨 일이 있나 봐.');
+    } },
+    { id: 't5windtamer', x: 21, y: 6, dir: 'down', pal: PAL2.surfer, move: 'look', talk: () => windTamerTalk() },
+    { id: 'lost_mong', x: 27, y: 9, dir: 'down', mon: 'mongmong', hidden: () => !f('safariQuest') || f('lost_mong'), talk: () => escapeeTalk('lost_mong', '몽몽이') },
   ],
   triggers: [
     { x: 11, y: 2, when: () => !f('portIntro'), run: port1Scene },
@@ -1181,6 +1196,78 @@ const town5: MapDef = {
 
 const center5 = makeCenter('center5', '파도항구 회복소', 'town5', 4, 9, '바다 몬스터는 전기 기술에 약한 경우가 많아.\n고스트 타입에는 악 타입 기술이 잘 통하고!');
 const shop5 = makeShop('shop5', '파도항구 상점', 'town5', 16, 4, '뱃사람들은 늘 회복약을 넉넉히 챙긴대요.');
+
+const safarigate: MapDef = {
+  id: 'safarigate', name: '팜팜 사파리 입구', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkooookkX',
+    'XoTTTTTToX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town5', tx: 25, ty: 4, dir: 'down' },
+    { x: 5, y: 7, to: 'town5', tx: 25, ty: 4, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'keeper', x: 4, y: 1, dir: 'down', pal: PAL2.ranger, talk: () => keeperTalk() },
+    { id: 'sgvisitor', x: 7, y: 5, dir: 'left', pal: PAL.hiker, move: 'wander', talk: '사파리 안에서는 내 몬스터로 싸울 수 없어.\n대신 진흙을 던지면 몬스터가 잡히기 쉬워지지!' },
+  ],
+};
+
+/** 팜팜 사파리: 10분 동안 사파리볼로만 몬스터를 잡는 특별 구역. */
+const safari: MapDef = {
+  id: 'safari', name: '팜팜 사파리', safari: true,
+  tiles: [
+    '####################################',
+    '#,,,,,,,#dd~~~~~~~~~~~~~dd#,,,,,#,,#',
+    '#,,,,,,,.dd~~~~~~~~~~~~~dd.,#,,,,,,#',
+    '#,,,,,,,.dd~~~~~~~~~~~~~dd.,,,,#,,,#',
+    '#,,,,,,,.dd~~~~~~~~~~~~~dd.,,,,,,,,#',
+    '#,,,,,,,.dd~~~~~~~~~~~~~dd.,,,,,,,,#',
+    '#,,,,,,,.dddd~~~~~~~~~dddd.,,,,,,#,#',
+    '#........ddddddddddddddddd.,,#,,,,,#',
+    '##.==============================,##',
+    '#.........#...#..=..#..#...,,,,,,,,#',
+    '#.,,,,,,,,,,,....=.................#',
+    '#.,,,,,,,,,f,....=....,,,,,,,,,,,#.#',
+    '#.,,f,,,,,,,,.ddd=ddd.,,,,,,#,,,,,.#',
+    '#.,,,,,,,,,,,.d~~=~~d.,,#,,,,,,,,,.#',
+    '#.,,,,,,,f,,,.d~~=~~d.,,,,,,,,,,,,.#',
+    '#.,,,,,,,,,,,.d~~=~~d.,,,,,,,,,#,,.#',
+    '#.,,,,f,,,,,,.ddd=ddd.,,,,,,,,,,,,.#',
+    '##...............======,,,#,,,,,,,.#',
+    '#.ffffffffffff...=....,,,,,,,,,,,,.#',
+    '#.ff,,,,,fffff...=.................#',
+    '#.ff,,,,,ffffFFFF=FFFF..,,,,,,,,,,.#',
+    '#.ffffffffffff.S.=......,,,,,,,,,,.#',
+    '#................=.................#',
+    '####################################',
+  ],
+  warps: [],
+  signs: [{ x: 15, y: 21, text: '팜팜 사파리\n풀숲과 연못에 귀한 몬스터가 살고 있어요.  ·  아래쪽 문: 출구' }],
+  encounters: {
+    rate: 0.14,
+    table: [
+      ['tongsil', 24, 28, 10], ['baramsae', 24, 28, 9], ['kkaeng', 24, 27, 8], ['agigom', 24, 27, 8], ['mongmong', 24, 27, 8],
+      ['dalto', 24, 27, 7], ['ddakkum', 24, 27, 7], ['bueong', 24, 27, 7], ['kkotip', 24, 27, 7], ['suguk', 24, 27, 6],
+      ['monsil', 24, 27, 6], ['nunnyang', 25, 28, 5], ['ggangtong', 25, 28, 5], ['soejip', 25, 28, 5], ['makarong', 25, 28, 4],
+      ['agiyuni', 25, 28, 4], ['satba', 27, 29, 3], ['kkomaryong', 25, 28, 3], ['olppaemi', 27, 29, 2], ['wangmong', 27, 29, 2],
+      ['mujigae', 27, 29, 2], ['seolpyo', 28, 30, 1], ['nalgae', 29, 31, 1],
+    ],
+  },
+  fishing: [['pongduck', 22, 26, 30], ['munu', 22, 26, 25], ['jelly', 23, 27, 20], ['eungeo', 26, 28, 12], ['aurora', 27, 29, 8], ['hyeonmuk', 26, 28, 5]],
+  npcs: [
+    { id: 'saf1', x: 30, y: 4, dir: 'down', item: { id: 'hyperball', qty: 1 } },
+    { id: 'saf2', x: 3, y: 20, dir: 'down', item: { id: 'fullrestore', qty: 1 } },
+    { id: 'saf3', x: 33, y: 17, dir: 'down', item: { id: 'safariticket', qty: 1 } },
+  ],
+  triggers: [{ x: 17, y: 22, run: safariExitTile }],
+};
 
 const ship: MapDef = {
   id: 'ship', name: '유령선', indoor: true, dark: true,
@@ -1901,7 +1988,7 @@ export const MAPS: Record<string, MapDef> = {
   home, town1, lab, route1, town2, center, shop, dojo,
   route2, forest, town3, center3, shop3, gym2,
   route3, cave, town4, center4, shop4, gym3, peak, pastel,
-  route4, town5, center5, shop5, ship, gym4, route5, town6, center6, shop6, gym5, volcano, route6, plateau, center7, league,
+  route4, town5, center5, shop5, safarigate, safari, ship, gym4, route5, town6, center6, shop6, gym5, volcano, route6, plateau, center7, league,
   town7, center8, shop8, gym6, icecave, route7, town8, center9, shop9, den, gym7, route8,
 };
 

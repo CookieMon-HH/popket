@@ -17,6 +17,8 @@ export interface GameState {
   caught: string[];
   lastHeal: { map: string; x: number; y: number };
   frames: number;
+  /** Set while inside the safari: balls left and frames left. */
+  safari?: { balls: number; left: number };
 }
 
 const SAVE_KEY = 'popket-save-v1';

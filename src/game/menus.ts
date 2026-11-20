@@ -69,6 +69,8 @@ export class PartyView extends Widget<number> {
 /** Shows the party and returns the chosen index (-1 on cancel). `validate` returns an error message or null. */
 export async function pickPartyMember(prompt: string, validate?: (m: Mon) => string | null, cancel = true): Promise<number> {
   const pv = new PartyView(prompt, cancel);
+  // Start on the first member that passes the check (e.g. skip fainted ones).
+  if (validate) pv.idx = Math.max(0, game.party.findIndex((m) => !validate(m)));
   ui.run(pv);
   for (;;) {
     const i = await pv.promise;
