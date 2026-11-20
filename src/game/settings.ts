@@ -2,7 +2,7 @@ export type ControlMode = 'dpad' | 'stick';
 
 const KEY = 'popket-settings-v1';
 
-export const settings: { controls: ControlMode } = { controls: 'dpad' };
+export const settings: { controls: ControlMode; noCloudPrompt?: boolean } = { controls: 'dpad' };
 
 export function loadSettings() {
   try {
@@ -21,6 +21,10 @@ export function applySettings() {
 export function setControls(mode: ControlMode) {
   settings.controls = mode;
   applySettings();
+  saveSettings();
+}
+
+export function saveSettings() {
   try {
     localStorage.setItem(KEY, JSON.stringify(settings));
   } catch {

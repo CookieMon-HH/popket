@@ -18,6 +18,7 @@ import { shrineTalk } from './story';
 import { safariEnd } from './safari';
 import { canFly, flyMenu } from './fly';
 import { signedIn, uploadSave } from './cloud';
+import { offerServerSave, accountMenu, accountLabel } from './account';
 import { settings, setControls } from './settings';
 
 export { world };
@@ -310,9 +311,12 @@ async function saveWithMessage(): Promise<boolean> {
     return false;
   }
   if (signedIn()) {
-    if (await uploadSave(game)) await say('{name}은(는) 모험을 기록했다!\n(구글 계정에도 저장했어요)');
-    else await say('{name}은(는) 모험을 기록했다!\n하지만 인터넷 저장은 실패했어요. 이 기기에는 저장되었어요.');
-  } else await say('{name}은(는) 모험을 기록했다!');
+    if (await uploadSave(game)) await say('{name}은(는) 모험을 기록했다!\n(서버에도 저장했어요)');
+    else await say('{name}은(는) 모험을 기록했다!\n서버 저장은 실패했지만, 이 기기에는 저장되었어요.');
+  } else {
+    await say('{name}은(는) 모험을 기록했다!');
+    await offerServerSave();
+  }
   return true;
 }
 
@@ -359,7 +363,11 @@ async function settingsMenu() {
   let i = 0;
   for (;;) {
     const label = settings.controls === 'dpad' ? '방향키' : '조이스틱';
-    i = await ui.run(new Menu({ items: [`조작 방식: ${label}`, '닫기'], cancel: true, x: OX + BW - 150, y: 40, w: 146, index: i }));
+    i = await ui.run(new Menu({ items: [`조작 방식: ${label}`, accountLabel(), '닫기'], cancel: true, x: OX + BW - 150, y: 40, w: 146, index: i }));
+    if (i === 1) {
+      await accountMenu();
+      continue;
+    }
     if (i !== 0) return;
     setControls(settings.controls === 'dpad' ? 'stick' : 'dpad');
     await say(settings.controls === 'dpad' ? '조작 방식을 방향키로 바꿨어요.' : '조작 방식을 조이스틱으로 바꿨어요.\n화면 왼쪽을 누르고 끌어서 움직여요.');

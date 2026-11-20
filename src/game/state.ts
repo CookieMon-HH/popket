@@ -53,6 +53,8 @@ export const runtime = {
   savedAt: 0,
   /** True once this session's game is tied to the save slot (loaded or saved). */
   ownsSave: false,
+  /** Server save was already offered this session. */
+  cloudAsked: false,
 };
 
 export function newGame(name: string) {
