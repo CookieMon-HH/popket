@@ -19,7 +19,9 @@ function embedded() {
   }
 }
 
-export const cloudAvailable = !!URL && !!KEY && !embedded() && location.protocol.startsWith('http');
+// `?nocloud` turns server features off (used by automated tests).
+const optedOut = new URLSearchParams(location.search).has('nocloud');
+export const cloudAvailable = !!URL && !!KEY && !embedded() && !optedOut && location.protocol.startsWith('http');
 
 const sb: SupabaseClient | null = cloudAvailable
   ? createClient(URL!, KEY!, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' } })

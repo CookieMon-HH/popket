@@ -5,11 +5,11 @@ import { ui, Menu, MessageBox, setTextFormatter, say, yesNo } from './engine/ui'
 import { tickTasks } from './engine/timing';
 import { scenes, fx, fadeTo } from './engine/scene';
 import { world } from './game/overworld';
-import { installHooks, runScript, appHooks, importSaveFlow } from './game/api';
+import { installHooks, runScript, appHooks } from './game/api';
 import { game, hasSave, loadGame, newGame, saveGame, runtime, localSaveTime, writeLocalSave } from './game/state';
 import { j } from './game/common';
 import { TitleScene } from './game/title';
-import { initCloud, signedIn, downloadSave, uploadSave } from './game/cloud';
+import { initCloud, signedIn, downloadSave, uploadSave, cloudAvailable, signInWithGoogle } from './game/cloud';
 
 const canvas = document.getElementById('screen') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
@@ -74,16 +74,20 @@ async function titleFlow() {
   scenes.current = title;
   await fadeTo(0, 20);
   await title.waitStart();
-  await syncCloudSave();
-  const menuItems = [...(hasSave() ? ['이어하기'] : []), '새로 시작', '기록 가져오기'];
-  const pick = menuItems[await ui.run(new Menu({ items: menuItems, x: W / 2 - 52, y: 192 - 14 - menuItems.length * 16, w: 104 }))];
-  if (pick === '기록 가져오기') {
-    if (await importSaveFlow()) {
+  // Login screen: play with a Google account (saved on the server) or as a guest (saved in this browser).
+  if (cloudAvailable && !signedIn()) {
+    const c = await ui.run(new Menu({ items: ['구글로 시작하기', '계정 없이 시작하기'], x: W / 2 - 66, y: 192 - 14 - 2 * 16, w: 132 }));
+    if (c === 0) {
+      await say('구글 계정으로 시작하면 게임 기록이 서버에 저장돼서\n어느 기기에서든 이어 할 수 있어요.');
+      await say('서버에는 계정 번호와 게임 기록만 보관하고,\n이름이나 이메일 같은 개인정보는 게임에 따로 저장하지 않아요.');
       title.dispose();
+      await signInWithGoogle(); // leaves the page for Google's sign-in, then comes back here
       return;
     }
-    return titleFlow();
   }
+  await syncCloudSave();
+  const menuItems = [...(hasSave() ? ['이어하기'] : []), '새로 시작'];
+  const pick = menuItems[await ui.run(new Menu({ items: menuItems, x: W / 2 - 52, y: 192 - 14 - menuItems.length * 16, w: 104 }))];
   title.dispose();
   const r = pick === '이어하기' ? 0 : 1;
   const items = ['이어하기', '새로 시작'];

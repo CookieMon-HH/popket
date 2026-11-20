@@ -223,6 +223,8 @@ export class Overworld implements Scene {
 
   /** Called when the player finishes a step. Returns true when an event took over. */
   sliding = false;
+  /** Fishing animation state (rod, line and bobber). */
+  fishing: { t0: number; phase: 'cast' | 'wait' | 'bite' | 'reel' } | null = null;
 
   private onArrive(): boolean {
     const p = this.player;
@@ -299,6 +301,18 @@ export class Overworld implements Scene {
   }
 
   /** Walk an NPC up to the player and face each other. */
+  /** Walk a trainer back to its own spot after a battle so it never blocks the path. */
+  async returnHome(n: NPC) {
+    const home = n.def;
+    for (let guard = 0; guard < 16 && (n.x !== home.x || n.y !== home.y); guard++) {
+      const dx = home.x - n.x;
+      const dy = home.y - n.y;
+      const dir: Dir = dx !== 0 ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'down' : 'up';
+      if (!(await this.walk(n, dir))) break;
+    }
+    n.dir = home.dir;
+  }
+
   async approach(n: NPC) {
     const p = this.player;
     for (let guard = 0; guard < 12; guard++) {
@@ -388,7 +402,77 @@ export class Overworld implements Scene {
         g.fillRect(sx + 7, sy - 11, 2, 2);
       }
     }
+    if (this.fishing) this.drawFishing(g, cx, cy);
     if (this.map.dark) this.drawDark(g, cx, cy);
+  }
+
+  private drawFishing(g: Ctx, cx: number, cy: number) {
+    const f = this.fishing!;
+    const p = this.player;
+    const [dx, dy] = DIRV[p.dir];
+    const t = clock.frame - f.t0;
+    // Hand and rod tip (the rod leans forward and up).
+    const hx = p.x * 16 - cx + 8 + dx * 4;
+    const hy = p.y * 16 - cy + 6 + dy * 3;
+    const tipx = hx + dx * 11 + (dx === 0 ? 5 : 0);
+    const tipy = hy + dy * 9 - (dy === 0 ? 9 : 4);
+    // Where the bobber lands: two tiles ahead on the water.
+    const bx = p.x * 16 - cx + 8 + dx * 30;
+    const by = p.y * 16 - cy + 10 + dy * 26;
+    let ox = bx;
+    let oy = by;
+    if (f.phase === 'cast' || f.phase === 'reel') {
+      const k = Math.min(1, t / (f.phase === 'cast' ? 22 : 12));
+      const q = f.phase === 'cast' ? k : 1 - k;
+      ox = tipx + (bx - tipx) * q;
+      oy = tipy + (by - tipy) * q - Math.sin(q * Math.PI) * 16;
+    } else if (f.phase === 'wait') {
+      oy = by + Math.round(Math.sin(t / 14));
+    } else {
+      oy = by + 2 + (Math.floor(t / 4) % 2);
+    }
+    ox = Math.round(ox);
+    oy = Math.round(oy);
+    // Rod
+    g.strokeStyle = '#7a4a24';
+    g.lineWidth = 1.5;
+    g.beginPath();
+    g.moveTo(hx, hy);
+    g.lineTo(tipx, tipy);
+    g.stroke();
+    // Line, sagging a little while waiting
+    g.strokeStyle = 'rgba(240,244,255,0.9)';
+    g.lineWidth = 0.6;
+    g.beginPath();
+    g.moveTo(tipx, tipy);
+    g.quadraticCurveTo((tipx + ox) / 2, Math.max(tipy, oy) + (f.phase === 'bite' ? 0 : 4), ox, oy);
+    g.stroke();
+    // Ripples around the bobber
+    if (f.phase === 'wait' || f.phase === 'bite') {
+      const r = f.phase === 'bite' ? 3 + (t % 12) / 2 : 2 + (t % 60) / 12;
+      g.strokeStyle = `rgba(255,255,255,${f.phase === 'bite' ? 0.8 : 0.5 - (t % 60) / 140})`;
+      g.lineWidth = 0.8;
+      g.beginPath();
+      g.ellipse(bx, by + 2, r * 1.6, r * 0.6, 0, 0, Math.PI * 2);
+      g.stroke();
+    }
+    // Bobber: red top, white bottom
+    g.fillStyle = '#ffffff';
+    g.fillRect(ox - 1, oy, 3, 2);
+    g.fillStyle = '#e84a4a';
+    g.fillRect(ox - 1, oy - 2, 3, 2);
+    // "!" when something bites
+    if (f.phase === 'bite') {
+      const sx = p.x * 16 - cx;
+      const sy = p.y * 16 - cy;
+      g.fillStyle = '#26263a';
+      g.fillRect(sx + 3, sy - 19, 10, 12);
+      g.fillStyle = '#ffffff';
+      g.fillRect(sx + 4, sy - 18, 8, 10);
+      g.fillStyle = '#e04a4a';
+      g.fillRect(sx + 7, sy - 17, 2, 5);
+      g.fillRect(sx + 7, sy - 11, 2, 2);
+    }
   }
 
   private drawDark(g: Ctx, cx: number, cy: number) {
