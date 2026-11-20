@@ -99,8 +99,9 @@ function drawPerson(pal: Pal, dir: 'down' | 'up' | 'left', frame: number): Pix {
       p.rect(2, 5, 5, 1, pal.hat);
     }
   } else {
-    const lUp = frame === 1 ? 1 : 0;
-    const rUp = frame === 3 ? 1 : 0;
+    // Bigger steps: the lifted leg rises 2px.
+    const lUp = frame === 1 ? 2 : 0;
+    const rUp = frame === 3 ? 2 : 0;
     p.rect(5, 15, 2, 4 - lUp, pal.pants);
     p.rect(9, 15, 2, 4 - rUp, pal.pants);
     p.rect(5, 18 - lUp, 2, 1, shoe);
