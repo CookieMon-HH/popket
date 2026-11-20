@@ -386,9 +386,12 @@ export class Overworld implements Scene {
         }
         continue;
       }
-      const frame = a === this.player && this.sliding ? 0 : a.moving > STEP / 2 ? (a.step % 2 ? 1 : 3) : 0;
+      // Step pose in the middle of the stride (not right at the start), with a 1px bob.
+      const prog = 1 - a.moving / STEP;
+      const striding = a.moving > 0 && prog > 0.1 && prog < 0.8 && !(a === this.player && this.sliding);
+      const frame = striding ? (a.step % 2 ? 1 : 3) : 0;
       const pal = npc ? npc.def.pal ?? PLAYER_PAL : PLAYER_PAL;
-      g.drawImage(personSprite(pal, a.dir, frame), sx, sy - 5);
+      g.drawImage(personSprite(pal, a.dir, frame), sx, sy - 5 - (striding ? 1 : 0));
       if (this.tileAt(a.x, a.y) === ',' && a.moving < STEP / 2) {
         g.drawImage(tall, 0, 9, 16, 7, a.x * 16 - cx, a.y * 16 - cy + 9, 16, 7);
       }

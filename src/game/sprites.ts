@@ -18,6 +18,45 @@ export function monSprite(species: string): HTMLCanvasElement {
   return c;
 }
 
+const backCache = new Map<string, HTMLCanvasElement>();
+/**
+ * The player's own monster seen from behind: the same body, but with the face
+ * (eyes, mouth, cheeks and other small details) painted over with the
+ * surrounding body colour.
+ */
+export function monBackSprite(species: string): HTMLCanvasElement {
+  let c = backCache.get(species);
+  if (!c) {
+    const p = new Pix(MON_SIZE, MON_SIZE);
+    (MON_DRAW[species] ?? MON_DRAW.tosil)(p);
+    const count = new Map<string, number>();
+    for (const col of p.d) if (col) count.set(col, (count.get(col) ?? 0) + 1);
+    const isFace = (col: string) => col === EYE || col === '#ffffff' || (count.get(col) ?? 0) <= 6;
+    for (let pass = 0; pass < 4; pass++) {
+      const snap = p.d.slice();
+      const at = (x: number, y: number) => (x < 0 || y < 0 || x >= p.w || y >= p.h ? null : snap[y * p.w + x]);
+      for (let y = 0; y < p.h; y++) {
+        for (let x = 0; x < p.w; x++) {
+          const col = at(x, y);
+          if (!col || !isFace(col)) continue;
+          const nb = [at(x - 1, y), at(x + 1, y), at(x, y - 1), at(x, y + 1)];
+          if (nb.some((n) => !n)) continue; // keep the silhouette edge
+          const votes = new Map<string, number>();
+          for (const n of nb) if (n && !isFace(n)) votes.set(n, (votes.get(n) ?? 0) + 1);
+          let best: string | null = null;
+          let bestN = 0;
+          for (const [k, v] of votes) if (v > bestN) [best, bestN] = [k, v];
+          if (best) p.set(x, y, best);
+        }
+      }
+    }
+    p.outline(OUT);
+    c = p.toCanvas();
+    backCache.set(species, c);
+  }
+  return c;
+}
+
 // ---------------------------------------------------------------------------
 // People (16x20)
 
@@ -41,13 +80,16 @@ function drawPerson(pal: Pal, dir: 'down' | 'up' | 'left', frame: number): Pix {
       p.rect(6, 15, 4, 4, pal.pants);
       p.rect(6, 18, 4, 1, shoe);
     } else {
-      p.rect(7 + fwd, 15, 2, 4, pal.pants);
+      // Stride: front leg reaches out, back leg pushes off with the heel up.
+      p.rect(7 + fwd * 2, 15, 2, 4, pal.pants);
+      p.rect(7 + fwd * 2, 18, 2, 1, shoe);
       p.rect(7 - fwd, 15, 2, 3, pal.pants);
-      p.rect(7 + fwd, 18, 2, 1, shoe);
+      p.rect(7 - fwd, 17, 2, 1, shoe);
     }
     p.rect(5, 10, 6, 6, pal.shirt);
-    p.rect(7 - fwd, 11, 2, 4, pal.shirt);
-    p.set(7 - fwd, 14, S);
+    // Arm swings opposite to the front leg.
+    p.rect(7 - fwd * 2, 11, 2, 4, pal.shirt);
+    p.set(7 - fwd * 2, 14, S);
     p.ell(8, 6.5, 5, 5, S);
     p.ell(8.5, 4.5, 5, 3.6, pal.hair);
     p.rect(9, 5, 4, 4, pal.hair);
@@ -64,10 +106,13 @@ function drawPerson(pal: Pal, dir: 'down' | 'up' | 'left', frame: number): Pix {
     p.rect(5, 18 - lUp, 2, 1, shoe);
     p.rect(9, 18 - rUp, 2, 1, shoe);
     p.rect(4, 10, 8, 6, pal.shirt);
-    p.rect(3, 11, 1, 3, pal.shirt);
-    p.rect(12, 11, 1, 3, pal.shirt);
-    p.set(3, 14, S);
-    p.set(12, 14, S);
+    // Arms swing: the arm on the side of the lifted leg goes back (up), the other forward (down).
+    const la = lUp ? -1 : rUp ? 1 : 0;
+    const ra = rUp ? -1 : lUp ? 1 : 0;
+    p.rect(3, 11 + la, 1, 3, pal.shirt);
+    p.rect(12, 11 + ra, 1, 3, pal.shirt);
+    p.set(3, 14 + la, S);
+    p.set(12, 14 + ra, S);
     p.ell(8, 6.5, 5, 5, S);
     if (dir === 'down') {
       p.ell(8, 4.5, 5.2, 3.6, pal.hair);

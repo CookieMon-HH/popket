@@ -564,3 +564,83 @@ export class TrainerCard extends Widget<void> {
 }
 
 export { MessageBox };
+
+// ---------------------------------------------------------------------------
+// PC box: a grid of monster pictures with details for the selected one.
+
+export class BoxView extends Widget<number> {
+  idx = 0;
+  static COLS = 5;
+  static ROWS = 4;
+
+  constructor(public mons: Mon[], public title = '보관함') {
+    super();
+  }
+
+  update() {
+    const n = this.mons.length;
+    const C = BoxView.COLS;
+    if (input.repeat('left')) this.idx = Math.max(0, this.idx - 1);
+    if (input.repeat('right')) this.idx = Math.min(n - 1, this.idx + 1);
+    if (input.repeat('up') && this.idx - C >= 0) this.idx -= C;
+    if (input.repeat('down')) this.idx = Math.min(n - 1, this.idx + C);
+    if (input.pressed('a')) this.finish(this.idx);
+    else if (input.pressed('b')) this.finish(-1);
+  }
+
+  draw(ctx: Ctx) {
+    centered(ctx, () => this.paint(ctx));
+  }
+
+  paint(ctx: Ctx) {
+    const C = BoxView.COLS;
+    const R = BoxView.ROWS;
+    panel(ctx, '#5a8ad0');
+    ctx.fillStyle = '#3a64a8';
+    ctx.fillRect(0, 0, W, 22);
+    text(ctx, this.title, 10, 5, { color: '#fff', shadow: '#1a2a5a' });
+    text(ctx, `${this.mons.length}마리`, W - 10, 5, { color: '#fff', shadow: '#1a2a5a', align: 'right' });
+
+    // Grid of pictures
+    box(ctx, 4, 26, 144, 162);
+    const row = Math.floor(this.idx / C);
+    const top = Math.max(0, Math.min(row - 1, Math.ceil(this.mons.length / C) - R));
+    for (let r = 0; r < R; r++) {
+      for (let c = 0; c < C; c++) {
+        const i = (top + r) * C + c;
+        if (i >= this.mons.length) continue;
+        const x = 10 + c * 27;
+        const y = 32 + r * 38;
+        if (i === this.idx) {
+          ctx.fillStyle = '#ffe9a0';
+          ctx.beginPath();
+          ctx.roundRect(x - 1, y - 1, 28, 36, 4);
+          ctx.fill();
+        }
+        const m = this.mons[i];
+        drawSprite(ctx, monSprite(m.species), x + 1, y, 25, 25);
+        text(ctx, `Lv${m.level}`, x + 13, y + 25, { size: 7, align: 'center', shadow: false });
+      }
+    }
+    const rows = Math.ceil(this.mons.length / C);
+    if (top > 0) text(ctx, '▲', 76, 26, { size: 7, align: 'center', shadow: false });
+    if (top + R < rows) text(ctx, '▼', 76, 180, { size: 7, align: 'center', shadow: false });
+
+    // Details
+    const m = this.mons[this.idx];
+    if (!m) return;
+    const sp = SPECIES[m.species];
+    box(ctx, 152, 26, 100, 162);
+    ctx.fillStyle = '#e8f0f8';
+    ctx.fillRect(158, 32, 88, 70);
+    drawSprite(ctx, monSprite(m.species), 167, 33, 70, 70);
+    text(ctx, monName(m), 160, 106, { size: 10 });
+    text(ctx, `Lv${m.level}`, 244, 107, { size: 9, align: 'right' });
+    let x = 160;
+    for (const t of sp.types) x += typeChip(ctx, t, TYPE_COLOR[t], x, 121) + 3;
+    const st = calcStats(m);
+    text(ctx, `HP ${maxHp(m)}  공격 ${st.atk}`, 160, 137, { size: 8 });
+    text(ctx, `방어 ${st.def}  스피드 ${st.spe}`, 160, 149, { size: 8 });
+    m.moves.slice(0, 4).forEach((mv, k) => text(ctx, MOVES[mv.id].name, 160 + (k % 2) * 44, 162 + Math.floor(k / 2) * 11, { size: 7.5 }));
+  }
+}

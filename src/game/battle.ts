@@ -1,4 +1,4 @@
-import { W, H, OX, box, text, hpBar, typeChip, drawSprite, cursor, centered, type Ctx } from '../engine/draw';
+import { W, H, OX, box, text, hpBar, typeChip, drawSprite, cursor, centered, measure, type Ctx } from '../engine/draw';
 import { input } from '../engine/input';
 import { ui, Widget, Menu, MessageBox, say } from '../engine/ui';
 import { tween, wait } from '../engine/timing';
@@ -9,7 +9,7 @@ import { ITEMS } from '../data/items';
 import { effectiveness, TYPE_COLOR } from '../data/types';
 import { game, removeItem, markSeen, markCaught, addMon } from './state';
 import { monName, maxHp, calcStats, expFor, expRatio, type Mon } from './monster';
-import { monSprite, personSprite, capsuleSprite, type Pal } from './sprites';
+import { monSprite, monBackSprite, personSprite, capsuleSprite, type Pal } from './sprites';
 import { silhouette } from '../engine/pix';
 import { BagView, pickPartyMember, useItemOn } from './menus';
 import { learnMove, movesLearnedAt } from './learn';
@@ -88,7 +88,7 @@ class BattleScene implements Scene {
     }
     if (v.player && v.pVis && !v.pBlink) {
       g.globalAlpha = v.pAlpha;
-      drawSprite(g, monSprite(v.player.species), 6 + v.pX, 34 + v.pY, 120, 120, true);
+      drawSprite(g, monBackSprite(v.player.species), -2 + v.pX, 38 + v.pY, 136, 136, true);
       g.globalAlpha = 1;
     }
     if (v.ball.vis) {
@@ -107,36 +107,52 @@ class BattleScene implements Scene {
 
   private paintUI(ctx: Ctx) {
     const v = this.v;
-    if (v.enemyTeam) teamRow(ctx, v.enemyTeam, 10, 47, '상대');
-    if (v.pBox || v.pVis) teamRow(ctx, game.party, 132, 84, '나');
+    if (v.enemyTeam) teamRow(ctx, v.enemyTeam, 10, 55, '상대');
+    if (v.pBox || v.pVis) teamRow(ctx, game.party, 132, 75, '나');
     if (v.eBox && v.enemy) {
-      box(ctx, 6, 8, 122, 36);
-      text(ctx, monName(v.enemy), 14, 13, { size: 10 });
-      text(ctx, `Lv${v.enemy.level}`, 120, 13, { size: 9, align: 'right' });
-      statusChip(ctx, v.enemy, 14, 28);
-      text(ctx, 'HP', 46, 27, { size: 8, color: '#e0605a', shadow: false });
-      hpBar(ctx, 60, 30, 62, v.eHp / maxHp(v.enemy));
+      box(ctx, 6, 8, 122, 44);
+      text(ctx, monName(v.enemy), 14, 12, { size: 10 });
+      text(ctx, `Lv${v.enemy.level}`, 120, 12, { size: 9, align: 'right' });
       if (game.caught.includes(v.enemy.species)) {
         ctx.fillStyle = '#3aa8a0';
-        ctx.fillRect(116, 26, 5, 5);
+        ctx.fillRect(92, 15, 5, 5);
       }
+      const ex = typeChips(ctx, SPECIES[v.enemy.species].types, 14, 25);
+      statusChip(ctx, v.enemy, ex + 2, 24.5);
+      text(ctx, 'HP', 14, 36, { size: 8, color: '#e0605a', shadow: false });
+      hpBar(ctx, 30, 39, 92, v.eHp / maxHp(v.enemy));
     }
     if (v.pBox && v.player) {
       const m = v.player;
       const mh = maxHp(m);
-      box(ctx, 128, 96, 124, 46);
-      text(ctx, monName(m), 136, 101, { size: 10 });
-      text(ctx, `Lv${m.level}`, 244, 101, { size: 9, align: 'right' });
-      statusChip(ctx, m, 136, 116);
-      text(ctx, 'HP', 168, 115, { size: 8, color: '#e0605a', shadow: false });
-      hpBar(ctx, 182, 118, 62, v.pHp / mh);
-      text(ctx, `${Math.ceil(v.pHp)}/${mh}`, 244, 124, { size: 8, align: 'right' });
+      box(ctx, 128, 88, 124, 54);
+      text(ctx, monName(m), 136, 92, { size: 10 });
+      text(ctx, `Lv${m.level}`, 244, 92, { size: 9, align: 'right' });
+      const px = typeChips(ctx, SPECIES[m.species].types, 136, 105);
+      statusChip(ctx, m, px + 2, 104.5);
+      text(ctx, 'HP', 136, 117, { size: 8, color: '#e0605a', shadow: false });
+      hpBar(ctx, 152, 120, 92, v.pHp / mh);
+      text(ctx, `${Math.ceil(v.pHp)}/${mh}`, 244, 126, { size: 8, align: 'right' });
       ctx.fillStyle = '#3a3e52';
       ctx.fillRect(136, 136, 108, 3);
       ctx.fillStyle = '#4ab0e8';
       ctx.fillRect(137, 137, 106 * v.pExp, 1.5);
     }
   }
+}
+
+/** Small coloured type labels in a row; returns the x after the last one. */
+function typeChips(ctx: Ctx, types: readonly string[], x: number, y: number) {
+  for (const t of types) {
+    const w = measure(t, 7) + 8;
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, 10, 3);
+    ctx.fillStyle = TYPE_COLOR[t as keyof typeof TYPE_COLOR];
+    ctx.fill();
+    text(ctx, t, x + w / 2, y + 1, { size: 7, color: '#fff', align: 'center', shadow: 'rgba(0,0,0,0.35)' });
+    x += w + 2;
+  }
+  return x;
 }
 
 /** A row of capsules: one per monster, grey when fainted. */
@@ -720,7 +736,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
       let sc: number;
       if (mv.power > 0) {
         sc = mv.power * effectiveness(mv.type, SPECIES[me.mon.species].types) * (SPECIES[enemy.mon.species].types.includes(mv.type) ? 1.5 : 1) * (mv.acc || 100) / 100;
-      } else if (mv.effect?.kind === 'status') sc = me.mon.status ? 0 : 50;
+      } else if (mv.effect?.kind === 'status') sc = me.mon.status ? 0 : 25; // no special priority for status moves
       else if (mv.effect?.kind === 'heal') sc = enemy.mon.hp < maxHp(enemy.mon) / 2 ? 70 : 0;
       else sc = 25;
       sc *= 0.85 + Math.random() * 0.3;

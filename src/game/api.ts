@@ -10,7 +10,7 @@ import { game, runtime, addItem, saveGame, markCaught, addMon, itemCount, beaten
 import { createMon, healMon, monName, maxHp, type Mon } from './monster';
 import { runBattle, type BattleResult } from './battle';
 import { monSprite } from './sprites';
-import { partyMenu, bagMenu, DexView, TrainerCard, pickPartyMember } from './menus';
+import { partyMenu, bagMenu, DexView, TrainerCard, pickPartyMember, BoxView } from './menus';
 import { learnMove, movesLearnedAt } from './learn';
 import { OPP, j, rand } from './common';
 import type { TrainerDef } from './maps';
@@ -147,9 +147,9 @@ export async function giveMon(species: string, level: number) {
 }
 
 const DEFAULT_FISH: [string, number, number, number][] = [
-  ['banjjak', 6, 14, 75],
-  ['munu', 6, 12, 20],
-  ['eungeo', 18, 20, 5],
+  ['banjjak', 5, 12, 75],
+  ['munu', 5, 10, 20],
+  ['eungeo', 15, 17, 5],
 ];
 
 async function fish() {
@@ -284,8 +284,7 @@ export async function pcScript() {
         await say('동료가 가득 차 있다! 먼저 한 마리를 맡겨 주세요.');
         continue;
       }
-      const items = game.box.map((m) => `${monName(m)}  Lv${m.level}`);
-      const k = await ui.run(new Menu({ items, cancel: true, x: 8, y: 8, maxRows: 7 }));
+      const k = await ui.run(new BoxView(game.box, '보관함 — 데려올 몬스터를 고르세요'));
       if (k < 0) continue;
       const [m] = game.box.splice(k, 1);
       healMon(m);
