@@ -320,7 +320,7 @@ const route1: MapDef = {
   signs: [{ x: 7, y: 22, text: '1번 도로\n북쪽: 들꽃마을   남쪽: 솔빛마을' }],
   encounters: {
     rate: 0.12,
-    table: [['tosil', 2, 4, 30], ['jjaek', 2, 4, 26], ['kkomul', 2, 4, 22], ['monsil', 3, 4, 7], ['ddakkum', 3, 4, 7], ['jjirit', 3, 5, 5], ['doldol', 3, 5, 3]],
+    table: [['tosil', 2, 4, 30], ['jjaek', 2, 4, 26], ['kkomul', 2, 4, 22], ['monsil', 3, 4, 7], ['ddakkum', 3, 4, 7], ['jjirit', 3, 5, 5], ['doldol', 3, 5, 3], ['bungbung', 2, 4, 20], ['dotori', 2, 4, 18]],
   },
   npcs: [
     {
@@ -330,7 +330,7 @@ const route1: MapDef = {
     {
       id: 'r1minsu', x: 4, y: 9, dir: 'right', pal: PAL.bugkid, sight: 4,
       trainer: {
-        id: 'minsu', cls: '곤충소년', name: '민수', pal: PAL.bugkid, team: [['kkomul', 3], ['kkomul', 4]], reward: 120,
+        id: 'minsu', cls: '곤충소년', name: '민수', pal: PAL.bugkid, team: [['kkomul', 3], ['bungbung', 4]], reward: 120,
         intro: '풀숲에서 직접 잡은 내 벌레 몬스터를 봐라!', defeat: '으아, 내 꼬물이들이…!',
         after: '꼬물이는 고치가 됐다가 금방 나풀이로 변해! 진짜야!',
       },
@@ -530,7 +530,7 @@ const route2: MapDef = {
   signs: [{ x: 8, y: 25, text: '2번 도로\n북쪽: 속삭임숲   남쪽: 들꽃마을' }],
   encounters: {
     rate: 0.12,
-    table: [['tosil', 6, 8, 18], ['jjaek', 6, 8, 16], ['pojani', 6, 8, 22], ['jinheuk', 6, 8, 16], ['ddakkum', 6, 8, 16], ['kkomul', 5, 7, 5], ['doldol', 7, 8, 4], ['kkaeng', 6, 8, 8], ['monsil', 6, 8, 5], ['dalto', 7, 8, 4], ['mongmong', 6, 8, 5], ['agigom', 7, 8, 4], ['chorong', 5, 7, 6]],
+    table: [['tosil', 6, 8, 18], ['jjaek', 6, 8, 16], ['pojani', 6, 8, 22], ['jinheuk', 6, 8, 16], ['ddakkum', 6, 8, 16], ['kkomul', 5, 7, 5], ['doldol', 7, 8, 4], ['kkaeng', 6, 8, 8], ['monsil', 6, 8, 5], ['dalto', 7, 8, 4], ['mongmong', 6, 8, 5], ['agigom', 7, 8, 4], ['chorong', 5, 7, 6], ['bungbung', 5, 7, 12], ['meongmeong', 5, 8, 14], ['dotori', 5, 7, 10]],
   },
   npcs: [
     {
@@ -598,7 +598,7 @@ const forest: MapDef = {
   ],
   encounters: {
     rate: 0.13,
-    table: [['pojani', 8, 10, 22], ['dokbul', 8, 10, 12], ['soejip', 8, 10, 12], ['kkwae', 8, 10, 12], ['kkomul', 8, 9, 8], ['dandan', 8, 9, 6], ['ddakkum', 8, 10, 10], ['baramsae', 10, 11, 8], ['naphul', 10, 11, 4], ['beoseot', 11, 12, 6], ['bueong', 8, 10, 10], ['agigom', 9, 10, 5]],
+    table: [['pojani', 8, 10, 22], ['dokbul', 8, 10, 12], ['soejip', 8, 10, 12], ['kkwae', 8, 10, 12], ['kkomul', 8, 9, 8], ['dandan', 8, 9, 6], ['ddakkum', 8, 10, 10], ['baramsae', 10, 11, 8], ['naphul', 10, 11, 4], ['beoseot', 11, 12, 6], ['bueong', 8, 10, 10], ['agigom', 9, 10, 5], ['bandi', 8, 11, 16], ['kkuldanji', 9, 11, 6], ['jipgesasum', 10, 12, 4]],
   },
   npcs: [
     { id: 'granny', x: 5, y: 21, dir: 'down', pal: PAL.granny, talk: () => grannyTalk() },
@@ -771,7 +771,7 @@ const route3: MapDef = {
   signs: [{ x: 19, y: 9, text: '3번 도로\n동쪽: 별빛동굴  서쪽: 물안개마을  북쪽: 운무봉' }],
   encounters: {
     rate: 0.13,
-    table: [['jinheuk', 12, 14, 15], ['ddakkum', 12, 14, 13], ['baramsae', 13, 14, 12], ['beoseot', 13, 14, 10], ['jjirit', 12, 14, 10], ['tongsil', 13, 14, 9], ['kkaeng', 13, 14, 10], ['dalto', 12, 14, 9], ['kkwae', 13, 14, 6], ['beonjjeok', 14, 14, 4], ['soejip', 13, 14, 2], ['agigom', 13, 14, 7], ['ggorichim', 13, 14, 7], ['ggangtong', 12, 14, 5]],
+    table: [['jinheuk', 12, 14, 15], ['ddakkum', 12, 14, 13], ['baramsae', 13, 14, 12], ['beoseot', 13, 14, 10], ['jjirit', 12, 14, 10], ['tongsil', 13, 14, 9], ['kkaeng', 13, 14, 10], ['dalto', 12, 14, 9], ['kkwae', 13, 14, 6], ['beonjjeok', 14, 14, 4], ['soejip', 13, 14, 2], ['agigom', 13, 14, 7], ['ggorichim', 13, 14, 7], ['ggangtong', 12, 14, 5], ['meongmeong', 12, 14, 12]],
   },
   fishing: [['banjjak', 12, 17, 55], ['munu', 13, 15, 25], ['eungeo', 17, 20, 15], ['meokmul', 16, 18, 5]],
   npcs: [
@@ -828,7 +828,7 @@ const cave: MapDef = {
   encounters: {
     rate: 0.1,
     tiles: '_',
-    table: [['doldol', 14, 16, 20], ['jinheuk', 14, 16, 17], ['dokbul', 14, 16, 15], ['agipeng', 14, 16, 13], ['heukjang', 15, 17, 9], ['jjirit', 14, 16, 9], ['bawi', 16, 17, 5], ['beoseot', 15, 16, 5], ['dokkae', 16, 17, 4], ['kkomaryong', 15, 16, 3], ['ggangtong', 14, 16, 8], ['ggorichim', 14, 16, 6], ['nunnyang', 14, 16, 7]],
+    table: [['doldol', 14, 16, 20], ['jinheuk', 14, 16, 17], ['dokbul', 14, 16, 15], ['agipeng', 14, 16, 13], ['heukjang', 15, 17, 9], ['jjirit', 14, 16, 9], ['bawi', 16, 17, 5], ['beoseot', 15, 16, 5], ['dokkae', 16, 17, 4], ['kkomaryong', 15, 16, 3], ['ggangtong', 14, 16, 8], ['ggorichim', 14, 16, 6], ['nunnyang', 14, 16, 7], ['bandi', 14, 16, 8], ['banjjakbandi', 15, 16, 3]],
   },
   fishing: [['banjjak', 15, 19, 40], ['eungeo', 18, 20, 30], ['munu', 15, 17, 15], ['meokmul', 18, 20, 15]],
   npcs: [

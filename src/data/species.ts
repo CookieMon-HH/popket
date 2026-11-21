@@ -70,6 +70,11 @@ const CHORONG: L = [[1, 'tackle'], [1, 'ember'], [7, 'spook'], [13, 'willowisp']
 const MULGWI: L = [[1, 'splash'], [1, 'spook'], [8, 'bubble'], [14, 'bewitch'], [20, 'tentacle'], [26, 'soulwave'], [32, 'wave'], [38, 'nightdance'], [44, 'tide']];
 const HAEGOL: L = [[1, 'peck'], [1, 'spook'], [6, 'growl'], [11, 'gust'], [17, 'wingcut'], [23, 'soulwave'], [30, 'dive'], [36, 'nightdance'], [42, 'storm']];
 const BOMUL: L = [[1, 'bite'], [1, 'spook'], [15, 'ironwall'], [22, 'bewitch'], [28, 'club'], [34, 'soulwave'], [40, 'nightdance']];
+const BUNG: L = [[1, 'tackle'], [1, 'sting'], [6, 'silk'], [10, 'bugbite'], [15, 'curl'], [21, 'glitter'], [27, 'moondust'], [34, 'dive'], [40, 'bloom']];
+const MEONG: L = [[1, 'tackle'], [1, 'growl'], [5, 'bite'], [10, 'dash'], [16, 'focus'], [22, 'press'], [28, 'straight'], [34, 'fullcharge'], [40, 'upper']];
+const DOTORI: L = [[1, 'scratch'], [1, 'growl'], [5, 'dash'], [9, 'bite'], [14, 'curl'], [19, 'snatch'], [25, 'press'], [31, 'fullcharge']];
+const BANDI: L = [[1, 'tackle'], [1, 'zap'], [6, 'silk'], [10, 'bugbite'], [15, 'sparkspike'], [21, 'glitter'], [27, 'bolt'], [34, 'thunder']];
+const SASUM: L = [[1, 'scratch'], [1, 'bugbite'], [8, 'jab'], [14, 'ironclaw'], [20, 'straight'], [27, 'deulbaeji'], [34, 'steelpincer'], [40, 'upper']];
 const SEOLHWA: L = [[1, 'twinkle'], [1, 'frostbreath'], [40, 'icefang'], [45, 'moondust'], [55, 'avalanche'], [62, 'snowblossom']];
 const CHEOLSAN: L = [[1, 'mudthrow'], [1, 'ironclaw'], [40, 'quake'], [45, 'steelbeam'], [55, 'earthsplit'], [62, 'ironquake']];
 const JUJAK: L = [[1, 'ember'], [1, 'gust'], [40, 'flamedash'], [45, 'wingcut'], [55, 'storm'], [62, 'phoenixfire']];
@@ -186,6 +191,20 @@ const list: Def[] = [
   s('hyeonmu', '현무', ['물', '드래곤'], [108, 96, 122, 54], 45, 240, HYEON, '현무', '등딱지를 감싼 검은 뱀과 함께 다니는 거북. 북쪽 바다를 지키는 수호자라고 전해진다.'),
   // 특별한 몬스터
   s('sangun', '산군', ['바위', '고스트'], [100, 118, 92, 110], 20, 250, SANGUN, '산신령', '운무봉을 지키는 흰 호랑이의 정령. 숲·물·바위의 세 방울 소리를 들으면 서낭당으로 내려온다고 전해진다.', undefined, { special: true }),
+  // ── 초반 지역 ──
+  s('bungbung', '붕붕이', ['벌레'], [40, 38, 40, 52], 255, 40, BUNG, '꼬마벌', '꽃밭 위를 붕붕 날며 꽃가루를 모은다. 동그란 몸이 너무 무거워서 가끔 꽃잎 위에 털썩 주저앉는다.', [9, 'kkuldanji']),
+  s('kkuldanji', '꿀단지벌', ['벌레'], [58, 42, 78, 36], 120, 100, BUNG, '꿀단지', '꿀이 가득 찬 항아리 모양의 집 안에서 쉬며 여왕이 될 날을 기다린다. 단단한 항아리가 몸을 지켜 준다.', [20, 'yeowangbeol']),
+  s('yeowangbeol', '여왕벌', ['벌레', '페어리'], [82, 86, 78, 98], 45, 210, BUNG, '여왕벌', '작은 왕관을 쓴 꿀벌의 여왕. 날갯짓으로 반짝이는 꽃가루를 흩뿌리면 들판의 꽃이 한꺼번에 핀다.'),
+  s('meongmeong', '멍뭉이', ['노말'], [55, 55, 45, 52], 190, 60, MEONG, '강아지', '꼬리를 쉬지 않고 흔드는 동네 강아지. 처음 보는 사람에게도 배를 보이며 뒹군다.', [18, 'baekgu']),
+  s('baekgu', '백구', ['노말'], [75, 80, 62, 72], 120, 140, MEONG, '진돗개', '하얀 털이 눈부신 충직한 개. 한 번 주인으로 정한 사람은 아무리 멀리 떨어져도 반드시 찾아온다.', [34, 'jindodaejang']),
+  s('jindodaejang', '진도대장', ['노말', '격투'], [98, 112, 82, 92], 45, 230, MEONG, '대장개', '동네 개들을 이끄는 우두머리. 붉은 목도리를 휘날리며 약한 몬스터를 괴롭히는 녀석을 혼내 준다.'),
+  s('dotori', '도토리람쥐', ['노말'], [44, 46, 38, 64], 230, 52, DOTORI, '다람쥐', '볼주머니에 도토리를 가득 넣고 다닌다. 묻어 둔 곳을 자주 잊어버려서 숲 곳곳에 참나무가 자란다.', [16, 'cheongseolmo']),
+  s('cheongseolmo', '청설모', ['노말'], [70, 82, 60, 98], 90, 145, DOTORI, '청설모', '잿빛 털과 커다란 꼬리를 가진 날쌘 몬스터. 나무 사이를 날 듯이 건너뛰며 도토리를 지킨다.'),
+  s('bandi', '반디', ['벌레'], [38, 36, 40, 62], 220, 50, BANDI, '반딧불', '꼬리 끝에서 연둣빛 불빛이 깜빡인다. 여름밤 숲속에서 무리 지어 날며 길을 밝혀 준다.', [14, 'banjjakbandi']),
+  s('banjjakbandi', '반짝반디', ['벌레', '전기'], [56, 60, 54, 84], 120, 120, BANDI, '번개반디', '꼬리의 불빛에 전기가 흐르게 된 반디. 깜빡임으로 동료들과 이야기한다.', [30, 'byeolbitbandi']),
+  s('byeolbitbandi', '별빛반디', ['벌레', '전기'], [78, 94, 72, 118], 45, 215, BANDI, '별빛반디', '밤하늘의 별처럼 빛나는 반디. 수백 마리가 함께 날면 동굴 천장이 은하수처럼 보인다.'),
+  s('jipgesasum', '집게사슴', ['벌레', '격투'], [56, 72, 62, 44], 120, 70, SASUM, '사슴벌레', '커다란 집게로 나무에 매달려 수액을 핥는다. 집게 힘겨루기를 좋아해서 만나면 일단 붙잡고 본다.', [28, 'jangsu']),
+  s('jangsu', '장수사슴벌레', ['벌레', '격투'], [84, 114, 98, 62], 45, 185, SASUM, '장수벌레', '숲에서 가장 힘센 벌레. 거대한 집게로 바위를 들어 올리며, 숲을 어지럽히는 자와는 정정당당히 겨룬다.'),
   // ── 유령선과 고스트 ──
   s('chorong', '초롱이', ['불'], [44, 50, 42, 60], 190, 58, CHORONG, '초롱', '밤길을 밝히던 종이 초롱에 작은 불씨가 깃들었다. 길 잃은 사람을 졸졸 따라다니며 발밑을 비춰 준다.', [22, 'cheongsa']),
   s('cheongsa', '청사초롱', ['불', '고스트'], [62, 72, 60, 82], 120, 140, CHORONG, '혼불초롱', '푸른 비단과 붉은 비단을 두른 초롱. 안에서 타는 불은 뜨겁지 않고 푸르스름하게 일렁인다.', [36, 'dokkaechorong']),
@@ -222,6 +241,7 @@ const ORDER = [
   'pongduck', 'ubiduck', 'kkotip', 'beotkkot', 'suguk', 'jangma', 'bingsu', 'wangbingsu',
   'agibuk', 'bingsan', 'hyeonmuk', 'hyeonmu',
   'kkomaryong', 'nalgae', 'cheonryong',
+  'bungbung', 'kkuldanji', 'yeowangbeol', 'meongmeong', 'baekgu', 'jindodaejang', 'dotori', 'cheongseolmo', 'bandi', 'banjjakbandi', 'byeolbitbandi', 'jipgesasum', 'jangsu',
   'chorong', 'cheongsa', 'dokkaechorong', 'mulgwi', 'yuseon', 'haegol', 'yuaeng', 'bomulgoe',
   'sangun', 'eunha', 'seolhwa', 'cheolsan', 'jujak', 'cheongryong', 'cheonji',
 ];
