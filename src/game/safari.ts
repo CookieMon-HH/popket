@@ -1,5 +1,5 @@
 import { say, yesNo, choose } from '../engine/ui';
-import { game, itemCount, removeItem } from './state';
+import { game, itemCount, removeItem, badgeCount } from './state';
 import { world, giveItem, warpTo } from './api';
 import { j } from './common';
 
@@ -8,11 +8,19 @@ import { j } from './common';
 //
 // Quest: three baby monsters escaped through a broken fence. Bring them all
 // back and the park opens (with free tickets). Each visit uses one ticket and
-// lasts 10 minutes of walking time with 30 safari balls.
+// lasts 10 minutes (battles included). Six themed zones branch off the
+// central plaza; the special zone opens with five badges.
 
 export const SAFARI_FRAMES = 60 * 60 * 10;
-export const SAFARI_BALLS = 30;
 export const TICKET_PRICE = 1500;
+export const SPECIAL_ZONE_BADGES = 5;
+
+/** Safari monsters match the player's progress: about 12 at the start, 52 after the league. */
+export function safariLevel() {
+  const base = game.flags.champion ? 52 : [12, 16, 20, 25, 30, 35, 40, 45][badgeCount()];
+  const special = game.map === 'safari_special' ? 3 : 0;
+  return base + special + Math.floor(Math.random() * 5) - 2;
+}
 
 /** The escaped monsters: flag id, species name for dialogue. */
 export const ESCAPEES: [string, string][] = [
@@ -52,8 +60,8 @@ export async function keeperTalk() {
     f.safariOpen = true;
     await say('사파리 관리인 초원: 오늘부터 팜팜 사파리를 열게요.\n고마운 마음을 담아 입장권을 드릴게요!');
     await giveItem('safariticket', 3);
-    await say('사파리 관리인 초원: 사파리 안에서는 내 몬스터로 싸울 수 없어요.\n사파리볼을 던지거나, 먹이나 진흙으로 몬스터의 마음을 흔들어 보세요.');
-    await say('사파리 관리인 초원: 먹이를 주면 잘 도망가지 않지만 잡기 어려워지고,\n진흙을 던지면 잡기 쉬워지지만 금방 도망가요. 이용 시간은 10분이에요!');
+    await say('사파리 관리인 초원: 사파리 광장에서 여섯 개의 존으로 갈 수 있어요.\n화산지대, 호수, 밀림, 설원, 번개 협곡, 꿈빛 숲! 존마다 사는 몬스터가 달라요.');
+    await say('사파리 관리인 초원: 배지를 다섯 개 이상 모으면 희귀한 몬스터가 사는\n「전설의 초원」에도 들어갈 수 있어요. 이용 시간은 배틀까지 포함해서 10분이에요!');
   }
   for (;;) {
     const c = await choose(`사파리 관리인 초원: 팜팜 사파리에 어서 오세요!\n(입장권 ${itemCount('safariticket')}장 · 소지금 ${game.money.toLocaleString()}원)`, ['입장하기', `입장권 사기 (${TICKET_PRICE}원)`, '설명 듣기', '그만두기']);
@@ -62,11 +70,11 @@ export async function keeperTalk() {
         await say('사파리 관리인 초원: 입장권이 없네요. 여기서 한 장 사 가세요!');
         continue;
       }
-      if (!(await yesNo('입장권 1장을 사용해서 사파리에 들어갈까요?\n(제한 시간 10분 · 사파리볼 30개)'))) continue;
+      if (!(await yesNo('입장권 1장을 사용해서 사파리에 들어갈까요?\n(제한 시간 10분 · 배틀 시간 포함)'))) continue;
       removeItem('safariticket');
-      game.safari = { balls: SAFARI_BALLS, left: SAFARI_FRAMES };
-      await say('사파리 관리인 초원: 사파리볼 30개를 드릴게요. 즐거운 시간 보내세요!');
-      await warpTo('safari', 17, 21, 'up');
+      game.safari = { left: SAFARI_FRAMES };
+      await say(`사파리 관리인 초원: 지금 ${game.name} 님 실력이면 Lv${safariLevel()} 안팎의 몬스터가 나올 거예요.\n팜팜볼은 넉넉히 챙기셨죠? 즐거운 시간 보내세요!`);
+      await warpTo('safari', 15, 18, 'up');
       return;
     }
     if (c === 1) {
@@ -79,9 +87,10 @@ export async function keeperTalk() {
       continue;
     }
     if (c === 2) {
-      await say('사파리에서는 풀숲과 물가에서 다양한 몬스터를 만날 수 있어요.\n다른 곳에서는 보기 힘든 귀한 몬스터도 살고 있답니다!');
-      await say('사파리볼: 던져서 잡아요.\n먹이: 도망을 잘 안 가지만, 잡기는 조금 어려워져요.\n진흙: 잡기 쉬워지지만, 화가 나서 금방 도망가요.');
-      await say('제한 시간 10분이 지나거나 사파리볼을 다 쓰면 입구로 돌아와요.\n시간은 걷고 있을 때만 흘러가요. 낚싯대가 있다면 연못에서 낚시도 해 보세요!');
+      await say('광장 서쪽은 화산지대(불·땅)와 바위 협곡(전기·강철·바위),\n동쪽은 호수(물)와 밀림(풀·벌레), 북쪽은 꿈빛 숲(페어리·에스퍼)과 설원(얼음)이에요.');
+      await say('몬스터와는 평소처럼 배틀해서 잡아요. 나오는 몬스터의 레벨은\n가진 배지 수에 맞춰 달라져요. 호수에서는 낚시도 할 수 있어요!');
+      await say(`광장 북쪽 가운데의 「전설의 초원」은 배지 ${SPECIAL_ZONE_BADGES}개부터 들어갈 수 있어요.\n꼬마룡·무지개유니 같은 희귀한 몬스터가 훨씬 자주 나와요!`);
+      await say('제한 시간 10분이 지나면 입구로 돌아와요. 배틀 중에도 시간이 흘러가요.');
       continue;
     }
     await say('사파리 관리인 초원: 또 오세요!');
@@ -90,9 +99,8 @@ export async function keeperTalk() {
 }
 
 /** Leave the park: time up, out of balls, or by choice. */
-export async function safariEnd(reason: 'time' | 'balls' | 'leave') {
+export async function safariEnd(reason: 'time' | 'leave') {
   if (reason === 'time') await say('삐——! 사파리 이용 시간이 끝났습니다!');
-  else if (reason === 'balls') await say('삐——! 사파리볼을 모두 사용했습니다!');
   game.safari = undefined;
   await warpTo('safarigate', 4, 5, 'down');
   await say('사파리 관리인 초원: 수고하셨어요! 좋은 몬스터를 만나셨나요?\n다음에 또 놀러 오세요!');
@@ -103,9 +111,17 @@ export async function safariExitTile() {
     await warpTo('safarigate', 4, 5, 'down');
     return;
   }
-  if (await yesNo('사파리를 나갈까요?\n남은 시간과 사파리볼은 없어져요.')) {
+  if (await yesNo('사파리를 나갈까요?\n남은 시간은 없어져요.')) {
     await safariEnd('leave');
     return;
   }
   await world.walk(world.player, 'up');
+}
+
+/** 광장 북쪽 가운데: 전설의 초원 입구. */
+export async function specialGate() {
+  if (badgeCount() >= SPECIAL_ZONE_BADGES) return;
+  await say(`관리인: 이 앞은 「전설의 초원」이에요. 희귀한 몬스터가 사는 곳이라\n배지를 ${SPECIAL_ZONE_BADGES}개 이상 가진 트레이너만 들어갈 수 있어요.`);
+  await say(`(지금 배지 ${badgeCount()}개)`);
+  await world.walk(world.player, 'down');
 }

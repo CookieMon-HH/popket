@@ -5,7 +5,7 @@ import { clock, wait } from '../engine/timing';
 import type { Scene } from '../engine/scene';
 import { DIRS, DIRV, OPP, pick, rand, clamp, type Dir } from './common';
 import { MAPS, type MapDef, type NPCDef } from './maps';
-import { SOLID, tileCanvas } from './tiles';
+import { SOLID, tileCanvas, TALL_CHARS } from './tiles';
 import { silhouette } from '../engine/pix';
 import { personSprite, itemSprite, monSprite, boulderSprite, barrierSprite, type Pal } from './sprites';
 import { game, runtime, beatenAll } from './state';
@@ -155,8 +155,8 @@ export class Overworld implements Scene {
       }
     }
     if (this.bannerT > 0) this.bannerT--;
-    // Safari time only runs while the player is free to walk around.
-    if (this.map.safari && game.safari && canInput && !runtime.busy && !ui.active && --game.safari.left <= 0) {
+    // Safari time is counted in main.ts (it also runs during battles); end the visit once free.
+    if (this.map.safari && game.safari && canInput && !runtime.busy && !ui.active && game.safari.left <= 0) {
       this.hooks.run(() => this.hooks.safariEnd());
       return;
     }
@@ -394,8 +394,9 @@ export class Overworld implements Scene {
       const frame = striding ? (a.step % 2 ? 1 : 3) : 0;
       const pal = npc ? npc.def.pal ?? PLAYER_PAL : PLAYER_PAL;
       g.drawImage(personSprite(pal, a.dir, frame), sx, sy - 5);
-      if (this.tileAt(a.x, a.y) === ',' && a.moving < STEP / 2) {
-        g.drawImage(tall, 0, 9, 16, 7, a.x * 16 - cx, a.y * 16 - cy + 9, 16, 7);
+      const under = this.tileAt(a.x, a.y);
+      if (TALL_CHARS.includes(under) && a.moving < STEP / 2) {
+        g.drawImage(under === ',' ? tall : tileCanvas(under, 0), 0, 9, 16, 7, a.x * 16 - cx, a.y * 16 - cy + 9, 16, 7);
       }
       if (npc && npc.bubble > 0) {
         g.fillStyle = '#26263a';
@@ -509,7 +510,7 @@ export class Overworld implements Scene {
     }
     if (this.map.safari && game.safari) {
       const sec = Math.max(0, Math.ceil(game.safari.left / 60));
-      const label = `남은 시간 ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}   사파리볼 ${game.safari.balls}개`;
+      const label = `사파리 남은 시간 ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
       const w = measure(label, 9) + 16;
       box(ctx, W - w - 4, 4, w, 18);
       text(ctx, label, W - w / 2 - 4, 8, { size: 9, align: 'center', color: sec <= 60 ? '#d83a4a' : '#30323f' });

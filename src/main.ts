@@ -160,6 +160,8 @@ function frame() {
   ui.cleanup();
   input.endFrame();
   if (sc === world) game.frames++;
+  // Safari time keeps running in battles too (but not on the title screen).
+  if (game.safari && game.safari.left > 0 && world.map?.safari && !(sc instanceof TitleScene)) game.safari.left--;
   requestAnimationFrame(frame);
 }
 

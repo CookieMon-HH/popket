@@ -12,6 +12,17 @@ const ROOF: Record<string, [string, string]> = {
   A: ['#3ab0b0', '#228888'],
 };
 
+/** Tall grass colours: background, blade, highlight. */
+export const TALL: Record<string, [string, string, string]> = {
+  ',': ['#5cb44a', '#3a8a34', '#9ee07a'],
+  '1': ['#8a4a34', '#5a2a1e', '#ff8a4a'], // 화산지대: scorched grass with embers
+  '2': ['#4ab49a', '#2a7a6a', '#a8f0d8'], // 호수: reeds
+  '3': ['#2e7a34', '#1a4e22', '#6ac05a'], // 밀림: dense jungle bush
+  '4': ['#9a8a6a', '#6a5a40', '#d8c890'], // 협곡: dry grass on gravel
+  '5': ['#c8a838', '#8a6a18', '#fff0a0'], // 전설의 초원: golden grass
+};
+export const TALL_CHARS = Object.keys(TALL).join('');
+
 function centerFloor(p: Pix) {
   p.rect(0, 0, 16, 16, '#eef3f4');
   p.rect(0, 0, 16, 1, '#d4dee0');
@@ -73,16 +84,18 @@ function build(ch: string, anim: number): Pix {
     case '.':
       grass(p);
       break;
-    case ',': {
-      p.rect(0, 0, 16, 16, '#5cb44a');
+    case ',': case '1': case '2': case '3': case '4': case '5': {
+      // Tall grass; the safari zones use their own colours.
+      const [bg, dark, light] = TALL[ch];
+      p.rect(0, 0, 16, 16, bg);
       let row = 0;
       for (const by of [4, 9, 14]) {
         for (const bx of row % 2 ? [3, 11] : [-1, 7, 15]) {
-          p.set(bx, by, '#3a8a34');
-          p.set(bx + 1, by - 2, '#3a8a34');
-          p.set(bx + 1, by - 1, '#9ee07a');
-          p.set(bx + 2, by - 1, '#3a8a34');
-          p.set(bx + 3, by, '#3a8a34');
+          p.set(bx, by, dark);
+          p.set(bx + 1, by - 2, dark);
+          p.set(bx + 1, by - 1, light);
+          p.set(bx + 2, by - 1, dark);
+          p.set(bx + 3, by, dark);
         }
         row++;
       }

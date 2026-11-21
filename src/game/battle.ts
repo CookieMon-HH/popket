@@ -21,8 +21,6 @@ export interface BattleOpts {
   kind: 'wild' | 'trainer';
   enemies: Mon[];
   trainer?: { cls: string; name: string; reward: number; defeat: string; pal: Pal; heals?: number };
-  /** Safari battle: throw safari balls, bait or mud instead of fighting. */
-  safari?: boolean;
   /** League tournament: stadium background with a cheering crowd. */
   arena?: boolean;
 }
@@ -111,6 +109,10 @@ class BattleScene implements Scene {
 
   private paintUI(ctx: Ctx) {
     const v = this.v;
+    if (game.safari) {
+      const sec = Math.max(0, Math.ceil(game.safari.left / 60));
+      text(ctx, `사파리 ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`, 252, 2, { size: 7, align: 'right', color: sec <= 60 ? '#d83a4a' : '#30323f', shadow: false });
+    }
     if (v.enemyTeam) teamRow(ctx, v.enemyTeam, 10, 55, '상대');
     if (v.pBox || v.pVis) teamRow(ctx, game.party, 132, 75, '나');
     if (v.eBox && v.enemy) {
@@ -382,7 +384,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     v.eScale = 0;
     await popEnemy();
   }
-  if (!o.safari) await sendOutMe();
+  await sendOutMe();
 
   // --- core move execution ---
   async function applyEffect(e: Effect, user: BMon, target: BMon, primary: boolean) {
@@ -613,71 +615,6 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     if (addMon(enemy.mon) === 'box') await say(`동료가 가득 차서 ${j(n, '은/는')} 보관함으로 보내졌다.`);
   }
 
-  // --- safari: no fighting; balls, bait and mud ---
-  async function safariLoop(): Promise<BattleResult> {
-    const sf = game.safari!;
-    const spe = SPECIES[enemy.mon.species].base.spe;
-    let eating = 0;
-    let angry = 0;
-    for (;;) {
-      const msg = new MessageBox(`사파리볼 ${sf.balls}개\n어떻게 할까?`, { persist: true, instant: true });
-      ui.run(msg);
-      await msg.promise;
-      const a = await ui.run(new Menu({ items: ['사파리볼', '먹이', '진흙', '도망'], cols: 2, x: OX + 132, y: 144, w: 124, h: 48, index: lastAction }));
-      msg.close();
-      lastAction = a;
-      const n = L(enemy);
-      if (a === 0) {
-        if (game.party.length >= 6 && game.box.length >= 60) {
-          await say('보관함이 가득 차서 더 잡을 수 없다!');
-          continue;
-        }
-        sf.balls--;
-        ballWord = '사파리볼';
-        await say('{name}은(는) 사파리볼을 던졌다!');
-        // Mud makes it easier to catch, bait makes it harder.
-        const mul = 1.5 * (angry > 0 ? 2 : 1) * (eating > 0 ? 0.6 : 1);
-        if (await throwBall(mul)) {
-          await gotIt();
-          return 'caught';
-        }
-        if (sf.balls <= 0) {
-          await say('사파리볼을 모두 써 버렸다!');
-          return 'run';
-        }
-      } else if (a === 1) {
-        await say(`{name}은(는) ${n}에게 먹이를 던졌다!`);
-        await say(`${j(n, '은/는')} 먹이를 오물오물 먹고 있다.`);
-        eating = rand(2, 4);
-        angry = 0;
-      } else if (a === 2) {
-        await say(`{name}은(는) ${n}에게 진흙을 던졌다!`);
-        await say(`${j(n, '은/는')} 화가 났다!`);
-        angry = rand(2, 4);
-        eating = 0;
-      } else {
-        await say('무사히 도망쳤다!');
-        return 'run';
-      }
-      // After every action the wild monster may run away. Fast ones flee more.
-      let flee = clamp(spe / 420, 0.06, 0.3);
-      if (eating > 0) flee *= 0.4;
-      if (angry > 0) flee *= 1.8;
-      if (eating > 0) eating--;
-      if (angry > 0) angry--;
-      if (Math.random() < flee) {
-        await tween(16, (p) => (v.eX = 160 * p));
-        v.eVis = false;
-        v.eBox = false;
-        await say(`${j(n, '은/는')} 도망쳐 버렸다!`);
-        return 'run';
-      }
-      if (eating > 0) await say(`${j(n, '은/는')} 먹이에 정신이 팔려 있다.`);
-      else if (angry > 0) await say(`${j(n, '은/는')} 씩씩거리며 노려보고 있다!`);
-      else await say(`${j(n, '은/는')} 이쪽을 살펴보고 있다…`);
-    }
-  }
-
   // --- player action selection ---
   type Act = { kind: 'move'; slot: number | null } | { kind: 'turn' } | { kind: 'end'; result: BattleResult };
 
@@ -793,7 +730,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
   }
 
   // --- main loop ---
-  let result: BattleResult | null = o.safari ? await safariLoop() : null;
+  let result: BattleResult | null = null;
   while (!result) {
     const act = await chooseAction();
     if (act.kind === 'end') {

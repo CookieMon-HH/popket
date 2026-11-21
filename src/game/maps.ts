@@ -10,7 +10,7 @@ import {
   port1Scene, dalnimShipTalk, shipAdminWin, leader4Win, leader5Win, volcanoBossScene, 
   iceIntroScene, iceCaveScene, beachAdminWin, haesolMeet, haesolTalk, cheonjiTalk, summitMonk, leader6Win, dragonIntroScene, elderTalk, denEntranceScene, cloudWin, leader7Win, lever, toggleSwitch, quiz,
 } from './story';
-import { keeperTalk, escapeeTalk, safariExitTile } from './safari';
+import { keeperTalk, escapeeTalk, safariExitTile, specialGate } from './safari';
 import { windTamerTalk } from './fly';
 import { receptionTalk } from './tournament';
 import { legendEncounter, snowMomPost, hwaryeonPost } from './legends';
@@ -1229,54 +1229,254 @@ const safarigate: MapDef = {
   ],
 };
 
-/** 팜팜 사파리: 10분 동안 사파리볼로만 몬스터를 잡는 특별 구역. */
+/** 팜팜 사파리 광장: 여섯 존과 전설의 초원으로 이어지는 중앙 광장. */
 const safari: MapDef = {
-  id: 'safari', name: '팜팜 사파리', safari: true,
+  id: 'safari', name: '팜팜 사파리 광장', safari: true,
   tiles: [
-    '####################################',
-    '#,,,,,,,#dd~~~~~~~~~~~~~dd#,,,,,#,,#',
-    '#,,,,,,,.dd~~~~~~~~~~~~~dd.,#,,,,,,#',
-    '#,,,,,,,.dd~~~~~~~~~~~~~dd.,,,,#,,,#',
-    '#,,,,,,,.dd~~~~~~~~~~~~~dd.,,,,,,,,#',
-    '#,,,,,,,.dd~~~~~~~~~~~~~dd.,,,,,,,,#',
-    '#,,,,,,,.dddd~~~~~~~~~dddd.,,,,,,#,#',
-    '#........ddddddddddddddddd.,,#,,,,,#',
-    '##.==============================,##',
-    '#.........#...#..=..#..#...,,,,,,,,#',
-    '#.,,,,,,,,,,,....=.................#',
-    '#.,,,,,,,,,f,....=....,,,,,,,,,,,#.#',
-    '#.,,f,,,,,,,,.ddd=ddd.,,,,,,#,,,,,.#',
-    '#.,,,,,,,,,,,.d~~=~~d.,,#,,,,,,,,,.#',
-    '#.,,,,,,,f,,,.d~~=~~d.,,,,,,,,,,,,.#',
-    '#.,,,,,,,,,,,.d~~=~~d.,,,,,,,,,#,,.#',
-    '#.,,,,f,,,,,,.ddd=ddd.,,,,,,,,,,,,.#',
-    '##...............======,,,#,,,,,,,.#',
-    '#.ffffffffffff...=....,,,,,,,,,,,,.#',
-    '#.ff,,,,,fffff...=.................#',
-    '#.ff,,,,,ffffFFFF=FFFF..,,,,,,,,,,.#',
-    '#.ffffffffffff.S.=......,,,,,,,,,,.#',
-    '#................=.................#',
-    '####################################',
+    '########=######=######=########',
+    '#.......=......=......=.......#',
+    '#...#...=.##...=...##.=...#...#',
+    '#.......=......=......=.......#',
+    '#.......=......=......=.......#',
+    '===============================',
+    '#..............=..............#',
+    '#..............=..............#',
+    '#..fff......=======......fff..#',
+    '#..~~~~.....=======.....~~~~..#',
+    '#..~~~~.....=======.S...~~~~..#',
+    '#..~~~~.....=======.....~~~~..#',
+    '#..............=..............#',
+    '#..............=..............#',
+    '===============================',
+    '#..............=..............#',
+    '#..............=..............#',
+    '#...ff....#....=....#....ff...#',
+    '#..............=..............#',
+    '###############=###############',
   ],
-  warps: [],
-  signs: [{ x: 15, y: 21, text: '팜팜 사파리\n풀숲과 연못에 귀한 몬스터가 살고 있어요.  ·  아래쪽 문: 출구' }],
-  encounters: {
-    rate: 0.14,
-    table: [
-      ['tongsil', 20, 24, 10], ['baramsae', 20, 24, 9], ['kkaeng', 20, 23, 8], ['agigom', 20, 23, 8], ['mongmong', 20, 23, 8],
-      ['dalto', 20, 23, 7], ['ddakkum', 20, 23, 7], ['bueong', 20, 23, 7], ['kkotip', 20, 23, 7], ['suguk', 20, 23, 6],
-      ['monsil', 20, 23, 6], ['nunnyang', 21, 24, 5], ['ggangtong', 21, 24, 5], ['soejip', 21, 24, 5], ['makarong', 21, 24, 4],
-      ['agiyuni', 21, 24, 4], ['satba', 23, 25, 3], ['kkomaryong', 21, 24, 3], ['olppaemi', 23, 25, 2], ['wangmong', 23, 25, 2],
-      ['mujigae', 23, 25, 2], ['seolpyo', 24, 26, 1], ['nalgae', 25, 26, 1],
-    ],
-  },
-  fishing: [['pongduck', 19, 22, 30], ['munu', 19, 22, 25], ['jelly', 20, 23, 20], ['eungeo', 22, 24, 12], ['aurora', 23, 25, 8], ['hyeonmuk', 22, 24, 5]],
+  warps: [
+    { x: 0, y: 5, to: 'safari_fire', tx: 22, ty: 8, dir: 'left' },
+    { x: 0, y: 14, to: 'safari_canyon', tx: 22, ty: 8, dir: 'left' },
+    { x: 8, y: 0, to: 'safari_fairy', tx: 12, ty: 14, dir: 'up' },
+    { x: 15, y: 0, to: 'safari_special', tx: 12, ty: 14, dir: 'up' },
+    { x: 22, y: 0, to: 'safari_ice', tx: 12, ty: 14, dir: 'up' },
+    { x: 30, y: 5, to: 'safari_water', tx: 1, ty: 8, dir: 'right' },
+    { x: 30, y: 14, to: 'safari_jungle', tx: 1, ty: 8, dir: 'right' },
+  ],
+  labels: [
+    { x: 2.5, y: 4.1, text: '화산지대', color: '#ffd8c8', ink: '#8a2a10' },
+    { x: 2.5, y: 13.1, text: '번개 협곡', color: '#fff2b0', ink: '#6a5a10' },
+    { x: 8, y: 1.1, text: '꿈빛 숲', color: '#f8d8ff', ink: '#6a3a8a' },
+    { x: 15, y: 1.1, text: '전설의 초원', color: '#fff0a0', ink: '#7a5a00' },
+    { x: 22, y: 1.1, text: '하얀 설원', color: '#e0f4ff', ink: '#2a5a8a' },
+    { x: 28.5, y: 4.1, text: '푸른 호수', color: '#d0f0ff', ink: '#1a5a8a' },
+    { x: 28.5, y: 13.1, text: '깊은 밀림', color: '#d8f4c8', ink: '#2a6a2a' },
+  ],
+  signs: [{ x: 20, y: 10, text: '팜팜 사파리 광장\n서: 화산지대·번개 협곡   동: 푸른 호수·깊은 밀림\n북: 꿈빛 숲·전설의 초원·하얀 설원   남: 출구' }],
   npcs: [
-    { id: 'saf1', x: 30, y: 4, dir: 'down', item: { id: 'hyperball', qty: 1 } },
-    { id: 'saf2', x: 3, y: 20, dir: 'down', item: { id: 'fullrestore', qty: 1 } },
-    { id: 'saf3', x: 33, y: 17, dir: 'down', item: { id: 'safariticket', qty: 1 } },
+    { id: 'safguide', x: 13, y: 9, dir: 'down', pal: PAL2.ranger, talk: async () => {
+      await say('사파리 가이드: 존마다 사는 몬스터가 달라요! 원하는 타입이 있는 존으로 가 보세요.\n몬스터 레벨은 배지 수에 맞춰져요.');
+      if (await yesNo('사파리 가이드: 동료들을 쉬게 해 줄까요? (시간은 계속 흘러가요)')) await healParty();
+    } },
   ],
-  triggers: [{ x: 17, y: 22, run: safariExitTile }],
+  triggers: [
+    { x: 15, y: 19, run: safariExitTile },
+    { x: 15, y: 1, run: specialGate },
+  ],
+};
+
+const safari_fire: MapDef = {
+  id: 'safari_fire', name: '사파리 — 화산지대', safari: true,
+  tiles: [
+    'CCCCCCCCCCCCCCCCCCCCCCCC',
+    'C____1______________1__C',
+    'C__11111_1________11111C',
+    'C_1111111111_____111111C',
+    'C__1C11CC1________11111C',
+    'C____1C1111__L______1__C',
+    'C_____1_1___LLLL_______C',
+    'C___1111L__11L11_1_C___C',
+    'C__1__L_LLL111111CCC___=',
+    'C11111__LCC1111111LC___C',
+    'C111111_CCCCC1L1LLL_L__C',
+    'C11111____C__111L1L1___C',
+    'C111111_______11111____C',
+    'C11111__________1______C',
+    'C__1___________________C',
+    'CCCCCCCCCCCCCCCCCCCCCCCC',
+  ],
+  warps: [{ x: 23, y: 8, to: 'safari', tx: 1, ty: 5, dir: 'right' }],
+  encounters: { rate: 0.14, tiles: '1', table: [['gungo', 1, 1, 20], ['jinheuk', 1, 1, 18], ['ggorichim', 1, 1, 14], ['jangjak', 1, 1, 8], ['heukjang', 1, 1, 8], ['dokjeongal', 1, 1, 6], ['modak', 1, 1, 4], ['hwaro', 1, 1, 2]] },
+  npcs: [
+    { id: 'safari_fire_item0', x: 1, y: 1, dir: 'down', item: { id: 'hyperpotion', qty: 1 } },
+  ],
+};
+
+const safari_canyon: MapDef = {
+  id: 'safari_canyon', name: '사파리 — 번개 협곡', safari: true,
+  tiles: [
+    'CCCCCCCCCCCCCCCCCCCCCCCC',
+    'CCCCddddddddd4dddddddddC',
+    'CCCCCCdddddz44444dd4dddC',
+    'CCCCCCdddzzzzz444444z4dC',
+    'CCCCCCdzd4dz44444z4zzzzC',
+    'CddCdzzzzz44444zzCzzz4dC',
+    'Cddddd4z444444zzzCzzz4dC',
+    'Cdddddd44444dd4zzzzz4ddC',
+    'Cdddddd4d4ddCCCCCz44ddd=',
+    'Cdddd44444dddCCdd4444ddC',
+    'Cddd4444444CCCCC444444dC',
+    'Cdd4444444CCCCCCC44444dC',
+    'Cd4444444ddCCCCC4444dddC',
+    'Cdd44444dddddd44444ddddC',
+    'Cdddd4dddddddddd4ddddddC',
+    'CCCCCCCCCCCCCCCCCCCCCCCC',
+  ],
+  warps: [{ x: 23, y: 8, to: 'safari', tx: 1, ty: 14, dir: 'right' }],
+  encounters: { rate: 0.14, tiles: '4', table: [['jjirit', 1, 1, 18], ['ddakkum', 1, 1, 18], ['ggangtong', 1, 1, 16], ['doldol', 1, 1, 16], ['cheolgap', 1, 1, 8], ['bawi', 1, 1, 8], ['beonjjeok', 1, 1, 6], ['beongae', 1, 1, 3], ['geosin', 1, 1, 1]] },
+  npcs: [
+    { id: 'safari_canyon_item0', x: 1, y: 14, dir: 'down', item: { id: 'maxrevive', qty: 1 } },
+  ],
+};
+
+const safari_fairy: MapDef = {
+  id: 'safari_fairy', name: '사파리 — 꿈빛 숲', safari: true,
+  tiles: [
+    'gggggggggggggggggggggggg',
+    'g::::::::;~ggggggg:::::g',
+    'g:::;:f;~~g~~ggggggg:::g',
+    'g:;;;;;~~~~~~~ggggggg::g',
+    'g;;;;;;;;~~~~;;ggg:g:::g',
+    'g:;;;;;::;~;;;;;;g:::::g',
+    'g:::;::;;;;;;;;;::::ff:g',
+    'g:;;;;;;;;;;;;ggggg::::g',
+    'g;;;;;g;;;;;;;::::;::::g',
+    'g:;;ggggg;;;;;;:;;;;;::g',
+    'g:::;:g:;;;;;;;;;;;~;;:g',
+    'g:f:::::::;;;g~~~~~;;~:g',
+    'g::::::::::::ggg;:;~:::g',
+    'g:::::::::::::;:f::::::g',
+    'g::::::::::::::::::::::g',
+    'gggggggggggg=ggggggggggg',
+  ],
+  warps: [{ x: 12, y: 15, to: 'safari', tx: 8, ty: 1, dir: 'down' }],
+  encounters: { rate: 0.14, tiles: ';', table: [['monsil', 1, 1, 18], ['mongmong', 1, 1, 18], ['dalto', 1, 1, 16], ['makarong', 1, 1, 14], ['bueong', 1, 1, 12], ['agiyuni', 1, 1, 8], ['jeolgu', 1, 1, 6], ['mujigae', 1, 1, 3], ['monggeul', 1, 1, 3]] },
+  fishing: [['banjjak', 1, 1, 30], ['munu', 1, 1, 25], ['eungeo', 1, 1, 15], ['jelly', 1, 1, 15], ['daewang', 1, 1, 6], ['hyeonmuk', 1, 1, 4], ['aurora', 1, 1, 5]],
+  npcs: [
+    { id: 'safari_fairy_item0', x: 1, y: 1, dir: 'down', item: { id: 'safariticket', qty: 1 } },
+  ],
+};
+
+const safari_special: MapDef = {
+  id: 'safari_special', name: '사파리 — 전설의 초원', safari: true,
+  tiles: [
+    '########################',
+    '#.......5...........5..#',
+    '#..5..555555......55555#',
+    '#5555555555555...555555#',
+    '#55555555555555...55555#',
+    '#55555555555#5....~~~~~#',
+    '#..55~~~~~####....f.~..#',
+    '#.5555####55#..........#',
+    '#...#.#####555#........#',
+    '#...555##~555####...5..#',
+    '#.....5~~~~~..#...55555#',
+    '#.....~~~~#~~5555555555#',
+    '#...~~~~~~~~.5555555555#',
+    '#....~f..~....555...5..#',
+    '#......................#',
+    '############=###########',
+  ],
+  warps: [{ x: 12, y: 15, to: 'safari', tx: 15, ty: 1, dir: 'down' }],
+  encounters: { rate: 0.14, tiles: '5', table: [['kkomaryong', 1, 1, 14], ['agiyuni', 1, 1, 12], ['kkaeng', 1, 1, 10], ['kkwae', 1, 1, 10], ['dokbul', 1, 1, 10], ['mujigae', 1, 1, 8], ['nalgae', 1, 1, 6], ['seolpyo', 1, 1, 6], ['bingsan', 1, 1, 5], ['olppaemi', 1, 1, 5], ['wangmong', 1, 1, 5], ['cheonryong', 1, 1, 2]] },
+  fishing: [['banjjak', 1, 1, 30], ['munu', 1, 1, 25], ['eungeo', 1, 1, 15], ['jelly', 1, 1, 15], ['daewang', 1, 1, 6], ['hyeonmuk', 1, 1, 4], ['aurora', 1, 1, 5]],
+  npcs: [
+    { id: 'safari_special_item0', x: 1, y: 1, dir: 'down', item: { id: 'hyperball', qty: 1 } },
+    { id: 'safari_special_item1', x: 1, y: 2, dir: 'down', item: { id: 'fullrestore', qty: 1 } },
+    { id: 'safari_special_item2', x: 2, y: 1, dir: 'down', item: { id: 'safariticket', qty: 1 } },
+  ],
+};
+
+const safari_ice: MapDef = {
+  id: 'safari_ice', name: '사파리 — 하얀 설원', safari: true,
+  tiles: [
+    'hhhhhhhhhhhhhhhhhhhhhhhh',
+    'h```j`j````````````````h',
+    'h`jjjjjjjj`````````````h',
+    'hjjjjjjjjjjj```````````h',
+    'h`jjjjjjjj``h`j````````h',
+    'h``hj`j```hhhhhjjh`````h',
+    'hhhhhh`````jhjjhhhhh```h',
+    'h``hj```````jjjjjhh````h',
+    'hjjjjjh``````jjjhhhhh``h',
+    'hjjjjhhhh```jjjjjjhjj``h',
+    'h`jjjjh`j``h`jjjjjjjjj`h',
+    'h```j`jjjhhhhh`jjjjjj``h',
+    'h```````j``h```jjjjjjj`h',
+    'h```````````````jjjjj``h',
+    'h`````````````````j````h',
+    'hhhhhhhhhhhh=hhhhhhhhhhh',
+  ],
+  warps: [{ x: 12, y: 15, to: 'safari', tx: 22, ty: 1, dir: 'down' }],
+  encounters: { rate: 0.14, tiles: 'j', table: [['agipeng', 1, 1, 22], ['nunnyang', 1, 1, 20], ['bingsu', 1, 1, 18], ['agibuk', 1, 1, 14], ['eolpeng', 1, 1, 8], ['seolpyo', 1, 1, 4], ['wangbingsu', 1, 1, 4]] },
+  npcs: [
+    { id: 'safari_ice_item0', x: 1, y: 1, dir: 'down', item: { id: 'hyperball', qty: 1 } },
+  ],
+};
+
+const safari_water: MapDef = {
+  id: 'safari_water', name: '사파리 — 푸른 호수', safari: true,
+  tiles: [
+    '########################',
+    '#dddddddddddd2ddddddddd#',
+    '#dd2ddddddd22222ddddddd#',
+    '#22222~ddd2222222ddd2dd#',
+    '#dd2~~~~d2d22222dd22222#',
+    '#ddddd~22222d2ddd222222#',
+    '#ddd222222222d~d2222222#',
+    '#dd222222222~~#~~22222d#',
+    '=ddd~~~~~2d~#~~~ddd2ddd#',
+    '#ddddd~2d22~~~~~~ddd~dd#',
+    '#dd2d222222~~~~~dd~~~~~#',
+    '#222222222dd~~~~~ddd~dd#',
+    '#222222222dddd~dddddddd#',
+    '#22222222dddddddddddddd#',
+    '#dd2dd2dddddddddddddddd#',
+    '########################',
+  ],
+  warps: [{ x: 0, y: 8, to: 'safari', tx: 29, ty: 5, dir: 'left' }],
+  encounters: { rate: 0.14, tiles: '2', table: [['pongduck', 1, 1, 20], ['munu', 1, 1, 18], ['jelly', 1, 1, 14], ['banjjak', 1, 1, 14], ['ubiduck', 1, 1, 8], ['meokmul', 1, 1, 8], ['pong', 1, 1, 4], ['aurora', 1, 1, 3]] },
+  fishing: [['banjjak', 1, 1, 30], ['munu', 1, 1, 25], ['eungeo', 1, 1, 15], ['jelly', 1, 1, 15], ['daewang', 1, 1, 6], ['hyeonmuk', 1, 1, 4], ['aurora', 1, 1, 5]],
+  npcs: [
+    { id: 'safari_water_item0', x: 22, y: 1, dir: 'down', item: { id: 'hyperball', qty: 1 } },
+  ],
+};
+
+const safari_jungle: MapDef = {
+  id: 'safari_jungle', name: '사파리 — 깊은 밀림', safari: true,
+  tiles: [
+    '########################',
+    '#..............3.......#',
+    '#..........#.33333.3...#',
+    '#......3.#####33333333.#',
+    '#....#33333#333333.3f..#',
+    '#..#####33333333.......#',
+    '#.#######33333..3..3...#',
+    '#..######..3..33333333.#',
+    '=..f.######....33..3...#',
+    '#....#######.33333.3...#',
+    '#..33########..3.33333.#',
+    '#.33333##.#####33333333#',
+    '#..33333..#####3333333.#',
+    '#....3......#..33333...#',
+    '#................3.....#',
+    '########################',
+  ],
+  warps: [{ x: 0, y: 8, to: 'safari', tx: 29, ty: 14, dir: 'left' }],
+  encounters: { rate: 0.14, tiles: '3', table: [['kkotip', 1, 1, 18], ['suguk', 1, 1, 16], ['pojani', 1, 1, 16], ['kkomul', 1, 1, 14], ['soejip', 1, 1, 10], ['beoseot', 1, 1, 8], ['naphul', 1, 1, 6], ['saesun', 1, 1, 4], ['beotkkot', 1, 1, 3]] },
+  npcs: [
+    { id: 'safari_jungle_item0', x: 22, y: 1, dir: 'down', item: { id: 'fullrestore', qty: 1 } },
+  ],
 };
 
 const ship: MapDef = {
@@ -2096,7 +2296,7 @@ export const MAPS: Record<string, MapDef> = {
   home, town1, lab, route1, town2, center, shop, dojo,
   route2, forest, town3, center3, shop3, gym2,
   route3, cave, town4, center4, shop4, gym3, peak, pastel,
-  route4, town5, center5, shop5, safarigate, safari, ship, gym4, route5, town6, center6, shop6, gym5, volcano, route6, plateau, center7, league,
+  route4, town5, center5, shop5, safarigate, safari, safari_fire, safari_canyon, safari_fairy, safari_special, safari_ice, safari_water, safari_jungle, ship, gym4, route5, town6, center6, shop6, gym5, volcano, route6, plateau, center7, league,
   town7, center8, shop8, gym6, icecave, skyroad, summit, route7, town8, center9, shop9, den, gym7, route8,
 };
 

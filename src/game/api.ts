@@ -6,7 +6,7 @@ import { silhouette } from '../engine/pix';
 import { SPECIES } from '../data/species';
 import { ITEMS } from '../data/items';
 import { world, type NPC } from './overworld';
-import { game, runtime, addItem, saveGame, markCaught, addMon, itemCount, beatenAll } from './state';
+import { game, runtime, addItem, saveGame, markCaught, addMon, itemCount, beatenAll, badgeCount } from './state';
 import { createMon, healMon, monName, maxHp, type Mon } from './monster';
 import { runBattle, type BattleResult } from './battle';
 import { monSprite } from './sprites';
@@ -15,7 +15,7 @@ import { learnMove, movesLearnedAt } from './learn';
 import { OPP, j, rand } from './common';
 import type { TrainerDef } from './maps';
 import { shrineTalk } from './story';
-import { safariEnd } from './safari';
+import { safariEnd, safariLevel } from './safari';
 import { canFly, flyMenu } from './fly';
 import { signedIn, uploadSave } from './cloud';
 import { offerServerSave, accountMenu, accountLabel } from './account';
@@ -88,8 +88,8 @@ async function battle(opts: Parameters<typeof runBattle>[0], canLose = false): P
 
 async function whiteout() {
   // A small penalty only: 10% of your money, capped by progress.
-  const badges = Object.keys(game.flags).filter((k) => /^badge\d$/.test(k) && game.flags[k]).length;
-  const lost = Math.min(Math.floor(game.money / 10), 200 + badges * 100);
+  const lost = Math.min(Math.floor(game.money / 10), 200 + badgeCount() * 100);
+  game.safari = undefined; // fainting ends a safari visit
   game.money -= lost;
   for (const m of game.party) healMon(m);
   const h = game.lastHeal;
@@ -111,9 +111,9 @@ export async function randomEncounter(table: [string, number, number, number][])
       break;
     }
   }
-  const safari = !!world.map.safari && !!game.safari;
-  await battle({ kind: 'wild', enemies: [createMon(row[0], rand(row[1], row[2]))], safari });
-  if (safari && game.safari && game.safari.balls <= 0) await safariEnd('balls');
+  // Safari monsters grow with the player's badges.
+  const level = world.map.safari ? safariLevel() : rand(row[1], row[2]);
+  await battle({ kind: 'wild', enemies: [createMon(row[0], level)] });
 }
 
 export async function trainerBattle(t: TrainerDef, canLose = false): Promise<BattleResult> {

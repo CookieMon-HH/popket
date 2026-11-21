@@ -17,8 +17,8 @@ export interface GameState {
   caught: string[];
   lastHeal: { map: string; x: number; y: number };
   frames: number;
-  /** Set while inside the safari: balls left and frames left. */
-  safari?: { balls: number; left: number };
+  /** Set while inside the safari: frames of time left (runs during battles too). */
+  safari?: { left: number; balls?: number };
   /** Wall-clock time of the last save (ms), used to pick the newer of local and cloud saves. */
   savedAtMs?: number;
   /** Number of league tournament wins. */
@@ -127,6 +127,8 @@ export function writeLocalSave(data: unknown): boolean {
     return false;
   }
 }
+
+export const badgeCount = () => [1, 2, 3, 4, 5, 6, 7].filter((n) => game.flags['badge' + n]).length;
 
 export const itemCount = (id: string) => game.bag[id] ?? 0;
 
