@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', 'ⓟ', '┏', '┓', '┗', '┛', 'ⓝ', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', 'ⓟ', '┏', '┓', '┗', '┛', 'ⓝ', 'ⓦ', 'ⓜ', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -200,6 +200,17 @@ function build(ch: string, anim: number): Pix {
       p.rect(4, 6, 8, 7, '#f0e6cc'); p.rect(4, 6, 8, 1, '#c8b890');
       for (const y of [8, 10]) p.rect(5, y, 6, 1, '#8a7a60');
       p.set(11, 12, '#c8b890');
+      break;
+    case 'ⓦ': // ancient mural carved into the ice wall
+      caveWall(p);
+      p.rect(1, 1, 14, 14, '#9ad0e8'); p.rect(2, 2, 12, 12, '#c8ecf8');
+      p.ell(8, 6, 3, 2, '#3a6a9a'); p.line(4, 10, 12, 10, '#3a6a9a'); p.line(5, 12, 11, 12, '#3a6a9a');
+      p.set(8, 3, '#ffe880'); p.set(3, 3, '#ffffff'); p.set(12, 4, '#ffffff');
+      break;
+    case 'ⓜ': // a small red mitten on the ice
+      caveFloor(p);
+      p.ell(8, 9, 3.5, 4, '#d8323a'); p.ell(5, 8, 1.5, 2, '#d8323a'); p.rect(5, 12, 7, 2, '#f4f4f4');
+      p.set(7, 7, '#ff8a8a');
       break;
     case '┏': case '┓': case '┗': case '┛': { // the old tree: canopy (top) and trunk (bottom) over 2×2 tiles
       grass(p);

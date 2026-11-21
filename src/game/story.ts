@@ -1,5 +1,6 @@
 import { say, yesNo, choose } from '../engine/ui';
 import { photoEpilogue } from './volcano';
+import { allMurals } from './ice';
 import { wait } from '../engine/timing';
 import { fadeTo, flashes } from '../engine/scene';
 import { SPECIES, SPECIES_LIST } from '../data/species';
@@ -706,7 +707,12 @@ export async function iceCaveScene() {
   }
   if (res === 'win') await say('빙산곰은 기운이 빠져 얌전해지더니,\n얼음굴 깊은 곳으로 천천히 걸어 들어갔다.');
   await say('눈송이: 으앙… 무서웠어요! 아기북곰도 무사해요!');
-  await say('관장 서리: 정말 고마워요. 이 눈보라 때문에 얼음굴의 몬스터들까지 흥분했나 봐요.\n아이는 제가 데려갈게요. 수련관에서 기다릴게요!');
+  if (game.flags.mitten) await say('눈송이: 앗, 그거 내 장갑이야! 주워 줬구나, 고마워!');
+  await say('관장 서리: 정말 고마워요. 이 눈보라 때문에 얼음굴의 몬스터들까지 흥분했나 봐요.');
+  if (allMurals()) {
+    await say('관장 서리: …호수 아래 벽화를 보셨군요. 여의주가 하늘을 떠나면 북녘의 눈이\n그치지 않는다는 옛이야기예요. 설마 그 이야기가 진짜일 줄은…');
+  }
+  await say('관장 서리: 아이는 제가 데려갈게요. 수련관에서 기다릴게요!');
   await fadeTo(1, 12);
   game.flags.iceCaveDone = true;
   world.load('town7', 5, 4, 'down');

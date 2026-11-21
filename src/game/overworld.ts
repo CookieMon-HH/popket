@@ -4,7 +4,7 @@ import { ui } from '../engine/ui';
 import { clock, wait } from '../engine/timing';
 import type { Scene } from '../engine/scene';
 import { DIRS, DIRV, OPP, pick, rand, clamp, type Dir } from './common';
-import { MAPS, type MapDef, type NPCDef } from './maps';
+import { MAPS, type MapDef, type NPCDef, type Ambience } from './maps';
 import { SOLID, tileCanvas, TALL_CHARS } from './tiles';
 import { silhouette } from '../engine/pix';
 import { personSprite, itemSprite, monSprite, boulderSprite, barrierSprite, type Pal } from './sprites';
@@ -421,7 +421,8 @@ export class Overworld implements Scene {
       }
     }
     if (this.fishing) this.drawFishing(g, cx, cy);
-    const amb = this.map.ambience ?? (this.map.id === 'ship' ? 'shipdeck' : this.map.id.startsWith('ship') ? 'ship' : undefined);
+    const a0 = this.map.ambience;
+    const amb = (typeof a0 === 'function' ? a0() : a0) ?? (this.map.id === 'ship' ? 'shipdeck' : this.map.id.startsWith('ship') ? 'ship' : undefined);
     if (amb === 'ship' || amb === 'shipdeck') this.drawGloom(g, cx, cy);
     else if (amb) this.drawAmbience(g, cx, cy, amb);
     if (this.isDark()) this.drawDark(g, cx, cy);
@@ -506,7 +507,7 @@ export class Overworld implements Scene {
   private nextBolt = 0;
   private drawGloom(g: Ctx, cx: number, cy: number) {
     const f = clock.frame;
-    const deck = (this.map.ambience ?? (this.map.id === 'ship' ? 'shipdeck' : '')) === 'shipdeck';
+    const deck = this.map.id === 'ship';
     g.fillStyle = 'rgba(14,26,34,0.42)';
     g.fillRect(0, 0, W, H);
     // drifting fog banks (in world space so they slide past as you walk)
@@ -561,7 +562,7 @@ export class Overworld implements Scene {
   }
   private shake = 0;
   private nextRumble = 0;
-  private drawAmbience(g: Ctx, cx: number, cy: number, amb: NonNullable<MapDef['ambience']>) {
+  private drawAmbience(g: Ctx, cx: number, cy: number, amb: Ambience) {
     const f = clock.frame;
     const wrap = (v: number, m: number) => ((v % m) + m) % m;
     if (amb === 'volcano' || amb === 'volcanoheart') {
@@ -630,7 +631,13 @@ export class Overworld implements Scene {
         const sp = amb === 'icecave' ? 0.1 : bl ? 1.6 : 0.5;
         const yy = wrap(y + t * (sp + (i % 4) * 0.12), H + 40) - 20;
         const xx = wrap(x + (bl ? -t * 1.4 : Math.sin(t / 40 + i) * 8), W + 40) - 20;
-        g.fillStyle = amb === 'icecave' ? `rgba(170,230,255,${0.4 + 0.4 * Math.sin(t / 20 + i)})` : '#ffffff';
+        if (bl) {
+          // wind-driven streaks, tinted so they read against white snow
+          g.fillStyle = i % 2 ? 'rgba(150,170,200,0.75)' : 'rgba(255,255,255,0.95)';
+          g.fillRect(Math.round(xx), Math.round(yy), 3, 1);
+          return;
+        }
+        g.fillStyle = amb === 'icecave' ? `rgba(170,230,255,${0.4 + 0.4 * Math.sin(t / 20 + i)})` : i % 2 ? 'rgba(150,170,200,0.8)' : '#ffffff';
         g.fillRect(Math.round(xx), Math.round(yy), i % 3 ? 1 : 2, i % 3 ? 1 : 2);
       });
       const vg = g.createRadialGradient(W / 2, H / 2, 60, W / 2, H / 2, W * 0.7);

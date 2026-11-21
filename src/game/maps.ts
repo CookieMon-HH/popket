@@ -14,6 +14,7 @@ import { keeperTalk, escapeeTalk, safariExitTile, specialGate } from './safari';
 import { windTamerTalk } from './fly';
 import { chestProp, chestTalk, fossilSite } from './chests';
 import { fireflyAt, groveExit, fireflyTalk, whisper, oldTree, nestTalk, lostMong } from './forest';
+import { mittenTalk, mural, northWeather } from './ice';
 import { forgeValve, forgeSchematic, channelCool, volcanoNote1, volcanoNote2, volcanoNote3 } from './volcano';
 import { antiqueOwner, musicBox, foxGirl, shipwright, moonCrystal, moonCrystalProp, moonPad, moonRiddle } from './events';
 import { boardShip, lockedBridge, lockedEngine, logPage1, portraitTalk, dalnimCabin, wardrobe, candleProp, candleTalk, pianoTalk, valveTalk, generatorTalk, shipAdminWinV2, wheelTalk, captainTalk, shipExitCheck } from './ship';
@@ -80,6 +81,8 @@ export interface NPCDef {
 
 type Table = [string, number, number, number][];
 
+export type Ambience = 'ship' | 'shipdeck' | 'volcano' | 'volcanoheart' | 'forest' | 'snow' | 'blizzard' | 'icecave' | 'den';
+
 export interface MapDef {
   /** Safari rules: timer, safari balls and safari-style battles. */
   safari?: boolean;
@@ -96,7 +99,7 @@ export interface MapDef {
   /** Name tags drawn over buildings (x, y in tile units; x is the tag's center). */
   labels?: { x: number; y: number; text: string; color?: string; ink?: string }[];
   /** Atmosphere overlay: tint, particles and weather drawn over the map. */
-  ambience?: 'ship' | 'shipdeck' | 'volcano' | 'volcanoheart' | 'forest' | 'snow' | 'blizzard' | 'icecave' | 'den';
+  ambience?: Ambience | (() => Ambience);
   encounters?: { rate: number; table: Table; tiles?: string; /** extra monsters after the ending */ post?: Table };
   fishing?: Table;
   triggers?: { x: number; y: number; when?: () => boolean; run: () => Promise<void> }[];
@@ -2190,8 +2193,42 @@ const league: MapDef = {
 // ---------------------------------------------------------------------------
 // 제6장 — 서리마을 · 서리 수련관(얼음 미끄럼 퍼즐)
 
+const icecave_deep: MapDef = {
+  id: 'icecave_deep', name: '얼음굴 — 얼어붙은 호수', dark: true, ambience: 'icecave',
+  tiles: [
+    'CCCCCCCCCCCCCCCCCCCC',
+    'CCCCCC________CCCCCC',
+    'CCCCCC________CCCCCC',
+    'CCCCCCCCC__CCCCCCCCC',
+    'CiiiiiiiiiiiziiiiiiC',
+    'CiiiiiiziziiiiziiiiC',
+    'CzziiiiiiiiiiiiiiiiC',
+    'CiiiiiiiiiiiiiiiiiiC',
+    'CiiiiiiiiiiiiiiiiziC',
+    'CiiiiiiiiiiiiziiiiiC',
+    'CiziiiiiiiiiiziiiiiC',
+    'CiiiiiziiiziziiziiiC',
+    'C__________________C',
+    'C__________________C',
+    'CCCⓦCCⓦCC__CCCCⓦCCCC',
+  ],
+  warps: [
+    { x: 9, y: 14, to: 'icecave', tx: 10, ty: 1, dir: 'down' },
+    { x: 10, y: 14, to: 'icecave', tx: 10, ty: 1, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'mural0', x: 3, y: 14, dir: 'down', prop: 'ⓦ', talk: () => mural(0) },
+    { id: 'mural1', x: 6, y: 14, dir: 'down', prop: 'ⓦ', talk: () => mural(1) },
+    { id: 'mural2', x: 15, y: 14, dir: 'down', prop: 'ⓦ', talk: () => mural(2) },
+    { id: 'icdeepitem', x: 18, y: 4, dir: 'down', item: { id: 'pphoney', qty: 1 } },
+    { id: 'seori_cave', x: 8, y: 2, dir: 'down', pal: PAL.seori, hidden: () => f('iceCaveDone') || f('badge6'), talk: () => iceCaveScene() },
+    { id: 'icebear', x: 10, y: 1, dir: 'down', mon: 'bingsan', hidden: () => f('iceCaveDone') || f('badge6'), talk: () => iceCaveScene() },
+    { id: 'snowkid', x: 12, y: 1, dir: 'down', pal: PAL.kid, hidden: () => f('iceCaveDone') || f('badge6'), talk: '눈송이: 무서워… 빙산곰이 너무 화가 났어…' },
+  ],
+  triggers: [9, 10].map((x) => ({ x, y: 3, when: () => !f('iceCaveDone') && !f('badge6'), run: iceCaveScene })),
+};
 const town7: MapDef = {
-  id: 'town7', name: '서리마을', edge: 'h',
+  id: 'town7', name: '서리마을', edge: 'h', ambience: northWeather,
   tiles: [
     'hhhhhhhhhhhhhhhhhhhOhh',
     'h``YYYYY`````MMMM````h',
@@ -2280,9 +2317,9 @@ const gym6: MapDef = {
 
 /** 서리마을 북쪽 얼음굴 — 서리 수련관에 가기 전의 이야기. 미끄러운 얼음판을 건너야 한다. */
 const icecave: MapDef = {
-  id: 'icecave', name: '얼음굴', dark: true,
+  id: 'icecave', name: '얼음굴', dark: true, ambience: 'icecave',
   tiles: [
-    'CCCCCCCCCCCCCCCCCCCC',
+    'CCCCCCCCCC_CCCCCCCCC',
     'CCCCCC________CCCCCC',
     'CCCCCC________CCCCCC',
     'CCCCCCCCC__CCCCCCCCC',
@@ -2298,7 +2335,7 @@ const icecave: MapDef = {
     'C__________________C',
     'CCCCCCCCCCOCCCCCCCCC',
   ],
-  warps: [{ x: 10, y: 14, to: 'town7', tx: 19, ty: 1, dir: 'down' }],
+  warps: [{ x: 10, y: 14, to: 'town7', tx: 19, ty: 1, dir: 'down' }, { x: 10, y: 0, to: 'icecave_deep', tx: 9, ty: 13, dir: 'up' }],
   encounters: {
     rate: 0.1,
     tiles: '_',
@@ -2309,20 +2346,17 @@ const icecave: MapDef = {
     { id: 'ichiker', x: 18, y: 11, dir: 'down', pal: PAL.hiker, sight: 3, trainer: tr('ichiker', '등산가', '얼음산', PAL.hiker, [['bawi', 40], ['agibuk', 40], ['heukjang', 41]], 2000, '눈보라에 갇혀서 몸이 근질근질했다!', '하하, 몸이 다 풀렸다!', '빙산곰 울음소리가 안쪽에서 계속 들려…') },
     { id: 'lg_seolhwa', x: 12, y: 2, dir: 'down', mon: 'seolhwa', hidden: () => !f('lg_hint_seolhwa') || f('lg_seolhwa'),
       talk: () => legendEncounter('seolhwa', 65, '뿔에 눈꽃이 핀 하얀 사슴이 조용히 이쪽을 바라보고 있다…\n다가가 볼까?', '설화: 히이이잉——!') },
+    { id: 'mitten', x: 8, y: 2, dir: 'down', prop: 'ⓜ', hidden: () => f('mitten') || f('iceCaveDone') || f('badge6'), talk: () => mittenTalk() },
     { id: 'icitem1', x: 1, y: 4, dir: 'down', item: { id: 'hyperpotion', qty: 2 } },
     { id: 'icitem2', x: 18, y: 4, dir: 'down', item: { id: 'maxrevive', qty: 1 } },
-    { id: 'seori_cave', x: 8, y: 2, dir: 'down', pal: PAL.seori, hidden: () => f('iceCaveDone') || f('badge6'), talk: () => iceCaveScene() },
-    { id: 'icebear', x: 10, y: 1, dir: 'down', mon: 'bingsan', hidden: () => f('iceCaveDone') || f('badge6'), talk: () => iceCaveScene() },
-    { id: 'snowkid', x: 12, y: 1, dir: 'down', pal: PAL.kid, hidden: () => f('iceCaveDone') || f('badge6'), talk: '눈송이: 무서워… 빙산곰이 너무 화가 났어…' },
   ],
-  triggers: [9, 10].map((x) => ({ x, y: 3, when: () => !f('iceCaveDone') && !f('badge6'), run: iceCaveScene })),
 };
 
 // ---------------------------------------------------------------------------
 // 제7장 — 7번 도로 설원 산길 · 용의 마을 · 용의 둥지 · 용의 수련관(퀴즈)
 
 const route7: MapDef = {
-  id: 'route7', name: '7번 도로 설원 산길', edge: 'h',
+  id: 'route7', name: '7번 도로 설원 산길', ambience: northWeather, edge: 'h',
   tiles: [
     'hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh',
     'hjjjjj````hhh````jjjjjj````jjh',
@@ -2629,7 +2663,7 @@ export const MAPS: Record<string, MapDef> = {
   route2, forest, forest_grove, forest_tree, town3, center3, shop3, gym2,
   route3, cave, town4, center4, shop4, antique, gym3, peak, pastel,
   route4, town5, center5, shop5, safarigate, safari, safari_fire, safari_canyon, safari_fairy, safari_special, safari_ice, safari_water, safari_jungle, ship, ship_cabins, ship_ballroom, ship_engine, ship_bridge, ship_ghost, gym4, route5, town6, center6, shop6, gym5, volcano, volcano_forge, volcano_heart, route6, plateau, center7, league,
-  town7, center8, shop8, gym6, icecave, skyroad, summit, route7, town8, center9, shop9, den, gym7, route8,
+  town7, center8, shop8, gym6, icecave, icecave_deep, skyroad, summit, route7, town8, center9, shop9, den, gym7, route8,
 };
 
 // Validate map rows and warp targets in development.

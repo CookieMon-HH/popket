@@ -78,6 +78,13 @@ export const SONGS: Record<string, Song> = {
     pad: 'A3 - - - - - - - F3 - - - - - - - F3 - - - - - - - E3 - - - - - - - D3 - - - - - - - D#3 - - - - - - - C#3 - - - - - - - A3 - - - - - - -',
     drums: 'k . k . . . . . . . . . . . . . . . . . . . . . . . . . . . . .',
   },
+  icecave: {
+    // High music-box arpeggios in E minor over long cold chords, with a glassy echo.
+    bpm: 84, wave: 'sine', echo: true, vibrato: 2,
+    lead: 'E6 - B5 - G5 - B5 - E6 - F#6 - G6 - - - F#6 - D6 - B5 - D6 - F#6 - - - . . . . E6 - B5 - G5 - B5 - C6 - B5 - A5 - - - G5 - F#5 - E5 - D#5 - E5 - - - . . . .',
+    bass: 'E3 - - - - - - - C3 - - - - - - - D3 - - - - - - - B2 - - - - - - - E3 - - - - - - - A2 - - - - - - - B2 - - - - - - - E3 - - - - - - -',
+    pad: 'G4 - - - - - - - E4 - - - - - - - F#4 - - - - - - - D#4 - - - - - - - G4 - - - - - - - E4 - - - - - - - D#4 - - - - - - - B3 - - - - - - -',
+  },
   forest: {
     // Gentle A-Dorian lilt with a soft echo: green light, whispers between the trees.
     bpm: 92, wave: 'triangle', echo: true,
