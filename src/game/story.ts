@@ -50,6 +50,7 @@ export const PAL = {
   yongha: { hair: '#2a4a3a', shirt: '#c83a3a', pants: '#2a2a3a', hat: '#e8c040' },
   elder: { hair: '#f4f4f4', shirt: '#6a4a8a', pants: '#3a2a4a' },
   sutgeom: { hair: '#3a2a22', shirt: '#7a3a2a', pants: '#2a1e1a', hat: '#a04a2a' },
+  haesol: { hair: '#f0f0f8', shirt: '#f4e8c8', pants: '#6a4a9a', hat: '#ffd24a' },
   cloud: { hair: '#8a94c8', shirt: '#2e2e3a', pants: '#1e1e28', hat: '#626aa0' },
   skier: { hair: '#3a2a20', shirt: '#e84a6a', pants: '#3a4a7a', hat: '#ffffff' },
 } satisfies Record<string, Pal>;
@@ -125,6 +126,8 @@ export async function momTalk() {
   setLastHeal('home', 6, 3);
   if (game.flags.champion) await say('엄마: 우리 집 챔피언! 오늘 저녁은 네가 좋아하는 걸로 해 줄게.');
   else if (game.flags.badge7) await say('엄마: 배지를 일곱 개나 모았다며? 리그가 바로 옆 고원에 있다니, 응원하러 갈게!');
+  if (game.flags.champion && !game.flags.haesolWin) await say('엄마: 고원 북쪽 구름 위에 엄청 강한 사람이 산다던데…\n우리 챔피언이라도 꼭 준비 단단히 하고 가렴!');
+  else if (game.flags.haesolWin) await say('엄마: 태초의 챔피언까지 이겼다고? 세상에, 우리 {name}가 해솔 지방 최강이구나!');
   else if (game.flags.badge5) await say('엄마: 서리마을은 엄청 춥다던데, 따뜻하게 입고 다니렴!');
   else if (game.flags.badge3) await say('엄마: 세 번째 배지까지 모았다며? 우리 {name}, 정말 자랑스럽구나!');
   else if (game.flags.forestCleared) await say('엄마: 검은안개단이라는 무서운 사람들이 있다던데… 너무 무리하지 마렴.');
@@ -615,7 +618,10 @@ export async function championScene() {
   await say('엄마: 어서 오렴, {name}! 아니, 이제는 챔피언이라고 불러야 하나?');
   await say('엄마: 떠날 때는 몬스터 한 마리뿐이었는데… 이렇게 많은 친구들과 돌아왔구나.\n정말 자랑스럽단다.');
   await say('한별 박사: (전화) {name}! 챔피언 축하한다! 도감도 계속 채워 주렴.\n아직 만나지 못한 몬스터들이 해솔 지방 곳곳에 있단다.');
-  await say('— 팜팜몬 「해솔 지방 이야기」 끝 —\n플레이해 줘서 고마워요! 산군 퀘스트와 도감 완성에도 도전해 보세요.');
+  await say('한별 박사: 아, 그리고… 요즘 이상한 소문이 돌고 있단다.\n해솔고원 북쪽, 구름 위로 이어진 「천공의 길」 끝에 누군가 있다는구나.');
+  await say('한별 박사: 50년 전 해솔 리그를 세우고 사라진 태초의 챔피언이\n전설의 용 「천지」와 함께 아직도 그곳에서 수행하고 있다는 거야.');
+  await say('한별 박사: 챔피언만 그 길을 오를 수 있다고 하더구나.\n…하지만 무리는 하지 마렴. 그 힘은 지금까지와는 차원이 다르다니까.');
+  await say('— 팜팜몬 「해솔 지방 이야기」 끝 —\n하지만 모험은 아직 끝나지 않았어요. 해솔고원 북쪽 「천공의 길」에 도전해 보세요!');
   await healParty();
   setLastHeal('home', 6, 3);
 }
@@ -780,4 +786,79 @@ export function quiz(flag: string, question: string, options: string[], answer: 
 
 export function npcById(id: string): NPC | undefined {
   return world.npcs.find((n) => n.def.id === id);
+}
+
+// ---------------------------------------------------------------------------
+// 엔딩 이후 — 천공의 신전: 태초의 챔피언 해솔과 전설의 용 천지
+
+export const HAESOL: TrainerDef = {
+  id: 'haesol', cls: '태초의 챔피언', name: '해솔', pal: PAL.haesol,
+  team: [['dokdae', 72], ['hwasan', 73], ['haeil', 73], ['geosin', 74], ['byeolkkum', 74], ['cheonji', 80]],
+  reward: 30000, elite: true, heals: 3,
+  intro: '', defeat: '…훌륭하다. 50년 만에 처음으로 졌구나.', after: '',
+};
+
+export async function haesolMeet() {
+  game.flags.haesolMet = true;
+  const n = world.npcs.find((x) => x.def.id === 'haesol');
+  if (n) world.faceEachOther(n);
+  await say('???: …구름을 뚫고 여기까지 올라온 자가 있다니.');
+  await say('해솔: 나는 해솔. 50년 전 이 땅에 해솔 리그를 세운 첫 번째 챔피언이다.\n리그를 떠난 뒤로 줄곧 이곳에서 천지와 함께 수행해 왔지.');
+  await say('해솔: 은재를 이기고 챔피언이 되었다고? 좋은 눈빛이로구나.\n하지만 리그의 승부는 시작에 불과하다.');
+  await say('해솔: 내 동료들은 불과 물, 강철과 번개, 어둠과 별빛…\n그리고 하늘과 땅을 가른 천지의 힘까지 지니고 있다.');
+  await say('해솔: 준비가 되면 말을 걸어라. 동료를 단단히 다지고,\n상성과 전략을 세워서 오너라. 어설픈 각오로는 한 마리도 쓰러뜨리지 못할 것이다.');
+}
+
+export async function haesolTalk() {
+  if (!game.flags.haesolMet) {
+    await haesolMeet();
+    return;
+  }
+  if (game.flags.haesolWin) {
+    if (!(await yesNo('해솔: 다시 겨뤄 보겠나? 나도 그동안 더 강해졌다.'))) {
+      await say('해솔: 언제든 오너라. 천지도 너를 기다리고 있다.');
+      return;
+    }
+  } else if (!(await yesNo('해솔: 준비는 되었나?\n(동료 6마리 · 최고 Lv80 · 만능회복약 3개를 사용하는 매우 강한 상대예요)'))) {
+    await say('해솔: 서두를 것 없다. 신전 앞 수행자에게 쉬어 가거라.');
+    return;
+  }
+  await say('해솔: 그럼 시작하자. 하늘과 땅이 지켜보는 승부를!');
+  const res = await trainerBattle(HAESOL, true);
+  if (res !== 'win') {
+    await say('해솔: …아직이다. 하지만 좋은 승부였다.\n쓰러진 이유를 생각하고, 동료를 다시 다져서 오너라.');
+    return;
+  }
+  if (game.flags.haesolWin) {
+    await say('해솔: 역시 너는 진짜다. 또 오너라!');
+    return;
+  }
+  game.flags.haesolWin = true;
+  await say('해솔: 내가 리그를 떠난 건, 더 이상 나를 이길 자가 없었기 때문이었다.\n…50년을 기다린 보람이 있구나.');
+  await say('해솔: 이제 해솔 지방 최강의 트레이너는 너다, {name}.');
+  await flashes(2);
+  await say('신전 안쪽에서 해와 달의 빛이 쏟아져 나왔다…!');
+  await say('해솔: 천지가 너를 보고 있구나. 천지는 스스로 인정한 자에게만 마음을 연다.\n신전 안쪽으로 가 보거라. 천지가 직접 너를 시험할 것이다.');
+  world.refreshNPCs();
+}
+
+export async function cheonjiTalk() {
+  if (!(await yesNo('천지가 해와 달의 구슬을 쥐고 조용히 내려다보고 있다…\n다가가 볼까?'))) return;
+  await say('천지: 크오오오——!');
+  const res = await wildBattle(createMon('cheonji', 70));
+  if (res === 'caught') {
+    game.flags.cheonjiCaught = true;
+    await say('해솔: …천지가 너를 택했구나. 부디 소중히 대해 다오.');
+    world.refreshNPCs();
+    return;
+  }
+  if (res === 'win') await say('천지는 빛이 되어 구름 위로 흩어졌다…\n잠시 후 다시 내려올 것 같다.');
+  else if (res === 'run') await say('천지는 여전히 신전 안쪽에서 이쪽을 바라보고 있다.');
+}
+
+export async function summitMonk() {
+  await say('수행자 노을: 여기까지 올라온 것만으로도 대단하구나. 잠시 쉬었다 가거라.');
+  await healParty();
+  await say('동료들이 모두 기운을 되찾았다!');
+  if (!game.flags.haesolWin) await say('수행자 노을: 해솔 님의 동료는 저마다 타입이 다르다.\n한 마리에만 기대지 말고, 상성을 고루 갖춘 여섯 마리로 맞서야 한다.');
 }

@@ -1467,4 +1467,37 @@ export const MON_DRAW: Record<string, (p: Pix) => void> = {
     eye(p, 5, 18, 2);
     p.rect(2, 23, 4, 1, Bd);
   },
+
+  // ── 전설: 천지 (하늘과 땅을 잇는 태초의 용, 드래곤+에스퍼) ─────────
+  cheonji(p) {
+    const W = '#fbf7ec', S = '#d8ccb0', Gd = '#ffd24a', Go = '#e8a020', M = '#8a5ad8', Ml = '#c0a0f8', Cl = '#cfe8ff';
+    const Sun = '#ff8a3a', Moon = '#2a3470', Ey = '#ff4a5a';
+    // clouds it rides on
+    p.ell(14, 37, 10, 2.5, Cl); p.ell(28, 37.5, 9, 2.2, Cl);
+    // coiled body: tail → loop → neck
+    chain(p, [[38, 33], [37, 25], [31, 20], [24, 23], [20, 30], [13, 30], [10, 23], [11, 16]], 3.2, W);
+    chain(p, [[37, 26], [31, 21.5], [24, 24.5], [20, 31.5], [13, 31.5], [10.5, 24]], 1.3, Gd);
+    // tail flame (purple) and back fins
+    p.tri(36, 34, 40, 38, 35, 39, M); p.tri(37, 32, 40, 30, 39, 36, Ml);
+    for (const [x, y] of [[33, 17], [26, 19], [19, 26], [12, 26]] as const) p.tri(x - 2, y + 2, x + 2, y + 2, x, y - 3, M);
+    // mane
+    p.ell(14, 12, 5, 6, M); p.ell(15, 10, 3.5, 4, Ml);
+    // head
+    p.ell(9, 13, 6, 5, W);
+    p.ell(4, 15.5, 4, 2.8, W);
+    p.ell(4.5, 17, 3.2, 1.2, S);
+    // golden horns
+    p.tri(10, 9, 13, 9, 15, 1, Gd); p.tri(7, 9, 9, 9, 7, 3, Gd); p.set(15, 2, Go); p.set(7, 4, Go);
+    // whiskers
+    p.line(1, 15, -1, 19, Gd); p.line(3, 17, 2, 22, Gd);
+    // glowing eye and nostril
+    p.rect(7, 11, 3, 2, Ey); p.set(7, 11, WHITE);
+    p.set(1, 14, K);
+    // claws holding the orb of sun and moon
+    p.ell(27, 9, 5.5, 5.5, Sun);
+    for (let y = 4; y <= 14; y++) for (let x = 27; x <= 33; x++) if (p.get(x, y) === Sun) p.set(x, y, Moon);
+    p.set(25, 7, '#ffe0a0'); p.set(29, 7, '#fff8c8'); p.set(30, 11, '#fff8c8');
+    p.ell(22, 14, 2.2, 1.6, Gd); p.ell(32, 14, 2.2, 1.6, Gd);
+    chain(p, [[13, 18], [20, 15]], 1.2, W);
+  },
 };

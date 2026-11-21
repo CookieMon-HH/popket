@@ -20,7 +20,7 @@ export type BattleResult = 'win' | 'lose' | 'run' | 'caught';
 export interface BattleOpts {
   kind: 'wild' | 'trainer';
   enemies: Mon[];
-  trainer?: { cls: string; name: string; reward: number; defeat: string; pal: Pal };
+  trainer?: { cls: string; name: string; reward: number; defeat: string; pal: Pal; heals?: number };
   /** Safari battle: throw safari balls, bait or mud instead of fighting. */
   safari?: boolean;
 }
@@ -233,6 +233,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
   let me = new BMon(game.party.find((m) => m.hp > 0)!, 'me');
   let participants = new Set<Mon>([me.mon]);
   let runAttempts = 0;
+  let foeHealsLeft = tr?.heals ?? 0;
   let lastAction = 0;
 
   const L = (b: BMon) => (b.side === 'me' ? monName(b.mon) : `${wild ? '야생' : '상대'} ${monName(b.mon)}`);
@@ -757,6 +758,9 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
       break;
     }
     const foeSlot = enemyChoice();
+    // Bosses may spend their turn on a full restore when a monster is in trouble.
+    const foeHeals = !wild && foeHealsLeft > 0 && enemy.mon.hp > 0 && enemy.mon.hp <= maxHp(enemy.mon) / 4 && Math.random() < 0.8;
+    if (foeHeals) foeHealsLeft--;
     const meB = me;
     const foeB = enemy;
     let order: ('me' | 'foe')[] = ['foe'];
@@ -770,10 +774,19 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
       const meFirst = pp !== fp ? pp > fp : ps !== fs ? ps > fs : Math.random() < 0.5;
       order = meFirst ? ['me', 'foe'] : ['foe', 'me'];
     }
+    if (foeHeals) order = ['foe', ...order.filter((w) => w !== 'foe')];
     for (const who of order) {
       const u = who === 'me' ? meB : foeB;
       const t = who === 'me' ? foeB : meB;
       if (u !== (who === 'me' ? me : enemy) || t !== (who === 'me' ? enemy : me)) continue;
+      if (who === 'foe' && foeHeals && u.mon.hp > 0) {
+        await say(`${j(trName, '은/는')} 만능회복약을 사용했다!`);
+        u.mon.hp = maxHp(u.mon);
+        u.mon.status = null;
+        await animHp(u);
+        await say(`${j(L(u), '은/는')} 기운을 모두 되찾았다!`);
+        continue;
+      }
       if (u.mon.hp <= 0 || t.mon.hp <= 0) continue;
       await doMove(u, t, who === 'me' ? (act as { slot: number | null }).slot : foeSlot);
       result = await handleFaints();

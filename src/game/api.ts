@@ -120,8 +120,15 @@ export async function trainerBattle(t: TrainerDef, canLose = false): Promise<Bat
   const res = await battle(
     {
       kind: 'trainer',
-      enemies: t.team.map(([s, lv]) => createMon(s, lv)),
-      trainer: { cls: t.cls, name: t.name, reward: t.reward, defeat: t.defeat, pal: t.pal },
+      enemies: t.team.map(([s, lv]) => {
+        const m = createMon(s, lv);
+        if (t.elite) {
+          m.ivs = { hp: 15, atk: 15, def: 15, spe: 15 };
+          m.hp = maxHp(m);
+        }
+        return m;
+      }),
+      trainer: { cls: t.cls, name: t.name, reward: t.reward, defeat: t.defeat, pal: t.pal, heals: t.heals },
     },
     canLose,
   );

@@ -8,7 +8,7 @@ import {
   PAL, momTalk, labProfessor, rivalLabTalk, chapter2Scene, leader1Win, grannyTalk, forestAdminWin,
   rival2Scene, fisherTalk, leader2Win, bossScene, whaleTalk, rival3Scene, leader3Win, minerTalk, sanjiTalk, potatoTalk,
   port1Scene, dalnimShipTalk, shipAdminWin, leader4Win, leader5Win, volcanoBossScene, guardian1Win, guardian2Win, championScene,
-  iceIntroScene, iceCaveScene, beachAdminWin, leader6Win, dragonIntroScene, elderTalk, denEntranceScene, cloudWin, leader7Win, lever, toggleSwitch, quiz,
+  iceIntroScene, iceCaveScene, beachAdminWin, haesolMeet, haesolTalk, cheonjiTalk, summitMonk, leader6Win, dragonIntroScene, elderTalk, denEntranceScene, cloudWin, leader7Win, lever, toggleSwitch, quiz,
 } from './story';
 import { keeperTalk, escapeeTalk, safariExitTile } from './safari';
 import { windTamerTalk } from './fly';
@@ -33,6 +33,10 @@ export interface TrainerDef {
   defeat: string;
   after: string;
   afterWin?: () => Promise<void>;
+  /** Post-game bosses: perfect stats on every monster. */
+  elite?: boolean;
+  /** How many 만능회복약 the trainer may use when a monster is low. */
+  heals?: number;
 }
 
 export interface NPCDef {
@@ -1561,17 +1565,17 @@ const route6: MapDef = {
 const plateau: MapDef = {
   id: 'plateau', name: '해솔고원',
   tiles: [
-    '######################',
-    '#....YYYYYYYYYYYY....#',
-    '#....YYYYYYYYYYYY....#',
-    '#....WwWwWDDWwWwW....#',
-    '#l........==.......l.#',
-    '#.........==.........#',
-    '#..fff....==....fff..#',
-    '#.........==.........#',
-    '#..BBBB...==.........#',
-    '#..BHBB...==.........#',
-    '#..WEwW...==.........#',
+    '####################=#',
+    '#....YYYYYYYYYYYY...=#',
+    '#....YYYYYYYYYYYY...=#',
+    '#....WwWwWDDWwWwW...=#',
+    '#l........==.......l=#',
+    '#.........==........=#',
+    '#..fff....==....fff.=#',
+    '#.........==........=#',
+    '#..BBBB...==........=#',
+    '#..BHBB...==........=#',
+    '#..WEwW...==........=#',
     '======================',
     '#....................#',
     '#..fff..........fff..#',
@@ -1584,19 +1588,27 @@ const plateau: MapDef = {
     { x: 10, y: 3, to: 'league', tx: 5, ty: 15, dir: 'up' },
     { x: 11, y: 3, to: 'league', tx: 6, ty: 15, dir: 'up' },
     { x: 4, y: 10, to: 'center7', tx: 4, ty: 6, dir: 'up' },
+    { x: 20, y: 0, to: 'skyroad', tx: 9, ty: 26, dir: 'up' },
   ],
   labels: [
     { x: 11, y: 1.1, text: '해솔 리그', color: '#fff2a8', ink: '#7a5a10' },
+    { x: 18.5, y: 0.3, text: '천공의 길', color: '#e8f0ff', ink: '#3a4a8a' },
     { x: 5, y: 8.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
   ],
   signs: [],
   npcs: [
-    { id: 'pguide', x: 13, y: 5, dir: 'left', pal: PAL.guard, talk: '안내원: 해솔 리그에 오신 걸 환영합니다!\n일곱 개의 배지를 모은 트레이너만 도전할 수 있어요.\n서쪽 길로 가면 바로 솔빛마을이에요.' },
+    { id: 'pguide', x: 13, y: 5, dir: 'left', pal: PAL.guard, talk: async () => {
+      if (f('champion')) await say('안내원: 챔피언님! 고원 북쪽 「천공의 길」이 열렸어요.\n구름 위 신전에 태초의 챔피언이 있다는 소문이… 정말 강하대요. 꼭 준비하고 가세요!');
+      else await say('안내원: 해솔 리그에 오신 걸 환영합니다!\n일곱 개의 배지를 모은 트레이너만 도전할 수 있어요.\n서쪽 길로 가면 바로 솔빛마을이에요.');
+    } },
   ],
-  triggers: [10, 11].map((x) => ({
-    x, y: 4, when: () => !(f('badge7') && f('pearlReturned')),
-    run: pushBack(['안내원: 죄송하지만 배지 일곱 개가 필요해요.', '배지를 모두 모아서 다시 와 주세요!'], 'down'),
-  })),
+  triggers: [
+    ...[10, 11].map((x) => ({
+      x, y: 4, when: () => !(f('badge7') && f('pearlReturned')),
+      run: pushBack(['안내원: 죄송하지만 배지 일곱 개가 필요해요.', '배지를 모두 모아서 다시 와 주세요!'], 'down'),
+    })),
+    { x: 20, y: 1, when: () => !f('champion'), run: pushBack(['북쪽으로 구름에 덮인 길이 이어져 있다.', '경비: 이 앞은 「천공의 길」. 해솔 리그 챔피언만 오를 수 있어.'], 'down') },
+  ],
 };
 
 const center7 = makeCenter('center7', '해솔고원 회복소', 'plateau', 4, 11, '리그 안에는 상점이 없어.\n들어가기 전에 회복약을 충분히 챙겨!');
@@ -1984,12 +1996,100 @@ const route8: MapDef = {
   ],
 };
 
+// ---------------------------------------------------------------------------
+// 엔딩 이후 — 천공의 길 · 천공의 신전
+
+const skyroad: MapDef = {
+  id: 'skyroad', name: '천공의 길', edge: 'h',
+  tiles: [
+    'hhhhhhhhh==hhhhhhhhh',
+    'h```jjjj`==`jjjj```h',
+    'h```jjjj`==`jjjj```h',
+    'h``hhhhh`==`hhhhh``h',
+    'h``h````````````h``h',
+    'h``h`jjjjjjjjjj`h``h',
+    'h````jjjjjjjjjj````h',
+    'hhhhh``````````hhhhh',
+    'h````````hh````````h',
+    'h`jjjjj``hh``jjjjj`h',
+    'h`jjjjj``hh``jjjjj`h',
+    'h``````````````````h',
+    'hhhhhhh``````hhhhhhh',
+    'h``````````````````h',
+    'h`jjjjjjj``jjjjjjj`h',
+    'h`jjjjjjj``jjjjjjj`h',
+    'h``````````````````h',
+    'h``hhhhhhhhhhhhh```h',
+    'h```````````````jj`h',
+    'h`jjjj``````````jj`h',
+    'h`jjjj````hh````jj`h',
+    'h`````````hh```````h',
+    'hhhhhhhh````hhhhhhhh',
+    'h``````````````````h',
+    'h`jjjj``````````jjjh',
+    'h`jjjj``````````jjjh',
+    'h````````==````````h',
+    'hhhhhhhhh==hhhhhhhhh',
+  ],
+  warps: [
+    { x: 9, y: 27, to: 'plateau', tx: 20, ty: 1, dir: 'down' },
+    { x: 10, y: 27, to: 'plateau', tx: 20, ty: 1, dir: 'down' },
+    { x: 9, y: 0, to: 'summit', tx: 7, ty: 10, dir: 'up' },
+    { x: 10, y: 0, to: 'summit', tx: 8, ty: 10, dir: 'up' },
+  ],
+  signs: [],
+  encounters: {
+    rate: 0.12, tiles: 'j',
+    table: [['seolpyo', 52, 58, 12], ['hoeori', 52, 58, 12], ['bingsan', 53, 58, 10], ['geoam', 53, 58, 10], ['wolgung', 53, 58, 10], ['noejeon', 53, 58, 10], ['jangsa', 54, 59, 8], ['byeolkkum', 54, 59, 8], ['daeji', 54, 59, 8], ['eolpeng', 52, 57, 8], ['cheonryong', 56, 60, 4]],
+  },
+  npcs: [
+    { id: 'sky1', x: 9, y: 13, dir: 'down', pal: PAL.monk, sight: 3, trainer: tr('sky1', '천공의 수행자', '바람결', PAL.monk, [['hoeori', 64], ['olppaemi', 64], ['beotkkot', 64], ['cheonryong', 66]], 5200, '이 길은 하늘과 가장 가까운 수행의 길. 각오는 되었나!', '바람이 너의 편이었군…', '정상의 해솔 님은 여섯 가지 다른 힘을 쓰신다.') },
+    { id: 'sky2', x: 4, y: 11, dir: 'right', pal: PAL.hiker, sight: 4, trainer: tr('sky2', '천공의 수행자', '무쇠', PAL.hiker, [['geoam', 65], ['jangsa', 65], ['gangjip', 65], ['geosin', 67]], 5400, '단단함이야말로 최고의 힘이다!', '내 무쇠가 부서지다니!', '강철과 땅만으로는 해솔 님께 닿지 못하더군.') },
+    { id: 'sky3', x: 15, y: 6, dir: 'left', pal: PAL.skier, sight: 4, trainer: tr('sky3', '천공의 수행자', '서릿발', PAL.skier, [['bingsan', 66], ['seolpyo', 66], ['wangbingsu', 66], ['haeil', 68]], 5600, '구름 위의 냉기를 맛보아라!', '얼음이 녹아내린다…', '천지는 얼음과 페어리 기술을 싫어한다던데.') },
+    { id: 'sky4', x: 9, y: 2, dir: 'down', pal: PAL.lady, sight: 2, trainer: tr('sky4', '천공의 수행자', '꿈별', PAL.lady, [['byeolkkum', 67], ['wolgung', 67], ['aurora', 67], ['monggeul', 68]], 5800, '정상 바로 앞이야. 마지막 시험은 나!', '별이 지는구나…', '해솔 님은 위험해지면 만능회복약을 쓰셔. 한 번에 몰아쳐!') },
+    { id: 'skyitem1', x: 1, y: 13, dir: 'down', item: { id: 'maxrevive', qty: 2 } },
+    { id: 'skyitem2', x: 18, y: 18, dir: 'down', item: { id: 'fullrestore', qty: 2 } },
+    { id: 'skyitem3', x: 18, y: 1, dir: 'down', item: { id: 'hyperball', qty: 5 } },
+  ],
+};
+
+const summit: MapDef = {
+  id: 'summit', name: '천공의 신전', edge: 'h',
+  tiles: [
+    'hhhhhhhhhhhhhhhh',
+    'h``````````````h',
+    'h``````````````h',
+    'h``````````````h',
+    'h``````==``````h',
+    'h``````==``````h',
+    'h``````==``````h',
+    'h``````==``````h',
+    'h``````==``````h',
+    'h``````==``````h',
+    'h``````==``````h',
+    'hhhhhhh==hhhhhhh',
+  ],
+  warps: [
+    { x: 7, y: 11, to: 'skyroad', tx: 9, ty: 1, dir: 'down' },
+    { x: 8, y: 11, to: 'skyroad', tx: 10, ty: 1, dir: 'down' },
+  ],
+  signs: [],
+  npcs: [
+    { id: 'sumstatue1', x: 4, y: 4, dir: 'down', statue: true, mon: 'cheonryong', talk: '하늘을 나는 용의 석상이다. 구름 사이로 은은한 빛이 감돈다.' },
+    { id: 'sumstatue2', x: 11, y: 4, dir: 'down', statue: true, mon: 'eunha', talk: '은하고래의 석상이다. 별빛이 새겨져 있다.' },
+    { id: 'haesol', x: 7, y: 3, dir: 'down', pal: PAL.haesol, talk: () => haesolTalk() },
+    { id: 'cheonji', x: 8, y: 1, dir: 'down', mon: 'cheonji', hidden: () => !f('haesolWin') || f('cheonjiCaught'), talk: () => cheonjiTalk() },
+    { id: 'summonk', x: 3, y: 8, dir: 'right', pal: PAL.monk, talk: () => summitMonk() },
+  ],
+  triggers: [7, 8].map((x) => ({ x, y: 5, when: () => !f('haesolMet'), run: haesolMeet })),
+};
+
 export const MAPS: Record<string, MapDef> = {
   home, town1, lab, route1, town2, center, shop, dojo,
   route2, forest, town3, center3, shop3, gym2,
   route3, cave, town4, center4, shop4, gym3, peak, pastel,
   route4, town5, center5, shop5, safarigate, safari, ship, gym4, route5, town6, center6, shop6, gym5, volcano, route6, plateau, center7, league,
-  town7, center8, shop8, gym6, icecave, route7, town8, center9, shop9, den, gym7, route8,
+  town7, center8, shop8, gym6, icecave, skyroad, summit, route7, town8, center9, shop9, den, gym7, route8,
 };
 
 // Validate map rows and warp targets in development.

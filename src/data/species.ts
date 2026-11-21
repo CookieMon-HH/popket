@@ -65,6 +65,7 @@ const BING: L = [[1, 'tackle'], [1, 'frostbreath'], [6, 'twinkle'], [11, 'curl']
 const BUKGOM: L = [[1, 'tackle'], [1, 'frostbreath'], [6, 'jab'], [12, 'icefang'], [18, 'focus'], [24, 'straight'], [30, 'avalanche'], [36, 'upper']];
 const HYEON: L = [[1, 'tackle'], [1, 'curl'], [6, 'splash'], [12, 'dragonbreath'], [18, 'ironwall'], [24, 'wave'], [30, 'dragontail'], [36, 'tide'], [42, 'skyfury']];
 const SANGUN: L = [[1, 'rockdrop'], [1, 'soulwave'], [30, 'focus'], [35, 'mountainroar'], [38, 'rockstorm']];
+const CHEONJI: L = [[1, 'dragontail'], [1, 'psybeam'], [45, 'meditate'], [50, 'moonsign'], [60, 'skyfury'], [70, 'genesis']];
 const EUNHA: L = [[1, 'wave'], [1, 'gust'], [20, 'breathe'], [25, 'tide'], [30, 'galaxy'], [35, 'storm']];
 
 type Def = Omit<SpeciesDef, 'no'>;
@@ -177,6 +178,7 @@ const list: Def[] = [
   s('hyeonmu', '현무', ['물', '드래곤'], [108, 96, 122, 54], 45, 240, HYEON, '현무', '등딱지를 감싼 검은 뱀과 함께 다니는 거북. 북쪽 바다를 지키는 수호자라고 전해진다.'),
   // 특별한 몬스터
   s('sangun', '산군', ['바위', '고스트'], [100, 118, 92, 110], 20, 250, SANGUN, '산신령', '운무봉을 지키는 흰 호랑이의 정령. 숲·물·바위의 세 방울 소리를 들으면 서낭당으로 내려온다고 전해진다.', undefined, { special: true }),
+  s('cheonji', '천지', ['드래곤', '에스퍼'], [115, 125, 105, 112], 10, 320, CHEONJI, '태초', '해솔 지방의 하늘과 땅을 처음 갈라놓았다는 전설의 용. 해와 달을 품은 구슬을 쥐고 구름 위 신전에 머문다.', undefined, { legend: true }),
   s('eunha', '은하고래', ['물', '비행'], [120, 110, 100, 90], 25, 260, EUNHA, '은하', '별빛동굴 지하 호수에 잠든 전설의 몬스터. 깨어나면 밤하늘을 헤엄치며 별을 뿌린다고 전해진다.', undefined, { legend: true }),
   // 땅 (뒤쪽 배치)
   s('jinheuk', '진흙이', ['땅'], [56, 56, 60, 30], 190, 60, JINHEUK, '진흙덩이', '비 온 다음 날 진흙 웅덩이에서 태어난다. 몸이 마르면 기운이 없어진다.', [16, 'heukjang']),
@@ -199,7 +201,7 @@ const ORDER = [
   'pongduck', 'ubiduck', 'kkotip', 'beotkkot', 'suguk', 'jangma', 'bingsu', 'wangbingsu',
   'agibuk', 'bingsan', 'hyeonmuk', 'hyeonmu',
   'kkomaryong', 'nalgae', 'cheonryong',
-  'sangun', 'eunha',
+  'sangun', 'eunha', 'cheonji',
 ];
 const byId = Object.fromEntries(list.map((d) => [d.id, d]));
 export const SPECIES_LIST: SpeciesDef[] = ORDER.map((id, i) => ({ ...byId[id], no: i + 1 }));

@@ -124,6 +124,7 @@ const list: MoveDef[] = [
   // 드래곤
   { id: 'dragonbreath', name: '용의숨결', type: '드래곤', power: 60, acc: 100, pp: 20, effect: { kind: 'status', status: 'par', chance: 20 }, desc: '용의 숨결을 내뿜는다. 마비될 때가 있다.' },
   { id: 'dragontail', name: '용꼬리치기', type: '드래곤', power: 80, acc: 100, pp: 10, desc: '굵은 꼬리로 후려친다.' },
+  { id: 'genesis', name: '천지개벽', type: '드래곤', power: 120, acc: 90, pp: 5, desc: '하늘과 땅을 갈라 태초의 빛을 쏟아낸다.' },
   { id: 'skyfury', name: '천룡의분노', type: '드래곤', power: 110, acc: 85, pp: 5, desc: '하늘을 가르는 용의 분노를 쏟아낸다.' },
   // 에스퍼
   { id: 'telekinesis', name: '염동력', type: '에스퍼', power: 50, acc: 100, pp: 25, desc: '보이지 않는 힘으로 들어 던진다.' },
