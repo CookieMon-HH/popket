@@ -68,8 +68,10 @@ const fixed = (o: string, d: string, b: string, l: string, h: string): Ramp => (
 const FIRE = fixed('#8a1e10', '#d8401a', '#ff7a2a', '#ffc040', '#fff4c0');
 const LAVA = fixed('#5a1a0e', '#c8361a', '#ff6a24', '#ffb040', '#fff0b0');
 
-// Light: top-left and toward the viewer.
+// Light: top-left and toward the viewer. Back views are drawn mirrored and then flipped
+// to face right (toward the enemy), so their light is mirrored while drawing.
 const LX = -0.55, LY = -0.62, LZ = 0.56;
+let mirrored = false;
 
 type Shade = { kind: 'sphere'; cx: number; cy: number; rx: number; ry: number; spec?: boolean } | { kind: 'bevel' } | { kind: 'glow'; cx: number; cy: number; rx: number; ry: number } | { kind: 'flat' };
 
@@ -103,12 +105,13 @@ export function part(p: Pix, r: Ramp, shape: (m: Pix) => void, shade: Shade = { 
         c = k > 0.72 ? r.h : k > 0.45 ? r.l : k > 0.18 ? r.b : r.d;
       } else {
         const nz = Math.sqrt(1 - d2);
-        const dot = LX * dx + LY * dy + LZ * nz;
+        const dot = (mirrored ? -LX : LX) * dx + LY * dy + LZ * nz;
         c = dot > 0.965 && shade.spec !== false ? r.h : dot > 0.6 ? r.l : dot > -0.12 ? r.b : r.d;
       }
     } else if (shade.kind === 'bevel') {
-      if (!inM(x - 1, y) || !inM(x, y - 1)) c = r.l;
-      else if (!inM(x + 1, y) || !inM(x, y + 1)) c = r.d;
+      const sx = mirrored ? -1 : 1;
+      if (!inM(x - sx, y) || !inM(x, y - 1)) c = r.l;
+      else if (!inM(x + sx, y) || !inM(x, y + 1)) c = r.d;
     }
     p.set(x, y, c);
   }
@@ -160,6 +163,15 @@ const mk = (draw: (p: Pix) => void) => () => {
   seal(p);
   return p;
 };
+/** Back view: drawn in the same left-facing layout, returned facing right (toward the enemy). */
+const mkBack = (draw: (p: Pix) => void) => () => {
+  mirrored = true;
+  try {
+    return mk(draw)().flipped();
+  } finally {
+    mirrored = false;
+  }
+};
 
 // ---------------------------------------------------------------------------
 
@@ -169,6 +181,7 @@ const SAESUN = { body: ramp('#a8d070'), belly: ramp('#f0f8d8'), leaf: ramp('#3aa
 const HWASAN = { body: ramp('#a43e1e'), rock: ramp('#5a4e58'), belly: ramp('#d0784a'), horn: ramp('#ece2d0') };
 const EUNHA = { body: ramp('#2e3e92'), belly: ramp('#94b8f4'), star: '#fff8c8', glowC: '#9ad8ff', moon: ramp('#fff0b8') };
 
+/** front faces left (toward the player); back faces right (toward the enemy). */
 export const MON_V2: Record<string, { front: () => Pix; back: () => Pix }> = {
   modak: {
     front: mk((p) => {
@@ -193,7 +206,7 @@ export const MON_V2: Record<string, { front: () => Pix; back: () => Pix }> = {
       p.set(5, 26, '#7a2a1c'); p.set(6, 27, '#7a2a1c'); p.set(7, 27, '#7a2a1c'); p.set(6, 26, '#c8503a');
       p.set(13, 24, '#ff9a8a'); p.set(14, 24, '#ff9a8a');
     }),
-    back: mk((p) => {
+    back: mkBack((p) => {
       const { body, frill, frillIn, spike, horn } = MODAK;
       part(p, ramp(body.d), (m) => { m.rect(14, 31, 4, 6, 'x'); m.rect(28, 31, 4, 6, 'x'); });
       part(p, body, (m) => m.tri(28, 23, 39, 27, 28, 32, 'x'), sph(32, 26, 8, 5));
@@ -227,7 +240,7 @@ export const MON_V2: Record<string, { front: () => Pix; back: () => Pix }> = {
       for (const [x, y] of [[4, 26], [3, 25], [16, 26], [17, 25]] as const) p.set(x, y, body.d);
       p.set(5, 24, '#ff9ab0'); p.set(17, 23, '#ff9ab0');
     }),
-    back: mk((p) => {
+    back: mkBack((p) => {
       const { body, drop, spot } = PONG;
       part(p, body, (m) => m.ell(22, 29, 12.5, 7.5, 'x'), sph(22, 27, 12.5, 8));
       for (const [x, y, rx, ry] of [[26, 25, 1.6, 1], [31, 28, 1.3, 1], [22, 24, 1.3, 0.8], [18, 30, 1.2, 0.8]] as const) p.ell(x, y, rx, ry, spot);
@@ -263,7 +276,7 @@ export const MON_V2: Record<string, { front: () => Pix; back: () => Pix }> = {
       p.set(7, 18, '#8a4a3a');
       p.set(12, 17, '#ffb0a0'); p.set(13, 17, '#ffc8b8');
     }),
-    back: mk((p) => {
+    back: mkBack((p) => {
       const { body, belly, leaf, ear } = SAESUN;
       part(p, ramp(body.d), (m) => { m.rect(17, 28, 2, 9, 'x'); m.rect(29, 28, 2, 9, 'x'); });
       part(p, body, (m) => m.ell(24, 24, 9.5, 5.5, 'x'), sph(24, 23, 9.5, 6));
@@ -307,7 +320,7 @@ export const MON_V2: Record<string, { front: () => Pix; back: () => Pix }> = {
       fierceEye(p, 5, 18, '#ffd040');
       p.line(1, 25, 5, 26, '#4a1408'); p.set(2, 26, '#ff8a3a');
     }),
-    back: mk((p) => {
+    back: mkBack((p) => {
       const { body, rock, horn } = HWASAN;
       part(p, ramp(body.d), (m) => { m.rect(12, 29, 6, 9, 'x'); m.rect(30, 29, 6, 9, 'x'); });
       part(p, body, (m) => m.tri(30, 19, 40, 26, 30, 32, 'x'), sph(33, 24, 8, 6));
@@ -344,7 +357,7 @@ export const MON_V2: Record<string, { front: () => Pix; back: () => Pix }> = {
       eye(p, 5, 18, '#3a6ae0');
       p.line(2, 23, 6, 23, body.o); p.set(3, 24, '#8a3a5a');
     }),
-    back: mk((p) => {
+    back: mkBack((p) => {
       const { body, star, glowC, moon } = EUNHA;
       part(p, body, (m) => { m.tri(29, 18, 40, 5, 38, 20, 'x'); m.tri(29, 20, 38, 20, 40, 33, 'x'); }, sph(34, 19, 8, 12));
       part(p, body, (m) => m.ell(17, 20, 16, 11, 'x'), sph(16, 18, 16, 11));

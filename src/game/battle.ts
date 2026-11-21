@@ -140,7 +140,7 @@ class BattleScene implements Scene {
     if (v.player && v.pVis && !v.pBlink) {
       g.globalAlpha = v.pAlpha;
       // v2 samples are drawn at a whole 3× scale so every pixel is the same size
-      if (ART_V2 && MON_V2[v.player.species]) drawSprite(g, monBackSprite(v.player.species), 6 + v.pX, 54 + v.pY, 120, 120, true);
+      if (ART_V2 && MON_V2[v.player.species]) drawSprite(g, monBackSprite(v.player.species), 6 + v.pX, 54 + v.pY, 120, 120);
       else drawSprite(g, monBackSprite(v.player.species), -2 + v.pX, 38 + v.pY, 136, 136, true);
       g.globalAlpha = 1;
     }
