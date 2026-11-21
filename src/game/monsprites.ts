@@ -6,11 +6,17 @@ export const MON_SIZE = 40;
 const K = '#1c1c28';
 const WHITE = '#ffffff';
 
+/** Set by the v2 restyler: draws eyes in the new style when the canvas is a ShadePix. */
+export const V2_HOOKS: { eye?: (p: Pix, x: number, y: number, h: number, w: number, iris?: string) => void } = {};
+const isV2 = (p: Pix) => 'v2' in p;
+
 function eye(p: Pix, x: number, y: number, h = 3, w = 2) {
+  if (isV2(p) && V2_HOOKS.eye) return V2_HOOKS.eye(p, x, y, h, w);
   p.rect(x, y, w, h, K);
   p.set(x, y, WHITE);
 }
 function bigEye(p: Pix, x: number, y: number, c = K) {
+  if (isV2(p) && V2_HOOKS.eye) return V2_HOOKS.eye(p, x, y, 4, 3, c === K ? undefined : c);
   p.rect(x, y, 3, 4, c);
   p.set(x, y, WHITE);
   p.set(x + 1, y, WHITE);
@@ -24,10 +30,16 @@ function happyEye(p: Pix, x: number, y: number) {
 }
 /** Recolor filled pixels inside a rectangle (for bands and stripes on bodies). */
 function paint(p: Pix, x: number, y: number, w: number, h: number, c: string) {
-  for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (p.get(i, j)) p.set(i, j, c);
+  const rc = (p as Pix & { recolor?: (x: number, y: number, c: string) => void }).recolor;
+  for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (p.get(i, j)) (rc ? rc.call(p, i, j, c) : p.set(i, j, c));
 }
 /** Draw a thick polyline as a chain of ellipses. */
 function chain(p: Pix, pts: [number, number][], r: number, c: string) {
+  const g = (p as Pix & { grouped?: (c: string, draw: () => void) => void }).grouped;
+  if (g) return g.call(p, c, () => chainRaw(p, pts, r, c));
+  chainRaw(p, pts, r, c);
+}
+function chainRaw(p: Pix, pts: [number, number][], r: number, c: string) {
   for (let i = 0; i < pts.length - 1; i++) {
     const [x0, y0] = pts[i];
     const [x1, y1] = pts[i + 1];

@@ -12,7 +12,7 @@ import { game, removeItem, markSeen, markCaught, addMon } from './state';
 import { monName, maxHp, calcStats, expFor, expRatio, type Mon } from './monster';
 import { monSprite, monBackSprite, personSprite, capsuleSprite, type Pal } from './sprites';
 import { silhouette } from '../engine/pix';
-import { MON_V2, ART_V2 } from './monsprites2';
+import { ART_V2 } from './monsprites2';
 import { BagView, pickPartyMember, useItemOn } from './menus';
 import { learnMove, movesLearnedAt } from './learn';
 import { j, pick, rand, clamp } from './common';
@@ -140,7 +140,7 @@ class BattleScene implements Scene {
     if (v.player && v.pVis && !v.pBlink) {
       g.globalAlpha = v.pAlpha;
       // v2 samples are drawn at a whole 3× scale so every pixel is the same size
-      if (ART_V2 && MON_V2[v.player.species]) drawSprite(g, monBackSprite(v.player.species), 6 + v.pX, 54 + v.pY, 120, 120);
+      if (ART_V2) drawSprite(g, monBackSprite(v.player.species), 6 + v.pX, 54 + v.pY, 120, 120);
       else drawSprite(g, monBackSprite(v.player.species), -2 + v.pX, 38 + v.pY, 136, 136, true);
       g.globalAlpha = 1;
     }

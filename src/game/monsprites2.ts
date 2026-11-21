@@ -2,7 +2,7 @@ import { Pix } from '../engine/pix';
 import { MON_SIZE } from './monsprites';
 
 // ---------------------------------------------------------------------------
-// Art style v2 (sample set, behind the `?art2` URL flag until approved).
+// Art style v2 (default; `?classic` shows the old sprites).
 //
 // - Every colour comes from a 5-step ramp: outline · dark · base · light · highlight,
 //   hue-shifted (shadows lean cool/purple, lights lean warm/yellow).
@@ -52,11 +52,13 @@ export interface Ramp { o: string; d: string; b: string; l: string; h: string }
 
 /** Build a hue-shifted 5-step ramp around a base colour. */
 export function ramp(base: string): Ramp {
-  const [h, s, l] = rgbToHsl(toRgb(base));
+  const [h0, s, l] = rgbToHsl(toRgb(base));
+  const h = s < 0.08 ? 235 : h0;
   const mk = (dl: number, hueTarget: number, deg: number, ds: number) =>
     toHex(hslToRgb([hueToward(h, hueTarget, s < 0.08 ? 0 : deg), clamp01(s + ds), clamp01(l + dl)]));
   return {
-    o: mk(-Math.min(0.42, l * 0.62), 255, 22, 0.05),
+    // outline: always dark (even for white/pastel colours) and never neon
+    o: toHex(hslToRgb([hueToward(h, 255, s < 0.08 ? 0 : 22), s < 0.08 ? 0.12 : Math.min(0.6, s * 0.85 + 0.08), Math.max(0.1, Math.min(0.27, l * 0.38))])),
     d: mk(-Math.min(0.13, l * 0.24), 250, 6, 0.02),
     b: base,
     l: mk(Math.min(0.1, (1 - l) * 0.4), 55, 6, -0.05),
@@ -370,5 +372,193 @@ export const MON_V2: Record<string, { front: () => Pix; back: () => Pix }> = {
   },
 };
 
-/** `?art2` turns on the v2 sample sprites. */
-export const ART_V2 = typeof location !== 'undefined' && new URLSearchParams(location.search).has('art2');
+// ---------------------------------------------------------------------------
+// Automatic restyle for every other species.
+//
+// The existing MON_DRAW functions are replayed on a ShadePix: each large ellipse is
+// shaded as an ellipsoid, each large rectangle/triangle gets a bevel, small shapes and
+// single pixels stay flat (details). Where a shape overlaps an earlier shape of the
+// same colour (head over body, leg over body), a soft inner line in that colour's
+// shadow is drawn. At the end the silhouette gets a selective outline (each edge in
+// the darkest shade of the colour it borders), and eyes use the v2 eye.
+
+const rampCache = new Map<string, Ramp>();
+const R = (c: string) => {
+  let r = rampCache.get(c);
+  if (!r) rampCache.set(c, (r = ramp(c)));
+  return r;
+};
+const OLD_K = '#1c1c28';
+const DEFAULT_IRIS = '#5a3a6a';
+
+export class ShadePix extends Pix {
+  /** Material (unshaded) colour of each pixel. */
+  base: (string | null)[];
+  /** Shade level of each pixel: 0 dark, 1 base, 2 light, 3 highlight, -1 flat. */
+  lvl: number[];
+  private group: Pix | null = null;
+  private groupColor = '';
+  readonly v2 = true;
+
+  constructor() {
+    super(MON_SIZE, MON_SIZE);
+    this.base = new Array(this.w * this.h).fill(null);
+    this.lvl = new Array(this.w * this.h).fill(-1);
+  }
+
+  private put(x: number, y: number, c: string, b: string, l: number) {
+    x = Math.floor(x); y = Math.floor(y);
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h) return;
+    const i = y * this.w + x;
+    this.d[i] = c; this.base[i] = b; this.lvl[i] = l;
+  }
+
+  set(x: number, y: number, c: string) {
+    if (this.group) { this.group.set(x, y, c); return; }
+    const col = c === OLD_K ? LASH : c;
+    this.put(x, y, col, col, -1);
+  }
+
+  /** Repaint a pixel in another material, keeping its shading (stripes, bands). */
+  recolor(x: number, y: number, c: string) {
+    const i = Math.floor(y) * this.w + Math.floor(x);
+    const l = this.lvl[i];
+    if (l < 0) { this.set(x, y, c); return; }
+    const r = R(c);
+    this.put(x, y, [r.d, r.b, r.l, r.h][l], c, l);
+  }
+
+  ell(cx: number, cy: number, rx: number, ry: number, c: string) {
+    if (this.group || rx * ry < 4.5 || c === OLD_K || c === WHITE || c === LASH) { super.ell(cx, cy, rx, ry, c); return; }
+    const m = new Pix(this.w, this.h);
+    m.ell(cx, cy, rx, ry, c);
+    this.fill(m, c, { kind: 'sphere', cx, cy: cy - ry * 0.08, rx, ry, spec: rx >= 4 && ry >= 4 });
+  }
+
+  rect(x: number, y: number, w: number, h: number, c: string) {
+    if (this.group || w * h <= 4 || w === 1 || h === 1 || c === OLD_K || c === WHITE || c === LASH) { super.rect(x, y, w, h, c); return; }
+    const m = new Pix(this.w, this.h);
+    m.rect(x, y, w, h, c);
+    this.fill(m, c, { kind: 'bevel' });
+  }
+
+  tri(ax: number, ay: number, bx: number, by: number, cx: number, cy: number, c: string) {
+    const area = Math.abs((bx - ax) * (cy - ay) - (cx - ax) * (by - ay)) / 2;
+    if (this.group || area < 6 || c === OLD_K || c === WHITE || c === LASH) { super.tri(ax, ay, bx, by, cx, cy, c); return; }
+    const m = new Pix(this.w, this.h);
+    m.tri(ax, ay, bx, by, cx, cy, c);
+    this.fill(m, c, { kind: 'bevel' });
+  }
+
+  /** Draw several shapes as one part (e.g. a tail made of a chain of circles). */
+  grouped(c: string, draw: () => void) {
+    if (this.group) { draw(); return; }
+    this.group = new Pix(this.w, this.h);
+    this.groupColor = c;
+    try { draw(); } finally {
+      const m = this.group;
+      this.group = null;
+      this.fill(m, this.groupColor, { kind: 'bevel' });
+    }
+  }
+
+  private fill(m: Pix, c: string, shade: Shade) {
+    const r = R(c);
+    const inM = (x: number, y: number) => m.get(x, y) !== null;
+    // soft inner line where this part overlaps an earlier part of the same material
+    for (let y = 0; y < this.h; y++) for (let x = 0; x < this.w; x++) {
+      if (inM(x, y)) continue;
+      if (!(inM(x - 1, y) || inM(x + 1, y) || inM(x, y - 1) || inM(x, y + 1))) continue;
+      const i = y * this.w + x;
+      if (this.base[i] === c && this.lvl[i] >= 0) { this.d[i] = r.d; this.lvl[i] = 0; }
+    }
+    for (let y = 0; y < this.h; y++) for (let x = 0; x < this.w; x++) {
+      if (!inM(x, y)) continue;
+      let l = 1;
+      if (shade.kind === 'sphere') {
+        const dx = (x + 0.5 - shade.cx) / shade.rx;
+        const dy = (y + 0.5 - shade.cy) / shade.ry;
+        const d2 = Math.min(1, dx * dx + dy * dy);
+        const dot = (mirrored ? -LX : LX) * dx + LY * dy + LZ * Math.sqrt(1 - d2);
+        l = dot > 0.965 && shade.spec !== false ? 3 : dot > 0.6 ? 2 : dot > -0.12 ? 1 : 0;
+      } else if (shade.kind === 'bevel') {
+        const sx = mirrored ? -1 : 1;
+        if (!inM(x - sx, y) || !inM(x, y - 1)) l = 2;
+        else if (!inM(x + sx, y) || !inM(x, y + 1)) l = 0;
+      }
+      this.put(x, y, [r.d, r.b, r.l, r.h][l], c, l);
+    }
+  }
+
+  /** Selective outline around the whole silhouette. */
+  finish() {
+    const src = this.d.slice();
+    const base = this.base.slice();
+    const at = (x: number, y: number) => (x < 0 || y < 0 || x >= this.w || y >= this.h ? null : src[y * this.w + x]);
+    const bAt = (x: number, y: number) => (x < 0 || y < 0 || x >= this.w || y >= this.h ? null : base[y * this.w + x]);
+    for (let y = 0; y < this.h; y++) for (let x = 0; x < this.w; x++) {
+      if (at(x, y)) continue;
+      const nb = [[x, y + 1], [x + 1, y], [x - 1, y], [x, y - 1]].find(([xx, yy]) => at(xx, yy));
+      if (!nb) continue;
+      const b = bAt(nb[0], nb[1]) ?? at(nb[0], nb[1])!;
+      const [rr, gg, bb] = toRgb(b);
+      this.put(x, y, rr + gg + bb < 150 ? '#140e1c' : R(b).o, b, -1);
+    }
+    return this;
+  }
+}
+
+/** v2 eye used by the restyled sprites (called through the old eye helpers). */
+export function eyeV2(p: Pix, x: number, y: number, h: number, w: number, iris = DEFAULT_IRIS) {
+  if (h >= 4 && w >= 3) { eye(p, x, y, iris); return; }
+  const ir = R(iris);
+  p.rect(x, y, w, h, LASH);
+  p.set(x, y, WHITE);
+  if (h >= 3) for (let i = 0; i < w; i++) p.set(x + i, y + h - 1, i === 0 ? ir.b : ir.d);
+  if (w >= 2 && h >= 3) p.set(x + 1, y + h - 1, ir.l);
+}
+
+/** Back view of a restyled sprite: face painted over with the surrounding body, facing right. */
+function eraseFace(p: ShadePix) {
+  const count = new Map<string, number>();
+  for (const b of p.base) if (b) count.set(b, (count.get(b) ?? 0) + 1);
+  const isFace = (i: number) => {
+    const b = p.base[i];
+    if (!b) return false;
+    return b === LASH || b === WHITE || p.lvl[i] < 0 && (count.get(b) ?? 0) <= 6;
+  };
+  for (let pass = 0; pass < 4; pass++) {
+    const snap = p.d.slice();
+    const face = snap.map((_, i) => isFace(i));
+    for (let y = 0; y < p.h; y++) for (let x = 0; x < p.w; x++) {
+      const i = y * p.w + x;
+      if (!snap[i] || !face[i]) continue;
+      const nbs = [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].map(([xx, yy]) => (xx < 0 || yy < 0 || xx >= p.w || yy >= p.h ? -1 : yy * p.w + xx));
+      if (nbs.some((k) => k < 0 || !snap[k])) continue;
+      const votes = new Map<number, number>();
+      for (const k of nbs) if (!face[k]) votes.set(k, (votes.get(k) ?? 0) + 1);
+      let best = -1, bestN = 0;
+      for (const [k, v] of votes) if (v > bestN) [best, bestN] = [k, v];
+      if (best >= 0) { p.d[i] = snap[best]; p.base[i] = p.base[best]; p.lvl[i] = p.lvl[best]; }
+    }
+  }
+}
+
+/** Front (facing left) or back (facing right) v2 sprite for any species. */
+export function v2Sprite(species: string, back: boolean, draw: (p: Pix) => void): Pix {
+  const hand = MON_V2[species];
+  if (hand) return back ? hand.back() : hand.front();
+  mirrored = back;
+  try {
+    const p = new ShadePix();
+    draw(p);
+    if (back) eraseFace(p);
+    p.finish();
+    return back ? p.flipped() : p;
+  } finally {
+    mirrored = false;
+  }
+}
+
+/** v2 art is the default; `?classic` shows the old sprites for comparison. */
+export const ART_V2 = !(typeof location !== 'undefined' && new URLSearchParams(location.search).has('classic'));

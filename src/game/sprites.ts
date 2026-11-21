@@ -1,6 +1,8 @@
-import { MON_V2, ART_V2 } from './monsprites2';
+import { ART_V2, v2Sprite, eyeV2 } from './monsprites2';
 import { Pix } from '../engine/pix';
-import { MON_DRAW, MON_SIZE } from './monsprites';
+import { MON_DRAW, MON_SIZE, V2_HOOKS } from './monsprites';
+
+V2_HOOKS.eye = eyeV2;
 import type { Dir } from './common';
 
 const OUT = '#26263a';
@@ -9,7 +11,7 @@ const EYE = '#1c1c28';
 const monCache = new Map<string, HTMLCanvasElement>();
 export function monSprite(species: string): HTMLCanvasElement {
   let c = monCache.get(species);
-  if (!c && ART_V2 && MON_V2[species]) monCache.set(species, (c = MON_V2[species].front().toCanvas()));
+  if (!c && ART_V2) monCache.set(species, (c = v2Sprite(species, false, MON_DRAW[species] ?? MON_DRAW.tosil).toCanvas()));
   if (!c) {
     const p = new Pix(MON_SIZE, MON_SIZE);
     (MON_DRAW[species] ?? MON_DRAW.tosil)(p);
@@ -28,7 +30,7 @@ const backCache = new Map<string, HTMLCanvasElement>();
  */
 export function monBackSprite(species: string): HTMLCanvasElement {
   let c = backCache.get(species);
-  if (!c && ART_V2 && MON_V2[species]) backCache.set(species, (c = MON_V2[species].back().toCanvas()));
+  if (!c && ART_V2) backCache.set(species, (c = v2Sprite(species, true, MON_DRAW[species] ?? MON_DRAW.tosil).toCanvas()));
   if (!c) {
     const p = new Pix(MON_SIZE, MON_SIZE);
     (MON_DRAW[species] ?? MON_DRAW.tosil)(p);
