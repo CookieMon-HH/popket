@@ -9,6 +9,8 @@ import { SOLID, tileCanvas, TALL_CHARS } from './tiles';
 import { silhouette } from '../engine/pix';
 import { personSprite, itemSprite, monSprite, boulderSprite, barrierSprite, type Pal } from './sprites';
 import { game, runtime, beatenAll } from './state';
+import { playMusic } from '../engine/audio';
+import { musicForMap } from './music';
 
 export interface Actor {
   x: number;
@@ -56,6 +58,7 @@ export class Overworld implements Scene {
     Object.assign(this.player, { x, y, dir, offX: 0, offY: 0, moving: 0 });
     game.map = id;
     game.flags['visit_' + id] = true;
+    playMusic(musicForMap(id));
     this.syncState();
     this.npcs = [];
     this.refreshNPCs();

@@ -2,7 +2,9 @@ export type ControlMode = 'dpad' | 'stick';
 
 const KEY = 'popket-settings-v1';
 
-export const settings: { controls: ControlMode; noCloudPrompt?: boolean } = { controls: 'dpad' };
+import { setSoundEnabled } from '../engine/audio';
+
+export const settings: { controls: ControlMode; noCloudPrompt?: boolean; sound?: boolean } = { controls: 'dpad', sound: true };
 
 export function loadSettings() {
   try {
@@ -16,10 +18,17 @@ export function loadSettings() {
 
 export function applySettings() {
   document.body.dataset.controls = settings.controls;
+  setSoundEnabled(settings.sound !== false);
 }
 
 export function setControls(mode: ControlMode) {
   settings.controls = mode;
+  applySettings();
+  saveSettings();
+}
+
+export function setSound(on: boolean) {
+  settings.sound = on;
   applySettings();
   saveSettings();
 }

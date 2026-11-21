@@ -19,7 +19,9 @@ import { safariEnd, safariLevel } from './safari';
 import { canFly, flyMenu } from './fly';
 import { signedIn, uploadSave } from './cloud';
 import { offerServerSave, accountMenu, accountLabel } from './account';
-import { settings, setControls } from './settings';
+import { settings, setControls, setSound } from './settings';
+import { playMusic, sfx, jingle } from '../engine/audio';
+import { musicForMap, musicForBattle } from './music';
 
 export { world };
 
@@ -37,6 +39,7 @@ export function runScript(fn: () => Promise<void>) {
 }
 
 export async function healParty() {
+  jingle('heal');
   await fadeTo(0.6, 10);
   for (const m of game.party) healMon(m);
   await wait(30);
@@ -49,12 +52,14 @@ export function setLastHeal(map: string, x: number, y: number) {
 
 export async function giveItem(id: string, n = 1, found = false) {
   addItem(id, n);
+  jingle('item');
   const name = ITEMS[id].name;
   const obj = n > 1 ? `${name} ${n}개를` : j(name, '을/를');
   await say(`{name}은(는) ${obj} ${found ? '찾았다' : '받았다'}!`);
 }
 
 export async function warpTo(to: string, x: number, y: number, dir: Parameters<typeof world.load>[3]) {
+  sfx('door');
   await fadeTo(1, 10);
   world.load(to, x, y, dir);
   await wait(2);
@@ -65,10 +70,13 @@ export async function warpTo(to: string, x: number, y: number, dir: Parameters<t
 // Battles
 
 async function battle(opts: Parameters<typeof runBattle>[0], canLose = false): Promise<BattleResult> {
+  playMusic(musicForBattle(opts));
+  sfx('encounter');
   await flashes(3);
   await fadeTo(1, 14);
   const result = await runBattle(opts);
   scenes.current = world;
+  if (result !== 'lose') playMusic(musicForMap(world.map.id));
   if (result === 'lose') {
     if (canLose) {
       for (const m of game.party) healMon(m);
@@ -87,6 +95,7 @@ async function battle(opts: Parameters<typeof runBattle>[0], canLose = false): P
 }
 
 async function whiteout() {
+  jingle('lose');
   // A small penalty only: 10% of your money, capped by progress.
   const lost = Math.min(Math.floor(game.money / 10), 200 + badgeCount() * 100);
   game.safari = undefined; // fainting ends a safari visit
@@ -389,8 +398,12 @@ async function settingsMenu() {
   let i = 0;
   for (;;) {
     const label = settings.controls === 'dpad' ? '방향키' : '조이스틱';
-    i = await ui.run(new Menu({ items: [`조작 방식: ${label}`, accountLabel(), '닫기'], cancel: true, x: OX + BW - 166, y: 40, w: 162, index: i }));
+    i = await ui.run(new Menu({ items: [`조작 방식: ${label}`, `소리: ${settings.sound === false ? '꺼짐' : '켜짐'}`, accountLabel(), '닫기'], cancel: true, x: OX + BW - 166, y: 40, w: 162, index: i }));
     if (i === 1) {
+      setSound(settings.sound === false);
+      continue;
+    }
+    if (i === 2) {
       await accountMenu();
       continue;
     }

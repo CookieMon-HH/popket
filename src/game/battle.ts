@@ -2,6 +2,7 @@ import { W, H, OX, box, text, hpBar, typeChip, drawSprite, cursor, centered, mea
 import { input } from '../engine/input';
 import { ui, Widget, Menu, MessageBox, say } from '../engine/ui';
 import { tween, wait, clock } from '../engine/timing';
+import { sfx, jingle, playMusic } from '../engine/audio';
 import { scenes, fadeTo, type Scene } from '../engine/scene';
 import { MOVES, STATUS_LABEL, STAT_NAME, type MoveDef, type StatKey, type Effect } from '../data/moves';
 import { SPECIES } from '../data/species';
@@ -317,6 +318,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     v.pBlink = v.eBlink = false;
   }
   async function faintAnim(b: BMon) {
+    sfx('faint');
     await tween(16, (p) => {
       if (b.side === 'me') {
         v.pY = p * 50;
@@ -476,6 +478,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     const stab = SPECIES[m.species].types.includes(mv.type) ? 1.5 : 1;
     const base = Math.floor(Math.floor(((2 * m.level) / 5 + 2) * mv.power * stat(user, 'atk') / stat(target, 'def')) / 50) + 2;
     const dmg = Math.max(1, Math.floor(base * (crit ? 1.5 : 1) * stab * eff * (0.85 + Math.random() * 0.15)));
+    sfx(eff > 1 ? 'super' : eff < 1 ? 'weak' : 'hit');
     await blink(target);
     const before = target.mon.hp;
     target.mon.hp = Math.max(0, before - dmg);
@@ -516,6 +519,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
         v.pExp = 0;
         v.pHp = m.hp;
       }
+      jingle('levelup');
       await say(`${j(n, '은/는')} 레벨 ${j(String(m.level), '으로/로')} 올랐다!`);
       for (const id of movesLearnedAt(m.species, m.level)) await learnMove(m, id);
       const evo = SPECIES[m.species].evolve;
@@ -532,6 +536,11 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     if (enemy.mon.hp <= 0 && v.eVis) {
       await faintAnim(enemy);
       await say(`${j(L(enemy), '은/는')} 쓰러졌다!`);
+      if (wild || enemyIdx + 1 >= o.enemies.length) {
+        // Last opponent down: stop the battle theme and play the victory jingle.
+        playMusic(null);
+        jingle('win');
+      }
       const sp = SPECIES[enemy.mon.species];
       const exp = Math.max(1, Math.floor(((sp.baseExp * enemy.mon.level) / 7) * (wild ? 1 : 1.5)));
       for (const m of game.party) if (m.hp > 0 && participants.has(m)) await gainExp(m, exp);
@@ -575,6 +584,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
   // --- capture ---
   let ballWord = '팜팜볼';
   async function throwBall(mul: number): Promise<boolean> {
+    sfx('ball');
     v.ball = { x: 40, y: 130, vis: true, rot: 0 };
     await tween(24, (p) => {
       v.ball.x = 40 + (184 - 40) * p;
@@ -595,10 +605,14 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     while (shakes < 4 && Math.random() < each) shakes++;
     for (let i = 0; i < Math.min(3, shakes); i++) {
       await wait(14);
+      sfx('shake');
       await tween(14, (t) => (v.ball.rot = Math.sin(t * Math.PI * 2) * 0.5));
     }
     await wait(10);
-    if (shakes >= 4) return true;
+    if (shakes >= 4) {
+      jingle('catch');
+      return true;
+    }
     v.ball.vis = false;
     v.eVis = true;
     await tween(10, (t) => (v.eScale = t));

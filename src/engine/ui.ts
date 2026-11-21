@@ -1,3 +1,4 @@
+import { sfx } from './audio';
 import { input } from './input';
 import { BW, OX, box, text, wrap, cursor, measure, type Ctx } from './draw';
 import { clock } from './timing';
@@ -217,9 +218,12 @@ export class Menu extends Widget<number> {
       this.idx = i;
       this.fixScroll();
       this.o.onMove?.(i);
+      sfx('cursor');
     }
-    if (input.pressed('a')) this.finish(this.idx, !this.o.keep);
-    else if (input.pressed('b') && this.o.cancel) this.finish(-1, !this.o.keep);
+    if (input.pressed('a')) {
+      sfx('select');
+      this.finish(this.idx, !this.o.keep);
+    } else if (input.pressed('b') && this.o.cancel) this.finish(-1, !this.o.keep);
   }
 
   draw(ctx: Ctx) {

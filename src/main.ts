@@ -9,6 +9,7 @@ import { installHooks, runScript, appHooks } from './game/api';
 import { game, hasSave, loadGame, newGame, saveGame, runtime, localSaveTime, writeLocalSave } from './game/state';
 import { j } from './game/common';
 import { TitleScene } from './game/title';
+import { playMusic, unlockAudio } from './engine/audio';
 import { initCloud, signedIn, downloadSave, uploadSave, cloudAvailable, signInWithGoogle } from './game/cloud';
 
 const canvas = document.getElementById('screen') as HTMLCanvasElement;
@@ -44,6 +45,8 @@ bindTouchPad(document.getElementById('touch')!);
 bindDpad(document.getElementById('dpad')!);
 bindJoystick(document.getElementById('stick-zone')!, document.getElementById('stick')!, document.getElementById('knob')!);
 window.addEventListener('orientationchange', () => setTimeout(resize, 200));
+// Browsers only start sound after the first tap or key press.
+for (const ev of ['pointerdown', 'keydown', 'touchstart']) window.addEventListener(ev, unlockAudio, { capture: true, passive: true });
 
 setTextFormatter((s) => s.replace(/\{name\}은\(는\)/g, j(game.name, '은/는')).replace(/\{name\}/g, game.name));
 installHooks();
@@ -72,6 +75,7 @@ async function syncCloudSave() {
 async function titleFlow() {
   const title = new TitleScene();
   scenes.current = title;
+  playMusic('title');
   await fadeTo(0, 20);
   await title.waitStart();
   // Login screen: play with a Google account (saved on the server) or as a guest (saved in this browser).
