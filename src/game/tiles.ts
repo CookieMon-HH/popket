@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', 'ⓟ', '┏', '┓', '┗', '┛', 'ⓝ', 'ⓦ', 'ⓜ', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', 'ⓟ', '┏', '┓', '┗', '┛', 'ⓝ', 'ⓦ', 'ⓜ', 'ⓑ', 'ⓒ', 'ⓨ', 'ⓠ', 'ⓘ', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -201,6 +201,32 @@ function build(ch: string, anim: number): Pix {
       for (const y of [8, 10]) p.rect(5, y, 6, 1, '#8a7a60');
       p.set(11, 12, '#c8b890');
       break;
+    case 'ⓑ': case 'ⓒ': { // stone brazier, unlit / lit with a blue dragon flame
+      caveFloor(p);
+      p.rect(4, 10, 8, 5, '#5a5468'); p.rect(3, 8, 10, 3, '#7a7488'); p.rect(3, 8, 10, 1, '#9a94a8');
+      p.set(6, 12, '#3a3448'); p.set(9, 12, '#3a3448');
+      if (ch === 'ⓒ') {
+        p.ell(8, 5, 3.5, 4, anim ? '#3a8ae8' : '#4aa0f0');
+        p.ell(8, 6, 2, 2.5, '#a8e0ff'); p.set(8, 1 + anim, '#d8f4ff');
+      } else p.rect(5, 7, 6, 1, '#2a2430');
+      break;
+    }
+    case 'ⓨ': // dragon constellation carved high on the wall
+      caveWall(p);
+      p.rect(1, 1, 14, 14, '#1e1a3a');
+      p.line(2, 4, 6, 6, '#5a5a9a'); p.line(6, 6, 10, 5, '#5a5a9a'); p.line(10, 5, 13, 9, '#5a5a9a'); p.line(13, 9, 11, 13, '#5a5a9a');
+      for (const [x, y] of [[2, 4], [8, 6], [11, 13]]) { p.ell(x, y, 1.2, 1.2, '#fff0a0'); }
+      for (const [x, y] of [[6, 6], [10, 5], [13, 9]]) p.set(x, y, '#a8a8e0');
+      break;
+    case 'ⓠ': case 'ⓘ': { // the sky altar, with (or without) the floating 여의주
+      caveFloor(p);
+      p.rect(2, 10, 12, 5, '#6a5a3a'); p.rect(3, 9, 10, 2, '#a88a4a'); p.rect(3, 9, 10, 1, '#d8b860');
+      if (ch === 'ⓠ') {
+        p.ell(8, 5 - anim, 4, 4, '#3a2a5a');
+        p.ell(8, 5 - anim, 3, 3, '#e8d070'); p.ell(7, 4 - anim, 1.4, 1.4, '#fff8d0');
+      }
+      break;
+    }
     case 'ⓦ': // ancient mural carved into the ice wall
       caveWall(p);
       p.rect(1, 1, 14, 14, '#9ad0e8'); p.rect(2, 2, 12, 12, '#c8ecf8');
@@ -758,7 +784,7 @@ function build(ch: string, anim: number): Pix {
 
 const cache = new Map<string, HTMLCanvasElement>();
 export function tileCanvas(ch: string, anim: number): HTMLCanvasElement {
-  const animated = ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$' || ch === '①' || ch === '②' || ch === '③' || ch === '◰' || ch === '◳' || ch === '◱' || ch === '◲';
+  const animated = ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$' || ch === '①' || ch === '②' || ch === '③' || ch === '◰' || ch === '◳' || ch === '◱' || ch === '◲' || ch === 'ⓒ' || ch === 'ⓠ';
   const key = animated ? ch + anim : ch;
   let c = cache.get(key);
   if (!c) {

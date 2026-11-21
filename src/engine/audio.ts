@@ -78,6 +78,14 @@ export const SONGS: Record<string, Song> = {
     pad: 'A3 - - - - - - - F3 - - - - - - - F3 - - - - - - - E3 - - - - - - - D3 - - - - - - - D#3 - - - - - - - C#3 - - - - - - - A3 - - - - - - -',
     drums: 'k . k . . . . . . . . . . . . . . . . . . . . . . . . . . . . .',
   },
+  den: {
+    // Majestic D-pentatonic call over slow war drums: an ancient dragon's home.
+    bpm: 88, vibrato: 4,
+    lead: 'D5 - - E5 G5 - A5 - C6 - A5 - G5 - - - E5 - G5 - A5 - D5 - E5 - - - . . . . D5 - - E5 G5 - A5 - C6 - D6 - E6 - - - D6 - C6 A5 G5 - E5 - D5 - - - - - . .',
+    bass: 'D2 - - - A2 - - - C3 - - - G2 - - - A2 - - - E2 - - - D2 - - - A2 - - - D2 - - - A2 - - - C3 - - - G2 - - - A#2 - - - C3 - - - D2 - - - D2 - - -',
+    pad: 'A3 - - - - - - - G3 - - - - - - - E3 - - - - - - - A3 - - - - - - - A3 - - - - - - - G3 - - - - - - - F3 - - - E3 - - - F#3 - - - - - - -',
+    drums: 'k . . . . . k . s . . . . . . .',
+  },
   icecave: {
     // High music-box arpeggios in E minor over long cold chords, with a glassy echo.
     bpm: 84, wave: 'sine', echo: true, vibrato: 2,

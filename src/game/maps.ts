@@ -14,6 +14,7 @@ import { keeperTalk, escapeeTalk, safariExitTile, specialGate } from './safari';
 import { windTamerTalk } from './fly';
 import { chestProp, chestTalk, fossilSite } from './chests';
 import { fireflyAt, groveExit, fireflyTalk, whisper, oldTree, nestTalk, lostMong } from './forest';
+import { brazier, brazierProp, altarOpen, starMural, cloudNote, pearlAltar } from './den';
 import { mittenTalk, mural, northWeather } from './ice';
 import { forgeValve, forgeSchematic, channelCool, volcanoNote1, volcanoNote2, volcanoNote3 } from './volcano';
 import { antiqueOwner, musicBox, foxGirl, shipwright, moonCrystal, moonCrystalProp, moonPad, moonRiddle } from './events';
@@ -1877,7 +1878,7 @@ const route5: MapDef = {
 };
 
 const volcano_forge: MapDef = {
-  id: 'volcano_forge', name: '불꽃산 아지트 — 제련소', dark: true, ambience: 'volcano',
+  id: 'volcano_forge', name: '불꽃산 아지트 — 제련소', dark: true, ambience: 'volcano', edge: 'C',
   tiles: [
     'CCCCCCCCC__CCCCCCCCC',
     'C__________________C',
@@ -1919,7 +1920,7 @@ const volcano_forge: MapDef = {
   ],
 };
 const volcano_heart: MapDef = {
-  id: 'volcano_heart', name: '불꽃산 — 화산의 심장', dark: true, ambience: 'volcanoheart',
+  id: 'volcano_heart', name: '불꽃산 — 화산의 심장', dark: true, ambience: 'volcanoheart', edge: 'C',
   tiles: [
     'CCCCCCCCCCCCCCCC',
     'CLLLLLLLLLLLLLLC',
@@ -2031,7 +2032,7 @@ const gym5: MapDef = {
 };
 
 const volcano: MapDef = {
-  id: 'volcano', name: '불꽃산 아지트', dark: true, ambience: 'volcano',
+  id: 'volcano', name: '불꽃산 아지트', dark: true, ambience: 'volcano', edge: 'C',
   tiles: [
     'CCCCCCCCCCCC_CCCCCCCCCCC',
     'C__________L_L_________C',
@@ -2194,7 +2195,7 @@ const league: MapDef = {
 // 제6장 — 서리마을 · 서리 수련관(얼음 미끄럼 퍼즐)
 
 const icecave_deep: MapDef = {
-  id: 'icecave_deep', name: '얼음굴 — 얼어붙은 호수', dark: true, ambience: 'icecave',
+  id: 'icecave_deep', name: '얼음굴 — 얼어붙은 호수', dark: true, ambience: 'icecave', edge: 'C',
   tiles: [
     'CCCCCCCCCCCCCCCCCCCC',
     'CCCCCC________CCCCCC',
@@ -2391,6 +2392,36 @@ const route7: MapDef = {
   ],
 };
 
+const den_altar: MapDef = {
+  id: 'den_altar', name: '용의 둥지 — 하늘의 제단', dark: true, ambience: 'den', edge: 'C',
+  tiles: [
+    'CCCCCCCCCCCCCC',
+    'CCCC______CCCC',
+    'CCC___ⓠ____CCC',
+    'CC__________CC',
+    'C____________C',
+    'C____________C',
+    'CC__________CC',
+    'CCC________CCC',
+    'CCCC______CCCC',
+    'CCCCCCC_CCCCCC',
+  ],
+  warps: [{ x: 7, y: 9, to: 'den', tx: 10, ty: 1, dir: 'down' }],
+  npcs: [
+    { id: 'pearlaltar', x: 6, y: 2, dir: 'down', prop: () => (f('denDone') ? 'ⓘ' : 'ⓠ'), talk: () => pearlAltar() },
+    {
+      id: 'lg_cheongryong', x: 8, y: 3, dir: 'left', mon: 'cheongryong', hidden: () => !f('lg_call_cheongryong') || f('lg_cheongryong'),
+      talk: () => legendEncounter('cheongryong', 70, '푸른 번개를 두른 용이 제단 위에서 하늘을 올려다보고 있다…\\n다가가 볼까?', '청룡: 쿠르르릉——!'),
+    },
+    {
+      id: 'cloud', x: 7, y: 4, dir: 'down', pal: PAL.cloud, sight: 4, hidden: () => f('denDone'),
+      requires: ['dgrunt1', 'dgrunt2'],
+      waitText: '먹구름: 부하들은 어쩌고 여기까지 왔지? …녀석들부터 쓰러뜨리고 와라.\\n그래야 상대해 줄 맛이 나지!',
+      trainer: tr('cloud', '검은안개단 잔당', '먹구름', PAL.cloud, [['beongae', 43], ['amheuk', 44], ['geosin', 44], ['daewang', 44]], 4500,
+        '흑영 님은 약해지셨다. 여의주의 힘으로 하늘을 다스리면 아무도 우릴 막지 못해!\\n방해하는 녀석은 번개로 날려 주마!', '…여의주가, 나를 거부한다…', '…', cloudWin),
+    },
+  ],
+};
 const town8: MapDef = {
   id: 'town8', name: '용의 마을',
   tiles: [
@@ -2448,9 +2479,9 @@ const center9 = makeCenter('center9', '용의 마을 회복소', 'town8', 4, 9, 
 const shop9 = makeShop('shop9', '용의 마을 상점', 'town8', 16, 4, '해솔 리그에 가기 전 마지막 상점이에요. 넉넉히 챙기세요!');
 
 const den: MapDef = {
-  id: 'den', name: '용의 둥지', dark: true,
+  id: 'den', name: '용의 둥지', dark: true, ambience: 'den',
   tiles: [
-    'CCCCCCCCCCCCCCCCCCCC',
+    'CCCCCCCCCC_CCCCCCCCC',
     'C__________________C',
     'C___z__________z___C',
     'C__________________C',
@@ -2466,7 +2497,7 @@ const den: MapDef = {
     'C__________________C',
     'CCCCCCCCCOCCCCCCCCCC',
   ],
-  warps: [{ x: 9, y: 14, to: 'town8', tx: 11, ty: 1, dir: 'down' }],
+  warps: [{ x: 9, y: 14, to: 'town8', tx: 11, ty: 1, dir: 'down' }, { x: 10, y: 0, to: 'den_altar', tx: 7, ty: 8, dir: 'up' }],
   encounters: {
     rate: 0.1, tiles: '_',
     table: [['nalgae', 36, 37, 18], ['dokdae', 36, 37, 12], ['geosin', 36, 37, 10], ['daeji', 36, 37, 10], ['geoam', 36, 37, 10], ['beongae', 36, 37, 10], ['cheonryong', 37, 37, 2], ['hyeonmu', 37, 37, 4], ['dokjeongal', 36, 37, 10], ['kkomaryong', 36, 37, 14]],
@@ -2477,17 +2508,14 @@ const den: MapDef = {
     grunt('dgrunt1', 2, 12, 'right', 6, [['nalgae', 43], ['amheuk', 43]], '여기까지 왔다고?! 먹구름 님께 가게 둘 순 없지!', '이럴 수가…', '바위를 잘못 밀었으면 둥지를 나갔다 오면 돼. …아, 이걸 왜 알려 줬지.'),
     grunt('dgrunt2', 17, 6, 'left', 5, [['geosin', 43], ['beongae', 43]], '여의주는 우리 거다!', '크으…', '먹구름 님은 저 위에 계셔.'),
     { id: 'yongha_den', x: 4, y: 9, dir: 'down', pal: PAL.yongha, hidden: () => f('denDone'), talk: '관장 용하: 녀석들이 길을 바위로 막아 버렸다.\n아래쪽 바위부터 옆으로 밀어 두고, 위쪽 바위를 밀어 올려라!' },
-    {
-      id: 'lg_cheongryong', x: 15, y: 1, dir: 'left', mon: 'cheongryong', hidden: () => !f('lg_call_cheongryong') || f('lg_cheongryong'),
-      talk: () => legendEncounter('cheongryong', 70, '푸른 번개를 두른 용이 둥지 꼭대기에서 하늘을 올려다보고 있다…\n다가가 볼까?', '청룡: 쿠르르릉——!'),
-    },
-    {
-      id: 'cloud', x: 15, y: 1, dir: 'left', pal: PAL.cloud, sight: 5, hidden: () => f('denDone'),
-      requires: ['dgrunt1', 'dgrunt2'],
-      waitText: '먹구름: 부하들은 어쩌고 여기까지 왔지? …녀석들부터 쓰러뜨리고 와라.\n그래야 상대해 줄 맛이 나지!',
-      trainer: tr('cloud', '검은안개단 잔당', '먹구름', PAL.cloud, [['beongae', 43], ['amheuk', 44], ['geosin', 44], ['daewang', 44]], 4500,
-        '흑영 님은 약해지셨다. 여의주의 힘으로 하늘을 다스리면 아무도 우릴 막지 못해!\n방해하는 녀석은 번개로 날려 주마!', '…여의주가, 나를 거부한다…', '…', cloudWin),
-    },
+    { id: 'brz0', x: 2, y: 1, dir: 'down', prop: brazierProp(0), talk: () => brazier(0) },
+    { id: 'brz1', x: 5, y: 1, dir: 'down', prop: brazierProp(1), talk: () => brazier(1) },
+    { id: 'brz2', x: 7, y: 1, dir: 'down', prop: brazierProp(2), talk: () => brazier(2) },
+    { id: 'brz3', x: 13, y: 1, dir: 'down', prop: brazierProp(3), talk: () => brazier(3) },
+    { id: 'brz4', x: 16, y: 1, dir: 'down', prop: brazierProp(4), talk: () => brazier(4) },
+    { id: 'starmural', x: 18, y: 0, dir: 'down', prop: 'ⓨ', talk: () => starMural() },
+    { id: 'altargate', x: 10, y: 1, dir: 'down', barrier: 'stone', hidden: () => altarOpen(), talk: '용의 비늘 무늬가 새겨진 돌문이 굳게 닫혀 있다.\n옆 벽의 별자리 그림과 돌 화로들이 무언가 관련이 있어 보인다.' },
+    { id: 'cloudnote', x: 13, y: 12, dir: 'down', prop: 'ⓟ', hidden: () => f('cloudNote'), talk: () => cloudNote() },
     { id: 'denitem1', x: 5, y: 8, dir: 'down', item: { id: 'maxrevive', qty: 1 } },
     { id: 'denitem2', x: 14, y: 10, dir: 'down', item: { id: 'hyperball', qty: 3 } },
   ],
@@ -2663,7 +2691,7 @@ export const MAPS: Record<string, MapDef> = {
   route2, forest, forest_grove, forest_tree, town3, center3, shop3, gym2,
   route3, cave, town4, center4, shop4, antique, gym3, peak, pastel,
   route4, town5, center5, shop5, safarigate, safari, safari_fire, safari_canyon, safari_fairy, safari_special, safari_ice, safari_water, safari_jungle, ship, ship_cabins, ship_ballroom, ship_engine, ship_bridge, ship_ghost, gym4, route5, town6, center6, shop6, gym5, volcano, volcano_forge, volcano_heart, route6, plateau, center7, league,
-  town7, center8, shop8, gym6, icecave, icecave_deep, skyroad, summit, route7, town8, center9, shop9, den, gym7, route8,
+  town7, center8, shop8, gym6, icecave, icecave_deep, skyroad, summit, route7, town8, center9, shop9, den, den_altar, gym7, route8,
 };
 
 // Validate map rows and warp targets in development.
