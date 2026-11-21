@@ -1,4 +1,5 @@
 import { say, yesNo, choose } from '../engine/ui';
+import { photoEpilogue } from './volcano';
 import { wait } from '../engine/timing';
 import { fadeTo, flashes } from '../engine/scene';
 import { SPECIES, SPECIES_LIST } from '../data/species';
@@ -582,6 +583,7 @@ async function volcanoWin() {
   await flashes(1);
   await say('흑영은 손에 쥔 별빛결정을 화산의 심장에서 거두었다.\n화산의 떨림이 천천히 잦아든다…');
   await say('흑영: 결정은 한별 박사에게 맡기겠다. 그리고 나는… 죗값을 치르겠다.\n검은안개단은 오늘로 해산이다.');
+  await photoEpilogue();
   await say('흑영: …{name}. 해솔 리그에 간다면, 꼭 이겨라.');
   await fadeTo(1, 12);
   game.flags.volcanoDone = true;

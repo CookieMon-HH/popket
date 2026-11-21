@@ -13,6 +13,7 @@ import {
 import { keeperTalk, escapeeTalk, safariExitTile, specialGate } from './safari';
 import { windTamerTalk } from './fly';
 import { chestProp, chestTalk, fossilSite } from './chests';
+import { forgeValve, forgeSchematic, channelCool, volcanoNote1, volcanoNote2, volcanoNote3 } from './volcano';
 import { antiqueOwner, musicBox, foxGirl, shipwright, moonCrystal, moonCrystalProp, moonPad, moonRiddle } from './events';
 import { boardShip, lockedBridge, lockedEngine, logPage1, portraitTalk, dalnimCabin, wardrobe, candleProp, candleTalk, pianoTalk, valveTalk, generatorTalk, shipAdminWinV2, wheelTalk, captainTalk, shipExitCheck } from './ship';
 import { receptionTalk } from './tournament';
@@ -72,7 +73,7 @@ export interface NPCDef {
   /** Draw the person see-through and flickering. */
   ghost?: boolean;
   /** A gate drawn as an object; give it `hidden` to open it. */
-  barrier?: 'water' | 'electric' | 'stone';
+  barrier?: 'water' | 'electric' | 'stone' | 'lava';
   hidden?: () => boolean;
 }
 
@@ -93,6 +94,8 @@ export interface MapDef {
   signs?: { x: number; y: number; text: string }[];
   /** Name tags drawn over buildings (x, y in tile units; x is the tag's center). */
   labels?: { x: number; y: number; text: string; color?: string; ink?: string }[];
+  /** Atmosphere overlay: tint, particles and weather drawn over the map. */
+  ambience?: 'ship' | 'shipdeck' | 'volcano' | 'volcanoheart' | 'forest' | 'snow' | 'blizzard' | 'icecave' | 'den';
   encounters?: { rate: number; table: Table; tiles?: string; /** extra monsters after the ending */ post?: Table };
   fishing?: Table;
   triggers?: { x: number; y: number; when?: () => boolean; run: () => Promise<void> }[];
@@ -1812,6 +1815,75 @@ const route5: MapDef = {
   ],
 };
 
+const volcano_forge: MapDef = {
+  id: 'volcano_forge', name: '불꽃산 아지트 — 제련소', dark: true, ambience: 'volcano',
+  tiles: [
+    'CCCCCCCCC__CCCCCCCCC',
+    'C__________________C',
+    'C______________ⓟ___C',
+    'CLLLLLLLLLLLLⓚLLLLLC',
+    'C__________________C',
+    'C__________________C',
+    'CLLLLⓚLLLLLLLLLLLLLC',
+    'C__________________C',
+    'C__ⓥ______ⓟ________C',
+    'C__________________C',
+    'CLLLLLLLLLLLLLLⓚLLLC',
+    'C__________________C',
+    'C__ⓥ___ⓢ___ⓥ_______C',
+    'CCCCCCCCC__CCCCCCCCC',
+  ],
+  warps: [
+    { x: 9, y: 13, to: 'volcano', tx: 12, ty: 1, dir: 'down' },
+    { x: 10, y: 13, to: 'volcano', tx: 12, ty: 1, dir: 'down' },
+    { x: 9, y: 0, to: 'volcano_heart', tx: 7, ty: 10, dir: 'up' },
+    { x: 10, y: 0, to: 'volcano_heart', tx: 8, ty: 10, dir: 'up' },
+  ],
+  encounters: {
+    rate: 0.08, tiles: '_',
+    table: [['jangjak', 30, 32, 20], ['hwaro', 30, 31, 8], ['heukjang', 30, 31, 15], ['sutdol', 30, 31, 14], ['hwarotdol', 31, 32, 8], ['dokjeongal', 30, 32, 12]],
+  },
+  npcs: [
+    // valves: 1 and 2 in the entrance hall, 3 on the island between the channels
+    { id: 'vvalve1', x: 3, y: 12, dir: 'down', prop: 'ⓥ', talk: () => forgeValve(1) },
+    { id: 'vvalve2', x: 11, y: 12, dir: 'down', prop: 'ⓥ', talk: () => forgeValve(2) },
+    { id: 'vvalve3', x: 3, y: 8, dir: 'down', prop: 'ⓥ', talk: () => forgeValve(3) },
+    { id: 'vschem', x: 7, y: 12, dir: 'down', prop: 'ⓢ', talk: () => forgeSchematic() },
+    { id: 'vlavaC', x: 15, y: 10, dir: 'down', barrier: 'lava', hidden: () => channelCool.C(), talk: '용암이 펄펄 끓고 있다. 냉각수로 식히면 건널 수 있을 것 같다.' },
+    { id: 'vlavaB', x: 5, y: 6, dir: 'down', barrier: 'lava', hidden: () => channelCool.B(), talk: '용암이 펄펄 끓고 있다. 냉각수로 식히면 건널 수 있을 것 같다.' },
+    { id: 'vlavaA', x: 13, y: 3, dir: 'down', barrier: 'lava', hidden: () => channelCool.A(), talk: '용암이 펄펄 끓고 있다. 냉각수로 식히면 건널 수 있을 것 같다.' },
+    { id: 'vnote2', x: 10, y: 8, dir: 'down', prop: 'ⓟ', hidden: () => f('vnote2'), talk: () => volcanoNote2() },
+    { id: 'vnote3', x: 15, y: 2, dir: 'down', prop: 'ⓟ', hidden: () => f('vnote3'), talk: () => volcanoNote3() },
+    grunt('vgrunt3', 12, 5, 'left', 4, [['amheuk', 36], ['hwarotdol', 35]], '제련소까지 들어오다니! 냉각 설비는 손대지 마라!', '밸브를… 이미 다 돌려 놨잖아…', '두목님은 산을 미워하시는 게 아니야. 산이 무서우신 거지.'),
+  ],
+};
+const volcano_heart: MapDef = {
+  id: 'volcano_heart', name: '불꽃산 — 화산의 심장', dark: true, ambience: 'volcanoheart',
+  tiles: [
+    'CCCCCCCCCCCCCCCC',
+    'CLLLLLLLLLLLLLLC',
+    'CLLLLL____LLLLLC',
+    'CLLL___◰◳___LLLC',
+    'CLL____◱◲____LLC',
+    'CL____________LC',
+    'CL____________LC',
+    'CLL__________LLC',
+    'CLLL________LLLC',
+    'CLLLLL____LLLLLC',
+    'CLLLLLL__LLLLLLC',
+    'CCCCCCC__CCCCCCC',
+  ],
+  warps: [
+    { x: 7, y: 11, to: 'volcano_forge', tx: 9, ty: 1, dir: 'down' },
+    { x: 8, y: 11, to: 'volcano_forge', tx: 10, ty: 1, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'lg_jujak', x: 7, y: 5, dir: 'down', mon: 'jujak', hidden: () => !f('lg_jujak_ok') || f('lg_jujak'),
+      talk: () => legendEncounter('jujak', 65, '붉은 불꽃의 새가 화산의 심장 위에 내려앉아 있다…\\n다가가 볼까?', '주작: 끼아아아——!') },
+    { id: 'vboss', x: 8, y: 5, dir: 'down', pal: PAL.boss, hidden: () => f('volcanoDone'), requires: ['vgrunt1', 'vgrunt2', 'vgrunt3'], waitText: '흑영: …아직 내 부하들이 남아 있다. 그들을 넘어서지 못한다면\\n나와 겨룰 자격도 없다.', talk: () => volcanoBossScene() },
+  ],
+  triggers: [7, 8].map((x) => ({ x, y: 8, when: () => !f('volcanoDone') && beatenAll(['vgrunt1', 'vgrunt2', 'vgrunt3']), run: volcanoBossScene })),
+};
 const town6: MapDef = {
   id: 'town6', name: '불꽃마을',
   tiles: [
@@ -1898,11 +1970,11 @@ const gym5: MapDef = {
 };
 
 const volcano: MapDef = {
-  id: 'volcano', name: '불꽃산 아지트', dark: true,
+  id: 'volcano', name: '불꽃산 아지트', dark: true, ambience: 'volcano',
   tiles: [
-    'CCCCCCCCCCCCCCCCCCCCCCCC',
-    'C__________LLLL________C',
-    'C_LLLL_____LLLL__LLLL__C',
+    'CCCCCCCCCCCC_CCCCCCCCCCC',
+    'C__________L_L_________C',
+    'C_LLLL_____L_L___LLLL__C',
     'C_LLLL___z_____z_LLLL__C',
     'C______________________C',
     'CCCCCCC_CCCCCCCCC_CCCCCC',
@@ -1916,21 +1988,18 @@ const volcano: MapDef = {
     'C______________________C',
     'CCCCCCCCCCCCCCCCCCCCCCCC',
   ],
-  warps: [{ x: 0, y: 9, to: 'town6', tx: 20, ty: 3, dir: 'left' }],
+  warps: [{ x: 0, y: 9, to: 'town6', tx: 20, ty: 3, dir: 'left' }, { x: 12, y: 0, to: 'volcano_forge', tx: 9, ty: 12, dir: 'up' }],
   encounters: {
     rate: 0.1, tiles: '_',
     table: [['jangjak', 29, 31, 20], ['hwaro', 29, 30, 8], ['dokjeongal', 29, 31, 15], ['geoam', 30, 31, 6], ['daeji', 29, 31, 8], ['heukjang', 29, 30, 15], ['geosin', 29, 30, 6], ['dokdae', 29, 30, 6], ['sutdol', 29, 30, 14], ['hwarotdol', 30, 31, 6]], post: [['maekae', 30, 31, 10], ['yeongi', 31, 32, 6], ['amheuk', 36, 38, 2]],
   },
   npcs: [
-    grunt('vgrunt1', 3, 10, 'right', 6, [['yeongi', 35], ['dokjeongal', 35]], '두목님의 마지막 작전이다! 물러서라!', '이럴 수가…', '두목님은 위쪽 심장의 방에 계신다.'),
+    grunt('vgrunt1', 3, 10, 'right', 6, [['yeongi', 35], ['dokjeongal', 35]], '두목님의 마지막 작전이다! 물러서라!', '이럴 수가…', '두목님은 제련소 너머, 화산의 심장에 계신다.'),
     grunt('vgrunt2', 20, 6, 'left', 6, [['geosin', 35], ['dokdae', 35]], '여기까지 왔다고? 대단하군. 하지만 끝이다!', '크으…', '두목님은… 사실 이 산을 지키고 싶어 하셔.'),
-    { id: 'lg_jujak', x: 12, y: 4, dir: 'down', mon: 'jujak', hidden: () => !f('lg_jujak_ok') || f('lg_jujak'),
-      talk: () => legendEncounter('jujak', 65, '붉은 불꽃의 새가 화산의 심장 위에 내려앉아 있다…\n다가가 볼까?', '주작: 끼아아아——!') },
-    { id: 'vboss', x: 12, y: 4, dir: 'up', pal: PAL.boss, hidden: () => f('volcanoDone'), requires: ['vgrunt1', 'vgrunt2'], waitText: '흑영: …아직 내 부하들이 남아 있다. 그들을 넘어서지 못한다면\n나와 겨룰 자격도 없다.', talk: () => volcanoBossScene() },
+    { id: 'vnote1', x: 6, y: 13, dir: 'down', prop: 'ⓟ', hidden: () => f('vnote1'), talk: () => volcanoNote1() },
     { id: 'vitem1', x: 1, y: 13, dir: 'down', item: { id: 'maxrevive', qty: 1 } },
     { id: 'vitem2', x: 22, y: 13, dir: 'down', item: { id: 'hyperball', qty: 3 } },
   ],
-  triggers: [7, 17].map((x) => ({ x, y: 4, when: () => !f('volcanoDone') && beatenAll(['vgrunt1', 'vgrunt2']), run: volcanoBossScene })),
 };
 
 // ---------------------------------------------------------------------------
@@ -2501,7 +2570,7 @@ export const MAPS: Record<string, MapDef> = {
   home, town1, lab, route1, town2, center, shop, dojo,
   route2, forest, town3, center3, shop3, gym2,
   route3, cave, town4, center4, shop4, antique, gym3, peak, pastel,
-  route4, town5, center5, shop5, safarigate, safari, safari_fire, safari_canyon, safari_fairy, safari_special, safari_ice, safari_water, safari_jungle, ship, ship_cabins, ship_ballroom, ship_engine, ship_bridge, ship_ghost, gym4, route5, town6, center6, shop6, gym5, volcano, route6, plateau, center7, league,
+  route4, town5, center5, shop5, safarigate, safari, safari_fire, safari_canyon, safari_fairy, safari_special, safari_ice, safari_water, safari_jungle, ship, ship_cabins, ship_ballroom, ship_engine, ship_bridge, ship_ghost, gym4, route5, town6, center6, shop6, gym5, volcano, volcano_forge, volcano_heart, route6, plateau, center7, league,
   town7, center8, shop8, gym6, icecave, skyroad, summit, route7, town8, center9, shop9, den, gym7, route8,
 };
 

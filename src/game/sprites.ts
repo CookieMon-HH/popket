@@ -199,8 +199,8 @@ export function boulderSprite(): HTMLCanvasElement {
 }
 
 const barrierCache = new Map<string, HTMLCanvasElement>();
-export function barrierSprite(kind: 'water' | 'electric' | 'stone', frame: number): HTMLCanvasElement {
-  const f = kind === 'electric' ? Math.floor(frame / 8) % 2 : 0;
+export function barrierSprite(kind: 'water' | 'electric' | 'stone' | 'lava', frame: number): HTMLCanvasElement {
+  const f = kind === 'electric' || kind === 'lava' ? Math.floor(frame / 8) % 2 : 0;
   const key = kind + f;
   let c = barrierCache.get(key);
   if (!c) {
@@ -209,6 +209,14 @@ export function barrierSprite(kind: 'water' | 'electric' | 'stone', frame: numbe
       p.rect(0, 2, 16, 13, '#2a5a8a');
       for (const x of [1, 5, 9, 13]) p.rect(x, 2, 2, 13, '#7ac0f0');
       p.rect(0, 2, 16, 2, '#4a6a8a'); p.rect(0, 13, 16, 2, '#4a6a8a');
+    } else if (kind === 'lava') {
+      // a bubbling pool of lava filling the bridge gap (no outline: it is part of the floor)
+      p.rect(0, 0, 16, 16, '#c8361a');
+      p.ell(5 + f * 4, 6, 3, 2, '#ff8a2a'); p.ell(11 - f * 3, 11, 3, 2, '#ff8a2a');
+      p.set(5 + f * 4, 5, '#ffe080'); p.set(11 - f * 3, 10, '#ffe080');
+      c = p.toCanvas();
+      barrierCache.set(key, c);
+      return c;
     } else if (kind === 'electric') {
       p.rect(1, 1, 2, 15, '#6a6a7a'); p.rect(13, 1, 2, 15, '#6a6a7a');
       p.ell(2, 1.5, 1.8, 1.5, '#ffe040'); p.ell(14, 1.5, 1.8, 1.5, '#ffe040');

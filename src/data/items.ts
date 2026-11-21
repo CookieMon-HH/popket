@@ -42,6 +42,7 @@ const list: ItemDef[] = [
   { id: 'captainwatch', name: '선장의회중시계', price: 0, kind: 'key', desc: '뚜껑 안쪽에 「해월」이라고 새겨진 회중시계. 바늘이 30년 전 폭풍의 밤에 멈춰 있다.' },
   { id: 'fossil_shell', name: '껍질화석', price: 0, kind: 'key', desc: '소용돌이 무늬가 새겨진 고대 조개 화석. 한별 연구소에서 되살릴 수 있다고 한다.' },
   { id: 'fossil_wing', name: '날개화석', price: 0, kind: 'key', desc: '깃털 자국이 남은 고대 새의 날개 화석. 한별 연구소에서 되살릴 수 있다고 한다.' },
+  { id: 'oldphoto', name: '낡은사진', price: 0, kind: 'key', desc: '흑영의 일기장 사이에서 떨어진 사진. 숯골 마을 앞에서 웃고 있는 소년과 여자아이, 아기 모닥뿔이 찍혀 있다.' },
   { id: 'rod', name: '낚싯대', price: 0, kind: 'key', desc: '물가를 바라보고 A 버튼을 누르면 낚시를 할 수 있다.' },
 ];
 

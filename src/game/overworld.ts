@@ -421,7 +421,9 @@ export class Overworld implements Scene {
       }
     }
     if (this.fishing) this.drawFishing(g, cx, cy);
-    if (this.map.id.startsWith('ship')) this.drawGloom(g, cx, cy);
+    const amb = this.map.ambience ?? (this.map.id === 'ship' ? 'shipdeck' : this.map.id.startsWith('ship') ? 'ship' : undefined);
+    if (amb === 'ship' || amb === 'shipdeck') this.drawGloom(g, cx, cy);
+    else if (amb) this.drawAmbience(g, cx, cy, amb);
     if (this.isDark()) this.drawDark(g, cx, cy);
   }
 
@@ -504,7 +506,7 @@ export class Overworld implements Scene {
   private nextBolt = 0;
   private drawGloom(g: Ctx, cx: number, cy: number) {
     const f = clock.frame;
-    const deck = this.map.id === 'ship';
+    const deck = (this.map.ambience ?? (this.map.id === 'ship' ? 'shipdeck' : '')) === 'shipdeck';
     g.fillStyle = 'rgba(14,26,34,0.42)';
     g.fillRect(0, 0, W, H);
     // drifting fog banks (in world space so they slide past as you walk)
@@ -546,6 +548,118 @@ export class Overworld implements Scene {
       g.fillStyle = `rgba(220,230,255,${a})`;
       g.fillRect(0, 0, W, H);
       this.lightning--;
+    }
+  }
+
+  /** Shared particle field in world space (parallax 0.6), deterministic per index. */
+  private particles(g: Ctx, cx: number, cy: number, n: number, draw: (x: number, y: number, i: number, t: number) => void) {
+    const f = clock.frame;
+    for (let i = 0; i < n; i++) {
+      const sx = ((i * 7919) % 997) / 997, sy = ((i * 104729) % 991) / 991;
+      draw(sx * (W + 40) - 20 - (cx * 0.6) % (W + 40), sy * (H + 40) - 20 - (cy * 0.6) % (H + 40), i, f);
+    }
+  }
+  private shake = 0;
+  private nextRumble = 0;
+  private drawAmbience(g: Ctx, cx: number, cy: number, amb: NonNullable<MapDef['ambience']>) {
+    const f = clock.frame;
+    const wrap = (v: number, m: number) => ((v % m) + m) % m;
+    if (amb === 'volcano' || amb === 'volcanoheart') {
+      const heart = amb === 'volcanoheart';
+      g.fillStyle = heart ? 'rgba(90,16,0,0.24)' : 'rgba(70,14,0,0.18)';
+      g.fillRect(0, 0, W, H);
+      // embers drifting up
+      this.particles(g, cx, cy, heart ? 40 : 26, (x, y, i, t) => {
+        const yy = wrap(y - t * (0.35 + (i % 5) * 0.08), H + 40) - 20;
+        const xx = wrap(x + Math.sin(t / 30 + i) * 6, W + 40) - 20;
+        const flick = (t + i * 13) % 40 < 30;
+        g.fillStyle = i % 3 ? (flick ? '#ffb040' : '#ff7020') : '#ffe080';
+        g.fillRect(Math.round(xx), Math.round(yy), i % 4 ? 1 : 2, i % 4 ? 1 : 2);
+      });
+      // rumbles: a shake and a distant boom now and then
+      if (!this.nextRumble) this.nextRumble = f + 300;
+      if (f >= this.nextRumble && !ui.active) {
+        this.shake = heart ? 22 : 14;
+        this.nextRumble = f + (heart ? 360 : 600) + Math.floor(Math.random() * 400);
+        sfx('thunder');
+      }
+      if (this.shake > 0) {
+        g.fillStyle = `rgba(255,120,40,${(this.shake / 22) * 0.18})`;
+        g.fillRect(0, 0, W, H);
+        this.shake--;
+      }
+      const vg = g.createRadialGradient(W / 2, H / 2, 60, W / 2, H / 2, W * 0.7);
+      vg.addColorStop(0, 'rgba(40,6,0,0)');
+      vg.addColorStop(1, heart ? 'rgba(60,8,0,0.6)' : 'rgba(40,6,0,0.45)');
+      g.fillStyle = vg;
+      g.fillRect(0, 0, W, H);
+    } else if (amb === 'forest') {
+      g.fillStyle = 'rgba(10,40,30,0.22)';
+      g.fillRect(0, 0, W, H);
+      for (let i = 0; i < 6; i++) {
+        const wx = wrap(i * 113 + f * 0.1 - cx * 0.3, W + 160) - 80;
+        const wy = wrap(i * 61 - cy * 0.3, H + 120) - 60;
+        const fog = g.createRadialGradient(wx, wy, 4, wx, wy, 60);
+        fog.addColorStop(0, 'rgba(200,235,215,0.15)');
+        fog.addColorStop(1, 'rgba(200,235,215,0)');
+        g.fillStyle = fog;
+        g.fillRect(wx - 64, wy - 64, 128, 128);
+      }
+      // fireflies
+      this.particles(g, cx, cy, 18, (x, y, i, t) => {
+        const xx = wrap(x + Math.sin(t / 50 + i * 2) * 10, W + 40) - 20;
+        const yy = wrap(y + Math.cos(t / 40 + i) * 8, H + 40) - 20;
+        const a = 0.35 + 0.35 * Math.sin(t / 18 + i * 1.7);
+        if (a < 0.1) return;
+        g.fillStyle = `rgba(210,255,120,${a * 0.35})`;
+        g.fillRect(Math.round(xx) - 1, Math.round(yy) - 1, 3, 3);
+        g.fillStyle = `rgba(240,255,170,${a})`;
+        g.fillRect(Math.round(xx), Math.round(yy), 1, 1);
+      });
+      const vg = g.createRadialGradient(W / 2, H / 2, 70, W / 2, H / 2, W * 0.7);
+      vg.addColorStop(0, 'rgba(4,20,14,0)');
+      vg.addColorStop(1, 'rgba(4,20,14,0.45)');
+      g.fillStyle = vg;
+      g.fillRect(0, 0, W, H);
+    } else if (amb === 'snow' || amb === 'blizzard' || amb === 'icecave') {
+      const bl = amb === 'blizzard';
+      g.fillStyle = amb === 'icecave' ? 'rgba(20,50,90,0.22)' : bl ? 'rgba(200,220,240,0.22)' : 'rgba(120,150,200,0.12)';
+      g.fillRect(0, 0, W, H);
+      const n = amb === 'icecave' ? 14 : bl ? 70 : 36;
+      this.particles(g, cx, cy, n, (x, y, i, t) => {
+        const sp = amb === 'icecave' ? 0.1 : bl ? 1.6 : 0.5;
+        const yy = wrap(y + t * (sp + (i % 4) * 0.12), H + 40) - 20;
+        const xx = wrap(x + (bl ? -t * 1.4 : Math.sin(t / 40 + i) * 8), W + 40) - 20;
+        g.fillStyle = amb === 'icecave' ? `rgba(170,230,255,${0.4 + 0.4 * Math.sin(t / 20 + i)})` : '#ffffff';
+        g.fillRect(Math.round(xx), Math.round(yy), i % 3 ? 1 : 2, i % 3 ? 1 : 2);
+      });
+      const vg = g.createRadialGradient(W / 2, H / 2, 60, W / 2, H / 2, W * 0.7);
+      vg.addColorStop(0, 'rgba(10,20,40,0)');
+      vg.addColorStop(1, bl ? 'rgba(220,230,245,0.5)' : 'rgba(10,20,40,0.4)');
+      g.fillStyle = vg;
+      g.fillRect(0, 0, W, H);
+    } else if (amb === 'den') {
+      g.fillStyle = 'rgba(30,14,50,0.24)';
+      g.fillRect(0, 0, W, H);
+      // slow golden motes and a faint aurora band
+      const band = g.createLinearGradient(0, 0, W, 0);
+      const ph = (Math.sin(f / 120) + 1) / 2;
+      band.addColorStop(0, 'rgba(120,255,200,0)');
+      band.addColorStop(ph * 0.8 + 0.1, 'rgba(120,255,200,0.10)');
+      band.addColorStop(1, 'rgba(160,120,255,0)');
+      g.fillStyle = band;
+      g.fillRect(0, 10 + Math.sin(f / 90) * 6, W, 26);
+      this.particles(g, cx, cy, 22, (x, y, i, t) => {
+        const yy = wrap(y - t * 0.15, H + 40) - 20;
+        const a = 0.4 + 0.4 * Math.sin(t / 25 + i);
+        g.fillStyle = `rgba(255,220,120,${a})`;
+        g.fillRect(Math.round(x), Math.round(yy), 1, 1);
+      });
+      const vg = g.createRadialGradient(W / 2, H / 2, 60, W / 2, H / 2, W * 0.7);
+      vg.addColorStop(0, 'rgba(14,6,24,0)');
+      vg.addColorStop(1, 'rgba(14,6,24,0.5)');
+      g.fillStyle = vg;
+      g.fillRect(0, 0, W, H);
     }
   }
 

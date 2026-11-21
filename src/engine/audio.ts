@@ -78,6 +78,14 @@ export const SONGS: Record<string, Song> = {
     pad: 'A3 - - - - - - - F3 - - - - - - - F3 - - - - - - - E3 - - - - - - - D3 - - - - - - - D#3 - - - - - - - C#3 - - - - - - - A3 - - - - - - -',
     drums: 'k . k . . . . . . . . . . . . . . . . . . . . . . . . . . . . .',
   },
+  volcano: {
+    // Driving E-Phrygian riff over a pounding bass: heat, danger and a ticking clock.
+    bpm: 112, vibrato: 3,
+    lead: 'E5 - F5 - E5 . B4 - C5 - B4 . A4 - B4 - E5 - F5 - G5 - F5 E5 F5 - - - . . . . E5 - F5 - E5 . B4 - C5 - D5 . C5 - B4 - A4 - B4 - C5 - B4 A4 G#4 - - - E4 - - .',
+    bass: 'E2 E2 E3 E2 F2 F2 F3 F2 E2 E2 E3 E2 D2 D2 D3 D2 C2 C2 C3 C2 D2 D2 D3 D2 E2 E2 E3 E2 E2 E2 B2 B2 E2 E2 E3 E2 F2 F2 F3 F2 E2 E2 E3 E2 D2 D2 D3 D2 A1 A1 A2 A1 B1 B1 B2 B1 E2 E2 E3 E2 E2 E2 E2 .',
+    pad: 'B3 - - - - - - - A3 - - - - - - - G3 - - - - - - - G#3 - - - - - - - B3 - - - - - - - A3 - - - - - - - C4 - - - - - - - B3 - - - - - - -',
+    drums: 'k . h k s . h . k k h . s . h h',
+  },
   safari: {
     bpm: 136,
     lead: 'C5 F5 A5 F5 C6 - A5 - A#5 G5 E5 C5 G5 - - . A5 C6 A5 F5 A#5 - G5 - E5 G5 C6 A#5 A5 - F5 -',

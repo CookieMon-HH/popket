@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', 'ⓟ', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -175,6 +175,43 @@ function build(ch: string, anim: number): Pix {
       p.ell(8, 8, 5, 5, anim ? '#b8a8ff' : '#9a88e8');
       p.ell(8, 8, 2.5, 2.5, '#f0e8ff');
       break;
+    case 'ⓚ': // cooled basalt bridge across a lava channel
+      caveFloor(p);
+      p.rect(0, 2, 16, 12, '#3a3036'); p.rect(0, 2, 16, 1, '#5a4a50');
+      for (const [x, y] of [[3, 6], [9, 9], [13, 5], [6, 11]]) p.set(x, y, '#c8501a');
+      p.line(2, 8, 6, 7, '#2a2228'); p.line(10, 4, 12, 7, '#2a2228');
+      break;
+    case 'ⓥ': // cooling-water valve on a pipe
+      caveFloor(p);
+      p.rect(6, 9, 4, 7, '#6a7888'); p.rect(6, 9, 1, 7, '#8a98a8');
+      p.ell(8, 7, 6, 6, '#2a6ab0'); p.ell(8, 7, 4, 4, '#3a3a44');
+      p.rect(2, 6, 12, 2, '#3a8ad8'); p.rect(7, 1, 2, 12, '#3a8ad8');
+      p.ell(8, 7, 1.5, 1.5, '#e8e0d0');
+      break;
+    case 'ⓢ': // scorched schematic board
+      caveFloor(p);
+      p.rect(1, 2, 14, 10, '#6a5040'); p.rect(2, 3, 12, 8, '#e8dcc0');
+      p.line(3, 5, 12, 5, '#3a6ab0'); p.line(3, 8, 9, 8, '#3a6ab0'); p.line(6, 5, 6, 8, '#3a6ab0');
+      p.rect(9, 7, 5, 4, '#2a2020'); p.set(8, 8, '#6a5040');
+      p.rect(6, 12, 1, 4, '#4a3428'); p.rect(10, 12, 1, 4, '#4a3428');
+      break;
+    case 'ⓟ': // a dropped page / notebook
+      caveFloor(p);
+      p.rect(4, 6, 8, 7, '#f0e6cc'); p.rect(4, 6, 8, 1, '#c8b890');
+      for (const y of [8, 10]) p.rect(5, y, 6, 1, '#8a7a60');
+      p.set(11, 12, '#c8b890');
+      break;
+    case '◰': case '◳': case '◱': case '◲': { // the volcano's heart: one magma core over 2×2 tiles
+      const qx = ch === '◳' || ch === '◲' ? 1 : 0, qy = ch === '◱' || ch === '◲' ? 1 : 0;
+      const cx = 16 - qx * 16, cy = 16 - qy * 16;
+      p.rect(0, 0, 16, 16, '#3a1208');
+      p.ell(cx, cy, 15, 15, '#7a2010');
+      p.ell(cx, cy, 13, 13, anim ? '#ff6a24' : '#e8501a');
+      p.ell(cx - 2, cy - 2, 8, 8, anim ? '#ffb040' : '#ff8a2a');
+      p.ell(cx - 3, cy - 3, 3.5, 3.5, '#fff0b0');
+      for (const [x, y] of [[3, 3], [12, 5], [6, 12]]) p.set(x, y, '#ffd080');
+      break;
+    }
     case '①': case '②': case '③': { // moon crystal on a pedestal (crescent / half / full)
       floor(p);
       p.rect(4, 12, 8, 3, '#4a4058'); p.rect(5, 11, 6, 1, '#6a5a80');
@@ -691,7 +728,7 @@ function build(ch: string, anim: number): Pix {
 
 const cache = new Map<string, HTMLCanvasElement>();
 export function tileCanvas(ch: string, anim: number): HTMLCanvasElement {
-  const animated = ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$' || ch === '①' || ch === '②' || ch === '③';
+  const animated = ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$' || ch === '①' || ch === '②' || ch === '③' || ch === '◰' || ch === '◳' || ch === '◱' || ch === '◲';
   const key = animated ? ch + anim : ch;
   let c = cache.get(key);
   if (!c) {
