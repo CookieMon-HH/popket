@@ -13,7 +13,7 @@ import {
 import { keeperTalk, escapeeTalk, safariExitTile, specialGate } from './safari';
 import { windTamerTalk } from './fly';
 import { chestProp, chestTalk, fossilSite } from './chests';
-import { antiqueOwner, musicBox } from './events';
+import { antiqueOwner, musicBox, foxGirl, shipwright } from './events';
 import { boardShip, lockedBridge, lockedEngine, logPage1, portraitTalk, dalnimCabin, wardrobe, candleProp, candleTalk, pianoTalk, valveTalk, generatorTalk, shipAdminWinV2, wheelTalk, captainTalk, shipExitCheck } from './ship';
 import { receptionTalk } from './tournament';
 import { legendEncounter, snowMomPost, hwaryeonPost } from './legends';
@@ -403,6 +403,7 @@ const town2: MapDef = {
   labels: [{ x: 5, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 12, y: 5.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 7, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
   signs: [{ x: 15, y: 9, text: '들꽃마을\n바람에 꽃향기가 실려 오는 마을  ·  북쪽: 2번 도로' }],
   npcs: [
+    { id: 't2foxgirl', x: 13, y: 12, dir: 'down', pal: PAL.girl, move: 'look', talk: () => foxGirl() },
     {
       id: 't2kid', x: 11, y: 10, dir: 'down', pal: PAL.kid, move: 'wander',
       talk: '파란 지붕은 회복소, 노란 지붕은 상점이야!\n보라색 지붕은 수련관이고.',
@@ -599,7 +600,7 @@ const forest: MapDef = {
   ],
   encounters: {
     rate: 0.13,
-    table: [['pojani', 8, 10, 22], ['dokbul', 8, 10, 12], ['soejip', 8, 10, 12], ['kkwae', 8, 10, 12], ['kkomul', 8, 9, 8], ['dandan', 8, 9, 6], ['ddakkum', 8, 10, 10], ['baramsae', 10, 11, 8], ['naphul', 10, 11, 4], ['beoseot', 11, 12, 6], ['bueong', 8, 10, 10], ['agigom', 9, 10, 5], ['bandi', 8, 11, 16], ['kkuldanji', 9, 11, 6], ['jipgesasum', 10, 12, 4]],
+    table: [['pojani', 8, 10, 22], ['dokbul', 8, 10, 12], ['soejip', 8, 10, 12], ['kkwae', 8, 10, 12], ['kkomul', 8, 9, 8], ['dandan', 8, 9, 6], ['ddakkum', 8, 10, 10], ['baramsae', 10, 11, 8], ['naphul', 10, 11, 4], ['beoseot', 11, 12, 6], ['bueong', 8, 10, 10], ['agigom', 9, 10, 5], ['bandi', 8, 11, 16], ['kkuldanji', 9, 11, 6]],
   },
   npcs: [
     { id: 'granny', x: 5, y: 21, dir: 'down', pal: PAL.granny, talk: () => grannyTalk() },
@@ -1223,6 +1224,7 @@ const town5: MapDef = {
   signs: [],
   fishing: [['meokmul', 24, 27, 40], ['munu', 22, 26, 20], ['eungeo', 24, 27, 25], ['daewang', 29, 30, 5], ['jelly', 24, 26, 10], ['mulgwi', 22, 25, 14]],
   npcs: [
+    { id: 't5shipwright', x: 22, y: 10, dir: 'left', pal: PAL.oldman, talk: () => shipwright() },
     { id: 't5sailor', x: 13, y: 2, dir: 'left', pal: PAL2.sailor, talk: '뱃사람: 유령선은 남쪽 부두 끝에 있다네.\n파란 도깨비불이 둥둥 떠다니니 조심하게!' },
     { id: 't5old', x: 20, y: 6, dir: 'down', pal: PAL.oldman, move: 'look', talk: '이 항구에서 서쪽 해변길을 따라 남쪽으로 가면 불꽃마을이 나온다네.\n뜨끈한 온천이 아주 좋지!' },
     { id: 't5kid', x: 8, y: 10, dir: 'right', pal: PAL.kid, move: 'wander', talk: '아빠가 그러는데, 바다 깊은 곳엔 배만 한 대왕문어가 산대!' },
@@ -1341,7 +1343,7 @@ const safari_fire: MapDef = {
     'CCCCCCCCCCCCCCCCCCCCCCCC',
   ],
   warps: [{ x: 23, y: 8, to: 'safari', tx: 1, ty: 5, dir: 'right' }],
-  encounters: { rate: 0.14, tiles: '1', table: [['gungo', 1, 1, 20], ['jinheuk', 1, 1, 18], ['ggorichim', 1, 1, 14], ['jangjak', 1, 1, 8], ['heukjang', 1, 1, 8], ['dokjeongal', 1, 1, 6], ['modak', 1, 1, 4], ['hwaro', 1, 1, 2]] },
+  encounters: { rate: 0.14, tiles: '1', table: [['gungo', 1, 1, 20], ['jinheuk', 1, 1, 18], ['ggorichim', 1, 1, 14], ['jangjak', 1, 1, 8], ['heukjang', 1, 1, 8], ['dokjeongal', 1, 1, 6], ['modak', 1, 1, 4], ['hwaro', 1, 1, 2], ['sutdol', 1, 1, 10], ['chorong', 1, 1, 8]] },
   npcs: [
     { id: 'safari_fire_item0', x: 1, y: 1, dir: 'down', item: { id: 'hyperpotion', qty: 1 } },
   ],
@@ -1368,7 +1370,7 @@ const safari_canyon: MapDef = {
     'CCCCCCCCCCCCCCCCCCCCCCCC',
   ],
   warps: [{ x: 23, y: 8, to: 'safari', tx: 1, ty: 14, dir: 'right' }],
-  encounters: { rate: 0.14, tiles: '4', table: [['jjirit', 1, 1, 18], ['ddakkum', 1, 1, 18], ['ggangtong', 1, 1, 16], ['doldol', 1, 1, 16], ['cheolgap', 1, 1, 8], ['bawi', 1, 1, 8], ['beonjjeok', 1, 1, 6], ['beongae', 1, 1, 3], ['geosin', 1, 1, 1]] },
+  encounters: { rate: 0.14, tiles: '4', table: [['jjirit', 1, 1, 18], ['ddakkum', 1, 1, 18], ['ggangtong', 1, 1, 16], ['doldol', 1, 1, 16], ['cheolgap', 1, 1, 8], ['bawi', 1, 1, 8], ['beonjjeok', 1, 1, 6], ['beongae', 1, 1, 3], ['geosin', 1, 1, 1], ['dujji', 1, 1, 10], ['kkakkak', 1, 1, 8]] },
   npcs: [
     { id: 'safari_canyon_item0', x: 1, y: 14, dir: 'down', item: { id: 'maxrevive', qty: 1 } },
   ],
@@ -1395,7 +1397,7 @@ const safari_fairy: MapDef = {
     'gggggggggggg=ggggggggggg',
   ],
   warps: [{ x: 12, y: 15, to: 'safari', tx: 8, ty: 1, dir: 'down' }],
-  encounters: { rate: 0.14, tiles: ';', table: [['monsil', 1, 1, 18], ['mongmong', 1, 1, 18], ['dalto', 1, 1, 16], ['makarong', 1, 1, 14], ['bueong', 1, 1, 12], ['agiyuni', 1, 1, 8], ['jeolgu', 1, 1, 6], ['mujigae', 1, 1, 3], ['monggeul', 1, 1, 3]] },
+  encounters: { rate: 0.14, tiles: ';', table: [['monsil', 1, 1, 18], ['mongmong', 1, 1, 18], ['dalto', 1, 1, 16], ['makarong', 1, 1, 14], ['bueong', 1, 1, 12], ['agiyuni', 1, 1, 8], ['jeolgu', 1, 1, 6], ['mujigae', 1, 1, 3], ['monggeul', 1, 1, 3], ['kkoribyeol', 1, 1, 8], ['bandi', 1, 1, 8]] },
   fishing: [['banjjak', 1, 1, 30], ['munu', 1, 1, 25], ['eungeo', 1, 1, 15], ['jelly', 1, 1, 15], ['daewang', 1, 1, 6], ['hyeonmuk', 1, 1, 4], ['aurora', 1, 1, 5]],
   npcs: [
     { id: 'safari_fairy_item0', x: 1, y: 1, dir: 'down', item: { id: 'safariticket', qty: 1 } },
@@ -1423,7 +1425,7 @@ const safari_special: MapDef = {
     '############=###########',
   ],
   warps: [{ x: 12, y: 15, to: 'safari', tx: 15, ty: 1, dir: 'down' }],
-  encounters: { rate: 0.14, tiles: '5', table: [['kkomaryong', 1, 1, 14], ['agiyuni', 1, 1, 12], ['kkaeng', 1, 1, 10], ['kkwae', 1, 1, 10], ['dokbul', 1, 1, 10], ['mujigae', 1, 1, 8], ['nalgae', 1, 1, 6], ['seolpyo', 1, 1, 6], ['bingsan', 1, 1, 5], ['olppaemi', 1, 1, 5], ['wangmong', 1, 1, 5], ['cheonryong', 1, 1, 2]] },
+  encounters: { rate: 0.14, tiles: '5', table: [['kkomaryong', 1, 1, 14], ['agiyuni', 1, 1, 12], ['kkaeng', 1, 1, 10], ['kkwae', 1, 1, 10], ['dokbul', 1, 1, 10], ['mujigae', 1, 1, 8], ['nalgae', 1, 1, 6], ['seolpyo', 1, 1, 6], ['bingsan', 1, 1, 5], ['olppaemi', 1, 1, 5], ['wangmong', 1, 1, 5], ['cheonryong', 1, 1, 2], ['kkoribyeol', 1, 1, 6], ['kkomadorong', 1, 1, 5], ['geumdukeop', 1, 1, 2]] },
   fishing: [['banjjak', 1, 1, 30], ['munu', 1, 1, 25], ['eungeo', 1, 1, 15], ['jelly', 1, 1, 15], ['daewang', 1, 1, 6], ['hyeonmuk', 1, 1, 4], ['aurora', 1, 1, 5]],
   npcs: [
     { id: 'safari_special_item0', x: 1, y: 1, dir: 'down', item: { id: 'hyperball', qty: 1 } },
@@ -1453,7 +1455,7 @@ const safari_ice: MapDef = {
     'hhhhhhhhhhhh=hhhhhhhhhhh',
   ],
   warps: [{ x: 12, y: 15, to: 'safari', tx: 22, ty: 1, dir: 'down' }],
-  encounters: { rate: 0.14, tiles: 'j', table: [['agipeng', 1, 1, 22], ['nunnyang', 1, 1, 20], ['bingsu', 1, 1, 18], ['agibuk', 1, 1, 14], ['eolpeng', 1, 1, 8], ['seolpyo', 1, 1, 4], ['wangbingsu', 1, 1, 4]] },
+  encounters: { rate: 0.14, tiles: 'j', table: [['agipeng', 1, 1, 22], ['nunnyang', 1, 1, 20], ['bingsu', 1, 1, 18], ['agibuk', 1, 1, 14], ['eolpeng', 1, 1, 8], ['seolpyo', 1, 1, 4], ['wangbingsu', 1, 1, 4], ['dotori', 1, 1, 8]] },
   npcs: [
     { id: 'safari_ice_item0', x: 1, y: 1, dir: 'down', item: { id: 'hyperball', qty: 1 } },
   ],
@@ -1480,7 +1482,7 @@ const safari_water: MapDef = {
     '########################',
   ],
   warps: [{ x: 0, y: 8, to: 'safari', tx: 29, ty: 5, dir: 'left' }],
-  encounters: { rate: 0.14, tiles: '2', table: [['pongduck', 1, 1, 20], ['munu', 1, 1, 18], ['jelly', 1, 1, 14], ['banjjak', 1, 1, 14], ['ubiduck', 1, 1, 8], ['meokmul', 1, 1, 8], ['pong', 1, 1, 4], ['aurora', 1, 1, 3]] },
+  encounters: { rate: 0.14, tiles: '2', table: [['pongduck', 1, 1, 20], ['munu', 1, 1, 18], ['jelly', 1, 1, 14], ['banjjak', 1, 1, 14], ['ubiduck', 1, 1, 8], ['meokmul', 1, 1, 8], ['pong', 1, 1, 4], ['aurora', 1, 1, 3], ['dukeop', 1, 1, 8], ['mulgwi', 1, 1, 6]] },
   fishing: [['banjjak', 1, 1, 30], ['munu', 1, 1, 25], ['eungeo', 1, 1, 15], ['jelly', 1, 1, 15], ['daewang', 1, 1, 6], ['hyeonmuk', 1, 1, 4], ['aurora', 1, 1, 5]],
   npcs: [
     { id: 'safari_water_item0', x: 22, y: 1, dir: 'down', item: { id: 'hyperball', qty: 1 } },
@@ -1508,7 +1510,7 @@ const safari_jungle: MapDef = {
     '########################',
   ],
   warps: [{ x: 0, y: 8, to: 'safari', tx: 29, ty: 14, dir: 'left' }],
-  encounters: { rate: 0.14, tiles: '3', table: [['kkotip', 1, 1, 18], ['suguk', 1, 1, 16], ['pojani', 1, 1, 16], ['kkomul', 1, 1, 14], ['soejip', 1, 1, 10], ['beoseot', 1, 1, 8], ['naphul', 1, 1, 6], ['saesun', 1, 1, 4], ['beotkkot', 1, 1, 3]] },
+  encounters: { rate: 0.14, tiles: '3', table: [['kkotip', 1, 1, 18], ['suguk', 1, 1, 16], ['pojani', 1, 1, 16], ['kkomul', 1, 1, 14], ['soejip', 1, 1, 10], ['beoseot', 1, 1, 8], ['naphul', 1, 1, 6], ['saesun', 1, 1, 4], ['beotkkot', 1, 1, 3], ['jipgesasum', 1, 1, 10], ['jangsu', 1, 1, 2], ['geomi', 1, 1, 8], ['bungbung', 1, 1, 8]] },
   npcs: [
     { id: 'safari_jungle_item0', x: 22, y: 1, dir: 'down', item: { id: 'fullrestore', qty: 1 } },
   ],
@@ -1573,6 +1575,7 @@ const ship_cabins: MapDef = {
   warps: [{ x: 0, y: 6, to: 'ship', tx: 12, ty: 9, dir: 'down' }],
   encounters: { rate: 0.07, tiles: '9', table: [['chorong', 24, 26, 18], ['cheongsa', 25, 27, 4], ['mulgwi', 24, 26, 16], ['haegol', 24, 26, 16], ['dokbul', 24, 26, 16], ['dokkae', 25, 27, 6], ['bomulgoe', 26, 27, 2]] },
   npcs: [
+    { id: 'shipshadestone', x: 9, y: 2, dir: 'down', item: { id: 'shadestone', qty: 1 } },
     { id: 'shiplog1', x: 2, y: 1, dir: 'down', prop: '(', talk: () => logPage1() },
     grunt('sgrunt2', 9, 2, 'down', 2, [['yeongi', 30], ['dodug', 30]], '여기서 한 발짝도 못 지나간다!', '크윽…', '간부님은 조종실을 차지하고 계셔. 문은 잠겨 있지만.'),
     { id: 'sdalnim', x: 15, y: 2, dir: 'down', pal: PAL.dalnim, hidden: () => f('shipDone'), talk: () => dalnimCabin() },
@@ -1781,6 +1784,7 @@ const route5: MapDef = {
   },
   fishing: [['meokmul', 26, 28, 40], ['aurora', 26, 28, 20], ['eungeo', 26, 28, 30], ['daewang', 30, 31, 10]],
   npcs: [
+    { id: 'r5firestone', x: 24, y: 16, dir: 'down', item: { id: 'firestone', qty: 1 } },
     { id: 'r5surf1', x: 10, y: 4, dir: 'down', pal: PAL2.surfer, sight: 3, trainer: tr('r5s1', '서퍼', '파랑', PAL2.surfer, [['ubiduck', 32], ['aurora', 33]], 1300, '파도를 타듯 승부를 타 볼까!', '와이프아웃이다…', '해변의 풀숲엔 우비오리가 자주 나와.') },
     { id: 'r5beauty', x: 18, y: 10, dir: 'left', pal: PAL2.beauty, sight: 12, trainer: tr('r5b', '아가씨', '모래', PAL2.beauty, [['beotkkot', 32], ['jangma', 33]], 1300, '선탠을 방해하다니! 승부예요!', '피부가 다 탔잖아요~', '불꽃마을 온천은 피부에 정말 좋대요.') },
     { id: 'r5fire', x: 1, y: 13, dir: 'right', pal: PAL2.firefighter, sight: 4, trainer: tr('r5f', '소방관', '불돌이', PAL2.firefighter, [['jangjak', 33], ['eolpeng', 32]], 1400, '불꽃마을로 가려면 내 시험을 통과해라!', '훌륭한 판단력이다!', '화련 관장님의 불꽃은 물 타입으로 맞서는 게 좋아.') },
@@ -1949,10 +1953,11 @@ const route6: MapDef = {
   signs: [{ x: 36, y: 9, text: '6번 도로\n서쪽: 서리마을   동쪽: 불꽃마을' }],
   encounters: {
     rate: 0.12,
-    table: [['hoeori', 31, 32, 10], ['beonjjeok', 31, 32, 8], ['noejeon', 31, 32, 4], ['satba', 31, 32, 10], ['seolpyo', 31, 32, 8], ['olppaemi', 31, 32, 10], ['wangmong', 31, 32, 8], ['byeolkkum', 31, 32, 2], ['gangjip', 31, 32, 8], ['dodug', 31, 32, 10], ['nalgae', 31, 32, 6], ['beoseotking', 31, 32, 6], ['kkakkak', 31, 32, 8], ['kkamagwi', 32, 32, 2]],
+    table: [['hoeori', 31, 32, 10], ['beonjjeok', 31, 32, 8], ['noejeon', 31, 32, 4], ['satba', 31, 32, 10], ['seolpyo', 31, 32, 8], ['olppaemi', 31, 32, 10], ['wangmong', 31, 32, 8], ['byeolkkum', 31, 32, 2], ['gangjip', 31, 32, 8], ['dodug', 31, 32, 10], ['nalgae', 31, 32, 6], ['beoseotking', 31, 32, 6], ['kkakkak', 31, 32, 8], ['kkamagwi', 32, 32, 2], ['geumdukeop', 31, 32, 1]],
   },
   fishing: [['eungeo', 29, 32, 50], ['aurora', 29, 31, 30], ['daewang', 31, 32, 20]],
   npcs: [
+    { id: 'r6thornstone', x: 21, y: 4, dir: 'down', item: { id: 'thornstone', qty: 1 } },
     { id: 'r6ace1', x: 5, y: 5, dir: 'down', pal: PAL2.ace, sight: 1, trainer: tr('r6a1', '엘리트트레이너', '바람', PAL2.ace, [['hoeori', 38], ['noejeon', 38], ['jangsa', 38]], 2200, '리그로 가는 길이라면 나를 넘어가라!', '이 정도라면 리그에서도 통하겠어.', '리그 수호자는 악과 드래곤 타입을 쓴대.') },
     { id: 'r6ace2', x: 16, y: 7, dir: 'up', pal: PAL.lady, sight: 1, trainer: tr('r6a2', '엘리트트레이너', '구름', PAL.lady, [['byeolkkum', 38], ['aurora', 38], ['wangbingsu', 38]], 2200, '파스텔빛 몬스터의 진짜 힘을 보여 줄게!', '정말 강하구나…', '페어리 기술은 드래곤 타입에 아주 잘 통해!') },
     { id: 'r6ace3', x: 26, y: 5, dir: 'down', pal: PAL2.surfer, sight: 1, trainer: tr('r6a3', '엘리트트레이너', '파도', PAL2.surfer, [['daewang', 38], ['eolpeng', 38], ['ubiduck', 38]], 2200, '해솔 리그를 꿈꾸는 건 너만이 아니야!', '꿈은 너에게 맡길게.', '고원의 회복소에서 꼭 쉬어 가.') },
@@ -2208,7 +2213,7 @@ const route7: MapDef = {
   signs: [{ x: 9, y: 11, text: '7번 도로 설원 산길\n서쪽: 용의 마을   동쪽: 서리마을' }],
   encounters: {
     rate: 0.13, tiles: 'j',
-    table: [['agibuk', 34, 36, 14], ['nunnyang', 34, 36, 10], ['seolpyo', 34, 36, 10], ['eolpeng', 34, 36, 10], ['wangbingsu', 34, 36, 8], ['bingsan', 35, 36, 4], ['olppaemi', 34, 36, 10], ['hoeori', 34, 36, 8], ['jangsa', 34, 36, 6], ['geoam', 34, 36, 6], ['jeolgu', 34, 36, 8]],
+    table: [['agibuk', 34, 36, 14], ['nunnyang', 34, 36, 10], ['seolpyo', 34, 36, 10], ['eolpeng', 34, 36, 10], ['wangbingsu', 34, 36, 8], ['bingsan', 35, 36, 4], ['olppaemi', 34, 36, 10], ['hoeori', 34, 36, 8], ['jangsa', 34, 36, 6], ['geoam', 34, 36, 6], ['jeolgu', 34, 36, 8], ['kkomadorong', 34, 36, 6]],
   },
   npcs: [
     grunt('r7grunt1', 22, 6, 'down', 1, [['beongae', 41], ['dodug', 41]], '먹구름 님의 명령이다! 여기는 못 지나간다!', '으윽, 추운데 졌다…', '여의주의 힘이면 날씨도 마음대로라고! …였는데.'),
@@ -2254,7 +2259,7 @@ const town8: MapDef = {
     { x: 21.5, y: 6.2, text: '사당', color: '#fff2a8', ink: '#7a5a10' },
   ],
   signs: [],
-  encounters: { rate: 0.12, table: [['kkomaryong', 34, 36, 20], ['nalgae', 35, 37, 10], ['hyeonmuk', 34, 36, 12], ['beotkkot', 34, 36, 14], ['wolgung', 34, 36, 10], ['mujigae', 34, 36, 10], ['jangma', 34, 36, 12], ['eungeo', 34, 36, 12]] },
+  encounters: { rate: 0.12, table: [['kkomaryong', 34, 36, 20], ['nalgae', 35, 37, 10], ['hyeonmuk', 34, 36, 12], ['beotkkot', 34, 36, 14], ['wolgung', 34, 36, 10], ['mujigae', 34, 36, 10], ['jangma', 34, 36, 12], ['eungeo', 34, 36, 12], ['kkomadorong', 34, 36, 10]] },
   fishing: [['hyeonmuk', 32, 36, 35], ['eungeo', 34, 37, 45], ['aurora', 34, 37, 20]],
   npcs: [
     { id: 'elder', x: 20, y: 7, dir: 'right', pal: PAL.elder, talk: () => elderTalk() },
@@ -2386,7 +2391,7 @@ const route8: MapDef = {
   signs: [{ x: 11, y: 9, text: '8번 도로\n서쪽: 해솔고원 · 솔빛마을   동쪽: 용의 마을' }],
   encounters: {
     rate: 0.12,
-    table: [['hoeori', 39, 41, 10], ['noejeon', 39, 41, 8], ['jangsa', 39, 41, 8], ['bingsan', 39, 41, 6], ['byeolkkum', 39, 41, 6], ['geosin', 39, 41, 8], ['cheonryong', 40, 41, 2], ['hyeonmu', 39, 41, 6], ['wangbingsu', 39, 41, 8], ['daewang', 39, 41, 8], ['beoseotking', 39, 41, 8], ['wolgung', 39, 41, 8], ['jangseung', 40, 43, 10]],
+    table: [['hoeori', 39, 41, 10], ['noejeon', 39, 41, 8], ['jangsa', 39, 41, 8], ['bingsan', 39, 41, 6], ['byeolkkum', 39, 41, 6], ['geosin', 39, 41, 8], ['cheonryong', 40, 41, 2], ['hyeonmu', 39, 41, 6], ['wangbingsu', 39, 41, 8], ['daewang', 39, 41, 8], ['beoseotking', 39, 41, 8], ['wolgung', 39, 41, 8], ['jangseung', 40, 43, 10], ['geumdukeop', 39, 41, 1]],
   },
   fishing: [['eungeo', 36, 39, 50], ['daewang', 37, 39, 30], ['aurora', 36, 39, 20]],
   npcs: [
@@ -2440,7 +2445,7 @@ const skyroad: MapDef = {
   signs: [],
   encounters: {
     rate: 0.12, tiles: 'j',
-    table: [['seolpyo', 52, 58, 12], ['hoeori', 52, 58, 12], ['bingsan', 53, 58, 10], ['geoam', 53, 58, 10], ['wolgung', 53, 58, 10], ['noejeon', 53, 58, 10], ['jangsa', 54, 59, 8], ['byeolkkum', 54, 59, 8], ['daeji', 54, 59, 8], ['eolpeng', 52, 57, 8], ['cheonryong', 56, 60, 4], ['amheuk', 54, 58, 5]],
+    table: [['seolpyo', 52, 58, 12], ['hoeori', 52, 58, 12], ['bingsan', 53, 58, 10], ['geoam', 53, 58, 10], ['wolgung', 53, 58, 10], ['noejeon', 53, 58, 10], ['jangsa', 54, 59, 8], ['byeolkkum', 54, 59, 8], ['daeji', 54, 59, 8], ['eolpeng', 52, 57, 8], ['cheonryong', 56, 60, 4], ['amheuk', 54, 58, 5], ['geumdukeop', 54, 58, 2], ['dolharubang', 54, 58, 4]],
   },
   npcs: [
     { id: 'skychest1', x: 18, y: 9, dir: 'down', prop: chestProp('sky1'), talk: () => chestTalk('sky1', 'maxrevive', 1, 58) },

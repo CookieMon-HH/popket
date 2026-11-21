@@ -2,7 +2,7 @@ export interface ItemDef {
   id: string;
   name: string;
   price: number;
-  kind: 'heal' | 'cure' | 'full' | 'revive' | 'ball' | 'key';
+  kind: 'heal' | 'cure' | 'full' | 'revive' | 'ball' | 'key' | 'stone';
   amount?: number;
   /** revive: restore to full HP instead of half. */
   fullRevive?: boolean;
@@ -21,6 +21,9 @@ const list: ItemDef[] = [
   { id: 'cure', name: '만병통치약', price: 400, kind: 'cure', desc: '화상·독·마비·수면을 모두 낫게 한다.' },
   { id: 'revive', name: '기운의조각', price: 1500, kind: 'revive', desc: '쓰러진 몬스터를 체력 절반으로 되살린다.' },
   { id: 'maxrevive', name: '기운의덩어리', price: 4000, kind: 'revive', fullRevive: true, desc: '쓰러진 몬스터를 체력 가득 되살린다.' },
+  { id: 'firestone', name: '불꽃의돌', price: 2100, kind: 'stone', desc: '안에서 불씨가 일렁이는 붉은 돌. 꼬리별여우에게 쓰면 불여우로 진화한다.' },
+  { id: 'shadestone', name: '그늘의돌', price: 2100, kind: 'stone', desc: '빛을 빨아들이는 보랏빛 돌. 꼬리별여우에게 쓰면 그늘여우로 진화한다.' },
+  { id: 'thornstone', name: '가시의돌', price: 2100, kind: 'stone', desc: '가시덩굴이 휘감긴 초록 돌. 꼬리별여우에게 쓰면 가시여우로 진화한다.' },
   { id: 'bell_forest', name: '숲의방울', price: 0, kind: 'key', desc: '숲지기 할머니에게 받은 초록빛 방울. 흔들면 나뭇잎 소리가 난다.' },
   { id: 'bell_water', name: '물의방울', price: 0, kind: 'key', desc: '물안개마을 낚시꾼에게 받은 푸른 방울. 흔들면 물방울 소리가 난다.' },
   { id: 'bell_rock', name: '바위의방울', price: 0, kind: 'key', desc: '별빛동굴 광부 대장에게 받은 잿빛 방울. 흔들면 돌 구르는 소리가 난다.' },

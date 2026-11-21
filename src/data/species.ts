@@ -23,6 +23,10 @@ export interface SpeciesDef {
   legend?: boolean;
   /** Special encounter: gets a dramatic intro but no label. */
   special?: boolean;
+  /** Evolution by item: stone id → species id. */
+  stones?: Record<string, string>;
+  /** Runs away from wild battles after a few turns. */
+  flees?: boolean;
 }
 
 type L = [number, string][];
@@ -85,6 +89,14 @@ const SUTDOL: L = [[1, 'tackle'], [1, 'pebble'], [8, 'ember'], [14, 'curl'], [20
 const MAEKAE: L = [[1, 'tackle'], [1, 'toxshot'], [6, 'snatch'], [11, 'inkspray'], [16, 'bite'], [22, 'poisontail'], [28, 'nightveil'], [34, 'toxblast'], [41, 'club']];
 const JANGSEUNG: L = [[1, 'vine'], [1, 'spook'], [10, 'leafcut'], [18, 'bewitch'], [26, 'soulwave'], [34, 'bloom'], [42, 'nightdance'], [48, 'forestwrath']];
 const GIGU: L = [[1, 'tackle'], [1, 'gust'], [15, 'curl'], [25, 'wingcut'], [33, 'breathe'], [40, 'dive'], [46, 'storm']];
+const YEOU: L = [[1, 'tackle'], [1, 'growl'], [6, 'dash'], [11, 'twinkle'], [17, 'bite'], [24, 'press'], [32, 'fullcharge']];
+const BULYEOU: L = [[1, 'ember'], [1, 'telekinesis'], [1, 'dash'], [1, 'bite'], [26, 'flamedash'], [32, 'psybeam'], [38, 'firestorm'], [46, 'moonsign'], [52, 'lava']];
+const GEUNEUL: L = [[1, 'spook'], [1, 'bewitch'], [1, 'dash'], [1, 'bite'], [26, 'soulwave'], [32, 'nightveil'], [40, 'willowisp'], [46, 'nightdance']];
+const GASI: L = [[1, 'toxshot'], [1, 'poisonspore'], [1, 'dash'], [1, 'bite'], [26, 'poisontail'], [32, 'leafcut'], [40, 'toxblast'], [48, 'fullcharge']];
+const DORONG: L = [[1, 'scratch'], [1, 'mudthrow'], [10, 'dragonbreath'], [18, 'bite'], [26, 'quake'], [34, 'dragontail'], [44, 'earthsplit'], [52, 'skyfury']];
+const GEUMDU: L = [[1, 'splash'], [1, 'curl'], [1, 'dash'], [20, 'ironwall'], [30, 'ironclaw']];
+const GEOBUK: L = [[1, 'bubble'], [1, 'ironclaw'], [1, 'curl'], [22, 'wave'], [28, 'ironwall'], [34, 'steelpincer'], [40, 'tide'], [48, 'steelbeam'], [56, 'bigwave']];
+const HARUBANG: L = [[1, 'pebble'], [1, 'glare'], [1, 'curl'], [30, 'rockdrop'], [36, 'press'], [42, 'quake'], [48, 'rockstorm'], [55, 'earthsplit']];
 const ORGOL: L = [[1, 'telekinesis'], [1, 'spook'], [15, 'hoot'], [22, 'psybeam'], [30, 'soulwave'], [38, 'moonsign'], [44, 'nightdance']];
 const SEOLHWA: L = [[1, 'twinkle'], [1, 'frostbreath'], [40, 'icefang'], [45, 'moondust'], [55, 'avalanche'], [62, 'snowblossom']];
 const CHEOLSAN: L = [[1, 'mudthrow'], [1, 'ironclaw'], [40, 'quake'], [45, 'steelbeam'], [55, 'earthsplit'], [62, 'ironquake']];
@@ -242,6 +254,16 @@ const list: Def[] = [
   s('cheonha', '천하대장군', ['풀', '고스트'], [96, 108, 104, 60], 45, 228, JANGSEUNG, '대장군', '해솔고원 길목을 지켜 온 거대한 장승. 리그에 오르는 트레이너의 각오를 시험한다고 전해진다.'),
   s('yeolgigu', '열기구곰', ['비행'], [86, 72, 80, 92], 45, 175, GIGU, '열기구', '알록달록한 열기구에 작은 곰이 매달려 있다. 바람 부는 날이면 고원 위를 둥실둥실 떠다니며 손을 흔든다.'),
   s('orgol', '오르골인형', ['에스퍼', '고스트'], [70, 80, 78, 100], 45, 180, ORGOL, '오르골', '오르골 위 발레리나 인형에 깃든 혼. 태엽을 감지 않아도 밤이면 저절로 춤추며 잠을 부르는 멜로디를 울린다.'),
+  // ── 갈래 진화·특수 ──
+  s('kkoribyeol', '꼬리별여우', ['노말'], [48, 50, 44, 62], 120, 64, YEOU, '별꼬리', '꼬리 끝에 작은 별이 반짝이는 아기 여우. 어떤 돌을 만나느냐에 따라 전혀 다른 모습으로 자란다고 한다.', undefined, { stones: { firestone: 'bulyeou', shadestone: 'geuneulyeou', thornstone: 'gasiyeou' } }),
+  s('bulyeou', '불여우', ['불', '에스퍼'], [76, 92, 70, 96], 45, 198, BULYEOU, '여우불', '아홉 갈래 꼬리 끝마다 여우불이 타오른다. 불꽃으로 상대의 마음을 읽고 홀린다고 전해진다.'),
+  s('geuneulyeou', '그늘여우', ['고스트'], [80, 90, 74, 90], 45, 198, GEUNEUL, '그림자여우', '해가 지면 그림자 속으로 스며드는 여우. 보랏빛 눈만이 어둠 속에서 은은하게 빛난다.'),
+  s('gasiyeou', '가시여우', ['독'], [84, 92, 82, 76], 45, 198, GASI, '가시여우', '꼬리털이 독가시 덩굴로 변했다. 화가 나면 가시를 곤두세우고 보랏빛 독을 흩뿌린다.'),
+  s('kkomadorong', '꼬마도롱', ['드래곤'], [52, 60, 52, 50], 75, 70, DORONG, '도롱뇽용', '용의 마을 개울가에 사는 도롱뇽을 닮은 아기 용. 진흙 속에 숨어 낮잠 자는 걸 좋아한다.', [40, 'mireudorong']),
+  s('mireudorong', '미르도롱', ['드래곤', '땅'], [86, 100, 88, 70], 45, 220, DORONG, '미르', '땅속 깊은 물길을 따라 헤엄치는 용. 미르는 옛말로 용을 뜻하며, 지나간 자리에는 샘이 솟는다.'),
+  s('geumdukeop', '금두꺼비', ['강철'], [55, 45, 90, 150], 30, 400, GEUMDU, '복두꺼비', '온몸이 황금빛으로 빛나는 두꺼비. 만나면 복이 온다고 하지만, 눈 깜짝할 새 도망쳐 버린다.', undefined, { flees: true }),
+  s('geobukseon', '거북선', ['물', '강철'], [86, 90, 104, 58], 45, 210, GEOBUK, '철갑거북', '등껍질이 철갑선처럼 단단한 거북. 용머리 같은 입에서 뜨거운 물대포를 뿜어 바다를 지킨다.'),
+  s('dolharubang', '돌하르방', ['바위'], [92, 96, 110, 40], 45, 205, HARUBANG, '돌할아버지', '구멍이 송송 난 현무암 몸을 가진 몬스터. 마을 어귀에 묵묵히 서서 나쁜 기운을 막아 준다.'),
   // ── 유령선과 고스트 ──
   s('chorong', '초롱이', ['불'], [44, 50, 42, 60], 190, 58, CHORONG, '초롱', '밤길을 밝히던 종이 초롱에 작은 불씨가 깃들었다. 길 잃은 사람을 졸졸 따라다니며 발밑을 비춰 준다.', [22, 'cheongsa']),
   s('cheongsa', '청사초롱', ['불', '고스트'], [62, 72, 60, 82], 120, 140, CHORONG, '혼불초롱', '푸른 비단과 붉은 비단을 두른 초롱. 안에서 타는 불은 뜨겁지 않고 푸르스름하게 일렁인다.', [36, 'dokkaechorong']),
@@ -282,6 +304,7 @@ const ORDER = [
   'dukeop', 'dokdukeop', 'dukeopwang', 'geomi', 'geumul', 'wanggeomi', 'dujji', 'gulchak', 'jogae', 'godaetugu', 'kkomasijo', 'sijosae', 'kkakkak', 'kkamagwi', 'sutdol', 'hwarotdol', 'gamasot',
   'maekae', 'yeongi', 'amheuk', 'jangseung', 'cheonha', 'yeolgigu', 'orgol',
   'chorong', 'cheongsa', 'dokkaechorong', 'mulgwi', 'yuseon', 'haegol', 'yuaeng', 'bomulgoe',
+  'kkoribyeol', 'bulyeou', 'geuneulyeou', 'gasiyeou', 'kkomadorong', 'mireudorong', 'geumdukeop', 'geobukseon', 'dolharubang',
   'sangun', 'eunha', 'seolhwa', 'cheolsan', 'jujak', 'cheongryong', 'cheonji',
 ];
 const byId = Object.fromEntries(list.map((d) => [d.id, d]));

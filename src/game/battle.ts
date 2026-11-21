@@ -745,6 +745,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
 
   // --- main loop ---
   let result: BattleResult | null = null;
+  let turnNo = 0;
   while (!result) {
     const act = await chooseAction();
     if (act.kind === 'end') {
@@ -787,6 +788,12 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
       if (result) break;
     }
     if (result) break;
+    turnNo++;
+    if (wild && SPECIES[enemy.mon.species].flees && enemy.mon.hp > 0 && turnNo >= 2 && Math.random() < 0.3 + (turnNo - 2) * 0.25) {
+      await say(`${j(L(enemy), '은/는')} 번쩍하더니 도망쳐 버렸다!`);
+      result = 'run';
+      break;
+    }
     for (const b of [me, enemy]) {
       const m = b.mon;
       if (m.hp <= 0 || (m.status !== 'brn' && m.status !== 'psn')) continue;

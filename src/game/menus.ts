@@ -229,6 +229,9 @@ export class BagView extends Widget<string | null> {
 }
 
 /** Apply a healing/cure/revive item. Returns true when consumed. */
+/** Set by api.ts (avoids an import cycle). */
+export const hooksForMenus: { evolve: (m: Mon, to: string) => Promise<void> } = { evolve: async () => undefined };
+
 export async function useItemOn(id: string, m: Mon): Promise<boolean> {
   const it = ITEMS[id];
   const n = monName(m);
@@ -266,6 +269,14 @@ export async function useItemOn(id: string, m: Mon): Promise<boolean> {
     m.status = null;
     removeItem(id);
     await say(`${j(n, '이/가')} 기운을 되찾았다!`);
+    return true;
+  }
+  if (it.kind === 'stone') {
+    const to = SPECIES[m.species].stones?.[id];
+    if (!to) return say('효과가 없을 것 같다.').then(() => false);
+    removeItem(id);
+    await say(`${n}에게 ${j(it.name, '을/를')} 사용했다!`);
+    await hooksForMenus.evolve(m, to);
     return true;
   }
   await say('지금은 쓸 수 없다.');
@@ -437,6 +448,7 @@ export function shopStock(): [string[], number] {
     f.badge1 ? ['superball', 'superpotion', 'cure'] : [],
     f.badge2 ? ['revive', 'hyperpotion'] : [],
     f.badge3 ? ['hyperball', 'fullrestore'] : [],
+    f.badge4 ? ['firestone', 'shadestone', 'thornstone'] : [],
     f.ending ? ['maxrevive'] : [],
   ];
   const tier = tiers.reduce((t, list, i) => (list.length ? i : t), 0);

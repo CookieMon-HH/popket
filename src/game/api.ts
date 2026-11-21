@@ -10,7 +10,7 @@ import { game, runtime, addItem, saveGame, markCaught, addMon, itemCount, beaten
 import { createMon, healMon, monName, maxHp, type Mon } from './monster';
 import { runBattle, type BattleResult } from './battle';
 import { monSprite } from './sprites';
-import { partyMenu, bagMenu, DexView, TrainerCard, pickPartyMember, BoxView } from './menus';
+import { partyMenu, bagMenu, DexView, TrainerCard, pickPartyMember, BoxView, hooksForMenus } from './menus';
 import { learnMove, movesLearnedAt } from './learn';
 import { OPP, j, rand } from './common';
 import type { TrainerDef } from './maps';
@@ -239,9 +239,10 @@ export async function talkTo(npc: NPC) {
 // ---------------------------------------------------------------------------
 // Evolution
 
-async function evolve(m: Mon) {
+/** Evolve `m` (into `toId` for item evolution, otherwise its level evolution). */
+export async function evolve(m: Mon, toId?: string) {
   const from = SPECIES[m.species];
-  const to = SPECIES[from.evolve!.to];
+  const to = SPECIES[toId ?? from.evolve!.to];
   const st = { showNew: false, white: 0, bg: 0 };
   const bd = new Backdrop((ctx: Ctx) => {
     ctx.fillStyle = '#1e2436';
@@ -433,3 +434,8 @@ export function installHooks() {
 }
 
 export { fx };
+
+hooksForMenus.evolve = async (m, to) => {
+  await evolve(m, to);
+  await fadeTo(0, 12);
+};

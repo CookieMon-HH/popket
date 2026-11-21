@@ -53,3 +53,45 @@ export async function musicBox() {
   world.refreshNPCs();
   await giveMon('orgol', 24);
 }
+
+// ---------------------------------------------------------------------------
+// 들꽃마을: a girl whose fox kit keeps sneaking out to look at the stars.
+
+export async function foxGirl() {
+  if (game.flags.foxGift) {
+    await say('여우를 좋아하는 소녀: 꼬리별여우는 잘 지내? 어떤 돌을 보여 주느냐에 따라\n불여우도, 그늘여우도, 가시여우도 된대. 천천히 골라 줘!');
+    return;
+  }
+  if (!game.flags.badge1) {
+    await say('여우를 좋아하는 소녀: 우리 집 꼬리별여우가 새끼를 낳았어!\n그런데 이 아이는 자꾸 밤마다 별을 보러 나가 버려…');
+    return;
+  }
+  await say('여우를 좋아하는 소녀: 앗, 그 배지! 수련관에서 이긴 트레이너구나!');
+  await say('여우를 좋아하는 소녀: 이 꼬리별여우는 마을 밖 넓은 세상을 보고 싶어 해.\n너라면 맡겨도 될 것 같아. 데려가 줄래?');
+  if ((await choose('꼬리별여우를 데려갈까?', ['데려간다', '나중에'])) !== 0) {
+    await say('여우를 좋아하는 소녀: 그래… 마음이 바뀌면 언제든 말해 줘!');
+    return;
+  }
+  game.flags.foxGift = true;
+  await giveMon('kkoribyeol', 12);
+  await say('여우를 좋아하는 소녀: 꼬리별여우는 진화의 돌로 진화해.\n불꽃의돌, 그늘의돌, 가시의돌… 별빛시를 지나면 상점에서 팔 거야!');
+}
+
+// ---------------------------------------------------------------------------
+// 파도항구: the old shipwright rebuilds an ironclad after the ghost ship is calmed.
+
+export async function shipwright() {
+  if (game.flags.geobukGift) {
+    await say('늙은 배목수: 거북선은 잘 크고 있나? 철갑은 녹슬지 않게 가끔 닦아 주게.');
+    return;
+  }
+  if (!game.flags.shipDone) {
+    await say('늙은 배목수: 남쪽 부두의 유령선 때문에 바다에 나가질 못하네.\n내 오랜 짝꿍도 겁을 먹고 등껍질 속에 숨어 버렸어.');
+    return;
+  }
+  await say('늙은 배목수: 자네가 유령선을 잠재웠다고? 덕분에 이 녀석이 다시 고개를 내밀었다네!');
+  await say('늙은 배목수: 내가 평생 배를 고치며 함께한 거북선이야.\n이제 나는 늙어서 바다에 못 나가니… 자네와 함께 넓은 바다를 보게 해 주게.');
+  await wait(10);
+  game.flags.geobukGift = true;
+  await giveMon('geobukseon', 30);
+}
