@@ -12,6 +12,7 @@ import {
 } from './story';
 import { keeperTalk, escapeeTalk, safariExitTile, specialGate } from './safari';
 import { windTamerTalk } from './fly';
+import { chestProp, chestTalk } from './chests';
 import { boardShip, lockedBridge, lockedEngine, logPage1, portraitTalk, dalnimCabin, wardrobe, candleProp, candleTalk, pianoTalk, valveTalk, generatorTalk, shipAdminWinV2, wheelTalk, captainTalk, shipExitCheck } from './ship';
 import { receptionTalk } from './tournament';
 import { legendEncounter, snowMomPost, hwaryeonPost } from './legends';
@@ -529,7 +530,7 @@ const route2: MapDef = {
   signs: [{ x: 8, y: 25, text: '2번 도로\n북쪽: 속삭임숲   남쪽: 들꽃마을' }],
   encounters: {
     rate: 0.12,
-    table: [['tosil', 6, 8, 18], ['jjaek', 6, 8, 16], ['pojani', 6, 8, 22], ['jinheuk', 6, 8, 16], ['ddakkum', 6, 8, 16], ['kkomul', 5, 7, 5], ['doldol', 7, 8, 4], ['kkaeng', 6, 8, 8], ['monsil', 6, 8, 5], ['dalto', 7, 8, 4], ['mongmong', 6, 8, 5], ['agigom', 7, 8, 4]],
+    table: [['tosil', 6, 8, 18], ['jjaek', 6, 8, 16], ['pojani', 6, 8, 22], ['jinheuk', 6, 8, 16], ['ddakkum', 6, 8, 16], ['kkomul', 5, 7, 5], ['doldol', 7, 8, 4], ['kkaeng', 6, 8, 8], ['monsil', 6, 8, 5], ['dalto', 7, 8, 4], ['mongmong', 6, 8, 5], ['agigom', 7, 8, 4], ['chorong', 5, 7, 6]],
   },
   npcs: [
     {
@@ -661,6 +662,7 @@ const town3: MapDef = {
   labels: [{ x: 5, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 13, y: 5.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 8, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
   signs: [{ x: 17, y: 9, text: '물안개마을\n새벽마다 호수에 안개가 피어오르는 마을\n동쪽: 3번 도로  ·  서쪽: 솜사탕언덕' }],
   encounters: { rate: 0.1, table: [['pojani', 9, 11, 25], ['jinheuk', 9, 11, 20], ['baramsae', 10, 12, 20], ['dalto', 9, 11, 18], ['kkwae', 9, 11, 17], ['mongmong', 9, 11, 12]] },
+  fishing: [['banjjak', 8, 12, 55], ['munu', 8, 11, 25], ['mulgwi', 9, 12, 12], ['eungeo', 15, 17, 8]],
   npcs: [
     { id: 'fisher', x: 15, y: 4, dir: 'right', pal: PAL.fisher, talk: () => fisherTalk() },
     {
@@ -830,6 +832,9 @@ const cave: MapDef = {
   },
   fishing: [['banjjak', 15, 19, 40], ['eungeo', 18, 20, 30], ['munu', 15, 17, 15], ['meokmul', 18, 20, 15]],
   npcs: [
+    { id: 'cavechest1', x: 2, y: 6, dir: 'down', prop: chestProp('cave1'), talk: () => chestTalk('cave1', 'superpotion', 2, 17) },
+    { id: 'cavechest2', x: 12, y: 11, dir: 'down', prop: chestProp('cave2'), talk: () => chestTalk('cave2', 'superball', 3, 18) },
+    { id: 'cavechest3', x: 10, y: 5, dir: 'down', prop: chestProp('cave3'), talk: () => chestTalk('cave3', 'revive', 1, 18) },
     grunt('cgrunt1', 7, 16, 'down', 1, [['ggorichim', 18], ['meokmul', 18]],
       '침입자다! 여기서 끝장내 주마!', '으악!', '이 동굴의 별빛결정은 전부 두목님 거다.'),
     grunt('cgrunt2', 9, 8, 'down', 1, [['beoseot', 19], ['dokbul', 19]],
@@ -1140,7 +1145,7 @@ const route4: MapDef = {
   signs: [{ x: 16, y: 10, text: '4번 도로\n북쪽: 별빛시   남쪽: 파도항구' }],
   encounters: {
     rate: 0.12,
-    table: [['hoeori', 24, 26, 10], ['tongsil', 24, 26, 10], ['beonjjeok', 24, 26, 10], ['heukjang', 24, 26, 10], ['jeolgu', 24, 26, 8], ['kwontu', 23, 25, 8], ['satba', 24, 26, 8], ['seolpyo', 24, 25, 6], ['cheolgap', 24, 26, 8], ['beoseot', 24, 26, 8], ['mujigae', 24, 25, 4], ['olppaemi', 24, 26, 8]],
+    table: [['hoeori', 24, 26, 10], ['tongsil', 24, 26, 10], ['beonjjeok', 24, 26, 10], ['heukjang', 24, 26, 10], ['jeolgu', 24, 26, 8], ['kwontu', 23, 25, 8], ['satba', 24, 26, 8], ['seolpyo', 24, 25, 6], ['cheolgap', 24, 26, 8], ['beoseot', 24, 26, 8], ['mujigae', 24, 25, 4], ['olppaemi', 24, 26, 8], ['chorong', 23, 25, 8]],
   },
   fishing: [['banjjak', 22, 26, 40], ['meokmul', 23, 26, 30], ['eungeo', 24, 26, 30]],
   npcs: [
@@ -1191,7 +1196,7 @@ const town5: MapDef = {
     { x: 16, y: 13.1, text: '유령선', color: '#d8d0f8', ink: '#3a2a6a' },
   ],
   signs: [],
-  fishing: [['meokmul', 24, 27, 40], ['munu', 22, 26, 20], ['eungeo', 24, 27, 25], ['daewang', 29, 30, 5], ['jelly', 24, 26, 10]],
+  fishing: [['meokmul', 24, 27, 40], ['munu', 22, 26, 20], ['eungeo', 24, 27, 25], ['daewang', 29, 30, 5], ['jelly', 24, 26, 10], ['mulgwi', 22, 25, 14]],
   npcs: [
     { id: 't5sailor', x: 13, y: 2, dir: 'left', pal: PAL2.sailor, talk: '뱃사람: 유령선은 남쪽 부두 끝에 있다네.\n파란 도깨비불이 둥둥 떠다니니 조심하게!' },
     { id: 't5old', x: 20, y: 6, dir: 'down', pal: PAL.oldman, move: 'look', talk: '이 항구에서 서쪽 해변길을 따라 남쪽으로 가면 불꽃마을이 나온다네.\n뜨끈한 온천이 아주 좋지!' },
@@ -1486,7 +1491,7 @@ const safari_jungle: MapDef = {
 
 // 유람선 은파호 — 갑판 (안개가 짙고, 전기가 들어오면 밝아진다)
 const ship: MapDef = {
-  id: 'ship', name: '은파호 — 갑판', dark: () => !f('ship_power'),
+  id: 'ship', name: '은파호 — 갑판', dark: () => !f('ship_power') && !f('shipDone'),
   tiles: [
     '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
     '~8888888888888888888888888888~',
@@ -1512,10 +1517,11 @@ const ship: MapDef = {
     { x: 25, y: 9, to: 'ship_engine', tx: 8, ty: 10, dir: 'up' },
   ],
   labels: [{ x: 15.5, y: 6.3, text: '은파호', color: '#f4e8c0', ink: '#6a4a10' }],
+  encounters: { rate: 0.07, tiles: '6', table: [['chorong', 24, 26, 18], ['cheongsa', 25, 27, 4], ['mulgwi', 24, 26, 16], ['haegol', 24, 26, 16], ['dokbul', 24, 26, 16], ['dokkae', 25, 27, 6], ['bomulgoe', 26, 27, 2]] },
   npcs: [
-    { id: 'shiplock_bridge', x: 15, y: 4, dir: 'down', prop: '"', hidden: () => f('ship_watch') && f('ship_power'), talk: () => lockedBridge() },
-    { id: 'shiplock_engine', x: 25, y: 9, dir: 'down', prop: '"', hidden: () => f('ship_key'), talk: () => lockedEngine() },
-    grunt('sgrunt1', 9, 10, 'right', 4, [['dokkae', 29], ['meokmul', 29]], '도깨비불이 무섭지 않냐? 흐흐흐…', '으악, 진짜 유령보다 무서운 녀석이다!', '유령선은 우리가 꾸며 낸 거였어… 그런데 가끔 진짜 소리가 나.'),
+    { id: 'shiplock_bridge', x: 15, y: 4, dir: 'down', prop: '"', hidden: () => (f('ship_watch') && f('ship_power')) || f('shipDone'), talk: () => lockedBridge() },
+    { id: 'shiplock_engine', x: 25, y: 9, dir: 'down', prop: '"', hidden: () => f('ship_key') || f('shipDone'), talk: () => lockedEngine() },
+    grunt('sgrunt1', 9, 10, 'right', 4, [['chorong', 28], ['meokmul', 29]], '도깨비불이 무섭지 않냐? 흐흐흐…', '으악, 진짜 유령보다 무서운 녀석이다!', '유령선은 우리가 꾸며 낸 거였어… 그런데 가끔 진짜 소리가 나.'),
     { id: 'sghost1', x: 4, y: 9, dir: 'down', mon: 'dokbul', move: 'wander', hidden: () => f('shipDone'), talk: '도깨비불이 슬픈 눈으로 흔들리고 있다…\n누군가를 기다리는 것 같다.' },
     { id: 'sghost2', x: 21, y: 11, dir: 'down', mon: 'dokbul', move: 'wander', hidden: () => f('shipDone'), talk: '도깨비불이 억지로 불을 피우고 있다…' },
     { id: 'deckitem', x: 26, y: 3, dir: 'down', item: { id: 'superpotion', qty: 2 } },
@@ -1527,7 +1533,7 @@ const ship: MapDef = {
 };
 
 const ship_cabins: MapDef = {
-  id: 'ship_cabins', name: '은파호 — 선실 복도', indoor: true, dark: () => !f('ship_power'),
+  id: 'ship_cabins', name: '은파호 — 선실 복도', indoor: true, dark: () => !f('ship_power') && !f('shipDone'),
   tiles: [
     '77777777777777777777777777',
     '7oooob7oooob7oooob7oooob77',
@@ -1540,6 +1546,7 @@ const ship_cabins: MapDef = {
     '77777777777777777777777777',
   ],
   warps: [{ x: 0, y: 6, to: 'ship', tx: 12, ty: 9, dir: 'down' }],
+  encounters: { rate: 0.07, tiles: '9', table: [['chorong', 24, 26, 18], ['cheongsa', 25, 27, 4], ['mulgwi', 24, 26, 16], ['haegol', 24, 26, 16], ['dokbul', 24, 26, 16], ['dokkae', 25, 27, 6], ['bomulgoe', 26, 27, 2]] },
   npcs: [
     { id: 'shiplog1', x: 2, y: 1, dir: 'down', prop: '(', talk: () => logPage1() },
     grunt('sgrunt2', 9, 2, 'down', 2, [['dodug', 30], ['ggorichim', 30]], '여기서 한 발짝도 못 지나간다!', '크윽…', '간부님은 조종실을 차지하고 계셔. 문은 잠겨 있지만.'),
@@ -1552,7 +1559,7 @@ const ship_cabins: MapDef = {
 };
 
 const ship_ballroom: MapDef = {
-  id: 'ship_ballroom', name: '은파호 — 연회장', indoor: true, dark: () => !f('ship_power') && !f('ship_watch'),
+  id: 'ship_ballroom', name: '은파호 — 연회장', indoor: true, dark: () => !f('ship_power') && !f('shipDone') && !f('ship_watch'),
   tiles: [
     '777777777777777777',
     '7TooooooooooooooT7',
@@ -1572,19 +1579,20 @@ const ship_ballroom: MapDef = {
     { x: 8, y: 12, to: 'ship', tx: 18, ty: 9, dir: 'down' },
     { x: 9, y: 12, to: 'ship', tx: 18, ty: 9, dir: 'down' },
   ],
+  encounters: { rate: 0.07, tiles: '9', table: [['chorong', 24, 26, 18], ['cheongsa', 25, 27, 4], ['mulgwi', 24, 26, 16], ['haegol', 24, 26, 16], ['dokbul', 24, 26, 16], ['dokkae', 25, 27, 6], ['bomulgoe', 26, 27, 2]] },
   npcs: [
     { id: 'spiano', x: 9, y: 2, dir: 'down', prop: '[', talk: () => pianoTalk() },
     { id: 'candle_star', x: 2, y: 5, dir: 'down', prop: candleProp('별'), talk: () => candleTalk('별') },
     { id: 'candle_sun', x: 15, y: 5, dir: 'down', prop: candleProp('해'), talk: () => candleTalk('해') },
     { id: 'candle_wave', x: 2, y: 9, dir: 'down', prop: candleProp('파도'), talk: () => candleTalk('파도') },
     { id: 'candle_moon', x: 15, y: 9, dir: 'down', prop: candleProp('달'), talk: () => candleTalk('달') },
-    grunt('sgrunt4', 12, 6, 'left', 3, [['dokbul', 30], ['dodug', 31]], '연회장은 우리 구역이다! 촛불은 건드리지 마라!', '촛불… 켜면 안 된다니까…', '촛불을 아무렇게나 켜면 바람이 불어서 다 꺼져. 무섭다고!'),
+    grunt('sgrunt4', 12, 6, 'left', 3, [['haegol', 30], ['dodug', 31]], '연회장은 우리 구역이다! 촛불은 건드리지 마라!', '촛불… 켜면 안 된다니까…', '촛불을 아무렇게나 켜면 바람이 불어서 다 꺼져. 무섭다고!'),
     { id: 'sghost3', x: 6, y: 4, dir: 'down', mon: 'dokbul', move: 'wander', hidden: () => f('shipDone'), talk: '도깨비불이 피아노 주위를 빙글빙글 돈다…' },
   ],
 };
 
 const ship_engine: MapDef = {
-  id: 'ship_engine', name: '은파호 — 기관실', indoor: true, dark: () => !f('ship_power'),
+  id: 'ship_engine', name: '은파호 — 기관실', indoor: true, dark: () => !f('ship_power') && !f('shipDone'),
   tiles: [
     '------------------',
     '-0000000000000000-',
@@ -1603,6 +1611,7 @@ const ship_engine: MapDef = {
     { x: 8, y: 11, to: 'ship', tx: 25, ty: 8, dir: 'down' },
     { x: 9, y: 11, to: 'ship', tx: 25, ty: 8, dir: 'down' },
   ],
+  encounters: { rate: 0.07, tiles: '0', table: [['chorong', 24, 26, 18], ['cheongsa', 25, 27, 4], ['mulgwi', 24, 26, 16], ['haegol', 24, 26, 16], ['dokbul', 24, 26, 16], ['dokkae', 25, 27, 6], ['bomulgoe', 26, 27, 2]] },
   npcs: [
     { id: 'sgenerator', x: 9, y: 2, dir: 'down', prop: ')', talk: () => generatorTalk() },
     ...[0, 1, 2, 3].map((i) => ({ id: 'svalve' + i, x: 3 + i * 4, y: 5, dir: 'down' as Dir, prop: '!', talk: () => valveTalk(i) })),
@@ -1631,7 +1640,7 @@ const ship_bridge: MapDef = {
   ],
   npcs: [
     { id: 'swheel', x: 7, y: 2, dir: 'down', prop: '@', talk: () => wheelTalk() },
-    { id: 'shiplock_ghost', x: 11, y: 0, dir: 'down', prop: '"', hidden: () => f('ship_wheel'), talk: '벽에 문 모양의 이음매가 보인다. 하지만 열리지 않는다.' },
+    { id: 'shiplock_ghost', x: 11, y: 0, dir: 'down', prop: '"', hidden: () => f('ship_wheel') || f('shipDone'), talk: '벽에 문 모양의 이음매가 보인다. 하지만 열리지 않는다.' },
     grunt('sgrunt6', 3, 4, 'right', 3, [['dokkae', 31], ['dokjeongal', 31]], '간부님께 가려면 나부터 쓰러뜨려라!', '간부님, 죄송합니다…', '키를 돌리면… 배가 울어. 진짜라고.'),
     {
       id: 'sadmin', x: 7, y: 4, dir: 'down', pal: PAL.admin, sight: 2, hidden: () => f('ship_admin') || f('shipDone'),
@@ -1700,11 +1709,11 @@ const gym4: MapDef = {
   ],
   npcs: [
     { id: 'g4note', x: 9, y: 10, dir: 'left', pal: PAL.pupil, hidden: () => f('shipDone'), talk: '수련생: 관장님은 항구의 유령선을 조사하러 가셨어요.\n이 수련관은 어둠 속 순간이동 발판을 찾아 관장님께 가야 해요.' },
-    { id: 'g4medium1', x: 5, y: 5, dir: 'down', pal: PAL2.medium, sight: 2, hidden: () => !f('shipDone'), trainer: tr('g4m1', '무녀', '은하', PAL2.medium, [['dokbul', 31], ['dokkae', 32]], 1200, '어둠 속에서 무엇이 보이나요…?', '당신 뒤에서 빛이 보여요.', '관장님의 고스트 몬스터에겐 노말 기술이 통하지 않아요.') },
-    { id: 'g4medium2', x: 12, y: 5, dir: 'left', pal: PAL2.medium, sight: 4, hidden: () => !f('shipDone'), trainer: tr('g4m2', '무녀', '새벽', PAL2.medium, [['dokkae', 32], ['jeolgu', 31]], 1200, '달빛이 당신을 시험할 거예요.', '달빛이 당신 편이군요.', '관장님은 악 타입 기술을 조심하신대요.') },
+    { id: 'g4medium1', x: 5, y: 5, dir: 'down', pal: PAL2.medium, sight: 2, hidden: () => !f('shipDone'), trainer: tr('g4m1', '무녀', '은하', PAL2.medium, [['haegol', 31], ['dokkae', 32]], 1200, '어둠 속에서 무엇이 보이나요…?', '당신 뒤에서 빛이 보여요.', '관장님의 고스트 몬스터에겐 노말 기술이 통하지 않아요.') },
+    { id: 'g4medium2', x: 12, y: 5, dir: 'left', pal: PAL2.medium, sight: 4, hidden: () => !f('shipDone'), trainer: tr('g4m2', '무녀', '새벽', PAL2.medium, [['mulgwi', 31], ['jeolgu', 31]], 1200, '달빛이 당신을 시험할 거예요.', '달빛이 당신 편이군요.', '관장님은 악 타입 기술을 조심하신대요.') },
     {
       id: 'dalnim', x: 6, y: 1, dir: 'down', pal: PAL.dalnim, hidden: () => !f('shipDone'),
-      trainer: tr('leader4', '관장', '달님', PAL.dalnim, [['dokkae', 31], ['meokmul', 32], ['wolgung', 32], ['dokdae', 34]], 3500,
+      trainer: tr('leader4', '관장', '달님', PAL.dalnim, [['cheongsa', 31], ['meokmul', 32], ['wolgung', 32], ['dokdae', 34]], 3500,
         '유령선에서는 정말 고마웠어요. 저는 파도 수련관의 관장 달님.\n하지만 승부는 승부예요. 달빛 아래 그림자를 보여 드릴게요!',
         '당신의 빛이 제 그림자를 모두 비췄네요…', '흑영은 불꽃산에 있어요. 부디 조심하세요.', leader4Win),
     },
@@ -1743,7 +1752,7 @@ const route5: MapDef = {
   signs: [{ x: 13, y: 15, text: '5번 도로 해변길\n북동쪽: 파도항구   남쪽: 불꽃마을' }],
   encounters: {
     rate: 0.13,
-    table: [['ubiduck', 26, 28, 14], ['meokmul', 26, 28, 10], ['eolpeng', 26, 28, 10], ['dokjeongal', 26, 28, 10], ['jangjak', 26, 28, 8], ['jangma', 26, 28, 10], ['beotkkot', 26, 28, 10], ['wangmong', 26, 28, 8], ['aurora', 27, 28, 4], ['eungeo', 26, 28, 8]],
+    table: [['ubiduck', 26, 28, 14], ['meokmul', 26, 28, 10], ['eolpeng', 26, 28, 10], ['dokjeongal', 26, 28, 10], ['jangjak', 26, 28, 8], ['jangma', 26, 28, 10], ['beotkkot', 26, 28, 10], ['wangmong', 26, 28, 8], ['aurora', 27, 28, 4], ['eungeo', 26, 28, 8], ['haegol', 26, 28, 14]],
   },
   fishing: [['meokmul', 26, 28, 40], ['aurora', 26, 28, 20], ['eungeo', 26, 28, 30], ['daewang', 30, 31, 10]],
   npcs: [
@@ -2408,6 +2417,8 @@ const skyroad: MapDef = {
     table: [['seolpyo', 52, 58, 12], ['hoeori', 52, 58, 12], ['bingsan', 53, 58, 10], ['geoam', 53, 58, 10], ['wolgung', 53, 58, 10], ['noejeon', 53, 58, 10], ['jangsa', 54, 59, 8], ['byeolkkum', 54, 59, 8], ['daeji', 54, 59, 8], ['eolpeng', 52, 57, 8], ['cheonryong', 56, 60, 4]],
   },
   npcs: [
+    { id: 'skychest1', x: 18, y: 9, dir: 'down', prop: chestProp('sky1'), talk: () => chestTalk('sky1', 'maxrevive', 1, 58) },
+    { id: 'skychest2', x: 1, y: 23, dir: 'down', prop: chestProp('sky2'), talk: () => chestTalk('sky2', 'fullrestore', 2, 58) },
     { id: 'sky1', x: 9, y: 13, dir: 'down', pal: PAL.monk, sight: 3, trainer: tr('sky1', '천공의 수행자', '바람결', PAL.monk, [['hoeori', 64], ['olppaemi', 64], ['beotkkot', 64], ['cheonryong', 66]], 5200, '이 길은 하늘과 가장 가까운 수행의 길. 각오는 되었나!', '바람이 너의 편이었군…', '정상의 해솔 님은 여섯 가지 다른 힘을 쓰신다.') },
     { id: 'sky2', x: 4, y: 11, dir: 'right', pal: PAL.hiker, sight: 4, trainer: tr('sky2', '천공의 수행자', '무쇠', PAL.hiker, [['geoam', 65], ['jangsa', 65], ['gangjip', 65], ['geosin', 67]], 5400, '단단함이야말로 최고의 힘이다!', '내 무쇠가 부서지다니!', '강철과 땅만으로는 해솔 님께 닿지 못하더군.') },
     { id: 'sky3', x: 15, y: 6, dir: 'left', pal: PAL.skier, sight: 4, trainer: tr('sky3', '천공의 수행자', '서릿발', PAL.skier, [['bingsan', 66], ['seolpyo', 66], ['wangbingsu', 66], ['haeil', 68]], 5600, '구름 위의 냉기를 맛보아라!', '얼음이 녹아내린다…', '천지는 얼음과 페어리 기술을 싫어한다던데.') },

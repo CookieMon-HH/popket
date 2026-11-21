@@ -66,6 +66,10 @@ const BUKGOM: L = [[1, 'tackle'], [1, 'frostbreath'], [6, 'jab'], [12, 'icefang'
 const HYEON: L = [[1, 'tackle'], [1, 'curl'], [6, 'splash'], [12, 'dragonbreath'], [18, 'ironwall'], [24, 'wave'], [30, 'dragontail'], [36, 'tide'], [42, 'skyfury']];
 const SANGUN: L = [[1, 'pebble'], [1, 'spook'], [25, 'rockdrop'], [30, 'focus'], [34, 'soulwave'], [42, 'mountainroar'], [50, 'rockstorm']];
 const CHEONJI: L = [[1, 'dragontail'], [1, 'psybeam'], [45, 'meditate'], [50, 'moonsign'], [60, 'skyfury'], [70, 'genesis']];
+const CHORONG: L = [[1, 'tackle'], [1, 'ember'], [7, 'spook'], [13, 'willowisp'], [18, 'flamedash'], [24, 'soulwave'], [30, 'hotsteam'], [37, 'nightdance'], [43, 'firestorm']];
+const MULGWI: L = [[1, 'splash'], [1, 'spook'], [8, 'bubble'], [14, 'bewitch'], [20, 'tentacle'], [26, 'soulwave'], [32, 'wave'], [38, 'nightdance'], [44, 'tide']];
+const HAEGOL: L = [[1, 'peck'], [1, 'spook'], [6, 'growl'], [11, 'gust'], [17, 'wingcut'], [23, 'soulwave'], [30, 'dive'], [36, 'nightdance'], [42, 'storm']];
+const BOMUL: L = [[1, 'bite'], [1, 'spook'], [15, 'ironwall'], [22, 'bewitch'], [28, 'club'], [34, 'soulwave'], [40, 'nightdance']];
 const SEOLHWA: L = [[1, 'twinkle'], [1, 'frostbreath'], [40, 'icefang'], [45, 'moondust'], [55, 'avalanche'], [62, 'snowblossom']];
 const CHEOLSAN: L = [[1, 'mudthrow'], [1, 'ironclaw'], [40, 'quake'], [45, 'steelbeam'], [55, 'earthsplit'], [62, 'ironquake']];
 const JUJAK: L = [[1, 'ember'], [1, 'gust'], [40, 'flamedash'], [45, 'wingcut'], [55, 'storm'], [62, 'phoenixfire']];
@@ -182,6 +186,15 @@ const list: Def[] = [
   s('hyeonmu', '현무', ['물', '드래곤'], [108, 96, 122, 54], 45, 240, HYEON, '현무', '등딱지를 감싼 검은 뱀과 함께 다니는 거북. 북쪽 바다를 지키는 수호자라고 전해진다.'),
   // 특별한 몬스터
   s('sangun', '산군', ['바위', '고스트'], [100, 118, 92, 110], 20, 250, SANGUN, '산신령', '운무봉을 지키는 흰 호랑이의 정령. 숲·물·바위의 세 방울 소리를 들으면 서낭당으로 내려온다고 전해진다.', undefined, { special: true }),
+  // ── 유령선과 고스트 ──
+  s('chorong', '초롱이', ['불'], [44, 50, 42, 60], 190, 58, CHORONG, '초롱', '밤길을 밝히던 종이 초롱에 작은 불씨가 깃들었다. 길 잃은 사람을 졸졸 따라다니며 발밑을 비춰 준다.', [22, 'cheongsa']),
+  s('cheongsa', '청사초롱', ['불', '고스트'], [62, 72, 60, 82], 120, 140, CHORONG, '혼불초롱', '푸른 비단과 붉은 비단을 두른 초롱. 안에서 타는 불은 뜨겁지 않고 푸르스름하게 일렁인다.', [36, 'dokkaechorong']),
+  s('dokkaechorong', '도깨비초롱', ['불', '고스트'], [84, 104, 76, 110], 45, 228, CHORONG, '도깨비불', '뿔 달린 도깨비가 초롱을 뒤집어쓴 모습. 깊은 밤 바닷가에 수십 개의 초롱불을 띄워 배를 홀린다고 한다.'),
+  s('mulgwi', '물귀신', ['물', '고스트'], [58, 60, 56, 48], 170, 66, MULGWI, '물귀신', '젖은 머리카락을 늘어뜨린 채 물가에 서 있는 혼. 발목을 붙잡는다는 소문과 달리 사실은 외로움을 많이 탄다.', [32, 'yuseon']),
+  s('yuseon', '유령선장', ['물', '고스트'], [96, 100, 86, 78], 60, 205, MULGWI, '유령선장', '낡은 선장 모자를 쓰고 안개 속을 떠도는 혼. 바다에서 길 잃은 배를 항구까지 이끌어 준다고 한다.'),
+  s('haegol', '해골앵무', ['고스트', '비행'], [45, 56, 40, 72], 180, 62, HAEGOL, '해골새', '해적선 돛대에 앉아 있던 앵무새의 혼. 들은 말을 똑같이 따라 해서 선원들을 놀래 준다.', [30, 'yuaeng']),
+  s('yuaeng', '유령앵무', ['고스트', '비행'], [72, 94, 62, 106], 75, 168, HAEGOL, '유령새', '안개처럼 흩날리는 깃털을 가진 앵무새. 한밤중 바다 위를 날며 옛 뱃노래를 부른다.'),
+  s('bomulgoe', '보물상자도깨비', ['고스트'], [72, 92, 108, 40], 45, 190, BOMUL, '보물상자', '보물상자 속에 숨어 사는 도깨비. 뚜껑을 여는 사람을 덥석 물고는, 마음에 들면 금화를 하나 건넨다.'),
   s('seolhwa', '설화', ['얼음', '페어리'], [100, 108, 95, 118], 5, 290, SEOLHWA, '눈꽃사슴', '서리마을 얼음굴 가장 깊은 곳에 산다는 수호신. 뿔에 맺힌 눈꽃이 녹지 않는 한 겨울이 끝나지 않는다고 전해진다.', undefined, { legend: true }),
   s('cheolsan', '철산', ['땅', '강철'], [120, 125, 120, 60], 5, 290, CHEOLSAN, '무쇠산', '별빛동굴 가장 깊은 갱도를 지키는 수호신. 무쇠 같은 몸이 움직일 때마다 산이 울린다고 한다.', undefined, { legend: true }),
   s('jujak', '주작', ['불', '비행'], [105, 118, 92, 120], 5, 290, JUJAK, '붉은새', '불꽃산 깊은 곳에서 남쪽 하늘을 지키는 사신. 날갯짓 한 번에 화산이 잠든다고 한다.', undefined, { legend: true }),
@@ -209,6 +222,7 @@ const ORDER = [
   'pongduck', 'ubiduck', 'kkotip', 'beotkkot', 'suguk', 'jangma', 'bingsu', 'wangbingsu',
   'agibuk', 'bingsan', 'hyeonmuk', 'hyeonmu',
   'kkomaryong', 'nalgae', 'cheonryong',
+  'chorong', 'cheongsa', 'dokkaechorong', 'mulgwi', 'yuseon', 'haegol', 'yuaeng', 'bomulgoe',
   'sangun', 'eunha', 'seolhwa', 'cheolsan', 'jujak', 'cheongryong', 'cheonji',
 ];
 const byId = Object.fromEntries(list.map((d) => [d.id, d]));

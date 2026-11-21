@@ -202,7 +202,7 @@ export async function wheelTalk() {
 
 const captainTeam = (): TrainerDef => ({
   id: 'captain_haewol', cls: '은파호 선장', name: '해월', pal: PAL.captain,
-  team: [['dokbul', 31], ['meokmul', 31], ['dokkae', 33]],
+  team: [['mulgwi', 31], ['haegol', 31], ['dokkae', 33]],
   reward: 3000, intro: '', defeat: '…훌륭하구나. 몬스터들이 너를 믿고 있어.', after: '',
 });
 
