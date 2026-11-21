@@ -413,14 +413,43 @@ export class ShadePix extends Pix {
     this.d[i] = c; this.base[i] = b; this.lvl[i] = l;
   }
 
+  /** Back view: face details are not drawn over the body. */
+  back = false;
+  /** Back view: colours repainted as another (painted faces, tusks, glowing eyes). */
+  remap: Record<string, string> = {};
+  private m(c: string) { return this.back ? this.remap[c] ?? c : c; }
+  private onlyEmpty = false;
+
   set(x: number, y: number, c: string) {
+    c = this.m(c);
     if (this.group) { this.group.set(x, y, c); return; }
+    if ((this.onlyEmpty || this.back) && this.get(x, y)) return; // details only where they stick out
     const col = c === OLD_K ? LASH : c;
     this.put(x, y, col, col, -1);
   }
 
+  /** Is a shape of this colour and pixel area a face detail (eyes, mouth, cheeks…)? */
+  private detail(c: string, area: number) {
+    if (!this.back || this.group) return false;
+    const [r, g, b] = toRgb(c);
+    const dark = r + g + b < 170, white = r > 232 && g > 232 && b > 232;
+    return area <= 14 || ((dark || white || c === OLD_K || c === LASH) && area <= 60);
+  }
+  private asDetail(draw: () => void) {
+    this.onlyEmpty = true;
+    try { draw(); } finally { this.onlyEmpty = false; }
+  }
+
+  line(x0: number, y0: number, x1: number, y1: number, c: string) {
+    c = this.m(c);
+    const [r, g, b] = toRgb(c);
+    if (this.back && !this.group && (r + g + b < 170 || c === OLD_K)) { this.asDetail(() => super.line(x0, y0, x1, y1, c)); return; }
+    super.line(x0, y0, x1, y1, c);
+  }
+
   /** Repaint a pixel in another material, keeping its shading (stripes, bands). */
   recolor(x: number, y: number, c: string) {
+    c = this.m(c);
     const i = Math.floor(y) * this.w + Math.floor(x);
     const l = this.lvl[i];
     if (l < 0) { this.set(x, y, c); return; }
@@ -429,6 +458,8 @@ export class ShadePix extends Pix {
   }
 
   ell(cx: number, cy: number, rx: number, ry: number, c: string) {
+    c = this.m(c);
+    if (this.detail(c, Math.PI * rx * ry)) { this.asDetail(() => super.ell(cx, cy, rx, ry, c)); return; }
     if (this.group || rx * ry < 4.5 || c === OLD_K || c === WHITE || c === LASH) { super.ell(cx, cy, rx, ry, c); return; }
     const m = new Pix(this.w, this.h);
     m.ell(cx, cy, rx, ry, c);
@@ -436,6 +467,8 @@ export class ShadePix extends Pix {
   }
 
   rect(x: number, y: number, w: number, h: number, c: string) {
+    c = this.m(c);
+    if (this.detail(c, w * h)) { this.asDetail(() => super.rect(x, y, w, h, c)); return; }
     if (this.group || w * h <= 4 || w === 1 || h === 1 || c === OLD_K || c === WHITE || c === LASH) { super.rect(x, y, w, h, c); return; }
     const m = new Pix(this.w, this.h);
     m.rect(x, y, w, h, c);
@@ -443,7 +476,9 @@ export class ShadePix extends Pix {
   }
 
   tri(ax: number, ay: number, bx: number, by: number, cx: number, cy: number, c: string) {
+    c = this.m(c);
     const area = Math.abs((bx - ax) * (cy - ay) - (cx - ax) * (by - ay)) / 2;
+    if (this.detail(c, area)) { this.asDetail(() => super.tri(ax, ay, bx, by, cx, cy, c)); return; }
     if (this.group || area < 6 || c === OLD_K || c === WHITE || c === LASH) { super.tri(ax, ay, bx, by, cx, cy, c); return; }
     const m = new Pix(this.w, this.h);
     m.tri(ax, ay, bx, by, cx, cy, c);
@@ -510,6 +545,7 @@ export class ShadePix extends Pix {
 
 /** v2 eye used by the restyled sprites (called through the old eye helpers). */
 export function eyeV2(p: Pix, x: number, y: number, h: number, w: number, iris = DEFAULT_IRIS) {
+  if (p instanceof ShadePix && p.back) return; // no face from behind
   if (h >= 4 && w >= 3) { eye(p, x, y, iris); return; }
   const ir = R(iris);
   p.rect(x, y, w, h, LASH);
@@ -544,6 +580,17 @@ function eraseFace(p: ShadePix) {
   }
 }
 
+/** Species whose faces are painted in body-sized shapes: what those colours become from behind. */
+const BACK_REMAP: Record<string, Record<string, string>> = {
+  haeil: { '#fffbe8': '#3a6ec0', '#e8f6ff': '#3a6ec0' },
+  jangseung: { '#d8323a': '#a8784a', '#ffe0c0': '#a8784a', '#ffffff': '#a8784a', '#6a4a2a': '#a8784a' },
+  cheonha: { '#c8282a': '#8a5a30', '#ffffff': '#8a5a30', '#ff3a3a': '#8a5a30', '#4a2e18': '#8a5a30' },
+  bomulgoe: { '#4a1a2a': '#8a5630', '#e8507a': '#8a5630', '#ffffff': '#8a5630', '#ffe040': '#8a5630' },
+  gamasot: { '#ff3a2a': '#3a3a44' },
+  bueong: { '#f4e0c0': '#a8784a', '#ffd040': '#a8784a', '#f0a030': '#a8784a' },
+  olppaemi: { '#2e2250': '#4a3a7a', '#7ae0ff': '#4a3a7a', '#c8b8f0': '#4a3a7a', '#ffe070': '#4a3a7a', '#f0b030': '#4a3a7a' },
+};
+
 /** Front (facing left) or back (facing right) v2 sprite for any species. */
 export function v2Sprite(species: string, back: boolean, draw: (p: Pix) => void): Pix {
   const hand = MON_V2[species];
@@ -551,8 +598,9 @@ export function v2Sprite(species: string, back: boolean, draw: (p: Pix) => void)
   mirrored = back;
   try {
     const p = new ShadePix();
+    p.back = back;
+    if (back) p.remap = BACK_REMAP[species] ?? {};
     draw(p);
-    if (back) eraseFace(p);
     p.finish();
     return back ? p.flipped() : p;
   } finally {
