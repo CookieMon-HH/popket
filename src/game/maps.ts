@@ -82,7 +82,7 @@ export interface NPCDef {
 
 type Table = [string, number, number, number][];
 
-export type Ambience = 'ship' | 'shipdeck' | 'volcano' | 'volcanoheart' | 'forest' | 'snow' | 'blizzard' | 'icecave' | 'den';
+export type Ambience = 'ship' | 'shipdeck' | 'volcano' | 'volcanoheart' | 'forest' | 'snow' | 'blizzard' | 'icecave' | 'den' | 'mist' | 'sky';
 
 export interface MapDef {
   /** Safari rules: timer, safari balls and safari-style battles. */
@@ -1078,7 +1078,7 @@ center4.warps = [
 ];
 
 const peak: MapDef = {
-  id: 'peak', name: '운무봉',
+  id: 'peak', name: '운무봉', ambience: 'mist',
   tiles: [
     'CCCCCCCCCCCCCCCCCC',
     'CCCCCC..J...CCCCCC',
@@ -2600,7 +2600,7 @@ const route8: MapDef = {
 // 엔딩 이후 — 천공의 길 · 천공의 신전
 
 const skyroad: MapDef = {
-  id: 'skyroad', name: '천공의 길', edge: 'h',
+  id: 'skyroad', name: '천공의 길', ambience: 'sky', edge: 'h',
   tiles: [
     'hhhhhhhhh==hhhhhhhhh',
     'h```jjjj`==`jjjj```h',
@@ -2656,7 +2656,7 @@ const skyroad: MapDef = {
 };
 
 const summit: MapDef = {
-  id: 'summit', name: '천공의 신전', edge: 'h',
+  id: 'summit', name: '천공의 신전', ambience: 'sky', edge: 'h',
   tiles: [
     'hhhhhhhhhhhhhhhh',
     'h``````````````h',

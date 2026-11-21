@@ -645,6 +645,29 @@ export class Overworld implements Scene {
       vg.addColorStop(1, bl ? 'rgba(220,230,245,0.5)' : 'rgba(10,20,40,0.4)');
       g.fillStyle = vg;
       g.fillRect(0, 0, W, H);
+    } else if (amb === 'mist' || amb === 'sky') {
+      const sky = amb === 'sky';
+      g.fillStyle = sky ? 'rgba(255,236,190,0.10)' : 'rgba(220,230,235,0.16)';
+      g.fillRect(0, 0, W, H);
+      // thick banks of mist / clouds sliding past with the wind
+      for (let i = 0; i < (sky ? 8 : 10); i++) {
+        const wx = wrap(i * 89 + f * (sky ? 0.5 : 0.15) - cx * 0.4, W + 200) - 100;
+        const wy = wrap(i * 47 - cy * 0.4, H + 140) - 70;
+        const r = sky ? 50 : 70;
+        const fog = g.createRadialGradient(wx, wy, 6, wx, wy, r);
+        fog.addColorStop(0, sky ? 'rgba(255,255,255,0.22)' : 'rgba(240,245,248,0.28)');
+        fog.addColorStop(1, 'rgba(240,245,248,0)');
+        g.fillStyle = fog;
+        g.fillRect(wx - r, wy - r, r * 2, r * 2);
+      }
+      if (sky) {
+        // high wind: thin streaks
+        g.fillStyle = 'rgba(255,255,255,0.55)';
+        this.particles(g, cx, cy, 14, (x, y, i, t) => {
+          const xx = wrap(x + t * (1.2 + (i % 3) * 0.4), W + 40) - 20;
+          g.fillRect(Math.round(xx), Math.round(y), 6 + (i % 3) * 3, 1);
+        });
+      }
     } else if (amb === 'den') {
       g.fillStyle = 'rgba(30,14,50,0.24)';
       g.fillRect(0, 0, W, H);
