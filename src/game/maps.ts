@@ -13,6 +13,7 @@ import {
 import { keeperTalk, escapeeTalk, safariExitTile, specialGate } from './safari';
 import { windTamerTalk } from './fly';
 import { chestProp, chestTalk, fossilSite } from './chests';
+import { fireflyAt, groveExit, fireflyTalk, whisper, oldTree, nestTalk, lostMong } from './forest';
 import { forgeValve, forgeSchematic, channelCool, volcanoNote1, volcanoNote2, volcanoNote3 } from './volcano';
 import { antiqueOwner, musicBox, foxGirl, shipwright, moonCrystal, moonCrystalProp, moonPad, moonRiddle } from './events';
 import { boardShip, lockedBridge, lockedEngine, logPage1, portraitTalk, dalnimCabin, wardrobe, candleProp, candleTalk, pianoTalk, valveTalk, generatorTalk, shipAdminWinV2, wheelTalk, captainTalk, shipExitCheck } from './ship';
@@ -568,7 +569,7 @@ const route2: MapDef = {
 };
 
 const forest: MapDef = {
-  id: 'forest', name: '속삭임숲',
+  id: 'forest', name: '속삭임숲', ambience: 'forest',
   tiles: [
     '##########=###########',
     '##,,,,,,,#=#,,,,,,,,##',
@@ -594,12 +595,13 @@ const forest: MapDef = {
     '#...........#........#',
     '#..###......#...###..#',
     '#..###......#...###..#',
-    '#....................#',
+    '.....................#',
     '##########=###########',
   ],
   warps: [
     { x: 10, y: 25, to: 'route2', tx: 9, ty: 1, dir: 'down' },
     { x: 10, y: 0, to: 'town3', tx: 10, ty: 14, dir: 'up' },
+    { x: 0, y: 24, to: 'forest_grove', tx: 7, ty: 10, dir: 'up' },
   ],
   encounters: {
     rate: 0.13,
@@ -634,8 +636,64 @@ const forest: MapDef = {
     { id: 'fpotion', x: 19, y: 6, dir: 'down', item: { id: 'superpotion', qty: 1 } },
     { id: 'frevive', x: 20, y: 22, dir: 'down', item: { id: 'revive', qty: 1 } },
   ],
+  triggers: [
+    { x: 10, y: 19, when: () => !f('forestCleared'), run: () => whisper('whisperA', '…검은 옷… 무서워… 친구들을 데려갔어…') },
+    { x: 5, y: 10, when: () => !f('forestCleared'), run: () => whisper('whisperB', '…공터… 우리 친구들이 갇혀 있어… 도와줘…') },
+    { x: 1, y: 24, when: () => !f('forestCleared'), run: pushBack(['서쪽은 나무가 빽빽한 깊은 숲이다.', '안쪽에서 무섭게 웅웅거리는 소리가 들린다…\n지금은 들어가지 않는 게 좋겠다.'], 'right') },
+  ],
 };
 
+const forest_grove: MapDef = {
+  id: 'forest_grove', name: '속삭임숲 — 깊은 숲', ambience: 'forest',
+  tiles: [
+    '#######.######',
+    '#,,,,##.##,,,#',
+    '#,,,,#...#,,,#',
+    '##.,,.....,.##',
+    '#,,,.......,,#',
+    '#,,...,,,...,#',
+    '..............',
+    '#,,...,,,...,#',
+    '#,,,.......,,#',
+    '##.,,.....,.##',
+    '#,,,,#...#,,,#',
+    '#######.######',
+  ],
+  warps: [{ x: 7, y: 11, to: 'forest', tx: 1, ty: 24, dir: 'right' }],
+  encounters: { rate: 0.06, table: [['bandi', 9, 11, 30], ['bueong', 9, 11, 20], ['beoseot', 10, 12, 15], ['monsil', 9, 11, 15], ['kkwae', 9, 11, 10]] },
+  npcs: [
+    { id: 'ffly_up', x: 6, y: 1, dir: 'down', mon: 'bandi', hidden: () => !fireflyAt('up'), talk: () => fireflyTalk() },
+    { id: 'ffly_left', x: 1, y: 5, dir: 'down', mon: 'bandi', hidden: () => !fireflyAt('left'), talk: () => fireflyTalk() },
+    { id: 'ffly_right', x: 12, y: 5, dir: 'down', mon: 'bandi', hidden: () => !fireflyAt('right'), talk: () => fireflyTalk() },
+  ],
+  triggers: [
+    { x: 7, y: 0, run: () => groveExit('up') },
+    { x: 0, y: 6, run: () => groveExit('left') },
+    { x: 13, y: 6, run: () => groveExit('right') },
+  ],
+};
+const forest_tree: MapDef = {
+  id: 'forest_tree', name: '속삭임숲 — 고목 공터', ambience: 'forest',
+  tiles: [
+    '############',
+    '#,,,.┏┓.,,,#',
+    '#,,..┗┛..,,#',
+    '#,ⓝ.......,#',
+    '#..........#',
+    '#.f......f.#',
+    '#..........#',
+    '#,........,#',
+    '#,,......,,#',
+    '######.#####',
+  ],
+  warps: [{ x: 6, y: 9, to: 'forest', tx: 1, ty: 24, dir: 'right' }],
+  npcs: [
+    { id: 'oldtree1', x: 5, y: 2, dir: 'down', prop: '┗', talk: () => oldTree() },
+    { id: 'oldtree2', x: 6, y: 2, dir: 'down', prop: '┛', talk: () => oldTree() },
+    { id: 'nest', x: 2, y: 3, dir: 'down', prop: 'ⓝ', talk: () => nestTalk() },
+    { id: 'grovemong', x: 4, y: 4, dir: 'down', mon: 'mongmong', hidden: () => f('groveMong'), talk: () => lostMong() },
+  ],
+};
 const town3: MapDef = {
   id: 'town3', name: '물안개마을',
   tiles: [
@@ -2568,7 +2626,7 @@ const summit: MapDef = {
 
 export const MAPS: Record<string, MapDef> = {
   home, town1, lab, route1, town2, center, shop, dojo,
-  route2, forest, town3, center3, shop3, gym2,
+  route2, forest, forest_grove, forest_tree, town3, center3, shop3, gym2,
   route3, cave, town4, center4, shop4, antique, gym3, peak, pastel,
   route4, town5, center5, shop5, safarigate, safari, safari_fire, safari_canyon, safari_fairy, safari_special, safari_ice, safari_water, safari_jungle, ship, ship_cabins, ship_ballroom, ship_engine, ship_bridge, ship_ghost, gym4, route5, town6, center6, shop6, gym5, volcano, volcano_forge, volcano_heart, route6, plateau, center7, league,
   town7, center8, shop8, gym6, icecave, skyroad, summit, route7, town8, center9, shop9, den, gym7, route8,

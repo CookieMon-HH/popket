@@ -78,6 +78,14 @@ export const SONGS: Record<string, Song> = {
     pad: 'A3 - - - - - - - F3 - - - - - - - F3 - - - - - - - E3 - - - - - - - D3 - - - - - - - D#3 - - - - - - - C#3 - - - - - - - A3 - - - - - - -',
     drums: 'k . k . . . . . . . . . . . . . . . . . . . . . . . . . . . . .',
   },
+  forest: {
+    // Gentle A-Dorian lilt with a soft echo: green light, whispers between the trees.
+    bpm: 92, wave: 'triangle', echo: true,
+    lead: 'A4 - C5 E5 - D5 C5 - B4 A4 - - G4 - A4 B4 C5 - E5 G5 - F#5 E5 - D5 E5 - - . . . . A4 - C5 E5 - D5 C5 - B4 A4 - G4 E4 - - . F#4 - A4 C5 - B4 A4 - G4 A4 - - - - . .',
+    bass: 'A2 - - E3 - - A2 - G2 - - D3 - - G2 - F2 - - C3 - - F2 - E2 - - B2 - - E2 - A2 - - E3 - - A2 - G2 - - D3 - - G2 - D2 - - A2 - - D2 - E2 - - - A2 - - -',
+    pad: 'E4 - - - - - - - D4 - - - - - - - C4 - - - - - - - B3 - - - - - - - E4 - - - - - - - D4 - - - - - - - F#4 - - - - - - - E4 - - - C#4 - - -',
+    drums: 'k . . h . . k . . h . . k . h .',
+  },
   volcano: {
     // Driving E-Phrygian riff over a pounding bass: heat, danger and a ticking clock.
     bpm: 112, vibrato: 3,

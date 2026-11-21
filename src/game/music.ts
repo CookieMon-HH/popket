@@ -15,11 +15,12 @@ export function musicForMap(id: string): string {
   if (BY_MAP[id]) return BY_MAP[id];
   if (id.startsWith('ship')) return 'ship';
   if (id.startsWith('volcano')) return 'volcano';
+  if (id.startsWith('forest')) return 'forest';
   if (id.startsWith('safari')) return 'safari';
   if (id.startsWith('center')) return 'center';
   if (id.startsWith('shop')) return BY_MAP['town' + id.replace(/\D/g, '')] ?? 'town_calm';
   if (id.startsWith('gym') || id === 'dojo') return 'gym';
-  if (['forest', 'cave', 'icecave', 'den', 'peak'].includes(id)) return 'cave';
+  if (['cave', 'icecave', 'den', 'peak'].includes(id)) return 'cave';
   return 'route';
 }
 

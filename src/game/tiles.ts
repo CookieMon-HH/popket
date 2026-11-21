@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', 'ⓟ', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', 'ⓟ', '┏', '┓', '┗', '┛', 'ⓝ', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -200,6 +200,25 @@ function build(ch: string, anim: number): Pix {
       p.rect(4, 6, 8, 7, '#f0e6cc'); p.rect(4, 6, 8, 1, '#c8b890');
       for (const y of [8, 10]) p.rect(5, y, 6, 1, '#8a7a60');
       p.set(11, 12, '#c8b890');
+      break;
+    case '┏': case '┓': case '┗': case '┛': { // the old tree: canopy (top) and trunk (bottom) over 2×2 tiles
+      grass(p);
+      const right = ch === '┓' || ch === '┛', top = ch === '┏' || ch === '┓';
+      const ox = right ? -16 : 0, oy = top ? 0 : -16;
+      const T = (x: number, y: number, rx: number, ry: number, c: string) => p.ell(x + ox, y + oy, rx, ry, c);
+      p.rect(12 + ox, 16 + oy, 8, 16, '#5a3a22'); p.rect(12 + ox, 16 + oy, 2, 16, '#7a5232');
+      p.rect(8 + ox, 28 + oy, 16, 4, '#4a2e1a');
+      T(16, 12, 15, 11, '#1e5a32'); T(13, 10, 11, 8, '#2e7a42'); T(11, 8, 6, 4, '#4a9a52');
+      T(22, 15, 6, 4, '#2e7a42');
+      for (const [x, y] of [[8, 6], [20, 8], [14, 16], [24, 12]]) T(x, y, 0.8, 0.8, '#c8f0a0');
+      break;
+    }
+    case 'ⓝ': // nest of twigs with a broken eggshell
+      grass(p);
+      p.ell(8, 10, 7, 4, '#7a5a32'); p.ell(8, 9, 5, 2.5, '#5a3e22');
+      p.ell(7, 8, 3, 2.5, '#f4ecd8'); p.tri(5, 7, 9, 7, 7, 4, '#f4ecd8');
+      p.set(6, 8, '#6aa8c8'); p.set(8, 9, '#6aa8c8');
+      p.line(1, 11, 4, 9, '#8a6a3a'); p.line(12, 9, 15, 11, '#8a6a3a');
       break;
     case '◰': case '◳': case '◱': case '◲': { // the volcano's heart: one magma core over 2×2 tiles
       const qx = ch === '◳' || ch === '◲' ? 1 : 0, qy = ch === '◱' || ch === '◲' ? 1 : 0;
