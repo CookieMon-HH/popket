@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -174,6 +174,24 @@ function build(ch: string, anim: number): Pix {
       p.ell(8, 8, 7, 7, '#6a5aa8');
       p.ell(8, 8, 5, 5, anim ? '#b8a8ff' : '#9a88e8');
       p.ell(8, 8, 2.5, 2.5, '#f0e8ff');
+      break;
+    case '①': case '②': case '③': { // moon crystal on a pedestal (crescent / half / full)
+      floor(p);
+      p.rect(4, 12, 8, 3, '#4a4058'); p.rect(5, 11, 6, 1, '#6a5a80');
+      p.ell(8, 6.5, 5, 5.5, '#2a2440');
+      p.ell(8, 6.5, 4, 4.5, anim ? '#8a7ad8' : '#7a6ac8');
+      const moon = '#fff6c8';
+      if (ch === '③') p.ell(8, 6.5, 2.6, 2.6, moon);
+      else if (ch === '②') { p.ell(8, 6.5, 2.6, 2.6, moon); p.rect(8, 3, 4, 7, anim ? '#8a7ad8' : '#7a6ac8'); }
+      else { p.ell(8, 6.5, 2.6, 2.6, moon); p.ell(9.4, 6, 2.4, 2.6, anim ? '#8a7ad8' : '#7a6ac8'); }
+      p.set(6, 4, '#ffffff');
+      break;
+    }
+    case 'ⓡ': // engraved stone tablet
+      floor(p);
+      p.rect(3, 2, 10, 12, '#5a5468'); p.rect(4, 3, 8, 10, '#7a7488');
+      for (const y of [5, 7, 9, 11]) p.rect(5, y, 6, 1, '#4a4458');
+      p.rect(2, 13, 12, 2, '#3a3448');
       break;
     case '^':
       // floor lever / switch
@@ -673,7 +691,7 @@ function build(ch: string, anim: number): Pix {
 
 const cache = new Map<string, HTMLCanvasElement>();
 export function tileCanvas(ch: string, anim: number): HTMLCanvasElement {
-  const animated = ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$';
+  const animated = ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$' || ch === '①' || ch === '②' || ch === '③';
   const key = animated ? ch + anim : ch;
   let c = cache.get(key);
   if (!c) {

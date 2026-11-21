@@ -1,9 +1,9 @@
 import { say, choose } from '../engine/ui';
 import { wait } from '../engine/timing';
 import { flashes } from '../engine/scene';
-import { jingle } from '../engine/audio';
+import { jingle, sfx } from '../engine/audio';
 import { game } from './state';
-import { world, giveMon } from './api';
+import { world, giveMon, warpTo } from './api';
 
 // ---------------------------------------------------------------------------
 // 별빛시 골동품 가게: the music box that plays by itself at night.
@@ -94,4 +94,42 @@ export async function shipwright() {
   await wait(10);
   game.flags.geobukGift = true;
   await giveMon('geobukseon', 30);
+}
+
+// ---------------------------------------------------------------------------
+// 파도 수련관: the moon crystal. Every pad leads somewhere different depending on
+// the moon's phase, and only a full moon lights the way to 달님.
+
+const PHASE = ['초승달', '반달', '보름달'];
+type Dir4 = 'up' | 'down' | 'left' | 'right';
+export const moonPhase = () => (game.flags.g4new ? 0 : game.flags.g4full ? 2 : 1);
+const setPhase = (n: number) => {
+  game.flags.g4new = n === 0;
+  game.flags.g4full = n === 2;
+};
+export const moonCrystalProp = () => ['①', '②', '③'][moonPhase()];
+
+export async function moonCrystal() {
+  await say(`달 수정이 ${PHASE[moonPhase()]} 모양으로 은은하게 빛나고 있다.`);
+  if ((await choose('수정을 돌려 볼까?', ['돌린다', '그만둔다'])) !== 0) return;
+  setPhase((moonPhase() + 1) % 3);
+  sfx('door');
+  await flashes(1);
+  await say(`스르르… 수정 속의 달이 ${PHASE[moonPhase()]}(으)로 바뀌었다.\n어둠 속 발판들의 빛깔이 조금 달라진 것 같다.`);
+}
+
+/** A pad whose destination depends on the moon phase: [crescent, half, full]. */
+export function moonPad(dests: [number, number, Dir4][], dim?: string) {
+  return async () => {
+    const ph = moonPhase();
+    const [x, y, d] = dests[Math.min(ph, dests.length - 1)];
+    if (dim && ph !== 2) await say(dim);
+    await warpTo('gym4', x, y, d);
+  };
+}
+
+export async function moonRiddle() {
+  await say('낡은 비석에 글귀가 새겨져 있다.');
+  await say('「달이 이지러지면 길은 서로 엇갈리고,\n 달이 가득 차오르면 마지막 문이 열리리라.」');
+  await say('「달의 마음은 서쪽 방의 수정에 깃들어 있나니.」');
 }

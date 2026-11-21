@@ -13,7 +13,7 @@ import {
 import { keeperTalk, escapeeTalk, safariExitTile, specialGate } from './safari';
 import { windTamerTalk } from './fly';
 import { chestProp, chestTalk, fossilSite } from './chests';
-import { antiqueOwner, musicBox, foxGirl, shipwright } from './events';
+import { antiqueOwner, musicBox, foxGirl, shipwright, moonCrystal, moonCrystalProp, moonPad, moonRiddle } from './events';
 import { boardShip, lockedBridge, lockedEngine, logPage1, portraitTalk, dalnimCabin, wardrobe, candleProp, candleTalk, pianoTalk, valveTalk, generatorTalk, shipAdminWinV2, wheelTalk, captainTalk, shipExitCheck } from './ship';
 import { receptionTalk } from './tournament';
 import { legendEncounter, snowMomPost, hwaryeonPost } from './legends';
@@ -1727,15 +1727,21 @@ const gym4: MapDef = {
   warps: [
     { x: 6, y: 12, to: 'town5', tx: 5, ty: 4, dir: 'down' },
     { x: 7, y: 12, to: 'town5', tx: 5, ty: 4, dir: 'down' },
-    { x: 2, y: 10, to: 'gym4', tx: 3, ty: 6, dir: 'right' },
-    { x: 10, y: 10, to: 'gym4', tx: 10, ty: 7, dir: 'down' },
-    { x: 2, y: 6, to: 'gym4', tx: 3, ty: 10, dir: 'right' },
-    { x: 4, y: 7, to: 'gym4', tx: 9, ty: 6, dir: 'right' },
-    { x: 11, y: 6, to: 'gym4', tx: 3, ty: 2, dir: 'right' },
-    { x: 8, y: 7, to: 'gym4', tx: 9, ty: 10, dir: 'down' },
     { x: 2, y: 3, to: 'gym4', tx: 6, ty: 10, dir: 'down' },
   ],
+  // Moon pads: destination = [초승달, 반달, 보름달]. Solution: west room crystal → 보름달,
+  // west pad → back to the hall, east hall pad → east room, east pad → 달님.
+  triggers: [
+    { x: 2, y: 10, run: moonPad([[10, 7, 'down'], [3, 6, 'right'], [3, 6, 'right']]) },
+    { x: 10, y: 10, run: moonPad([[3, 6, 'right'], [10, 7, 'down'], [10, 7, 'down']]) },
+    { x: 2, y: 6, run: moonPad([[3, 10, 'right']]) },
+    { x: 4, y: 7, run: moonPad([[9, 6, 'right'], [9, 10, 'down'], [9, 10, 'down']]) },
+    { x: 8, y: 7, run: moonPad([[9, 10, 'down']]) },
+    { x: 11, y: 6, run: moonPad([[3, 11, 'right'], [3, 11, 'right'], [3, 2, 'right']], '발판이 희미하게 깜빡이더니… 달빛이 모자라 입구 쪽으로 튕겨 나왔다!') },
+  ],
   npcs: [
+    { id: 'g4crystal', x: 1, y: 5, dir: 'down', prop: moonCrystalProp, talk: () => moonCrystal() },
+    { id: 'g4riddle', x: 12, y: 9, dir: 'down', prop: 'ⓡ', talk: () => moonRiddle() },
     { id: 'g4note', x: 9, y: 10, dir: 'left', pal: PAL.pupil, hidden: () => f('shipDone'), talk: '수련생: 관장님은 항구의 유령선을 조사하러 가셨어요.\n이 수련관은 어둠 속 순간이동 발판을 찾아 관장님께 가야 해요.' },
     { id: 'g4medium1', x: 5, y: 5, dir: 'down', pal: PAL2.medium, sight: 2, hidden: () => !f('shipDone'), trainer: tr('g4m1', '무녀', '은하', PAL2.medium, [['haegol', 31], ['dokkae', 32]], 1200, '어둠 속에서 무엇이 보이나요…?', '당신 뒤에서 빛이 보여요.', '관장님의 고스트 몬스터에겐 노말 기술이 통하지 않아요.') },
     { id: 'g4medium2', x: 12, y: 5, dir: 'left', pal: PAL2.medium, sight: 4, hidden: () => !f('shipDone'), trainer: tr('g4m2', '무녀', '새벽', PAL2.medium, [['mulgwi', 31], ['jeolgu', 31]], 1200, '달빛이 당신을 시험할 거예요.', '달빛이 당신 편이군요.', '관장님은 악 타입 기술을 조심하신대요.') },
