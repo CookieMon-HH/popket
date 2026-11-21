@@ -75,6 +75,13 @@ const MEONG: L = [[1, 'tackle'], [1, 'growl'], [5, 'bite'], [10, 'dash'], [16, '
 const DOTORI: L = [[1, 'scratch'], [1, 'growl'], [5, 'dash'], [9, 'bite'], [14, 'curl'], [19, 'snatch'], [25, 'press'], [31, 'fullcharge']];
 const BANDI: L = [[1, 'tackle'], [1, 'zap'], [6, 'silk'], [10, 'bugbite'], [15, 'sparkspike'], [21, 'glitter'], [27, 'bolt'], [34, 'thunder']];
 const SASUM: L = [[1, 'scratch'], [1, 'bugbite'], [8, 'jab'], [14, 'ironclaw'], [20, 'straight'], [27, 'deulbaeji'], [34, 'steelpincer'], [40, 'upper']];
+const DUKEOP: L = [[1, 'tackle'], [1, 'mudthrow'], [6, 'toxshot'], [12, 'bite'], [17, 'poisonspore'], [23, 'poisontail'], [29, 'quake'], [36, 'toxblast'], [44, 'earthsplit']];
+const GEOMI: L = [[1, 'sting'], [1, 'silk'], [7, 'bite'], [12, 'bugbite'], [18, 'snatch'], [24, 'glitter'], [30, 'nightveil'], [37, 'club']];
+const DUJJI: L = [[1, 'scratch'], [1, 'mudthrow'], [8, 'curl'], [14, 'quake'], [20, 'ironclaw'], [26, 'rockdrop'], [32, 'earthsplit'], [38, 'steelbeam']];
+const TUGU: L = [[1, 'scratch'], [1, 'curl'], [10, 'bugbite'], [16, 'pebble'], [22, 'rockdrop'], [30, 'steelpincer'], [36, 'glitter'], [42, 'rockstorm']];
+const SIJO: L = [[1, 'peck'], [1, 'pebble'], [10, 'gust'], [16, 'wingcut'], [22, 'rockdrop'], [30, 'dive'], [38, 'rockstorm'], [44, 'storm']];
+const KKAK: L = [[1, 'peck'], [1, 'snatch'], [7, 'growl'], [12, 'gust'], [18, 'bite'], [24, 'wingcut'], [30, 'nightveil'], [36, 'dive'], [42, 'club']];
+const SUTDOL: L = [[1, 'tackle'], [1, 'pebble'], [8, 'ember'], [14, 'curl'], [20, 'rockdrop'], [26, 'flamedash'], [32, 'hotsteam'], [38, 'lava'], [44, 'rockstorm']];
 const SEOLHWA: L = [[1, 'twinkle'], [1, 'frostbreath'], [40, 'icefang'], [45, 'moondust'], [55, 'avalanche'], [62, 'snowblossom']];
 const CHEOLSAN: L = [[1, 'mudthrow'], [1, 'ironclaw'], [40, 'quake'], [45, 'steelbeam'], [55, 'earthsplit'], [62, 'ironquake']];
 const JUJAK: L = [[1, 'ember'], [1, 'gust'], [40, 'flamedash'], [45, 'wingcut'], [55, 'storm'], [62, 'phoenixfire']];
@@ -205,6 +212,24 @@ const list: Def[] = [
   s('byeolbitbandi', '별빛반디', ['벌레', '전기'], [78, 94, 72, 118], 45, 215, BANDI, '별빛반디', '밤하늘의 별처럼 빛나는 반디. 수백 마리가 함께 날면 동굴 천장이 은하수처럼 보인다.'),
   s('jipgesasum', '집게사슴', ['벌레', '격투'], [56, 72, 62, 44], 120, 70, SASUM, '사슴벌레', '커다란 집게로 나무에 매달려 수액을 핥는다. 집게 힘겨루기를 좋아해서 만나면 일단 붙잡고 본다.', [28, 'jangsu']),
   s('jangsu', '장수사슴벌레', ['벌레', '격투'], [84, 114, 98, 62], 45, 185, SASUM, '장수벌레', '숲에서 가장 힘센 벌레. 거대한 집게로 바위를 들어 올리며, 숲을 어지럽히는 자와는 정정당당히 겨룬다.'),
+  // ── 중반 지역 ──
+  s('dukeop', '꼬마두껍', ['독'], [54, 48, 50, 38], 200, 58, DUKEOP, '두꺼비', '연잎 위에 앉아 졸고 있는 작은 두꺼비. 등의 혹에서 살짝 매운 독물이 나와 몸을 지킨다.', [18, 'dokdukeop']),
+  s('dokdukeop', '독두꺼비', ['독'], [74, 72, 70, 56], 120, 140, DUKEOP, '독두꺼비', '늪에서 보랏빛 거품을 뿜는다. 울음소리가 너무 커서 비 오는 밤 물안개마을 사람들은 잠을 설친다.', [34, 'dukeopwang']),
+  s('dukeopwang', '두꺼비왕', ['독', '땅'], [104, 104, 96, 64], 45, 228, DUKEOP, '두꺼비왕', '늪의 왕. 앉은 자리에서 땅을 울리면 늪 전체가 출렁이고, 등의 혹에서 짙은 독안개가 피어오른다.'),
+  s('geomi', '꼬마거미', ['벌레'], [40, 48, 40, 50], 220, 52, GEOMI, '꼬마거미', '밤새 작은 거미줄을 치고, 아침 이슬이 맺히면 자랑스럽게 구경한다.', [18, 'geumul']),
+  s('geumul', '그물거미', ['벌레', '악'], [62, 76, 58, 72], 120, 135, GEOMI, '그물거미', '동굴 입구에 커다란 그물을 치고 숨어서 기다린다. 등의 무늬가 웃는 얼굴처럼 보여 겁을 준다.', [33, 'wanggeomi']),
+  s('wanggeomi', '왕거미', ['벌레', '악'], [88, 106, 82, 94], 45, 225, GEOMI, '왕거미', '여덟 개의 붉은 눈으로 어둠 속을 꿰뚫어 본다. 강철처럼 질긴 실로 동굴 전체를 자기 영역으로 만든다.'),
+  s('dujji', '땅콩두지', ['땅'], [50, 56, 56, 38], 200, 60, DUJJI, '두더지', '땅콩 껍데기 모양의 단단한 머리로 흙을 판다. 햇빛을 보면 눈이 부셔서 금방 다시 땅속으로 들어간다.', [26, 'gulchak']),
+  s('gulchak', '굴착두지', ['땅', '강철'], [78, 100, 92, 62], 75, 165, DUJJI, '굴착두더지', '강철 드릴처럼 변한 코와 발톱으로 바위도 순식간에 뚫는다. 광부들이 가장 반기는 몬스터.'),
+  s('jogae', '고대조개', ['바위', '벌레'], [56, 64, 92, 40], 45, 72, TUGU, '화석', '아주 먼 옛날 바닷속에 살던 몬스터. 별빛동굴의 껍질화석에서 되살아났다. 단단한 껍데기 아래로 작은 다리가 꼼지락거린다.', [40, 'godaetugu']),
+  s('godaetugu', '고대투구', ['바위', '벌레'], [80, 112, 108, 68], 45, 200, TUGU, '고대투구', '투구 같은 껍데기와 낫 같은 앞발을 가졌다. 수억 년 전 바다의 사냥꾼이었다고 한다.'),
+  s('kkomasijo', '꼬마시조', ['바위', '비행'], [54, 72, 50, 72], 45, 72, SIJO, '화석', '깃털과 이빨을 함께 가진 고대의 작은 새. 별빛동굴의 날개화석에서 되살아났다. 아직 잘 날지 못해서 폴짝폴짝 뛰어다닌다.', [40, 'sijosae']),
+  s('sijosae', '시조새', ['바위', '비행'], [80, 108, 72, 102], 45, 200, SIJO, '시조새', '돌처럼 단단한 날개로 고대의 하늘을 누볐다. 날카로운 울음소리가 동굴 벽을 울린다.'),
+  s('kkakkak', '깍깍이', ['악', '비행'], [46, 56, 40, 66], 200, 60, KKAK, '까마귀', '반짝이는 물건을 보면 참지 못하고 물어 간다. 둥지에는 단추와 동전, 팜팜볼 뚜껑이 가득하다.', [32, 'kkamagwi']),
+  s('kkamagwi', '까마귀왕', ['악', '비행'], [82, 104, 70, 98], 75, 170, KKAK, '까마귀왕', '해 질 녘 수백 마리 까마귀를 거느리고 하늘을 덮는다. 깃털 끝이 별빛처럼 반짝인다.'),
+  s('sutdol', '숯돌이', ['바위'], [52, 50, 64, 28], 200, 58, SUTDOL, '숯덩이', '해변 모닥불 자리에서 태어난 숯 덩어리 몬스터. 쓰다듬으면 손이 새카매지지만 무척 따뜻하다.', [28, 'hwarotdol']),
+  s('hwarotdol', '화롯돌', ['불', '바위'], [72, 78, 90, 38], 120, 142, SUTDOL, '화로', '배 속에 숯불을 품은 화로 모양의 몬스터. 겨울이면 불꽃마을 사람들이 곁에 모여 손을 녹인다.', [38, 'gamasot']),
+  s('gamasot', '가마솥대장', ['불', '바위'], [102, 108, 118, 48], 45, 230, SUTDOL, '가마솥', '무쇠 가마솥을 뒤집어쓴 듯한 거대한 몬스터. 뚜껑을 들썩이며 뜨거운 김을 뿜으면 화산도 잠잠해진다.'),
   // ── 유령선과 고스트 ──
   s('chorong', '초롱이', ['불'], [44, 50, 42, 60], 190, 58, CHORONG, '초롱', '밤길을 밝히던 종이 초롱에 작은 불씨가 깃들었다. 길 잃은 사람을 졸졸 따라다니며 발밑을 비춰 준다.', [22, 'cheongsa']),
   s('cheongsa', '청사초롱', ['불', '고스트'], [62, 72, 60, 82], 120, 140, CHORONG, '혼불초롱', '푸른 비단과 붉은 비단을 두른 초롱. 안에서 타는 불은 뜨겁지 않고 푸르스름하게 일렁인다.', [36, 'dokkaechorong']),
@@ -242,6 +267,7 @@ const ORDER = [
   'agibuk', 'bingsan', 'hyeonmuk', 'hyeonmu',
   'kkomaryong', 'nalgae', 'cheonryong',
   'bungbung', 'kkuldanji', 'yeowangbeol', 'meongmeong', 'baekgu', 'jindodaejang', 'dotori', 'cheongseolmo', 'bandi', 'banjjakbandi', 'byeolbitbandi', 'jipgesasum', 'jangsu',
+  'dukeop', 'dokdukeop', 'dukeopwang', 'geomi', 'geumul', 'wanggeomi', 'dujji', 'gulchak', 'jogae', 'godaetugu', 'kkomasijo', 'sijosae', 'kkakkak', 'kkamagwi', 'sutdol', 'hwarotdol', 'gamasot',
   'chorong', 'cheongsa', 'dokkaechorong', 'mulgwi', 'yuseon', 'haegol', 'yuaeng', 'bomulgoe',
   'sangun', 'eunha', 'seolhwa', 'cheolsan', 'jujak', 'cheongryong', 'cheonji',
 ];

@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -553,6 +553,13 @@ function build(ch: string, anim: number): Pix {
       p.rect(7, 6, 2, 2, '#9aa0b4');
       p.set(8, 10, '#3a2a1a');
       break;
+    case '¶': { // rock with fossils sticking out
+      p.ell(8, 10, 7.5, 6, '#7a6a5a');
+      p.ell(7, 8, 6, 4, '#9a8a78');
+      p.ell(5, 9, 2.5, 2.5, '#e8dcc0'); p.set(5, 9, '#a8987a'); p.set(6, 8, '#a8987a');
+      p.tri(9, 11, 14, 8, 13, 12, '#e8dcc0'); p.line(10, 11, 13, 9, '#a8987a');
+      break;
+    }
     case '§': case '¤': { // treasure chest, closed / opened
       p.rect(0, 0, 16, 16, 'rgba(0,0,0,0)');
       p.rect(1, 6, 14, 9, '#8a5630');

@@ -30,6 +30,8 @@ const list: ItemDef[] = [
   { id: 'trophy', name: '해솔리그트로피', price: 0, kind: 'key', desc: '해솔 리그 토너먼트 우승자에게 주어지는 황금 트로피. 관중의 함성이 들려오는 것 같다.' },
   { id: 'enginekey', name: '기관실열쇠', price: 0, kind: 'key', desc: '은파호 선실 옷장에서 찾은 녹슨 열쇠. 갑판 뒤쪽 기관실 문을 연다.' },
   { id: 'captainwatch', name: '선장의회중시계', price: 0, kind: 'key', desc: '뚜껑 안쪽에 「해월」이라고 새겨진 회중시계. 바늘이 30년 전 폭풍의 밤에 멈춰 있다.' },
+  { id: 'fossil_shell', name: '껍질화석', price: 0, kind: 'key', desc: '소용돌이 무늬가 새겨진 고대 조개 화석. 한별 연구소에서 되살릴 수 있다고 한다.' },
+  { id: 'fossil_wing', name: '날개화석', price: 0, kind: 'key', desc: '깃털 자국이 남은 고대 새의 날개 화석. 한별 연구소에서 되살릴 수 있다고 한다.' },
   { id: 'rod', name: '낚싯대', price: 0, kind: 'key', desc: '물가를 바라보고 A 버튼을 누르면 낚시를 할 수 있다.' },
 ];
 

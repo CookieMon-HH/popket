@@ -11,6 +11,7 @@ import type { NPC } from './overworld';
 import type { Pal } from './sprites';
 import type { TrainerDef } from './maps';
 import { professorLegends, minerPost, elderPost } from './legends';
+import { reviveFossil } from './chests';
 import { setOpponents, setFinalHooks } from './tournament';
 
 export const PAL = {
@@ -142,6 +143,7 @@ export async function rivalLabTalk() {
 }
 
 export async function labProfessor() {
+  if (game.flags.gotStarter && (await reviveFossil())) return;
   if (!game.flags.gotStarter) {
     await say('한별 박사: 오, {name}! 기다리고 있었단다.');
     await say('이 해솔 지방에는 몬스터라고 불리는 신비한 생물들이 살고 있지.\n사람과 몬스터는 서로 도우며 함께 살아간단다.');

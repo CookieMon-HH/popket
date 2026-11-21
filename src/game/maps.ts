@@ -12,7 +12,7 @@ import {
 } from './story';
 import { keeperTalk, escapeeTalk, safariExitTile, specialGate } from './safari';
 import { windTamerTalk } from './fly';
-import { chestProp, chestTalk } from './chests';
+import { chestProp, chestTalk, fossilSite } from './chests';
 import { boardShip, lockedBridge, lockedEngine, logPage1, portraitTalk, dalnimCabin, wardrobe, candleProp, candleTalk, pianoTalk, valveTalk, generatorTalk, shipAdminWinV2, wheelTalk, captainTalk, shipExitCheck } from './ship';
 import { receptionTalk } from './tournament';
 import { legendEncounter, snowMomPost, hwaryeonPost } from './legends';
@@ -661,7 +661,7 @@ const town3: MapDef = {
   ],
   labels: [{ x: 5, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 13, y: 5.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 8, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
   signs: [{ x: 17, y: 9, text: '물안개마을\n새벽마다 호수에 안개가 피어오르는 마을\n동쪽: 3번 도로  ·  서쪽: 솜사탕언덕' }],
-  encounters: { rate: 0.1, table: [['pojani', 9, 11, 25], ['jinheuk', 9, 11, 20], ['baramsae', 10, 12, 20], ['dalto', 9, 11, 18], ['kkwae', 9, 11, 17], ['mongmong', 9, 11, 12]] },
+  encounters: { rate: 0.1, table: [['pojani', 9, 11, 25], ['jinheuk', 9, 11, 20], ['baramsae', 10, 12, 20], ['dalto', 9, 11, 18], ['kkwae', 9, 11, 17], ['mongmong', 9, 11, 12], ['dukeop', 9, 11, 18]] },
   fishing: [['banjjak', 8, 12, 55], ['munu', 8, 11, 25], ['mulgwi', 9, 12, 12], ['eungeo', 15, 17, 8]],
   npcs: [
     { id: 'fisher', x: 15, y: 4, dir: 'right', pal: PAL.fisher, talk: () => fisherTalk() },
@@ -771,7 +771,7 @@ const route3: MapDef = {
   signs: [{ x: 19, y: 9, text: '3번 도로\n동쪽: 별빛동굴  서쪽: 물안개마을  북쪽: 운무봉' }],
   encounters: {
     rate: 0.13,
-    table: [['jinheuk', 12, 14, 15], ['ddakkum', 12, 14, 13], ['baramsae', 13, 14, 12], ['beoseot', 13, 14, 10], ['jjirit', 12, 14, 10], ['tongsil', 13, 14, 9], ['kkaeng', 13, 14, 10], ['dalto', 12, 14, 9], ['kkwae', 13, 14, 6], ['beonjjeok', 14, 14, 4], ['soejip', 13, 14, 2], ['agigom', 13, 14, 7], ['ggorichim', 13, 14, 7], ['ggangtong', 12, 14, 5], ['meongmeong', 12, 14, 12]],
+    table: [['jinheuk', 12, 14, 15], ['ddakkum', 12, 14, 13], ['baramsae', 13, 14, 12], ['beoseot', 13, 14, 10], ['jjirit', 12, 14, 10], ['tongsil', 13, 14, 9], ['kkaeng', 13, 14, 10], ['dalto', 12, 14, 9], ['kkwae', 13, 14, 6], ['beonjjeok', 14, 14, 4], ['soejip', 13, 14, 2], ['agigom', 13, 14, 7], ['ggorichim', 13, 14, 7], ['ggangtong', 12, 14, 5], ['meongmeong', 12, 14, 12], ['dukeop', 12, 13, 10], ['geomi', 12, 14, 14]],
   },
   fishing: [['banjjak', 12, 17, 55], ['munu', 13, 15, 25], ['eungeo', 17, 20, 15], ['meokmul', 16, 18, 5]],
   npcs: [
@@ -828,10 +828,11 @@ const cave: MapDef = {
   encounters: {
     rate: 0.1,
     tiles: '_',
-    table: [['doldol', 14, 16, 20], ['jinheuk', 14, 16, 17], ['dokbul', 14, 16, 15], ['agipeng', 14, 16, 13], ['heukjang', 15, 17, 9], ['jjirit', 14, 16, 9], ['bawi', 16, 17, 5], ['beoseot', 15, 16, 5], ['dokkae', 16, 17, 4], ['kkomaryong', 15, 16, 3], ['ggangtong', 14, 16, 8], ['ggorichim', 14, 16, 6], ['nunnyang', 14, 16, 7], ['bandi', 14, 16, 8], ['banjjakbandi', 15, 16, 3]],
+    table: [['doldol', 14, 16, 20], ['jinheuk', 14, 16, 17], ['dokbul', 14, 16, 15], ['agipeng', 14, 16, 13], ['heukjang', 15, 17, 9], ['jjirit', 14, 16, 9], ['bawi', 16, 17, 5], ['beoseot', 15, 16, 5], ['dokkae', 16, 17, 4], ['kkomaryong', 15, 16, 3], ['ggangtong', 14, 16, 8], ['ggorichim', 14, 16, 6], ['nunnyang', 14, 16, 7], ['bandi', 14, 16, 8], ['banjjakbandi', 15, 16, 3], ['geomi', 14, 16, 8], ['dujji', 14, 16, 10], ['geumul', 16, 17, 3]],
   },
   fishing: [['banjjak', 15, 19, 40], ['eungeo', 18, 20, 30], ['munu', 15, 17, 15], ['meokmul', 18, 20, 15]],
   npcs: [
+    { id: 'fossilsite', x: 1, y: 6, dir: 'down', prop: '¶', hidden: () => f('fossilTaken'), talk: () => fossilSite() },
     { id: 'cavechest1', x: 2, y: 6, dir: 'down', prop: chestProp('cave1'), talk: () => chestTalk('cave1', 'superpotion', 2, 17) },
     { id: 'cavechest2', x: 12, y: 11, dir: 'down', prop: chestProp('cave2'), talk: () => chestTalk('cave2', 'superball', 3, 18) },
     { id: 'cavechest3', x: 10, y: 5, dir: 'down', prop: chestProp('cave3'), talk: () => chestTalk('cave3', 'revive', 1, 18) },
@@ -1145,7 +1146,7 @@ const route4: MapDef = {
   signs: [{ x: 16, y: 10, text: '4번 도로\n북쪽: 별빛시   남쪽: 파도항구' }],
   encounters: {
     rate: 0.12,
-    table: [['hoeori', 24, 26, 10], ['tongsil', 24, 26, 10], ['beonjjeok', 24, 26, 10], ['heukjang', 24, 26, 10], ['jeolgu', 24, 26, 8], ['kwontu', 23, 25, 8], ['satba', 24, 26, 8], ['seolpyo', 24, 25, 6], ['cheolgap', 24, 26, 8], ['beoseot', 24, 26, 8], ['mujigae', 24, 25, 4], ['olppaemi', 24, 26, 8], ['chorong', 23, 25, 8]],
+    table: [['hoeori', 24, 26, 10], ['tongsil', 24, 26, 10], ['beonjjeok', 24, 26, 10], ['heukjang', 24, 26, 10], ['jeolgu', 24, 26, 8], ['kwontu', 23, 25, 8], ['satba', 24, 26, 8], ['seolpyo', 24, 25, 6], ['cheolgap', 24, 26, 8], ['beoseot', 24, 26, 8], ['mujigae', 24, 25, 4], ['olppaemi', 24, 26, 8], ['chorong', 23, 25, 8], ['kkakkak', 23, 25, 10]],
   },
   fishing: [['banjjak', 22, 26, 40], ['meokmul', 23, 26, 30], ['eungeo', 24, 26, 30]],
   npcs: [
@@ -1752,7 +1753,7 @@ const route5: MapDef = {
   signs: [{ x: 13, y: 15, text: '5번 도로 해변길\n북동쪽: 파도항구   남쪽: 불꽃마을' }],
   encounters: {
     rate: 0.13,
-    table: [['ubiduck', 26, 28, 14], ['meokmul', 26, 28, 10], ['eolpeng', 26, 28, 10], ['dokjeongal', 26, 28, 10], ['jangjak', 26, 28, 8], ['jangma', 26, 28, 10], ['beotkkot', 26, 28, 10], ['wangmong', 26, 28, 8], ['aurora', 27, 28, 4], ['eungeo', 26, 28, 8], ['haegol', 26, 28, 14]],
+    table: [['ubiduck', 26, 28, 14], ['meokmul', 26, 28, 10], ['eolpeng', 26, 28, 10], ['dokjeongal', 26, 28, 10], ['jangjak', 26, 28, 8], ['jangma', 26, 28, 10], ['beotkkot', 26, 28, 10], ['wangmong', 26, 28, 8], ['aurora', 27, 28, 4], ['eungeo', 26, 28, 8], ['haegol', 26, 28, 14], ['kkakkak', 26, 27, 6], ['sutdol', 26, 28, 12]],
   },
   fishing: [['meokmul', 26, 28, 40], ['aurora', 26, 28, 20], ['eungeo', 26, 28, 30], ['daewang', 30, 31, 10]],
   npcs: [
@@ -1884,7 +1885,7 @@ const volcano: MapDef = {
   warps: [{ x: 0, y: 9, to: 'town6', tx: 20, ty: 3, dir: 'left' }],
   encounters: {
     rate: 0.1, tiles: '_',
-    table: [['jangjak', 29, 31, 20], ['hwaro', 29, 30, 8], ['dokjeongal', 29, 31, 15], ['geoam', 30, 31, 6], ['daeji', 29, 31, 8], ['heukjang', 29, 30, 15], ['geosin', 29, 30, 6], ['dokdae', 29, 30, 6]],
+    table: [['jangjak', 29, 31, 20], ['hwaro', 29, 30, 8], ['dokjeongal', 29, 31, 15], ['geoam', 30, 31, 6], ['daeji', 29, 31, 8], ['heukjang', 29, 30, 15], ['geosin', 29, 30, 6], ['dokdae', 29, 30, 6], ['sutdol', 29, 30, 14], ['hwarotdol', 30, 31, 6]],
   },
   npcs: [
     grunt('vgrunt1', 3, 10, 'right', 6, [['dodug', 35], ['dokjeongal', 35]], '두목님의 마지막 작전이다! 물러서라!', '이럴 수가…', '두목님은 위쪽 심장의 방에 계신다.'),
@@ -1924,7 +1925,7 @@ const route6: MapDef = {
   signs: [{ x: 36, y: 9, text: '6번 도로\n서쪽: 서리마을   동쪽: 불꽃마을' }],
   encounters: {
     rate: 0.12,
-    table: [['hoeori', 31, 32, 10], ['beonjjeok', 31, 32, 8], ['noejeon', 31, 32, 4], ['satba', 31, 32, 10], ['seolpyo', 31, 32, 8], ['olppaemi', 31, 32, 10], ['wangmong', 31, 32, 8], ['byeolkkum', 31, 32, 2], ['gangjip', 31, 32, 8], ['dodug', 31, 32, 10], ['nalgae', 31, 32, 6], ['beoseotking', 31, 32, 6]],
+    table: [['hoeori', 31, 32, 10], ['beonjjeok', 31, 32, 8], ['noejeon', 31, 32, 4], ['satba', 31, 32, 10], ['seolpyo', 31, 32, 8], ['olppaemi', 31, 32, 10], ['wangmong', 31, 32, 8], ['byeolkkum', 31, 32, 2], ['gangjip', 31, 32, 8], ['dodug', 31, 32, 10], ['nalgae', 31, 32, 6], ['beoseotking', 31, 32, 6], ['kkakkak', 31, 32, 8], ['kkamagwi', 32, 32, 2]],
   },
   fishing: [['eungeo', 29, 32, 50], ['aurora', 29, 31, 30], ['daewang', 31, 32, 20]],
   npcs: [
