@@ -285,27 +285,24 @@ const list: Def[] = [
   s('daeji', '대지거인', ['땅', '바위'], [110, 116, 110, 44], 45, 236, JINHEUK, '대지', '머리 위에 풀이 자랄 만큼 오래 산다. 한 걸음마다 땅이 쿵 울린다.'),
 ];
 
-// Dex order: put the 땅 line next to the 바위 line, and the two special monsters last.
+// Dex order: starters, then each family in the order the player first meets it on the journey; legends last.
 const ORDER = [
-  'modak', 'hwaro', 'hwasan', 'pong', 'mulbora', 'haeil', 'saesun', 'kkot', 'supji',
-  'tosil', 'tongsil', 'jjaek', 'baramsae', 'hoeori', 'kkomul', 'dandan', 'naphul', 'monsil', 'monggeul',
-  'jjirit', 'beongae', 'ddakkum', 'beonjjeok', 'noejeon',
-  'doldol', 'bawi', 'geoam', 'jinheuk', 'heukjang', 'daeji', 'kkaeng', 'kwontu',
-  'pojani', 'beoseot', 'beoseotking', 'soejip', 'gangjip', 'kkwae', 'dodug',
-  'dokbul', 'dokkae', 'dokdae', 'dalto', 'jeolgu', 'wolgung',
-  'banjjak', 'eungeo', 'munu', 'meokmul', 'daewang', 'agipeng', 'eolpeng', 'nunnyang', 'seolpyo',
-  'gungo', 'jangjak', 'agigom', 'satba', 'jangsa', 'ggangtong', 'cheolgap', 'geosin',
-  'mongmong', 'wangmong', 'ggorichim', 'dokjeongal', 'bueong', 'olppaemi',
-  'makarong', 'makatop', 'jelly', 'aurora', 'agiyuni', 'mujigae', 'byeolkkum',
-  'pongduck', 'ubiduck', 'kkotip', 'beotkkot', 'suguk', 'jangma', 'bingsu', 'wangbingsu',
-  'agibuk', 'bingsan', 'hyeonmuk', 'hyeonmu',
-  'kkomaryong', 'nalgae', 'cheonryong',
-  'bungbung', 'kkuldanji', 'yeowangbeol', 'meongmeong', 'baekgu', 'jindodaejang', 'dotori', 'cheongseolmo', 'bandi', 'banjjakbandi', 'byeolbitbandi', 'jipgesasum', 'jangsu',
-  'dukeop', 'dokdukeop', 'dukeopwang', 'geomi', 'geumul', 'wanggeomi', 'dujji', 'gulchak', 'jogae', 'godaetugu', 'kkomasijo', 'sijosae', 'kkakkak', 'kkamagwi', 'sutdol', 'hwarotdol', 'gamasot',
-  'maekae', 'yeongi', 'amheuk', 'jangseung', 'cheonha', 'yeolgigu', 'orgol',
-  'chorong', 'cheongsa', 'dokkaechorong', 'mulgwi', 'yuseon', 'haegol', 'yuaeng', 'bomulgoe',
-  'kkoribyeol', 'bulyeou', 'geuneulyeou', 'gasiyeou', 'kkomadorong', 'mireudorong', 'geumdukeop', 'geobukseon', 'dolharubang',
-  'sangun', 'eunha', 'seolhwa', 'cheolsan', 'jujak', 'cheongryong', 'cheonji',
+  'modak', 'hwaro', 'hwasan', 'pong', 'mulbora', 'haeil', 'saesun', 'kkot', 'supji', 'tosil',
+  'tongsil', 'jjaek', 'baramsae', 'hoeori', 'kkomul', 'dandan', 'naphul', 'monsil', 'monggeul', 'jjirit',
+  'beongae', 'ddakkum', 'beonjjeok', 'noejeon', 'doldol', 'bawi', 'geoam', 'bungbung', 'kkuldanji', 'yeowangbeol',
+  'dotori', 'cheongseolmo', 'kkoribyeol', 'bulyeou', 'geuneulyeou', 'gasiyeou', 'gungo', 'jangjak', 'jinheuk', 'heukjang',
+  'daeji', 'kkaeng', 'kwontu', 'pojani', 'beoseot', 'beoseotking', 'dalto', 'jeolgu', 'wolgung', 'agigom',
+  'satba', 'jangsa', 'mongmong', 'wangmong', 'meongmeong', 'baekgu', 'jindodaejang', 'chorong', 'cheongsa', 'dokkaechorong',
+  'soejip', 'gangjip', 'kkwae', 'dodug', 'dokbul', 'dokkae', 'dokdae', 'bueong', 'olppaemi', 'bandi',
+  'banjjakbandi', 'byeolbitbandi', 'kkomaryong', 'nalgae', 'cheonryong', 'banjjak', 'eungeo', 'munu', 'meokmul', 'daewang',
+  'dukeop', 'dokdukeop', 'dukeopwang', 'mulgwi', 'yuseon', 'ggangtong', 'cheolgap', 'geosin', 'ggorichim', 'dokjeongal',
+  'geomi', 'geumul', 'wanggeomi', 'agipeng', 'eolpeng', 'nunnyang', 'seolpyo', 'dujji', 'gulchak', 'jogae',
+  'godaetugu', 'kkomasijo', 'sijosae', 'orgol', 'makarong', 'makatop', 'jelly', 'aurora', 'agiyuni', 'mujigae',
+  'byeolkkum', 'pongduck', 'ubiduck', 'kkotip', 'beotkkot', 'suguk', 'jangma', 'bingsu', 'wangbingsu', 'kkakkak',
+  'kkamagwi', 'haegol', 'yuaeng', 'bomulgoe', 'geobukseon', 'sutdol', 'hwarotdol', 'gamasot', 'maekae', 'yeongi',
+  'amheuk', 'geumdukeop', 'agibuk', 'bingsan', 'kkomadorong', 'mireudorong', 'hyeonmuk', 'hyeonmu', 'jangseung', 'cheonha',
+  'yeolgigu', 'dolharubang', 'jipgesasum', 'jangsu', 'sangun', 'eunha', 'seolhwa', 'cheolsan', 'jujak', 'cheongryong',
+  'cheonji',
 ];
 const byId = Object.fromEntries(list.map((d) => [d.id, d]));
 export const SPECIES_LIST: SpeciesDef[] = ORDER.map((id, i) => ({ ...byId[id], no: i + 1 }));
