@@ -28,6 +28,8 @@ const list: ItemDef[] = [
   { id: 'safariticket', name: '사파리입장권', price: 1500, kind: 'key', desc: '파도항구 팜팜 사파리에 한 번 들어갈 수 있는 입장권. 10분 동안 사파리볼 30개로 몬스터를 잡을 수 있다.' },
   { id: 'windwhistle', name: '바람피리', price: 0, kind: 'key', desc: '바람 조련사 솔바람에게 받은 피리. 메뉴의 「날아가기」로 한 번 가 본 마을까지 회오리매가 데려다준다.' },
   { id: 'trophy', name: '해솔리그트로피', price: 0, kind: 'key', desc: '해솔 리그 토너먼트 우승자에게 주어지는 황금 트로피. 관중의 함성이 들려오는 것 같다.' },
+  { id: 'enginekey', name: '기관실열쇠', price: 0, kind: 'key', desc: '은파호 선실 옷장에서 찾은 녹슨 열쇠. 갑판 뒤쪽 기관실 문을 연다.' },
+  { id: 'captainwatch', name: '선장의회중시계', price: 0, kind: 'key', desc: '뚜껑 안쪽에 「해월」이라고 새겨진 회중시계. 바늘이 30년 전 폭풍의 밤에 멈춰 있다.' },
   { id: 'rod', name: '낚싯대', price: 0, kind: 'key', desc: '물가를 바라보고 A 버튼을 누르면 낚시를 할 수 있다.' },
 ];
 

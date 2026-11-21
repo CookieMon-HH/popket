@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -439,6 +439,128 @@ function build(ch: string, anim: number): Pix {
       }
       break;
     }
+    // ── 유람선 은파호 ─────────────────────────────────────────────
+    case '6': // teak deck planks
+      p.rect(0, 0, 16, 16, '#c89a62');
+      for (const y of [3, 7, 11, 15]) p.rect(0, y, 16, 1, '#a07444');
+      for (const [x, y] of [[5, 0], [12, 4], [2, 8], [9, 12]]) p.rect(x, y, 1, 3, '#a07444');
+      break;
+    case '7': // white cruise superstructure with a porthole
+      p.rect(0, 0, 16, 16, '#eef0f4');
+      p.rect(0, 0, 16, 2, '#c8ccd8');
+      p.rect(0, 14, 16, 2, '#9aa0b4');
+      p.ell(8, 8, 3.5, 3.5, '#5a6478');
+      p.ell(8, 8, 2.5, 2.5, '#9ad0f0');
+      p.set(7, 7, '#ffffff');
+      break;
+    case '8': // white railing above the sea
+      p.rect(0, 0, 16, 16, '#2a5a9a');
+      for (const y of [5, 9, 13]) p.rect(0, y, 16, 1, '#3a6aaa');
+      p.rect(0, 2, 16, 2, '#f4f4f8');
+      for (const x of [1, 7, 13]) p.rect(x, 2, 2, 10, '#e0e0ea');
+      p.rect(0, 10, 16, 1, '#c8c8d4');
+      break;
+    case '9': // ballroom / corridor carpet
+      p.rect(0, 0, 16, 16, '#8a2a3a');
+      p.rect(0, 0, 16, 1, '#6a1a28');
+      for (const [x, y] of [[3, 4], [11, 4], [7, 9], [3, 13], [11, 13]]) { p.set(x, y, '#d8a840'); p.set(x + 1, y, '#d8a840'); }
+      break;
+    case '0': // engine room grating
+      p.rect(0, 0, 16, 16, '#4a5058');
+      for (let i = 0; i < 16; i += 4) { p.rect(i, 0, 1, 16, '#3a3e46'); p.rect(0, i, 16, 1, '#3a3e46'); }
+      break;
+    case '-': // pipes on the engine room wall
+      p.rect(0, 0, 16, 16, '#3a3e46');
+      p.rect(0, 3, 16, 4, '#8a6a4a');
+      p.rect(0, 3, 16, 1, '#b8946a');
+      p.rect(0, 10, 16, 3, '#6a7888');
+      p.rect(6, 2, 3, 6, '#6a4a2e');
+      break;
+    case '{': // lifeboat
+      p.rect(0, 0, 16, 16, '#c89a62');
+      p.ell(8, 8, 7.5, 5, '#e8602a');
+      p.ell(8, 7, 6, 3.5, '#f4f0e8');
+      p.rect(3, 7, 10, 1, '#c84a1a');
+      break;
+    case '}': // funnel
+      p.rect(0, 0, 16, 16, '#c89a62');
+      p.ell(8, 9, 6.5, 6, '#2a2e3a');
+      p.ell(8, 8, 5.5, 5, '#c8323a');
+      p.rect(3, 5, 10, 2, '#f4f4f8');
+      p.ell(8, 8, 3, 2.5, '#1a1a22');
+      break;
+    case '|': // portrait on a dark panelled wall
+      p.rect(0, 0, 16, 16, '#5a3a26');
+      p.rect(2, 1, 12, 13, '#d8a840');
+      p.rect(3, 2, 10, 11, '#3a4a5a');
+      p.ell(8, 6, 2.5, 2.5, '#e8d0b0');
+      p.rect(5, 9, 6, 4, '#2a2a3a');
+      p.set(7, 6, '#c8323a'); p.set(9, 6, '#c8323a');
+      break;
+    case '<': case '>': { // candelabra, unlit / lit
+      floor(p);
+      p.rect(7, 6, 2, 8, '#d8a840');
+      p.rect(4, 13, 8, 2, '#b88a30');
+      p.rect(5, 4, 6, 1, '#d8a840');
+      for (const x of [5, 10]) p.rect(x, 4, 1, 3, '#f4f0e0');
+      p.rect(7, 2, 2, 4, '#f4f0e0');
+      if (ch === '>') { p.ell(8, 1, 1.2, 1.6, '#ffd84a'); p.set(5, 3, '#ff9a3a'); p.set(10, 3, '#ff9a3a'); }
+      break;
+    }
+    case '@': // ship's wheel
+      floor(p);
+      p.ell(8, 8, 6.5, 6.5, '#8a5630');
+      p.ell(8, 8, 4.5, 4.5, '#e4bc8c');
+      p.ell(8, 8, 1.5, 1.5, '#d8a840');
+      for (const [x, y] of [[8, 1], [8, 15], [1, 8], [15, 8], [3, 3], [13, 13], [3, 13], [13, 3]]) p.set(x, y, '#5a3418');
+      break;
+    case '[': // grand piano
+      p.rect(0, 0, 16, 16, '#8a2a3a');
+      p.ell(8, 7, 7.5, 6.5, '#1a1a22');
+      p.rect(1, 11, 14, 3, '#1a1a22');
+      p.rect(2, 12, 12, 2, '#f4f4f8');
+      for (const x of [3, 5, 8, 10, 12]) p.rect(x, 12, 1, 1, '#1a1a22');
+      break;
+    case ']': // wardrobe
+      floor(p);
+      p.rect(1, 0, 14, 16, '#5a3418');
+      p.rect(2, 1, 5, 14, '#7a4a2a');
+      p.rect(9, 1, 5, 14, '#7a4a2a');
+      p.set(7, 8, '#d8a840'); p.set(8, 8, '#d8a840');
+      break;
+    case '(': // desk with an open logbook
+      floor(p);
+      p.rect(0, 4, 16, 10, '#7a4a2a');
+      p.rect(0, 4, 16, 2, '#9a6a3a');
+      p.rect(4, 6, 8, 5, '#f4ecd8');
+      p.rect(8, 6, 1, 5, '#c8b890');
+      break;
+    case '!': // red valve wheel on a pipe
+      p.rect(0, 0, 16, 16, '#4a5058');
+      p.rect(6, 8, 4, 8, '#8a6a4a');
+      p.ell(8, 7, 6, 6, '#c8323a');
+      p.ell(8, 7, 4, 4, '#4a5058');
+      p.rect(2, 6, 12, 2, '#c8323a');
+      p.rect(7, 1, 2, 12, '#c8323a');
+      p.ell(8, 7, 1.5, 1.5, '#e8e0d0');
+      break;
+    case '"': // padlocked door
+      p.rect(0, 0, 16, 16, '#6a4a3a');
+      p.rect(2, 1, 12, 15, '#8a5e40');
+      for (let x = 0; x < 16; x += 3) p.set(x, 7, '#c8ccd8');
+      p.rect(0, 6, 16, 1, '#9aa0b4');
+      p.rect(6, 8, 4, 4, '#d8a840');
+      p.rect(7, 6, 2, 2, '#9aa0b4');
+      p.set(8, 10, '#3a2a1a');
+      break;
+    case ')': // generator
+      p.rect(0, 0, 16, 16, '#4a5058');
+      p.rect(1, 2, 14, 13, '#6a7888');
+      p.rect(3, 4, 10, 6, '#2a2e3a');
+      p.rect(4, 5, 3, 2, '#e84a4a');
+      p.rect(9, 5, 3, 2, '#4ae86a');
+      p.rect(2, 12, 12, 2, '#3a3e46');
+      break;
     case 'X':
       p.rect(0, 0, 16, 16, '#d8cce8');
       for (let x = 2; x < 16; x += 4) p.rect(x, 0, 1, 12, '#c8bce0');

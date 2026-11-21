@@ -7,11 +7,12 @@ import { shopMenu } from './menus';
 import {
   PAL, momTalk, labProfessor, rivalLabTalk, chapter2Scene, leader1Win, grannyTalk, forestAdminWin,
   rival2Scene, fisherTalk, leader2Win, bossScene, whaleTalk, rival3Scene, leader3Win, minerTalk, sanjiTalk, potatoTalk,
-  port1Scene, dalnimShipTalk, shipAdminWin, leader4Win, leader5Win, volcanoBossScene, 
+  port1Scene, leader4Win, leader5Win, volcanoBossScene, 
   iceIntroScene, iceCaveScene, beachAdminWin, haesolMeet, haesolTalk, cheonjiTalk, summitMonk, leader6Win, dragonIntroScene, elderTalk, denEntranceScene, cloudWin, leader7Win, lever, toggleSwitch, quiz,
 } from './story';
 import { keeperTalk, escapeeTalk, safariExitTile, specialGate } from './safari';
 import { windTamerTalk } from './fly';
+import { boardShip, lockedBridge, lockedEngine, logPage1, portraitTalk, dalnimCabin, wardrobe, candleProp, candleTalk, pianoTalk, valveTalk, generatorTalk, shipAdminWinV2, wheelTalk, captainTalk, shipExitCheck } from './ship';
 import { receptionTalk } from './tournament';
 import { legendEncounter, snowMomPost, hwaryeonPost } from './legends';
 
@@ -64,6 +65,10 @@ export interface NPCDef {
   item?: { id: string; qty: number };
   /** A rock the player can push. */
   boulder?: boolean;
+  /** Draw as a map object (a tile character), e.g. a candle or a ship's wheel. */
+  prop?: string | (() => string);
+  /** Draw the person see-through and flickering. */
+  ghost?: boolean;
   /** A gate drawn as an object; give it `hidden` to open it. */
   barrier?: 'water' | 'electric' | 'stone';
   hidden?: () => boolean;
@@ -77,7 +82,7 @@ export interface MapDef {
   id: string;
   name: string;
   indoor?: boolean;
-  dark?: boolean;
+  dark?: boolean | (() => boolean);
   /** Tile drawn beyond the map edge (outdoor maps default to trees). */
   edge?: string;
   tiles: string[];
@@ -1174,7 +1179,7 @@ const town5: MapDef = {
     { x: 5, y: 3, to: 'gym4', tx: 6, ty: 11, dir: 'up' },
     { x: 16, y: 3, to: 'shop5', tx: 4, ty: 6, dir: 'up' },
     { x: 4, y: 8, to: 'center5', tx: 4, ty: 6, dir: 'up' },
-    { x: 19, y: 13, to: 'ship', tx: 6, ty: 7, dir: 'up' },
+    { x: 19, y: 13, to: 'ship', tx: 2, ty: 11, dir: 'right' },
     { x: 0, y: 9, to: 'route5', tx: 24, ty: 3, dir: 'left' },
     { x: 25, y: 3, to: 'safarigate', tx: 4, ty: 6, dir: 'up' },
   ],
@@ -1479,37 +1484,189 @@ const safari_jungle: MapDef = {
   ],
 };
 
+// 유람선 은파호 — 갑판 (안개가 짙고, 전기가 들어오면 밝아진다)
 const ship: MapDef = {
-  id: 'ship', name: '유령선', indoor: true, dark: true,
+  id: 'ship', name: '은파호 — 갑판', dark: () => !f('ship_power'),
   tiles: [
-    'ZZZZZZZZZZZZZZ',
-    'ZTooooooooooTZ',
-    'ZooooooooooooZ',
-    'ZooZZZooZZZooZ',
-    'ZooZooooooZooZ',
-    'ZooZooooooZooZ',
-    'ZooooooooooooZ',
-    'ZTooooooooooTZ',
-    'ZZZZZZeeZZZZZZ',
+    '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+    '~8888888888888888888888888888~',
+    '~866{{6666666666666666{{66668~',
+    '~8666666666666666666666666668~',
+    '~86666666677777D7777766666668~',
+    '~86666}}667777777777766666668~',
+    '~86666}}667777777777766666668~',
+    '~8666666667777777777766666668~',
+    '~86666666677D77777D7766666668~',
+    '~866666666666666666666667D768~',
+    '~8666666666666666666666677768~',
+    '~6666666666666666666666677768~',
+    '~8666666666666666666666666668~',
+    '~866{{6666666666666666{{66668~',
+    '~8888888888888888888888888888~',
+    '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
   ],
   warps: [
-    { x: 6, y: 8, to: 'town5', tx: 19, ty: 12, dir: 'down' },
-    { x: 7, y: 8, to: 'town5', tx: 19, ty: 12, dir: 'down' },
+    { x: 12, y: 8, to: 'ship_cabins', tx: 1, ty: 6, dir: 'right' },
+    { x: 18, y: 8, to: 'ship_ballroom', tx: 8, ty: 11, dir: 'up' },
+    { x: 15, y: 4, to: 'ship_bridge', tx: 6, ty: 7, dir: 'up' },
+    { x: 25, y: 9, to: 'ship_engine', tx: 8, ty: 10, dir: 'up' },
+  ],
+  labels: [{ x: 15.5, y: 6.3, text: '은파호', color: '#f4e8c0', ink: '#6a4a10' }],
+  npcs: [
+    { id: 'shiplock_bridge', x: 15, y: 4, dir: 'down', prop: '"', hidden: () => f('ship_watch') && f('ship_power'), talk: () => lockedBridge() },
+    { id: 'shiplock_engine', x: 25, y: 9, dir: 'down', prop: '"', hidden: () => f('ship_key'), talk: () => lockedEngine() },
+    grunt('sgrunt1', 9, 10, 'right', 4, [['dokkae', 29], ['meokmul', 29]], '도깨비불이 무섭지 않냐? 흐흐흐…', '으악, 진짜 유령보다 무서운 녀석이다!', '유령선은 우리가 꾸며 낸 거였어… 그런데 가끔 진짜 소리가 나.'),
+    { id: 'sghost1', x: 4, y: 9, dir: 'down', mon: 'dokbul', move: 'wander', hidden: () => f('shipDone'), talk: '도깨비불이 슬픈 눈으로 흔들리고 있다…\n누군가를 기다리는 것 같다.' },
+    { id: 'sghost2', x: 21, y: 11, dir: 'down', mon: 'dokbul', move: 'wander', hidden: () => f('shipDone'), talk: '도깨비불이 억지로 불을 피우고 있다…' },
+    { id: 'deckitem', x: 26, y: 3, dir: 'down', item: { id: 'superpotion', qty: 2 } },
+  ],
+  triggers: [
+    { x: 1, y: 11, run: shipExitCheck },
+    { x: 3, y: 11, when: () => !f('ship_intro'), run: boardShip },
+  ],
+};
+
+const ship_cabins: MapDef = {
+  id: 'ship_cabins', name: '은파호 — 선실 복도', indoor: true, dark: () => !f('ship_power'),
+  tiles: [
+    '77777777777777777777777777',
+    '7oooob7oooob7oooob7oooob77',
+    '7ooooo7ooooo7ooooo7ooooo77',
+    '7ooooo7ooooo7ooooo7ooooo77',
+    '7ooooo7ooooo7ooooo7ooooo77',
+    '77797777797777797777797777',
+    'e9999999999999999999999997',
+    '79999999999999999999999997',
+    '77777777777777777777777777',
+  ],
+  warps: [{ x: 0, y: 6, to: 'ship', tx: 12, ty: 9, dir: 'down' }],
+  npcs: [
+    { id: 'shiplog1', x: 2, y: 1, dir: 'down', prop: '(', talk: () => logPage1() },
+    grunt('sgrunt2', 9, 2, 'down', 2, [['dodug', 30], ['ggorichim', 30]], '여기서 한 발짝도 못 지나간다!', '크윽…', '간부님은 조종실을 차지하고 계셔. 문은 잠겨 있지만.'),
+    { id: 'sdalnim', x: 15, y: 2, dir: 'down', pal: PAL.dalnim, hidden: () => f('shipDone'), talk: () => dalnimCabin() },
+    grunt('sgrunt3', 21, 3, 'up', 1, [['dokkae', 30], ['kkwae', 30], ['meokmul', 30]], '그 옷장엔 손대지 마! 열쇠가… 아, 아니 아무것도 없어!', '열쇠를 지키라고 했는데…', '…'),
+    { id: 'swardrobe', x: 22, y: 1, dir: 'down', prop: ']', requires: ['sgrunt3'], waitText: '옷장 앞을 검은안개단이 지키고 있다.', talk: () => wardrobe() },
+    { id: 'sportrait', x: 12, y: 8, dir: 'up', prop: '|', talk: () => portraitTalk() },
+    { id: 'cabinitem', x: 5, y: 4, dir: 'down', item: { id: 'revive', qty: 1 } },
+  ],
+};
+
+const ship_ballroom: MapDef = {
+  id: 'ship_ballroom', name: '은파호 — 연회장', indoor: true, dark: () => !f('ship_power') && !f('ship_watch'),
+  tiles: [
+    '777777777777777777',
+    '7TooooooooooooooT7',
+    '7oooooooooooooooo7',
+    '7oo999999999999oo7',
+    '7oo999999999999oo7',
+    '7oo999999999999oo7',
+    '7oo999999999999oo7',
+    '7oo999999999999oo7',
+    '7oo999999999999oo7',
+    '7oo999999999999oo7',
+    '7ooooTooooooToooo7',
+    '7TooooooooooooooT7',
+    '77777777ee77777777',
+  ],
+  warps: [
+    { x: 8, y: 12, to: 'ship', tx: 18, ty: 9, dir: 'down' },
+    { x: 9, y: 12, to: 'ship', tx: 18, ty: 9, dir: 'down' },
   ],
   npcs: [
-    grunt('sgrunt1', 1, 2, 'right', 5, [['dokkae', 30], ['meokmul', 30]], '도깨비불이 무섭지 않냐? 흐흐흐…', '으악, 진짜 유령보다 무서운 녀석이다!', '유령선은 우리가 꾸며 낸 거였어…'),
-    grunt('sgrunt2', 12, 6, 'left', 5, [['dodug', 30], ['ggorichim', 31]], '여기서 한 발짝도 못 지나간다!', '크윽…', '간부님은 배 한가운데 계셔.'),
-    { id: 'sghost1', x: 2, y: 5, dir: 'down', mon: 'dokbul', hidden: () => f('shipDone'), talk: '도깨비불이 슬픈 눈으로 흔들리고 있다…' },
-    { id: 'sghost2', x: 11, y: 2, dir: 'down', mon: 'dokbul', hidden: () => f('shipDone'), talk: '도깨비불이 억지로 불을 피우고 있다…' },
-    { id: 'sdalnim', x: 8, y: 4, dir: 'left', pal: PAL.dalnim, hidden: () => f('shipDone'), talk: () => dalnimShipTalk() },
+    { id: 'spiano', x: 9, y: 2, dir: 'down', prop: '[', talk: () => pianoTalk() },
+    { id: 'candle_star', x: 2, y: 5, dir: 'down', prop: candleProp('별'), talk: () => candleTalk('별') },
+    { id: 'candle_sun', x: 15, y: 5, dir: 'down', prop: candleProp('해'), talk: () => candleTalk('해') },
+    { id: 'candle_wave', x: 2, y: 9, dir: 'down', prop: candleProp('파도'), talk: () => candleTalk('파도') },
+    { id: 'candle_moon', x: 15, y: 9, dir: 'down', prop: candleProp('달'), talk: () => candleTalk('달') },
+    grunt('sgrunt4', 12, 6, 'left', 3, [['dokbul', 30], ['dodug', 31]], '연회장은 우리 구역이다! 촛불은 건드리지 마라!', '촛불… 켜면 안 된다니까…', '촛불을 아무렇게나 켜면 바람이 불어서 다 꺼져. 무섭다고!'),
+    { id: 'sghost3', x: 6, y: 4, dir: 'down', mon: 'dokbul', move: 'wander', hidden: () => f('shipDone'), talk: '도깨비불이 피아노 주위를 빙글빙글 돈다…' },
+  ],
+};
+
+const ship_engine: MapDef = {
+  id: 'ship_engine', name: '은파호 — 기관실', indoor: true, dark: () => !f('ship_power'),
+  tiles: [
+    '------------------',
+    '-0000000000000000-',
+    '-0000000000000000-',
+    '-0000000000000000-',
+    '-0000000000000000-',
+    '-0000000000000000-',
+    '-0000000000000000-',
+    '-0000000000000000-',
+    '-00000--000--0000-',
+    '-0000000000000000-',
+    '-0000000000000000-',
+    '--------ee--------',
+  ],
+  warps: [
+    { x: 8, y: 11, to: 'ship', tx: 25, ty: 8, dir: 'down' },
+    { x: 9, y: 11, to: 'ship', tx: 25, ty: 8, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'sgenerator', x: 9, y: 2, dir: 'down', prop: ')', talk: () => generatorTalk() },
+    ...[0, 1, 2, 3].map((i) => ({ id: 'svalve' + i, x: 3 + i * 4, y: 5, dir: 'down' as Dir, prop: '!', talk: () => valveTalk(i) })),
+    grunt('sgrunt5', 14, 8, 'left', 4, [['ggangtong', 30], ['cheolgap', 31]], '전기를 켜면 안 돼! 어둠 속이어야 유령 연출이 된다고!', '불이… 켜져 버리겠어…', '밸브 하나를 돌리면 옆 배관도 같이 돌아가. 복잡하다고!'),
+    { id: 'engineitem', x: 1, y: 1, dir: 'down', item: { id: 'hyperpotion', qty: 1 } },
+  ],
+};
+
+const ship_bridge: MapDef = {
+  id: 'ship_bridge', name: '은파호 — 조종실', indoor: true,
+  tiles: [
+    '77777777777D77',
+    '7T6666666666T7',
+    '76666666666667',
+    '76666666666667',
+    '76666666666667',
+    '76666666666667',
+    '76666666666667',
+    '76666666666667',
+    '777777ee777777',
+  ],
+  warps: [
+    { x: 6, y: 8, to: 'ship', tx: 15, ty: 3, dir: 'down' },
+    { x: 7, y: 8, to: 'ship', tx: 15, ty: 3, dir: 'down' },
+    { x: 11, y: 0, to: 'ship_ghost', tx: 5, ty: 8, dir: 'up' },
+  ],
+  npcs: [
+    { id: 'swheel', x: 7, y: 2, dir: 'down', prop: '@', talk: () => wheelTalk() },
+    { id: 'shiplock_ghost', x: 11, y: 0, dir: 'down', prop: '"', hidden: () => f('ship_wheel'), talk: '벽에 문 모양의 이음매가 보인다. 하지만 열리지 않는다.' },
+    grunt('sgrunt6', 3, 4, 'right', 3, [['dokkae', 31], ['dokjeongal', 31]], '간부님께 가려면 나부터 쓰러뜨려라!', '간부님, 죄송합니다…', '키를 돌리면… 배가 울어. 진짜라고.'),
     {
-      id: 'sadmin', x: 6, y: 4, dir: 'down', pal: PAL.admin, sight: 2, hidden: () => f('shipDone'),
-      requires: ['sgrunt1', 'sgrunt2'],
-      waitText: '잿빛: 흥, 갑판의 부하들도 못 넘은 주제에.\n그 녀석들부터 이기고 오면 상대해 주지.',
-      trainer: tr('admin3', '검은안개단 간부', '잿빛', PAL.admin, [['dokdae', 31], ['meokmul', 31], ['geosin', 32]], 2500,
-        '또 너냐…! 이번 유령선 작전만큼은 방해하게 두지 않겠다!', '세 번째… 이젠 할 말도 없군.', '…', shipAdminWin),
+      id: 'sadmin', x: 7, y: 4, dir: 'down', pal: PAL.admin, sight: 2, hidden: () => f('ship_admin') || f('shipDone'),
+      requires: ['sgrunt1', 'sgrunt2', 'sgrunt3', 'sgrunt4', 'sgrunt5', 'sgrunt6'],
+      waitText: '잿빛: 흥, 배 곳곳의 부하들도 못 넘은 주제에.\n그 녀석들부터 이기고 오면 상대해 주지.',
+      trainer: tr('admin3', '검은안개단 간부', '잿빛', PAL.admin, [['dokdae', 32], ['meokmul', 32], ['geosin', 33]], 2500,
+        '또 너냐…! 전기까지 켜고 여기까지 오다니. 이번 유령선 작전만큼은 방해하게 두지 않겠다!', '세 번째… 이젠 할 말도 없군.', '…', shipAdminWinV2),
     },
-    { id: 'shipitem', x: 2, y: 7, dir: 'down', item: { id: 'maxrevive', qty: 1 } },
+  ],
+};
+
+const ship_ghost: MapDef = {
+  id: 'ship_ghost', name: '은파호 — 선장실', indoor: true, dark: true,
+  tiles: [
+    'ZZZZZZZZZZZZ',
+    'ZT99999999TZ',
+    'Z9999999999Z',
+    'Z9999999999Z',
+    'Z9999999999Z',
+    'Z9999999999Z',
+    'Z9999999999Z',
+    'Z9999999999Z',
+    'ZT99999999TZ',
+    'ZZZZZeeZZZZZ',
+  ],
+  warps: [
+    { x: 5, y: 9, to: 'ship_bridge', tx: 11, ty: 1, dir: 'down' },
+    { x: 6, y: 9, to: 'ship_bridge', tx: 11, ty: 1, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'scaptain', x: 5, y: 2, dir: 'down', pal: PAL.captain, ghost: true, hidden: () => f('shipDone'), talk: () => captainTalk() },
+    { id: 'scaptaindesk', x: 8, y: 2, dir: 'down', prop: '(', talk: '선장의 책상이다. 항해일지의 마지막 장이 비어 있다.' },
+    { id: 'sghost4', x: 3, y: 4, dir: 'down', mon: 'dokbul', hidden: () => f('shipDone'), talk: '도깨비불이 선장 곁을 떠나지 않으려 한다…' },
+    { id: 'sghost5', x: 8, y: 5, dir: 'down', mon: 'dokbul', hidden: () => f('shipDone'), talk: '도깨비불이 조용히 깜빡인다.' },
+    { id: 'shipitem', x: 10, y: 7, dir: 'down', item: { id: 'maxrevive', qty: 1 } },
   ],
 };
 
@@ -2296,7 +2453,7 @@ export const MAPS: Record<string, MapDef> = {
   home, town1, lab, route1, town2, center, shop, dojo,
   route2, forest, town3, center3, shop3, gym2,
   route3, cave, town4, center4, shop4, gym3, peak, pastel,
-  route4, town5, center5, shop5, safarigate, safari, safari_fire, safari_canyon, safari_fairy, safari_special, safari_ice, safari_water, safari_jungle, ship, gym4, route5, town6, center6, shop6, gym5, volcano, route6, plateau, center7, league,
+  route4, town5, center5, shop5, safarigate, safari, safari_fire, safari_canyon, safari_fairy, safari_special, safari_ice, safari_water, safari_jungle, ship, ship_cabins, ship_ballroom, ship_engine, ship_bridge, ship_ghost, gym4, route5, town6, center6, shop6, gym5, volcano, route6, plateau, center7, league,
   town7, center8, shop8, gym6, icecave, skyroad, summit, route7, town8, center9, shop9, den, gym7, route8,
 };
 

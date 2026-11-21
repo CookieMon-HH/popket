@@ -365,6 +365,11 @@ export class Overworld implements Scene {
         g.drawImage(itemSprite(), sx, sy);
         continue;
       }
+      if (npc?.def.prop) {
+        const ch = typeof npc.def.prop === 'function' ? npc.def.prop() : npc.def.prop;
+        g.drawImage(tileCanvas(ch, Math.floor(clock.frame / 32) % 2), sx, sy);
+        continue;
+      }
       if (npc?.def.boulder) {
         g.drawImage(boulderSprite(), sx, sy);
         continue;
@@ -393,7 +398,9 @@ export class Overworld implements Scene {
       const striding = a.moving > 0 && prog > 0.05 && prog < 0.9 && !(a === this.player && this.sliding);
       const frame = striding ? (a.step % 2 ? 1 : 3) : 0;
       const pal = npc ? npc.def.pal ?? PLAYER_PAL : PLAYER_PAL;
+      if (npc?.def.ghost) g.globalAlpha = 0.45 + Math.sin(clock.frame / 9) * 0.15;
       g.drawImage(personSprite(pal, a.dir, frame), sx, sy - 5);
+      g.globalAlpha = 1;
       const under = this.tileAt(a.x, a.y);
       if (TALL_CHARS.includes(under) && a.moving < STEP / 2) {
         g.drawImage(under === ',' ? tall : tileCanvas(under, 0), 0, 9, 16, 7, a.x * 16 - cx, a.y * 16 - cy + 9, 16, 7);
@@ -409,7 +416,7 @@ export class Overworld implements Scene {
       }
     }
     if (this.fishing) this.drawFishing(g, cx, cy);
-    if (this.map.dark) this.drawDark(g, cx, cy);
+    if (this.isDark()) this.drawDark(g, cx, cy);
   }
 
   private drawFishing(g: Ctx, cx: number, cy: number) {
@@ -479,6 +486,11 @@ export class Overworld implements Scene {
       g.fillRect(sx + 7, sy - 17, 2, 5);
       g.fillRect(sx + 7, sy - 11, 2, 2);
     }
+  }
+
+  isDark() {
+    const d = this.map.dark;
+    return typeof d === 'function' ? d() : !!d;
   }
 
   private drawDark(g: Ctx, cx: number, cy: number) {

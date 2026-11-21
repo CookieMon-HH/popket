@@ -53,6 +53,7 @@ export const PAL = {
   elder: { hair: '#f4f4f4', shirt: '#6a4a8a', pants: '#3a2a4a' },
   sutgeom: { hair: '#3a2a22', shirt: '#7a3a2a', pants: '#2a1e1a', hat: '#a04a2a' },
   haesol: { hair: '#f0f0f8', shirt: '#f4e8c8', pants: '#6a4a9a', hat: '#ffd24a' },
+  captain: { hair: '#e8eef8', shirt: '#2a3a6a', pants: '#1a2440', hat: '#f4f4f8' },
   cloud: { hair: '#8a94c8', shirt: '#2e2e3a', pants: '#1e1e28', hat: '#626aa0' },
   skier: { hair: '#3a2a20', shirt: '#e84a6a', pants: '#3a4a7a', hat: '#ffffff' },
 } satisfies Record<string, Pal>;
