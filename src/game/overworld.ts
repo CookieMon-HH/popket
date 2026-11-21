@@ -9,7 +9,7 @@ import { SOLID, tileCanvas, TALL_CHARS } from './tiles';
 import { silhouette } from '../engine/pix';
 import { personSprite, itemSprite, monSprite, boulderSprite, barrierSprite, type Pal } from './sprites';
 import { game, runtime, beatenAll } from './state';
-import { playMusic } from '../engine/audio';
+import { playMusic, sfx } from '../engine/audio';
 import { musicForMap } from './music';
 
 export interface Actor {
@@ -421,6 +421,7 @@ export class Overworld implements Scene {
       }
     }
     if (this.fishing) this.drawFishing(g, cx, cy);
+    if (this.map.id.startsWith('ship')) this.drawGloom(g, cx, cy);
     if (this.isDark()) this.drawDark(g, cx, cy);
   }
 
@@ -496,6 +497,56 @@ export class Overworld implements Scene {
   isDark() {
     const d = this.map.dark;
     return typeof d === 'function' ? d() : !!d;
+  }
+
+  /** Ghost ship: cold murky tint, drifting fog, and rain with lightning on the open deck. */
+  private lightning = 0;
+  private nextBolt = 0;
+  private drawGloom(g: Ctx, cx: number, cy: number) {
+    const f = clock.frame;
+    const deck = this.map.id === 'ship';
+    g.fillStyle = 'rgba(14,26,34,0.42)';
+    g.fillRect(0, 0, W, H);
+    // drifting fog banks (in world space so they slide past as you walk)
+    for (let i = 0; i < 7; i++) {
+      const wx = ((i * 97 + f * (0.12 + (i % 3) * 0.05)) % 520) - 80 - (cx % 520) * 0.3;
+      const wy = (i * 53) % 220 - (cy % 220) * 0.3;
+      const fog = g.createRadialGradient(wx, wy, 4, wx, wy, 56);
+      fog.addColorStop(0, 'rgba(170,190,190,0.16)');
+      fog.addColorStop(1, 'rgba(170,190,190,0)');
+      g.fillStyle = fog;
+      g.fillRect(wx - 60, wy - 60, 120, 120);
+    }
+    if (deck) {
+      g.strokeStyle = 'rgba(160,180,200,0.35)';
+      g.lineWidth = 1;
+      g.beginPath();
+      for (let i = 0; i < 46; i++) {
+        const x = (i * 37 + f * 2) % (W + 40) - 20;
+        const y = (i * 71 + f * 6) % (H + 20) - 10;
+        g.moveTo(x, y);
+        g.lineTo(x - 3, y + 8);
+      }
+      g.stroke();
+      if (!this.nextBolt) this.nextBolt = f + 240 + Math.floor(Math.random() * 360);
+      if (f >= this.nextBolt && !ui.active) {
+        this.lightning = 14;
+        this.nextBolt = f + 420 + Math.floor(Math.random() * 480);
+        window.setTimeout(() => sfx('thunder'), 350);
+      }
+    }
+    // vignette
+    const vg = g.createRadialGradient(W / 2, H / 2, 60, W / 2, H / 2, W * 0.7);
+    vg.addColorStop(0, 'rgba(6,10,16,0)');
+    vg.addColorStop(1, 'rgba(6,10,16,0.55)');
+    g.fillStyle = vg;
+    g.fillRect(0, 0, W, H);
+    if (this.lightning > 0) {
+      const a = this.lightning > 10 ? 0.55 : this.lightning > 7 ? 0.1 : this.lightning > 4 ? 0.35 : 0.05;
+      g.fillStyle = `rgba(220,230,255,${a})`;
+      g.fillRect(0, 0, W, H);
+      this.lightning--;
+    }
   }
 
   private drawDark(g: Ctx, cx: number, cy: number) {

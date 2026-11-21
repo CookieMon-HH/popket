@@ -45,6 +45,49 @@ class View {
   enemyTeam: Mon[] | null = null;
   shake = 0;
   arena = false;
+  gloom = false;
+}
+
+/** Ghost ship backdrop: moonlit fog, broken masts and floating will-o'-wisps. */
+function drawGhostShip(g: Ctx) {
+  const f = clock.frame;
+  g.fillStyle = 'rgba(200,220,210,0.12)';
+  g.beginPath();
+  g.arc(W - 40, 26, 14, 0, Math.PI * 2);
+  g.fill();
+  g.fillStyle = '#d8e4dc';
+  g.beginPath();
+  g.arc(W - 40, 26, 8, 0, Math.PI * 2);
+  g.fill();
+  g.fillStyle = '#141a20';
+  for (const [x, h] of [[22, 70], [W - 70, 84]] as [number, number][]) {
+    g.fillRect(x, 96 - h, 3, h);
+    g.fillRect(x - 14, 96 - h + 12, 30, 2);
+    g.beginPath();
+    g.moveTo(x - 12, 96 - h + 14);
+    g.lineTo(x + 2, 96 - h + 40);
+    g.lineTo(x - 8, 96 - h + 44);
+    g.closePath();
+    g.fill();
+  }
+  for (let i = 0; i < 4; i++) {
+    const y = 30 + i * 22 + Math.sin(f / 50 + i) * 4;
+    const x = ((i * 83 + f * 0.25) % (W + 80)) - 40;
+    const fog = g.createLinearGradient(x - 50, 0, x + 50, 0);
+    fog.addColorStop(0, 'rgba(160,180,175,0)');
+    fog.addColorStop(0.5, 'rgba(160,180,175,0.13)');
+    fog.addColorStop(1, 'rgba(160,180,175,0)');
+    g.fillStyle = fog;
+    g.fillRect(x - 50, y - 6, 100, 12);
+  }
+  for (let i = 0; i < 3; i++) {
+    const x = 40 + i * ((W - 80) / 2) + Math.sin(f / 40 + i * 2) * 8;
+    const y = 50 + Math.cos(f / 33 + i) * 6;
+    g.fillStyle = 'rgba(110,200,255,0.18)';
+    g.beginPath(); g.arc(x, y, 5, 0, Math.PI * 2); g.fill();
+    g.fillStyle = 'rgba(180,235,255,0.7)';
+    g.beginPath(); g.arc(x, y, 2, 0, Math.PI * 2); g.fill();
+  }
 }
 
 class BattleScene implements Scene {
@@ -54,27 +97,31 @@ class BattleScene implements Scene {
   drawWorld(g: Ctx) {
     const v = this.v;
     const grad = g.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, '#f6f4dc');
-    grad.addColorStop(0.55, '#e0f0c8');
-    grad.addColorStop(1, '#b8dc98');
+    const [c0, c1, c2, pa, pb] = v.gloom
+      ? ['#0e141e', '#1c2630', '#2a2c2a', '#3a3a34', '#52524a']
+      : ['#f6f4dc', '#e0f0c8', '#b8dc98', '#a6d088', '#c0e0a0'];
+    grad.addColorStop(0, c0);
+    grad.addColorStop(0.55, c1);
+    grad.addColorStop(1, c2);
     g.fillStyle = grad;
     g.fillRect(0, 0, W, H);
     if (v.arena) drawArena(g);
+    if (v.gloom) drawGhostShip(g);
     g.save();
     g.translate(OX, 0);
-    g.fillStyle = '#a6d088';
+    g.fillStyle = pa;
     g.beginPath();
     g.ellipse(184, 76, 50, 11, 0, 0, Math.PI * 2);
     g.fill();
-    g.fillStyle = '#c0e0a0';
+    g.fillStyle = pb;
     g.beginPath();
     g.ellipse(184, 74, 44, 8, 0, 0, Math.PI * 2);
     g.fill();
-    g.fillStyle = '#a6d088';
+    g.fillStyle = pa;
     g.beginPath();
     g.ellipse(64, 146, 62, 13, 0, 0, Math.PI * 2);
     g.fill();
-    g.fillStyle = '#c0e0a0';
+    g.fillStyle = pb;
     g.beginPath();
     g.ellipse(64, 144, 56, 10, 0, 0, Math.PI * 2);
     g.fill();
@@ -270,6 +317,7 @@ class MoveMenu extends Widget<number> {
 export async function runBattle(o: BattleOpts): Promise<BattleResult> {
   const v = new View();
   v.arena = !!o.arena;
+  v.gloom = !o.arena && game.map.startsWith('ship');
   scenes.current = new BattleScene(v);
   const wild = o.kind === 'wild';
   const tr = o.trainer;

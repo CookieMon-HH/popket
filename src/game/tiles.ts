@@ -440,34 +440,43 @@ function build(ch: string, anim: number): Pix {
       break;
     }
     // ── 유람선 은파호 ─────────────────────────────────────────────
-    case '6': // teak deck planks
-      p.rect(0, 0, 16, 16, '#c89a62');
-      for (const y of [3, 7, 11, 15]) p.rect(0, y, 16, 1, '#a07444');
-      for (const [x, y] of [[5, 0], [12, 4], [2, 8], [9, 12]]) p.rect(x, y, 1, 3, '#a07444');
+    case '6': // rotting, weathered deck planks
+      p.rect(0, 0, 16, 16, '#5e5648');
+      for (const y of [3, 7, 11, 15]) p.rect(0, y, 16, 1, '#3a342c');
+      for (const [x, y] of [[5, 0], [12, 4], [2, 8], [9, 12]]) p.rect(x, y, 1, 3, '#3a342c');
+      for (const [x, y] of [[8, 1], [3, 5], [14, 9], [6, 13]]) p.set(x, y, '#4a6a4a'); // moss
+      p.rect(10, 9, 3, 1, '#2a2620'); p.set(11, 10, '#2a2620'); // crack
       break;
-    case '7': // white cruise superstructure with a porthole
-      p.rect(0, 0, 16, 16, '#eef0f4');
-      p.rect(0, 0, 16, 2, '#c8ccd8');
-      p.rect(0, 14, 16, 2, '#9aa0b4');
-      p.ell(8, 8, 3.5, 3.5, '#5a6478');
-      p.ell(8, 8, 2.5, 2.5, '#9ad0f0');
-      p.set(7, 7, '#ffffff');
+    case '7': // grimy superstructure, rust streaks and a cracked dark porthole
+      p.rect(0, 0, 16, 16, '#7e8682');
+      p.rect(0, 0, 16, 2, '#626a68');
+      p.rect(0, 14, 16, 2, '#4a5050');
+      for (const [x, h] of [[3, 7], [12, 10], [8, 4]]) p.rect(x, 11, 1, Math.min(h, 3), '#7a5238');
+      p.rect(3, 11, 1, 4, '#8a5a3a');
+      p.ell(8, 8, 3.5, 3.5, '#3a4040');
+      p.ell(8, 8, 2.5, 2.5, '#16222a');
+      p.set(7, 7, '#4a6a72'); p.set(9, 9, '#4a6a72'); p.set(8, 8, '#4a6a72');
+      p.set(1, 3, '#9aa29e'); p.set(14, 5, '#5a6260');
       break;
-    case '8': // white railing above the sea
-      p.rect(0, 0, 16, 16, '#2a5a9a');
-      for (const y of [5, 9, 13]) p.rect(0, y, 16, 1, '#3a6aaa');
-      p.rect(0, 2, 16, 2, '#f4f4f8');
-      for (const x of [1, 7, 13]) p.rect(x, 2, 2, 10, '#e0e0ea');
-      p.rect(0, 10, 16, 1, '#c8c8d4');
+    case '8': // rusted railing above a black-green sea
+      p.rect(0, 0, 16, 16, '#0e2226');
+      for (const y of [5, 9, 13]) p.rect(0, y, 16, 1, '#16343a');
+      p.set(4, 7, '#2a5a5a'); p.set(11, 12, '#2a5a5a');
+      p.rect(0, 2, 16, 2, '#8a8a80');
+      for (const x of [1, 7, 13]) p.rect(x, 2, 2, 10, '#6a6a62');
+      p.rect(0, 10, 16, 1, '#5a5a52');
+      p.set(8, 3, '#8a4a2a'); p.set(2, 6, '#8a4a2a'); p.set(13, 8, '#8a4a2a');
       break;
-    case '9': // ballroom / corridor carpet
-      p.rect(0, 0, 16, 16, '#8a2a3a');
-      p.rect(0, 0, 16, 1, '#6a1a28');
-      for (const [x, y] of [[3, 4], [11, 4], [7, 9], [3, 13], [11, 13]]) { p.set(x, y, '#d8a840'); p.set(x + 1, y, '#d8a840'); }
+    case '9': // faded, stained carpet
+      p.rect(0, 0, 16, 16, '#4a1e28');
+      p.rect(0, 0, 16, 1, '#2e1218');
+      for (const [x, y] of [[3, 4], [11, 4], [7, 9], [3, 13], [11, 13]]) { p.set(x, y, '#7a6438'); p.set(x + 1, y, '#7a6438'); }
+      p.ell(12, 10, 2, 1.2, '#3a161e'); p.set(5, 7, '#5a2a32');
       break;
-    case '0': // engine room grating
-      p.rect(0, 0, 16, 16, '#4a5058');
-      for (let i = 0; i < 16; i += 4) { p.rect(i, 0, 1, 16, '#3a3e46'); p.rect(0, i, 16, 1, '#3a3e46'); }
+    case '0': // rusted engine room grating over darkness
+      p.rect(0, 0, 16, 16, '#14161a');
+      for (let i = 0; i < 16; i += 4) { p.rect(i, 0, 1, 16, '#3a3a3c'); p.rect(0, i, 16, 1, '#3a3a3c'); }
+      p.set(4, 8, '#6a4a2e'); p.set(12, 4, '#6a4a2e'); p.set(8, 12, '#6a4a2e');
       break;
     case '-': // pipes on the engine room wall
       p.rect(0, 0, 16, 16, '#3a3e46');
@@ -476,17 +485,18 @@ function build(ch: string, anim: number): Pix {
       p.rect(0, 10, 16, 3, '#6a7888');
       p.rect(6, 2, 3, 6, '#6a4a2e');
       break;
-    case '{': // lifeboat
-      p.rect(0, 0, 16, 16, '#c89a62');
-      p.ell(8, 8, 7.5, 5, '#e8602a');
-      p.ell(8, 7, 6, 3.5, '#f4f0e8');
-      p.rect(3, 7, 10, 1, '#c84a1a');
+    case '{': // broken lifeboat
+      p.rect(0, 0, 16, 16, '#5e5648');
+      p.ell(8, 8, 7.5, 5, '#6a3a26');
+      p.ell(8, 7, 6, 3.5, '#9a9488');
+      p.rect(3, 7, 10, 1, '#4a2a1a');
+      p.rect(10, 5, 2, 4, '#1e1a16');
       break;
-    case '}': // funnel
-      p.rect(0, 0, 16, 16, '#c89a62');
-      p.ell(8, 9, 6.5, 6, '#2a2e3a');
-      p.ell(8, 8, 5.5, 5, '#c8323a');
-      p.rect(3, 5, 10, 2, '#f4f4f8');
+    case '}': // soot-blackened funnel
+      p.rect(0, 0, 16, 16, '#5e5648');
+      p.ell(8, 9, 6.5, 6, '#1a1c22');
+      p.ell(8, 8, 5.5, 5, '#5a2226');
+      p.rect(3, 5, 10, 2, '#8a8a84');
       p.ell(8, 8, 3, 2.5, '#1a1a22');
       break;
     case '|': // portrait on a dark panelled wall
@@ -598,6 +608,12 @@ function build(ch: string, anim: number): Pix {
       break;
     case 'o':
       floor(p);
+      break;
+    case 'ø': // ghost ship cabin floor: dark, warped boards
+      p.rect(0, 0, 16, 16, '#4a3a2e');
+      for (const y of [3, 7, 11, 15]) p.rect(0, y, 16, 1, '#2e241c');
+      for (const [x, y] of [[4, 0], [11, 4], [2, 8], [13, 12]]) p.rect(x, y, 1, 3, '#2e241c');
+      p.set(7, 5, '#5a4a3a'); p.set(12, 9, '#5a4a3a'); p.rect(5, 13, 2, 1, '#241c16');
       break;
     case 'T': case 'c':
       floor(p);

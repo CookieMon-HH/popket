@@ -4,7 +4,15 @@
 // "F#4", "-" to hold the previous note, "." for a rest. Drums use k (kick),
 // s (snare) and h (hi-hat).
 
-type Track = { lead: string; bass: string; drums?: string; wave?: OscillatorType };
+type Track = {
+  lead: string; bass: string; drums?: string; wave?: OscillatorType;
+  /** Soft sustained third voice. */
+  pad?: string;
+  /** Faint, detuned repeat of each lead note (ghostly echo). */
+  echo?: boolean;
+  /** Lead vibrato depth in Hz. */
+  vibrato?: number;
+};
 type Song = Track & { bpm: number };
 
 const DRUM_STD = 'k . h . s . h . k . h . s . h h';
@@ -63,9 +71,12 @@ export const SONGS: Record<string, Song> = {
     drums: 'k . . . . . h . k . . . . . h .',
   },
   ship: {
-    bpm: 96, wave: 'triangle',
-    lead: 'D5 - F5 - A5 - G#5 - - - A5 - A#5 - A5 - G5 - F5 - E5 - - - D5 - - - . . . .',
-    bass: 'D3 . A3 . D3 . E3 . . . A2 . G2 . D3 . A#2 . F3 . A2 . E3 . D3 . A2 . D3 . . .',
+    // Slow, eerie music-box waltz over a low drone, with a heartbeat and ghostly echoes.
+    bpm: 66, wave: 'sine', echo: true, vibrato: 5,
+    lead: 'D5 - - F5 - - A5 - G#5 - - - - - . . F5 - - E5 - - D5 - C#5 - - - - - . . D5 - - F5 - - A#5 - A5 - - - G#5 - - . G5 - F5 - E5 - D#5 - D5 - - - - - - .',
+    bass: 'D2 - - - - - - - - - - - - - - - A#1 - - - - - - - A1 - - - - - - - G1 - - - - - - - - - - - - - - - A1 - - - - - - - D2 - - - - - - -',
+    pad: 'A3 - - - - - - - F3 - - - - - - - F3 - - - - - - - E3 - - - - - - - D3 - - - - - - - D#3 - - - - - - - C#3 - - - - - - - A3 - - - - - - -',
+    drums: 'k . k . . . . . . . . . . . . . . . . . . . . . . . . . . . . .',
   },
   safari: {
     bpm: 136,
@@ -181,13 +192,22 @@ export function setAudioEnabled(music: boolean, effects: boolean) {
   sfxBus?.gain.setTargetAtTime(effects ? SFX_VOL : 0, ctx.currentTime, 0.05);
 }
 
-function tone(bus: GainNode, f: number, t: number, dur: number, wave: OscillatorType, vol: number, slideTo?: number) {
+function tone(bus: GainNode, f: number, t: number, dur: number, wave: OscillatorType, vol: number, slideTo?: number, vibrato = 0) {
   if (!ctx || !f) return;
   const o = ctx.createOscillator();
   const g = ctx.createGain();
   o.type = wave;
   o.frequency.setValueAtTime(f, t);
   if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+  if (vibrato) {
+    const lfo = ctx.createOscillator();
+    const depth = ctx.createGain();
+    lfo.frequency.value = 5.5;
+    depth.gain.value = vibrato;
+    lfo.connect(depth).connect(o.frequency);
+    lfo.start(t);
+    lfo.stop(t + dur + 0.02);
+  }
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
   g.gain.setValueAtTime(vol, t + Math.max(0.01, dur - 0.04));
@@ -238,6 +258,7 @@ function startSong(id: string) {
   const lead = steps(song.lead);
   const bass = steps(song.bass);
   const drums = song.drums ? steps(song.drums) : [];
+  const pad = song.pad ? steps(song.pad) : [];
   const stepDur = 60 / song.bpm / 2;
   const len = Math.max(lead.length, bass.length);
   let step = 0;
@@ -252,7 +273,13 @@ function startSong(id: string) {
     while (next < ctx.currentTime + 0.15) {
       const i = step % len;
       const l = lead[i % lead.length];
-      if (l && l !== '-' && l !== '.') tone(gain, freq(l), next, stepDur * noteLen(lead, i % lead.length) * 0.92, song.wave ?? 'square', 0.16);
+      if (l && l !== '-' && l !== '.') {
+        const dur = stepDur * noteLen(lead, i % lead.length) * 0.92;
+        tone(gain, freq(l), next, dur, song.wave ?? 'square', song.wave === 'sine' ? 0.22 : 0.16, undefined, song.vibrato ?? 0);
+        if (song.echo) tone(gain, freq(l) * 1.006, next + stepDur * 3, dur, 'sine', 0.06, undefined, song.vibrato ?? 0);
+      }
+      const pd = pad.length ? pad[i % pad.length] : null;
+      if (pd && pd !== '-' && pd !== '.') tone(gain, freq(pd), next, stepDur * noteLen(pad, i % pad.length) * 0.95, 'triangle', 0.09);
       const b = bass[i % bass.length];
       if (b && b !== '-' && b !== '.') tone(gain, freq(b), next, stepDur * noteLen(bass, i % bass.length) * 0.9, 'triangle', 0.3);
       if (drums.length) {
@@ -326,6 +353,27 @@ export function sfx(id: string) {
   const t = c.currentTime + 0.005;
   const b = sfxBus;
   switch (id) {
+    case 'thunder': {
+      // distant rumble: low-passed noise swelling and fading
+      if (!noise) return;
+      for (let k = 0; k < 3; k++) {
+        const src = c.createBufferSource();
+        src.buffer = noise;
+        const f = c.createBiquadFilter();
+        f.type = 'lowpass';
+        f.frequency.value = 220 - k * 50;
+        const g = c.createGain();
+        const t0 = t + k * 0.35;
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(0.5 - k * 0.12, t0 + 0.08);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.5);
+        src.connect(f).connect(g).connect(b);
+        src.start(t0);
+        src.stop(t0 + 0.5);
+      }
+      tone(b, 60, t, 1.2, 'sine', 0.25, 35);
+      return;
+    }
     case 'cursor':
       tone(b, 1200, t, 0.03, 'square', 0.08);
       break;
