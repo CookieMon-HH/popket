@@ -1,7 +1,7 @@
 import { W, H, OX, box, text, hpBar, typeChip, drawSprite, cursor, centered, measure, type Ctx } from '../engine/draw';
 import { input } from '../engine/input';
 import { ui, Widget, Menu, MessageBox, say } from '../engine/ui';
-import { tween, wait } from '../engine/timing';
+import { tween, wait, clock } from '../engine/timing';
 import { scenes, fadeTo, type Scene } from '../engine/scene';
 import { MOVES, STATUS_LABEL, STAT_NAME, type MoveDef, type StatKey, type Effect } from '../data/moves';
 import { SPECIES } from '../data/species';
@@ -23,6 +23,8 @@ export interface BattleOpts {
   trainer?: { cls: string; name: string; reward: number; defeat: string; pal: Pal; heals?: number };
   /** Safari battle: throw safari balls, bait or mud instead of fighting. */
   safari?: boolean;
+  /** League tournament: stadium background with a cheering crowd. */
+  arena?: boolean;
 }
 
 class BMon {
@@ -43,6 +45,7 @@ class View {
   ball = { x: 0, y: 0, vis: false, rot: 0 };
   enemyTeam: Mon[] | null = null;
   shake = 0;
+  arena = false;
 }
 
 class BattleScene implements Scene {
@@ -57,6 +60,7 @@ class BattleScene implements Scene {
     grad.addColorStop(1, '#b8dc98');
     g.fillStyle = grad;
     g.fillRect(0, 0, W, H);
+    if (v.arena) drawArena(g);
     g.save();
     g.translate(OX, 0);
     g.fillStyle = '#a6d088';
@@ -139,6 +143,44 @@ class BattleScene implements Scene {
       ctx.fillRect(137, 137, 106 * v.pExp, 1.5);
     }
   }
+}
+
+/** League stadium: stands full of spectators behind a green pitch with white lines. */
+function drawArena(g: Ctx) {
+  const t = clock.frame;
+  g.fillStyle = '#3a3e5a';
+  g.fillRect(0, 0, W, 66);
+  const shirts = ['#e84a4a', '#4a8ae8', '#f0d040', '#40b070', '#a060e0', '#f08a3a', '#ffffff'];
+  for (let row = 0; row < 4; row++) {
+    const y = 6 + row * 15;
+    g.fillStyle = row % 2 ? '#4a4e6a' : '#44486a';
+    g.fillRect(0, y + 9, W, 6);
+    for (let x = (row % 2) * 6; x < W; x += 12) {
+      const k = (x * 7 + row * 13) % shirts.length;
+      const wave = Math.sin(t / 9 + x / 20 + row) > 0.55;
+      g.fillStyle = shirts[k];
+      g.fillRect(x + 1, y + 6, 8, 7);
+      g.fillStyle = '#f8d0a8';
+      g.fillRect(x + 3, y + (wave ? 0 : 2), 4, 4);
+      if (wave) {
+        g.fillStyle = shirts[k];
+        g.fillRect(x, y - 2, 1, 7);
+        g.fillRect(x + 9, y - 2, 1, 7);
+      }
+    }
+  }
+  // banners
+  g.fillStyle = '#c8323a';
+  g.fillRect(0, 62, W, 4);
+  g.fillStyle = '#ffd24a';
+  for (let x = 4; x < W; x += 24) g.fillRect(x, 63, 10, 2);
+  // pitch
+  g.fillStyle = '#7cc45e';
+  g.fillRect(0, 66, W, H - 66);
+  g.fillStyle = '#8ed06c';
+  for (let x = 0; x < W; x += 32) g.fillRect(x, 66, 16, H - 66);
+  g.fillStyle = 'rgba(255,255,255,0.75)';
+  g.fillRect(0, 108, W, 2);
 }
 
 /** Small coloured type labels in a row; returns the x after the last one. */
@@ -224,6 +266,7 @@ class MoveMenu extends Widget<number> {
 
 export async function runBattle(o: BattleOpts): Promise<BattleResult> {
   const v = new View();
+  v.arena = !!o.arena;
   scenes.current = new BattleScene(v);
   const wild = o.kind === 'wild';
   const tr = o.trainer;

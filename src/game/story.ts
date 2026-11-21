@@ -11,6 +11,7 @@ import type { NPC } from './overworld';
 import type { Pal } from './sprites';
 import type { TrainerDef } from './maps';
 import { professorLegends, minerPost, elderPost } from './legends';
+import { setOpponents, setFinalHooks } from './tournament';
 
 export const PAL = {
   mom: { hair: '#7a4a2a', shirt: '#f0a0b0', pants: '#6a6aa0' },
@@ -83,7 +84,7 @@ function rivalDef(stage: 1 | 2 | 3 | 4): TrainerDef {
         ? [['baramsae', 13], ['pojani', 12], [line[1], 15]]
         : stage === 3
           ? [['baramsae', 23], ['kkomaryong', 22], ['jeolgu', 22], [line[1], 25]]
-          : [['hoeori', 53], ['wolgung', 53], ['cheonryong', 54], ['geosin', 53], ['bingsan', 54], [line[2], 57]];
+          : [['hoeori', 55], ['wolgung', 55], ['cheonryong', 56], ['geosin', 55], ['bingsan', 56], [line[2], 59]];
   return {
     id: 'rival' + stage,
     cls: stage === 4 ? '챔피언' : '라이벌',
@@ -598,17 +599,48 @@ export const guardian2Win = async () => {
   await say('리그 수호자 용연: 마지막 방에 챔피언이 기다린다. 후회 없는 승부를!');
 };
 
-export async function championScene() {
-  const c = world.npcs.find((n) => n.def.id === 'champ');
-  if (c) world.faceEachOther(c);
-  await say('은재: 왔구나, {name}! 놀랐지? 조금 전에 내가 챔피언을 이겼어.\n그러니까 지금 해솔 리그의 챔피언은… 바로 나야!');
-  await say('은재: 솔빛마을 연구소에서 처음 몬스터를 받은 날부터,\n언젠가 이 자리에서 너랑 싸우고 싶었어.');
-  await say('은재: 그럼 시작하자. 해솔 지방 최고의 트레이너를 정하는 승부를!');
-  const res = await trainerBattle(rivalDef(4), true);
-  if (res !== 'win') {
-    await say('은재: 하하, 아직 내가 챔피언이네! 언제든지 다시 도전해!');
-    return;
-  }
+// --- 토너먼트 상대와 결승 연출 (tournament.ts 가 사용) ---
+const TPAL = { hangyeol: { hair: '#2a2a3a', shirt: '#3ab0b0', pants: '#2a2a3a' } };
+setOpponents([
+  () => ({
+    id: 'tourney1', cls: '도전자', name: '한결', pal: TPAL.hangyeol, arena: true, reward: 4000,
+    team: [['wangmong', 50], ['beotkkot', 50], ['daeji', 51], ['olppaemi', 51]],
+    intro: '나도 이번 대회 우승을 노리고 왔어! 첫 경기부터 전력이다!', defeat: '첫 판부터 이렇게 강한 상대라니…', after: '',
+  }),
+  () => ({
+    id: 'tourney2', cls: '리그 수호자', name: '그림자', pal: PAL.shadow, arena: true, reward: 6000,
+    team: [['dodug', 51], ['daewang', 51], ['jangsa', 52], ['bingsan', 52], ['dokdae', 54]],
+    intro: '8강까지 올라왔군. 어둠 속에서도 빛나는 힘이 있는지 보겠다.', defeat: '…빛이 어둠을 이겼군.', after: '',
+  }),
+  () => ({
+    id: 'tourney3', cls: '리그 수호자', name: '용연', pal: PAL.yongyeon, arena: true, reward: 7000, heals: 1,
+    team: [['hyeonmu', 53], ['seolpyo', 53], ['eungeo', 54], ['geosin', 54], ['cheonryong', 56]],
+    intro: '4강이다. 하늘을 가르는 용의 힘을 받아 봐라! 위험해지면 나도 회복약을 쓴다.', defeat: '용이 고개를 숙였다… 결승에서 이겨라.', after: '',
+  }),
+  () => ({ ...rivalDef(4), id: 'tourney4', cls: '라이벌', pal: PAL.champ, arena: true, elite: true, heals: 2 }),
+]);
+setFinalHooks({
+  intro: async () => {
+    if (game.flags.champion) {
+      await say('은재: 또 결승이네, {name}! 이번엔 내가 트로피를 가져간다!\n이번 팀은 진짜 최강이야. 각오해!');
+      return;
+    }
+    await say('은재: 역시 결승에서 만날 줄 알았어, {name}!\n반대쪽 대진에서 전부 이기고 올라왔다고.');
+    await say('은재: 솔빛마을 연구소에서 처음 몬스터를 받은 날부터,\n언젠가 이 무대에서 너랑 싸우고 싶었어.');
+    await say('은재: 그럼 시작하자. 해솔 지방 최고의 트레이너를 정하는 승부를!');
+  },
+  win: async () => {
+    if (game.flags.champion) {
+      await say('은재: …또 졌다! 역시 챔피언은 너야.\n다음 대회엔 더 강해져서 올게!');
+      await say(`우승 ${game.leagueWins ?? 1}회째! 관중석에서 환호가 멈추지 않는다.`);
+      return;
+    }
+    await championEnding();
+  },
+});
+
+/** First tournament win: the hall of fame and the trip home. */
+async function championEnding() {
   game.flags.champion = true;
   await say('은재: …축하해, {name}. 오늘부터 네가 해솔 리그의 챔피언이야!');
   await flashes(2);

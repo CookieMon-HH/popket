@@ -27,6 +27,7 @@ const list: ItemDef[] = [
   { id: 'pearl', name: '여의주', price: 0, kind: 'key', desc: '용의 마을의 보물. 은은한 빛을 내며 하늘의 날씨를 다스린다고 한다.' },
   { id: 'safariticket', name: '사파리입장권', price: 1500, kind: 'key', desc: '파도항구 팜팜 사파리에 한 번 들어갈 수 있는 입장권. 10분 동안 사파리볼 30개로 몬스터를 잡을 수 있다.' },
   { id: 'windwhistle', name: '바람피리', price: 0, kind: 'key', desc: '바람 조련사 솔바람에게 받은 피리. 메뉴의 「날아가기」로 한 번 가 본 마을까지 회오리매가 데려다준다.' },
+  { id: 'trophy', name: '해솔리그트로피', price: 0, kind: 'key', desc: '해솔 리그 토너먼트 우승자에게 주어지는 황금 트로피. 관중의 함성이 들려오는 것 같다.' },
   { id: 'rod', name: '낚싯대', price: 0, kind: 'key', desc: '물가를 바라보고 A 버튼을 누르면 낚시를 할 수 있다.' },
 ];
 

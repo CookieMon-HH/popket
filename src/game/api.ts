@@ -129,6 +129,7 @@ export async function trainerBattle(t: TrainerDef, canLose = false): Promise<Bat
         return m;
       }),
       trainer: { cls: t.cls, name: t.name, reward: t.reward, defeat: t.defeat, pal: t.pal, heals: t.heals },
+      arena: t.arena,
     },
     canLose,
   );

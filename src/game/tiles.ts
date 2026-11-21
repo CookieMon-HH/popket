@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -398,6 +398,34 @@ function build(ch: string, anim: number): Pix {
       p.rect(8, 4, 1, 12, '#8a5432');
       p.set(10, 10, '#ffd84a');
       break;
+    case '%': case '&': case '$': {
+      // Stadium stands with two cheering spectators (arms go up on the alternate frame).
+      p.rect(0, 0, 16, 16, '#8a8ea4');
+      p.rect(0, 7, 16, 1, '#6a6e84');
+      p.rect(0, 15, 16, 1, '#6a6e84');
+      const sets: Record<string, [string, string, string, string]> = {
+        '%': ['#e84a4a', '#3a2a20', '#4a8ae8', '#f0d040'],
+        '&': ['#40b070', '#f0d040', '#f08a3a', '#2a2a30'],
+        '$': ['#a060e0', '#5a3a20', '#ffffff', '#c04a2a'],
+      };
+      const [s1, h1, s2, h2] = sets[ch];
+      const up = anim === 1;
+      for (const [x, shirt, hair, raise] of [[2, s1, h1, up], [9, s2, h2, !up]] as const) {
+        p.rect(x, 10, 5, 5, shirt);
+        p.ell(x + 2.5, 7.5, 2.5, 2.5, '#f8d0a8');
+        p.rect(x, 4, 5, 2, hair);
+        if (raise) {
+          p.rect(x - 1, 2, 1, 8, shirt);
+          p.rect(x + 5, 2, 1, 8, shirt);
+          p.set(x - 1, 1, '#f8d0a8');
+          p.set(x + 5, 1, '#f8d0a8');
+        } else {
+          p.rect(x - 1, 10, 1, 4, shirt);
+          p.rect(x + 5, 10, 1, 4, shirt);
+        }
+      }
+      break;
+    }
     case 'X':
       p.rect(0, 0, 16, 16, '#d8cce8');
       for (let x = 2; x < 16; x += 4) p.rect(x, 0, 1, 12, '#c8bce0');
@@ -465,7 +493,7 @@ function build(ch: string, anim: number): Pix {
 
 const cache = new Map<string, HTMLCanvasElement>();
 export function tileCanvas(ch: string, anim: number): HTMLCanvasElement {
-  const animated = ch === '~' || ch === 'f' || ch === 'L' || ch === '*';
+  const animated = ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$';
   const key = animated ? ch + anim : ch;
   let c = cache.get(key);
   if (!c) {

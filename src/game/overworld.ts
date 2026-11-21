@@ -223,6 +223,8 @@ export class Overworld implements Scene {
 
   /** Called when the player finishes a step. Returns true when an event took over. */
   sliding = false;
+  /** Frames of celebration confetti left to draw. */
+  confetti = 0;
   /** Fishing animation state (rod, line and bobber). */
   fishing: { t0: number; phase: 'cast' | 'wait' | 'bite' | 'reel' } | null = null;
 
@@ -511,6 +513,22 @@ export class Overworld implements Scene {
       const w = measure(label, 9) + 16;
       box(ctx, W - w - 4, 4, w, 18);
       text(ctx, label, W - w / 2 - 4, 8, { size: 9, align: 'center', color: sec <= 60 ? '#d83a4a' : '#30323f' });
+    }
+    if (this.confetti > 0) {
+      this.confetti--;
+      const colors = ['#e84a4a', '#ffd24a', '#4a8ae8', '#40b070', '#f08ad0', '#ffffff'];
+      const age = 150 - this.confetti;
+      for (let i = 0; i < 70; i++) {
+        const x = (i * 53 + Math.sin(age / 12 + i) * 10) % W;
+        const y = ((i * 29) % 60) - 60 + age * (1.2 + (i % 5) * 0.25);
+        if (y < -4 || y > H) continue;
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(age / 8 + i);
+        ctx.fillRect(-2, -1, 4, 2.4);
+        ctx.restore();
+      }
     }
     if (this.bannerT <= 0 || ui.active) return;
     const t = this.bannerT;

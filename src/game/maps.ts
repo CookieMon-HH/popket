@@ -1,17 +1,18 @@
 import type { Dir } from './common';
 import type { Pal } from './sprites';
 import { say, yesNo } from '../engine/ui';
-import { game, beatenAll } from './state';
+import { game, beatenAll, runtime } from './state';
 import { healParty, setLastHeal, world } from './api';
 import { shopMenu } from './menus';
 import {
   PAL, momTalk, labProfessor, rivalLabTalk, chapter2Scene, leader1Win, grannyTalk, forestAdminWin,
   rival2Scene, fisherTalk, leader2Win, bossScene, whaleTalk, rival3Scene, leader3Win, minerTalk, sanjiTalk, potatoTalk,
-  port1Scene, dalnimShipTalk, shipAdminWin, leader4Win, leader5Win, volcanoBossScene, guardian1Win, guardian2Win, championScene,
+  port1Scene, dalnimShipTalk, shipAdminWin, leader4Win, leader5Win, volcanoBossScene, 
   iceIntroScene, iceCaveScene, beachAdminWin, haesolMeet, haesolTalk, cheonjiTalk, summitMonk, leader6Win, dragonIntroScene, elderTalk, denEntranceScene, cloudWin, leader7Win, lever, toggleSwitch, quiz,
 } from './story';
 import { keeperTalk, escapeeTalk, safariExitTile } from './safari';
 import { windTamerTalk } from './fly';
+import { receptionTalk } from './tournament';
 import { legendEncounter, snowMomPost, hwaryeonPost } from './legends';
 
 export interface Warp {
@@ -38,6 +39,8 @@ export interface TrainerDef {
   elite?: boolean;
   /** How many 만능회복약 the trainer may use when a monster is low. */
   heals?: number;
+  /** Fought in the league stadium. */
+  arena?: boolean;
 }
 
 export interface NPCDef {
@@ -1591,8 +1594,8 @@ const plateau: MapDef = {
   warps: [
     { x: 0, y: 11, to: 'town1', tx: 18, ty: 8, dir: 'left' },
     { x: 21, y: 11, to: 'route8', tx: 22, ty: 6, dir: 'right' },
-    { x: 10, y: 3, to: 'league', tx: 5, ty: 15, dir: 'up' },
-    { x: 11, y: 3, to: 'league', tx: 6, ty: 15, dir: 'up' },
+    { x: 10, y: 3, to: 'league', tx: 7, ty: 13, dir: 'up' },
+    { x: 11, y: 3, to: 'league', tx: 8, ty: 13, dir: 'up' },
     { x: 4, y: 10, to: 'center7', tx: 4, ty: 6, dir: 'up' },
     { x: 20, y: 0, to: 'skyroad', tx: 9, ty: 26, dir: 'up' },
   ],
@@ -1619,47 +1622,39 @@ const plateau: MapDef = {
 
 const center7 = makeCenter('center7', '해솔고원 회복소', 'plateau', 4, 11, '리그 안에는 상점이 없어.\n들어가기 전에 회복약을 충분히 챙겨!');
 
+const TOURNEY_OPP_IDS = ['opp16', 'opp8', 'opp4', 'oppfinal'];
+const TOURNEY_PALS: Pal[] = [{ hair: '#2a2a3a', shirt: '#3ab0b0', pants: '#2a2a3a' }, PAL.shadow, PAL.yongyeon, PAL.champ];
+
 const league: MapDef = {
-  id: 'league', name: '해솔 리그', indoor: true,
+  id: 'league', name: '해솔 리그 경기장', indoor: true,
   tiles: [
-    'XXXXXXXXXXXX',
-    'XroooooooorX',
-    'XooooooooooX',
-    'XooooooooooX',
-    'XroooooooorX',
-    'XXXXXoXXXXXX',
-    'XroooooooorX',
-    'XooooooooooX',
-    'XooooooooooX',
-    'XroooooooorX',
-    'XXXXXoXXXXXX',
-    'XroooooooorX',
-    'XooooooooooX',
-    'XooooooooooX',
-    'XroooooooorX',
-    'XooooooooooX',
-    'XXXXXeeXXXXX',
+    '%&$%&$%&$%&$%&$%',
+    '$%&$%&$%&$%&$%&$',
+    '&$............%&',
+    '%&............$%',
+    '$%............&$',
+    '&$............%&',
+    '%&............$%',
+    '$%============&$',
+    '&$............%&',
+    '%&............$%',
+    '$%............&$',
+    '&$%&$%....%&$%&$',
+    'XXXXXooooooXXXXX',
+    'XXXXXooooooXXXXX',
+    'XXXXXXXeeXXXXXXX',
   ],
   warps: [
-    { x: 5, y: 16, to: 'plateau', tx: 10, ty: 4, dir: 'down' },
-    { x: 6, y: 16, to: 'plateau', tx: 11, ty: 4, dir: 'down' },
+    { x: 7, y: 14, to: 'plateau', tx: 10, ty: 4, dir: 'down' },
+    { x: 8, y: 14, to: 'plateau', tx: 11, ty: 4, dir: 'down' },
   ],
+  labels: [{ x: 8, y: 0.3, text: '해솔 리그 토너먼트', color: '#ffd24a', ink: '#5a3a00' }],
   npcs: [
-    {
-      id: 'guard1', x: 5, y: 12, dir: 'down', pal: PAL.shadow, sight: 2,
-      trainer: tr('guardian1', '리그 수호자', '그림자', PAL.shadow, [['dodug', 50], ['daewang', 50], ['jangsa', 51], ['bingsan', 51], ['dokdae', 53]], 6000,
-        '해솔 리그에 온 것을 환영한다. 나는 첫 번째 수호자 그림자.\n어둠 속에서 빛나는 힘이 있는지 보겠다.', '…빛이 어둠을 이겼군.', '다음 방으로 가라.', guardian1Win),
-    },
-    { id: 'gate1', x: 5, y: 10, dir: 'down', pal: PAL.guard, hidden: () => f('tr_guardian1'), talk: '문지기: 첫 번째 수호자를 이겨야 지나갈 수 있습니다.' },
-    {
-      id: 'guard2', x: 5, y: 7, dir: 'down', pal: PAL.yongyeon, sight: 2,
-      trainer: tr('guardian2', '리그 수호자', '용연', PAL.yongyeon, [['hyeonmu', 51], ['seolpyo', 51], ['eungeo', 52], ['geosin', 52], ['cheonryong', 54]], 6500,
-        '두 번째 수호자 용연이다. 하늘을 가르는 용의 힘을 받아 봐라!', '용이 고개를 숙였다… 훌륭하다.', '마지막 방으로 가라.', guardian2Win),
-    },
-    { id: 'gate2', x: 5, y: 5, dir: 'down', pal: PAL.guard, hidden: () => f('tr_guardian2'), talk: '문지기: 두 번째 수호자를 이겨야 지나갈 수 있습니다.' },
-    { id: 'champ', x: 5, y: 2, dir: 'down', pal: PAL.champ, hidden: () => f('champion'), talk: () => championScene() },
+    { id: 'reception', x: 5, y: 12, dir: 'right', pal: PAL.lady, talk: () => receptionTalk() },
+    { id: 'announcer', x: 2, y: 7, dir: 'right', pal: { hair: '#2a2a3a', shirt: '#ffffff', pants: '#2a2a3a', hat: '#c8323a' }, talk: '아나운서: 해솔 리그 토너먼트! 16강부터 결승까지,\n네 번을 내리 이기는 선수만이 트로피를 들 수 있습니다!' },
+    { id: 'lobbyfan', x: 10, y: 13, dir: 'left', pal: PAL.kid, move: 'look', talk: '꼬마 팬: 이번 대회엔 리그 수호자 그림자랑 용연도 나온대!\n결승까지 가면 엄청 멋질 거야!' },
+    ...TOURNEY_OPP_IDS.map((id, r) => ({ id, x: 7, y: 4, dir: 'down' as Dir, pal: TOURNEY_PALS[r], hidden: () => runtime.tourneyRound !== r })),
   ],
-  triggers: [5, 6].map((x) => ({ x, y: 4, when: () => !f('champion'), run: championScene })),
 };
 
 // ---------------------------------------------------------------------------

@@ -21,6 +21,8 @@ export interface GameState {
   safari?: { balls: number; left: number };
   /** Wall-clock time of the last save (ms), used to pick the newer of local and cloud saves. */
   savedAtMs?: number;
+  /** Number of league tournament wins. */
+  leagueWins?: number;
 }
 
 const SAVE_KEY = 'popket-save-v1';
@@ -55,6 +57,8 @@ export const runtime = {
   ownsSave: false,
   /** Server save was already offered this session. */
   cloudAsked: false,
+  /** League tournament: current round (0 = 16강 … 3 = 결승), -1 when not playing. */
+  tourneyRound: -1,
 };
 
 export function newGame(name: string) {
