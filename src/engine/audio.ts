@@ -12,6 +12,10 @@ type Track = {
   echo?: boolean;
   /** Lead vibrato depth in Hz. */
   vibrato?: number;
+  /** Second, softer melodic voice (square). */
+  harmony?: string;
+  /** Step the song loops back to after the end (an intro plays once). */
+  loopFrom?: number;
 };
 type Song = Track & { bpm: number };
 
@@ -20,10 +24,14 @@ const DRUM_FAST = 'k h s h k h s h k h s h k k s h';
 
 export const SONGS: Record<string, Song> = {
   title: {
-    bpm: 132,
-    lead: 'C5 - E5 G5 C6 - B5 A5 G5 - E5 - G5 - - . A5 - G5 F5 E5 - D5 E5 F5 - A5 - G5 - - .',
-    bass: 'C3 . C3 . G2 . G2 . A2 . A2 . E2 . E2 . F2 . F2 . C3 . C3 . G2 . G2 . G2 . B2 .',
-    drums: DRUM_STD,
+    // Title theme: a one-time fanfare, then an adventurous C-major theme (A: hope, B: lift,
+    // turnaround) with a second harmony voice, warm pad and a drum fill before it loops.
+    bpm: 128, loopFrom: 16, vibrato: 2,
+    lead: 'G4 - C5 - E5 - G5 - C6 - - - - - - . E5 - G5 - C6 - B5 A5 G5 - - D5 G5 - F5 E5 E5 - - C5 A5 - G5 A5 F5 - A5 - G5 - E5 D5 E5 - G5 - C6 - D6 E6 D6 - B5 G5 D6 - C6 B5 A5 - C6 A5 F5 - A5 C6 D6 - C6 B5 C6 - - . A5 - - E5 A5 - B5 C6 C6 - - A5 F5 - A5 C6 D6 - - A5 D6 - E6 F6 E6 - D6 - C6 - B5 - A5 - C6 - F6 - E6 D6 D6 - - - G5 A5 B5 D6',
+    harmony: 'E4 - G4 - C5 - E5 - G5 - - - - - - . C5 - - - E5 - - - B4 - - - D5 - - - C5 - - - E5 - - - A4 - - - C5 - - - C5 - - - E5 - - - B4 - - - D5 - - - A4 - - - C5 - - - B4 - - - D5 - - - C5 - - - E5 - - - A4 - - - C5 - - - A4 - - - D5 - - - B4 - - - D5 - - - A4 - - - C5 - - - B4 - - - D5 - - -',
+    bass: 'C2 - - - - - - - G2 - - - C3 - - - C3 . G2 . C3 C3 G2 . G2 . D3 . G2 G2 D3 . A2 . E3 . A2 A2 E3 . F2 . C3 . F2 F2 C3 . C3 . G2 . C3 C3 G2 . G2 . D3 . G2 G2 D3 . F2 . C3 . F2 F2 C3 . G2 . D3 . G2 G2 D3 . A2 . E3 . A2 A2 E3 . F2 . C3 . F2 F2 C3 . D3 . A2 . D3 D3 A2 . G2 . D3 . G2 G2 D3 . F2 . C3 . F2 F2 C3 . G2 . D3 . G2 G2 D3 .',
+    pad: 'C4 - - - - - - - - - - - B3 - - - E4 - - - - - - - D4 - - - - - - - C4 - - - - - - - C4 - - - - - - - E4 - - - - - - - D4 - - - - - - - C4 - - - - - - - D4 - - - - - - - C4 - - - - - - - C4 - - - - - - - F4 - - - - - - - D4 - - - - - - - C4 - - - - - - - D4 - - - - - - -',
+    drums: 'k . . . k . . . k . k . k k k k k . h . s . h . k . h . s . h h k . h . s . h . k . h . s . h h k . h . s . h . k . h . s . h h k . h . s . h . k . h . s . h h k . h . s . h . k . h . s . h h k . h . s . h . k . h . s . h h k . h . s . h . k . s . s s s s',
   },
   town_calm: {
     bpm: 104, wave: 'triangle',
@@ -208,7 +216,13 @@ function ensure(): AudioContext | null {
 }
 
 /** Browsers only allow sound after a tap or key press; call this from one. */
+let unlockedAt = 0;
+/** performance.now() of the first gesture that unlocked audio (0 = still locked). */
+export const audioUnlockedAt = () => unlockedAt;
+export const musicIsOn = () => musicOn;
+
 export function unlockAudio() {
+  if (!unlockedAt) unlockedAt = performance.now();
   const c = ensure();
   if (c && c.state === 'suspended') void c.resume();
   if (pendingSong && !current) startSong(pendingSong);
@@ -290,6 +304,8 @@ function startSong(id: string) {
   const bass = steps(song.bass);
   const drums = song.drums ? steps(song.drums) : [];
   const pad = song.pad ? steps(song.pad) : [];
+  const harm = song.harmony ? steps(song.harmony) : [];
+  const loopFrom = song.loopFrom ?? 0;
   const stepDur = 60 / song.bpm / 2;
   const len = Math.max(lead.length, bass.length);
   let step = 0;
@@ -302,13 +318,15 @@ function startSong(id: string) {
   const tick = () => {
     if (!ctx || songGain !== gain) return;
     while (next < ctx.currentTime + 0.15) {
-      const i = step % len;
+      const i = step < len ? step : loopFrom + ((step - len) % (len - loopFrom));
       const l = lead[i % lead.length];
       if (l && l !== '-' && l !== '.') {
         const dur = stepDur * noteLen(lead, i % lead.length) * 0.92;
         tone(gain, freq(l), next, dur, song.wave ?? 'square', song.wave === 'sine' ? 0.22 : 0.16, undefined, song.vibrato ?? 0);
         if (song.echo) tone(gain, freq(l) * 1.006, next + stepDur * 3, dur, 'sine', 0.06, undefined, song.vibrato ?? 0);
       }
+      const hm = harm.length ? harm[i % harm.length] : null;
+      if (hm && hm !== '-' && hm !== '.') tone(gain, freq(hm), next, stepDur * noteLen(harm, i % harm.length) * 0.9, 'square', 0.07);
       const pd = pad.length ? pad[i % pad.length] : null;
       if (pd && pd !== '-' && pd !== '.') tone(gain, freq(pd), next, stepDur * noteLen(pad, i % pad.length) * 0.95, 'triangle', 0.09);
       const b = bass[i % bass.length];

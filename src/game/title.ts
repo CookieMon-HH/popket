@@ -2,6 +2,7 @@ import { W, H, FONT_FAMILY, drawSprite, text, type Ctx } from '../engine/draw';
 import { clock } from '../engine/timing';
 import { input } from '../engine/input';
 import { ui } from '../engine/ui';
+import { audioUnlockedAt, musicIsOn } from '../engine/audio';
 import type { Scene } from '../engine/scene';
 import { silhouette } from '../engine/pix';
 import { monSprite, capsuleSprite } from './sprites';
@@ -170,8 +171,16 @@ export class TitleScene implements Scene {
     return new Promise((r) => (this.startResolve = r));
   }
 
+  /** The first press only turns the sound on (browsers block audio until a gesture),
+   *  so the title theme can be heard before the game starts. */
+  private soundArmed = false;
   private start() {
     if (this.started || clock.frame - this.t0 < 30) return;
+    if (!this.soundArmed && musicIsOn() && performance.now() - audioUnlockedAt() < 300) {
+      this.soundArmed = true;
+      return;
+    }
+    this.soundArmed = true;
     this.started = true;
     document.getElementById('screen')?.removeEventListener('pointerdown', this.onTap);
     this.startResolve?.();
@@ -344,16 +353,17 @@ export class TitleScene implements Scene {
     if (!this.started && !ui.active && p >= 1) {
       const blink = (Math.sin(clock.frame / 12) + 1) / 2;
       c.globalAlpha = 0.55 + blink * 0.45;
-      const label = '화면을 누르거나 Z 키로 시작';
+      const soundFirst = !this.soundArmed && musicIsOn() && !audioUnlockedAt();
+      const label = soundFirst ? '♪ 화면을 누르면 소리가 켜져요' : '화면을 누르거나 Z 키로 시작';
       c.fillStyle = 'rgba(20,24,60,0.55)';
-      const pw = 124;
+      const pw = soundFirst ? 132 : 124;
       roundRect(c, cx - pw / 2, 166, pw, 15, 7.5);
       c.fill();
       text(c, label, cx, 168.5, { size: 8.5, weight: 800, align: 'center', color: '#fff6c8', shadow: false });
       c.globalAlpha = 1;
     }
     if (signedIn()) text(c, '● 구글 계정 연결됨', 4, H - 10, { size: 7, color: 'rgba(255,255,255,0.8)', shadow: false });
-    text(c, 'ver 1.8', W - 4, H - 10, { size: 7, align: 'right', color: 'rgba(255,255,255,0.7)', shadow: false });
+    text(c, 'ver 1.9', W - 4, H - 10, { size: 7, align: 'right', color: 'rgba(255,255,255,0.7)', shadow: false });
   }
 }
 
