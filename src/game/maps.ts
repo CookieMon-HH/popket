@@ -12,6 +12,7 @@ import {
 } from './story';
 import { keeperTalk, escapeeTalk, safariExitTile } from './safari';
 import { windTamerTalk } from './fly';
+import { legendEncounter, snowMomPost, hwaryeonPost } from './legends';
 
 export interface Warp {
   x: number;
@@ -841,6 +842,8 @@ const cave: MapDef = {
       id: 'cguard', x: 21, y: 2, dir: 'down', pal: PAL.grunt, hidden: () => f('bossDone'),
       talk: '검은안개단: 출구는 봉쇄했다! 두목님의 의식이 끝날 때까지\n아무도 못 나간다고!',
     },
+    { id: 'lg_cheolsan', x: 19, y: 13, dir: 'down', mon: 'cheolsan', hidden: () => !f('lg_hint_cheolsan') || f('lg_cheolsan'),
+      talk: () => legendEncounter('cheolsan', 65, '무쇠 같은 거대한 몬스터가 갱도를 막고 서 있다. 땅이 울린다…\n다가가 볼까?', '철산: 쿠우우우웅——!') },
     { id: 'miner', x: 17, y: 5, dir: 'down', pal: PAL.hiker, hidden: () => !f('bossDone'), talk: () => minerTalk() },
     { id: 'csuperball', x: 1, y: 15, dir: 'down', item: { id: 'superball', qty: 3 } },
     { id: 'chyper', x: 22, y: 11, dir: 'down', item: { id: 'hyperpotion', qty: 1 } },
@@ -1481,11 +1484,12 @@ const gym5: MapDef = {
     { id: 'g5f1', x: 1, y: 8, dir: 'right', pal: PAL2.firefighter, sight: 7, trainer: tr('g5f1', '불꽃수련생', '지글', PAL2.firefighter, [['jangjak', 34], ['hwaro', 34]], 1500, '용암처럼 뜨거운 승부다!', '불이 꺼졌다…', '관장님의 화산뿔은 땅 타입도 가지고 있어.') },
     { id: 'g5f2', x: 10, y: 4, dir: 'left', pal: PAL2.firefighter, sight: 6, trainer: tr('g5f2', '불꽃수련생', '활활', PAL2.firefighter, [['dokjeongal', 34], ['jangjak', 35]], 1500, '관장님 앞에서 질 수는 없지!', '앗 뜨거!', '물 기술이 있으면 훨씬 수월할 거야.') },
     {
-      id: 'hwaryeon', x: 5, y: 1, dir: 'down', pal: PAL.hwaryeon,
+      id: 'hwaryeon', x: 5, y: 1, dir: 'down', pal: PAL.hwaryeon, hidden: () => f('champion'),
       trainer: tr('leader5', '관장', '화련', PAL.hwaryeon, [['jangjak', 36], ['hwaro', 36], ['seolpyo', 36], ['hwasan', 39]], 4000,
         '불꽃 수련관에 온 걸 환영해! 나는 관장 화련.\n이 마을은 화산과 함께 살아왔지. 그 뜨거운 마음을 보여 줄게!',
         '하하, 내 불꽃이 완전히 꺼졌네!', '화산이 요즘 이상해… 부탁할게.', leader5Win),
     },
+    { id: 'hwaryeon_post', x: 5, y: 1, dir: 'down', pal: PAL.hwaryeon, hidden: () => !f('champion'), talk: () => hwaryeonPost() },
   ],
 };
 
@@ -1516,6 +1520,8 @@ const volcano: MapDef = {
   npcs: [
     grunt('vgrunt1', 3, 10, 'right', 6, [['dodug', 35], ['dokjeongal', 35]], '두목님의 마지막 작전이다! 물러서라!', '이럴 수가…', '두목님은 위쪽 심장의 방에 계신다.'),
     grunt('vgrunt2', 20, 6, 'left', 6, [['geosin', 35], ['dokdae', 35]], '여기까지 왔다고? 대단하군. 하지만 끝이다!', '크으…', '두목님은… 사실 이 산을 지키고 싶어 하셔.'),
+    { id: 'lg_jujak', x: 12, y: 4, dir: 'down', mon: 'jujak', hidden: () => !f('lg_jujak_ok') || f('lg_jujak'),
+      talk: () => legendEncounter('jujak', 65, '붉은 불꽃의 새가 화산의 심장 위에 내려앉아 있다…\n다가가 볼까?', '주작: 끼아아아——!') },
     { id: 'vboss', x: 12, y: 4, dir: 'up', pal: PAL.boss, hidden: () => f('volcanoDone'), requires: ['vgrunt1', 'vgrunt2'], waitText: '흑영: …아직 내 부하들이 남아 있다. 그들을 넘어서지 못한다면\n나와 겨룰 자격도 없다.', talk: () => volcanoBossScene() },
     { id: 'vitem1', x: 1, y: 13, dir: 'down', item: { id: 'maxrevive', qty: 1 } },
     { id: 'vitem2', x: 22, y: 13, dir: 'down', item: { id: 'hyperball', qty: 3 } },
@@ -1700,7 +1706,8 @@ const town7: MapDef = {
     { id: 't7kid', x: 17, y: 12, dir: 'left', pal: PAL.kid, move: 'wander', talk: '마을 연못은 꽁꽁 얼어서 미끄럼을 탈 수 있어! 수련관 바닥도 다 얼음이래!' },
     { id: 'rival_t7', x: 15, y: 10, dir: 'down', pal: PAL.rival, hidden: () => f('iceIntro') },
     { id: 't7mom', x: 8, y: 4, dir: 'down', pal: PAL.lady, move: 'look', talk: async () => {
-      if (f('iceCaveDone')) await say('눈송이 엄마: 눈송이가 아기북곰이랑 꼭 붙어서 안 떨어져요.\n정말 고마웠어요!');
+      if (f('champion')) await snowMomPost();
+      else if (f('iceCaveDone')) await say('눈송이 엄마: 눈송이가 아기북곰이랑 꼭 붙어서 안 떨어져요.\n정말 고마웠어요!');
       else await say('눈송이 엄마: 우리 눈송이가 아기북곰을 쫓아서 얼음굴에 들어갔어요…\n얼음굴은 마을 북동쪽이에요. 제발 찾아 주세요!');
     } },
   ],
@@ -1775,6 +1782,8 @@ const icecave: MapDef = {
   npcs: [
     { id: 'icski', x: 1, y: 11, dir: 'down', pal: PAL.skier, sight: 3, trainer: tr('icski', '스키어', '눈보라', PAL.skier, [['seolpyo', 40], ['eolpeng', 41]], 2000, '얼음굴은 내 전용 스키장이라고!', '꽈당!', '얼음판에서는 바위에 부딪혀야 멈출 수 있어. 위쪽 굴로 가려면 바위를 잘 이용해 봐.') },
     { id: 'ichiker', x: 18, y: 11, dir: 'down', pal: PAL.hiker, sight: 3, trainer: tr('ichiker', '등산가', '얼음산', PAL.hiker, [['bawi', 40], ['agibuk', 40], ['heukjang', 41]], 2000, '눈보라에 갇혀서 몸이 근질근질했다!', '하하, 몸이 다 풀렸다!', '빙산곰 울음소리가 안쪽에서 계속 들려…') },
+    { id: 'lg_seolhwa', x: 12, y: 2, dir: 'down', mon: 'seolhwa', hidden: () => !f('lg_hint_seolhwa') || f('lg_seolhwa'),
+      talk: () => legendEncounter('seolhwa', 65, '뿔에 눈꽃이 핀 하얀 사슴이 조용히 이쪽을 바라보고 있다…\n다가가 볼까?', '설화: 히이이잉——!') },
     { id: 'icitem1', x: 1, y: 4, dir: 'down', item: { id: 'hyperpotion', qty: 2 } },
     { id: 'icitem2', x: 18, y: 4, dir: 'down', item: { id: 'maxrevive', qty: 1 } },
     { id: 'seori_cave', x: 8, y: 2, dir: 'down', pal: PAL.seori, hidden: () => f('iceCaveDone') || f('badge6'), talk: () => iceCaveScene() },
@@ -1909,6 +1918,10 @@ const den: MapDef = {
     grunt('dgrunt1', 2, 12, 'right', 6, [['nalgae', 43], ['dokdae', 43]], '여기까지 왔다고?! 먹구름 님께 가게 둘 순 없지!', '이럴 수가…', '바위를 잘못 밀었으면 둥지를 나갔다 오면 돼. …아, 이걸 왜 알려 줬지.'),
     grunt('dgrunt2', 17, 6, 'left', 5, [['geosin', 43], ['beongae', 43]], '여의주는 우리 거다!', '크으…', '먹구름 님은 저 위에 계셔.'),
     { id: 'yongha_den', x: 4, y: 9, dir: 'down', pal: PAL.yongha, hidden: () => f('denDone'), talk: '관장 용하: 녀석들이 길을 바위로 막아 버렸다.\n아래쪽 바위부터 옆으로 밀어 두고, 위쪽 바위를 밀어 올려라!' },
+    {
+      id: 'lg_cheongryong', x: 15, y: 1, dir: 'left', mon: 'cheongryong', hidden: () => !f('lg_call_cheongryong') || f('lg_cheongryong'),
+      talk: () => legendEncounter('cheongryong', 70, '푸른 번개를 두른 용이 둥지 꼭대기에서 하늘을 올려다보고 있다…\n다가가 볼까?', '청룡: 쿠르르릉——!'),
+    },
     {
       id: 'cloud', x: 15, y: 1, dir: 'left', pal: PAL.cloud, sight: 5, hidden: () => f('denDone'),
       requires: ['dgrunt1', 'dgrunt2'],

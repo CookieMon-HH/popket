@@ -66,6 +66,10 @@ const BUKGOM: L = [[1, 'tackle'], [1, 'frostbreath'], [6, 'jab'], [12, 'icefang'
 const HYEON: L = [[1, 'tackle'], [1, 'curl'], [6, 'splash'], [12, 'dragonbreath'], [18, 'ironwall'], [24, 'wave'], [30, 'dragontail'], [36, 'tide'], [42, 'skyfury']];
 const SANGUN: L = [[1, 'rockdrop'], [1, 'soulwave'], [30, 'focus'], [35, 'mountainroar'], [38, 'rockstorm']];
 const CHEONJI: L = [[1, 'dragontail'], [1, 'psybeam'], [45, 'meditate'], [50, 'moonsign'], [60, 'skyfury'], [70, 'genesis']];
+const SEOLHWA: L = [[1, 'twinkle'], [1, 'frostbreath'], [40, 'icefang'], [45, 'moondust'], [55, 'avalanche'], [62, 'snowblossom']];
+const CHEOLSAN: L = [[1, 'mudthrow'], [1, 'ironclaw'], [40, 'quake'], [45, 'steelbeam'], [55, 'earthsplit'], [62, 'ironquake']];
+const JUJAK: L = [[1, 'ember'], [1, 'gust'], [40, 'flamedash'], [45, 'wingcut'], [55, 'storm'], [62, 'phoenixfire']];
+const CHEONGRYONG: L = [[1, 'zap'], [1, 'dragonbreath'], [40, 'bolt'], [45, 'dragontail'], [55, 'thunder'], [62, 'azurebolt']];
 const EUNHA: L = [[1, 'wave'], [1, 'gust'], [20, 'breathe'], [25, 'tide'], [30, 'galaxy'], [35, 'storm']];
 
 type Def = Omit<SpeciesDef, 'no'>;
@@ -178,6 +182,10 @@ const list: Def[] = [
   s('hyeonmu', '현무', ['물', '드래곤'], [108, 96, 122, 54], 45, 240, HYEON, '현무', '등딱지를 감싼 검은 뱀과 함께 다니는 거북. 북쪽 바다를 지키는 수호자라고 전해진다.'),
   // 특별한 몬스터
   s('sangun', '산군', ['바위', '고스트'], [100, 118, 92, 110], 20, 250, SANGUN, '산신령', '운무봉을 지키는 흰 호랑이의 정령. 숲·물·바위의 세 방울 소리를 들으면 서낭당으로 내려온다고 전해진다.', undefined, { special: true }),
+  s('seolhwa', '설화', ['얼음', '페어리'], [100, 108, 95, 118], 5, 290, SEOLHWA, '눈꽃사슴', '서리마을 얼음굴 가장 깊은 곳에 산다는 수호신. 뿔에 맺힌 눈꽃이 녹지 않는 한 겨울이 끝나지 않는다고 전해진다.', undefined, { legend: true }),
+  s('cheolsan', '철산', ['땅', '강철'], [120, 125, 120, 60], 5, 290, CHEOLSAN, '무쇠산', '별빛동굴 가장 깊은 갱도를 지키는 수호신. 무쇠 같은 몸이 움직일 때마다 산이 울린다고 한다.', undefined, { legend: true }),
+  s('jujak', '주작', ['불', '비행'], [105, 118, 92, 120], 5, 290, JUJAK, '붉은새', '불꽃산 깊은 곳에서 남쪽 하늘을 지키는 사신. 날갯짓 한 번에 화산이 잠든다고 한다.', undefined, { legend: true }),
+  s('cheongryong', '청룡', ['전기', '드래곤'], [108, 122, 95, 118], 5, 290, CHEONGRYONG, '푸른용', '동쪽 하늘을 지키는 사신. 세 수호신이 한자리에 모이면 번개와 함께 용의 둥지에 내려온다고 한다.', undefined, { legend: true }),
   s('cheonji', '천지', ['드래곤', '에스퍼'], [115, 125, 105, 112], 10, 320, CHEONJI, '태초', '해솔 지방의 하늘과 땅을 처음 갈라놓았다는 전설의 용. 해와 달을 품은 구슬을 쥐고 구름 위 신전에 머문다.', undefined, { legend: true }),
   s('eunha', '은하고래', ['물', '비행'], [120, 110, 100, 90], 25, 260, EUNHA, '은하', '별빛동굴 지하 호수에 잠든 전설의 몬스터. 깨어나면 밤하늘을 헤엄치며 별을 뿌린다고 전해진다.', undefined, { legend: true }),
   // 땅 (뒤쪽 배치)
@@ -201,7 +209,7 @@ const ORDER = [
   'pongduck', 'ubiduck', 'kkotip', 'beotkkot', 'suguk', 'jangma', 'bingsu', 'wangbingsu',
   'agibuk', 'bingsan', 'hyeonmuk', 'hyeonmu',
   'kkomaryong', 'nalgae', 'cheonryong',
-  'sangun', 'eunha', 'cheonji',
+  'sangun', 'eunha', 'seolhwa', 'cheolsan', 'jujak', 'cheongryong', 'cheonji',
 ];
 const byId = Object.fromEntries(list.map((d) => [d.id, d]));
 export const SPECIES_LIST: SpeciesDef[] = ORDER.map((id, i) => ({ ...byId[id], no: i + 1 }));

@@ -124,6 +124,10 @@ const list: MoveDef[] = [
   // 드래곤
   { id: 'dragonbreath', name: '용의숨결', type: '드래곤', power: 60, acc: 100, pp: 20, effect: { kind: 'status', status: 'par', chance: 20 }, desc: '용의 숨결을 내뿜는다. 마비될 때가 있다.' },
   { id: 'dragontail', name: '용꼬리치기', type: '드래곤', power: 80, acc: 100, pp: 10, desc: '굵은 꼬리로 후려친다.' },
+  { id: 'snowblossom', name: '설화난무', type: '얼음', power: 110, acc: 90, pp: 5, desc: '눈꽃잎을 휘몰아쳐 모든 것을 얼린다.' },
+  { id: 'ironquake', name: '철산붕괴', type: '땅', power: 110, acc: 90, pp: 5, desc: '무쇠 같은 몸으로 대지를 무너뜨린다.' },
+  { id: 'phoenixfire', name: '주작의불꽃', type: '불', power: 110, acc: 90, pp: 5, effect: { kind: 'status', status: 'brn', chance: 20 }, desc: '꺼지지 않는 붉은 불꽃을 내려보낸다.' },
+  { id: 'azurebolt', name: '청룡뇌격', type: '전기', power: 110, acc: 90, pp: 5, effect: { kind: 'status', status: 'par', chance: 15 }, desc: '푸른 용의 번개를 하늘에서 내리꽂는다.' },
   { id: 'genesis', name: '천지개벽', type: '드래곤', power: 120, acc: 90, pp: 5, desc: '하늘과 땅을 갈라 태초의 빛을 쏟아낸다.' },
   { id: 'skyfury', name: '천룡의분노', type: '드래곤', power: 110, acc: 85, pp: 5, desc: '하늘을 가르는 용의 분노를 쏟아낸다.' },
   // 에스퍼

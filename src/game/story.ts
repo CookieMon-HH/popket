@@ -10,6 +10,7 @@ import { chooseStarter } from './menus';
 import type { NPC } from './overworld';
 import type { Pal } from './sprites';
 import type { TrainerDef } from './maps';
+import { professorLegends, minerPost, elderPost } from './legends';
 
 export const PAL = {
   mom: { hair: '#7a4a2a', shirt: '#f0a0b0', pants: '#6a6aa0' },
@@ -169,6 +170,7 @@ export async function labProfessor() {
   if (game.flags.champion) {
     await say('한별 박사: 챔피언 {name}! 이 연구소에서 첫 몬스터를 받던 날이 엊그제 같구나.');
     await say(`한별 박사: 도감은 ${game.caught.length}/${total}종류까지 채웠구나.\n해솔 지방의 모든 몬스터를 만나 보렴!`);
+    await professorLegends();
     return;
   }
   if (game.flags.pearlReturned) {
@@ -422,6 +424,7 @@ export async function sanjiTalk() {
 }
 
 export async function minerTalk() {
+  if (await minerPost()) return;
   if (!game.flags.quest) {
     await say('광부 대장 석두: 검은안개단을 쫓아내 줘서 고맙네!\n덕분에 다시 별빛결정을 캘 수 있게 됐지.');
     return;
@@ -690,6 +693,7 @@ export async function dragonIntroScene() {
 }
 
 export async function elderTalk() {
+  if (await elderPost()) return;
   if (!game.flags.dragonIntro) {
     await say('촌장: 이 사당은 해솔 지방의 하늘을 지키는 천룡님을 모신 곳이라네.');
     return;

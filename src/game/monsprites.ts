@@ -1468,6 +1468,94 @@ export const MON_DRAW: Record<string, (p: Pix) => void> = {
     p.rect(2, 23, 4, 1, Bd);
   },
 
+  // ── 전설: 설화 (눈꽃 사슴, 얼음+페어리) ─────────────────────
+  seolhwa(p) {
+    const W = '#f4fbff', S = '#c8e0f4', Ic = '#8ad8ff', Ib = '#4aa8e8', Pk = '#ffb0d8', Pd = '#e878b0';
+    p.ell(20, 38, 14, 2, '#d8f0ff');
+    p.rect(13, 27, 3, 11, S); p.rect(27, 27, 3, 11, S);
+    p.ell(22, 24, 11, 6.5, W);
+    p.ell(22, 28, 8, 2.5, S);
+    p.rect(9, 27, 3, 11, W); p.rect(23, 27, 3, 11, W);
+    p.rect(9, 36, 3, 2, Ib); p.rect(23, 36, 3, 2, Ib); p.rect(13, 36, 3, 2, Ib); p.rect(27, 36, 3, 2, Ib);
+    p.ell(33, 20, 2.5, 3.5, W); p.set(34, 17, Pk);
+    chain(p, [[13, 20], [10, 13]], 3, W);
+    p.ell(8, 11, 5, 4.5, W);
+    p.ell(3.5, 13, 3, 2.2, W);
+    // crystal antlers with snow blossoms
+    p.line(9, 7, 7, 1, Ic); p.line(8, 4, 4, 2, Ic); p.line(11, 7, 14, 1, Ic); p.line(13, 3, 17, 2, Ic); p.line(6, 2, 5, 0, Ib); p.line(15, 1, 17, 0, Ib);
+    for (const [x, y] of [[4, 2], [17, 2], [14, 1]] as const) { p.set(x, y, Pk); p.set(x - 1, y, Pd); p.set(x + 1, y, Pd); p.set(x, y + 1, Pd); }
+    p.ell(11, 9, 1.8, 1.2, Pk);
+    // snowflake marks on the body
+    for (const [x, y] of [[18, 21], [25, 20], [28, 24]] as const) { p.set(x, y, Ic); p.set(x - 1, y, S); p.set(x + 1, y, S); p.set(x, y - 1, S); p.set(x, y + 1, S); }
+    eye(p, 6, 10, 2);
+    p.set(1, 13, K);
+  },
+
+  // ── 전설: 철산 (무쇠 매머드, 땅+강철) ────────────────────────
+  cheolsan(p) {
+    const St = '#9aa2b4', Sd = '#6a7286', Sl = '#c8d0e0', Br = '#8a5a34', Bd = '#5e3a20', Tk = '#fff4dc';
+    p.rect(9, 28, 6, 10, Sd); p.rect(27, 28, 6, 10, Sd);
+    p.ell(23, 21, 15, 11, Br);
+    p.ell(24, 17, 13, 7, St);
+    for (const x of [16, 22, 28, 33]) p.rect(x, 12, 3, 4, Sl);
+    p.rect(13, 28, 6, 10, St); p.rect(31, 28, 6, 10, St);
+    p.rect(13, 36, 6, 2, Sl); p.rect(31, 36, 6, 2, Sl);
+    p.ell(11, 16, 8, 8, Br);
+    p.ell(12, 14, 6, 5, St);
+    p.ell(16, 18, 4.5, 6, Bd);
+    // trunk and tusks
+    chain(p, [[6, 19], [4, 25], [5, 31], [8, 33]], 2.2, Br);
+    p.line(8, 22, 2, 28, Tk); p.line(9, 23, 3, 29, Tk); p.line(2, 28, 1, 25, Tk);
+    p.set(8, 34, Bd);
+    eye(p, 8, 13, 2);
+    p.line(6, 11, 10, 12, Sd);
+  },
+
+  // ── 전설: 주작 (붉은 불새, 불+비행) ──────────────────────────
+  jujak(p) {
+    const R = '#e8402a', Rd = '#a82418', O = '#ff8a2a', Y = '#ffd84a', Fl = '#fff0a0';
+    // flame tail
+    chain(p, [[24, 26], [31, 31], [38, 30]], 2.6, R);
+    chain(p, [[26, 27], [33, 35], [39, 37]], 2, O);
+    p.tri(34, 26, 40, 22, 39, 31, Y); p.tri(36, 34, 40, 33, 38, 39, Y);
+    // wings spread
+    p.tri(18, 18, 38, 4, 30, 20, R); p.tri(20, 19, 36, 10, 32, 21, O); p.tri(26, 16, 39, 2, 34, 12, Y);
+    p.tri(14, 20, 2, 8, 10, 22, Rd); p.tri(12, 21, 4, 13, 11, 23, R);
+    // body and head
+    p.ell(19, 23, 7, 8, R);
+    p.ell(18, 26, 4.5, 5, O);
+    chain(p, [[16, 17], [13, 11]], 2.6, R);
+    p.ell(12, 9, 4.5, 4, R);
+    p.tri(8, 9, 3, 11, 8, 11, Y);
+    // flame crest
+    p.tri(12, 6, 15, 6, 14, 0, Y); p.tri(10, 6, 12, 6, 9, 1, O); p.tri(14, 7, 17, 7, 18, 2, O);
+    p.set(14, 2, Fl); p.set(9, 3, Fl);
+    p.rect(17, 31, 2, 6, Y); p.rect(21, 31, 2, 6, Y); p.rect(16, 36, 4, 1, Y); p.rect(20, 36, 4, 1, Y);
+    p.rect(10, 8, 2, 2, '#ffe060'); p.set(10, 8, K);
+  },
+
+  // ── 전설: 청룡 (푸른 번개 용, 전기+드래곤) ───────────────────
+  cheongryong(p) {
+    const B = '#2a7ae0', Bd = '#1a4aa0', Bl = '#8ad0ff', Y = '#ffe040', Yd = '#e8b020', Wh = '#e8f8ff';
+    p.ell(20, 37.5, 16, 2, '#cfe0f8');
+    chain(p, [[38, 10], [35, 20], [27, 26], [20, 32], [12, 30], [8, 22], [10, 14]], 3, B);
+    chain(p, [[35, 21], [27, 27.5], [20, 33.5], [12, 31.5]], 1.2, Bl);
+    // lightning mane and spikes
+    for (const [x, y] of [[33, 15], [29, 21], [22, 27], [14, 25]] as const) { p.line(x, y, x + 3, y - 4, Y); p.line(x + 3, y - 4, x + 1, y - 4, Y); p.line(x + 1, y - 4, x + 4, y - 8, Yd); }
+    p.tri(36, 6, 40, 4, 39, 12, Y);
+    // claws
+    p.ell(16, 34, 2.5, 1.5, Bd); p.ell(27, 30, 2.5, 1.5, Bd);
+    // head
+    p.ell(9, 11, 6, 5, B);
+    p.ell(4, 13, 4, 2.8, B);
+    p.ell(4.5, 14.8, 3, 1.1, Bl);
+    p.tri(10, 7, 13, 7, 17, 1, Wh); p.tri(7, 7, 9, 7, 6, 1, Wh);
+    p.ell(13, 9, 3, 4, Y);
+    p.line(1, 12, -1, 17, Y); p.line(3, 15, 1, 20, Yd);
+    p.rect(6, 9, 3, 2, Y); p.set(6, 9, K);
+    p.set(1, 12, K);
+  },
+
   // ── 전설: 천지 (하늘과 땅을 잇는 태초의 용, 드래곤+에스퍼) ─────────
   cheonji(p) {
     const W = '#fbf7ec', S = '#d8ccb0', Gd = '#ffd24a', Go = '#e8a020', M = '#8a5ad8', Ml = '#c0a0f8', Cl = '#cfe8ff';
