@@ -2,7 +2,11 @@ export interface ItemDef {
   id: string;
   name: string;
   price: number;
-  kind: 'heal' | 'cure' | 'full' | 'revive' | 'ball' | 'key' | 'stone';
+  kind: 'heal' | 'cure' | 'full' | 'revive' | 'ball' | 'key' | 'stone' | 'pp';
+  /** pp: PP restored per move (omit = all of it). */
+  pp?: number;
+  /** pp: restore every move instead of one chosen move. */
+  ppAll?: boolean;
   amount?: number;
   /** revive: restore to full HP instead of half. */
   fullRevive?: boolean;
@@ -19,6 +23,9 @@ const list: ItemDef[] = [
   { id: 'hyperpotion', name: '특급회복약', price: 1200, kind: 'heal', amount: 150, desc: '몬스터의 체력을 150 회복한다.' },
   { id: 'fullrestore', name: '만능회복약', price: 2500, kind: 'full', desc: '몬스터의 체력을 모두 회복하고 상태 이상도 낫게 한다.' },
   { id: 'cure', name: '만병통치약', price: 400, kind: 'cure', desc: '화상·독·마비·수면을 모두 낫게 한다.' },
+  { id: 'ppcandy', name: '기술사탕', price: 600, kind: 'pp', pp: 10, desc: '기술 하나를 골라 PP를 10 회복한다.' },
+  { id: 'ppjar', name: '기술단지', price: 1500, kind: 'pp', desc: '기술 하나를 골라 PP를 모두 회복한다.' },
+  { id: 'pphoney', name: '기술꿀', price: 3500, kind: 'pp', ppAll: true, desc: '모든 기술의 PP를 모두 회복한다.' },
   { id: 'revive', name: '기운의조각', price: 1500, kind: 'revive', desc: '쓰러진 몬스터를 체력 절반으로 되살린다.' },
   { id: 'maxrevive', name: '기운의덩어리', price: 4000, kind: 'revive', fullRevive: true, desc: '쓰러진 몬스터를 체력 가득 되살린다.' },
   { id: 'firestone', name: '불꽃의돌', price: 2100, kind: 'stone', desc: '안에서 불씨가 일렁이는 붉은 돌. 꼬리별여우에게 쓰면 불여우로 진화한다.' },

@@ -1,6 +1,6 @@
 import { W as SW, BW as W, OX, H, box, text, hpBar, panel, cursor, typeChip, drawSprite, wrap, centered, type Ctx } from '../engine/draw';
 import { input } from '../engine/input';
-import { ui, Widget, Menu, MessageBox, say, yesNo } from '../engine/ui';
+import { ui, Widget, Menu, MessageBox, say, yesNo, choose } from '../engine/ui';
 import { silhouette } from '../engine/pix';
 import { SPECIES, SPECIES_LIST } from '../data/species';
 import { MOVES, STATUS_LABEL } from '../data/moves';
@@ -271,6 +271,28 @@ export async function useItemOn(id: string, m: Mon): Promise<boolean> {
     await say(`${j(n, '이/가')} 기운을 되찾았다!`);
     return true;
   }
+  if (it.kind === 'pp') {
+    const missing = (s: { id: string; pp: number }) => MOVES[s.id].pp - s.pp;
+    if (!m.moves.some((s) => missing(s) > 0)) return say('효과가 없을 것 같다.').then(() => false);
+    if (it.ppAll) {
+      for (const s of m.moves) s.pp = MOVES[s.id].pp;
+      removeItem(id);
+      await say(`${n}의 모든 기술의 PP가 회복되었다!`);
+      return true;
+    }
+    const k = await choose(
+      '어느 기술의 PP를 회복할까?',
+      [...m.moves.map((s) => `${MOVES[s.id].name}  ${s.pp}/${MOVES[s.id].pp}`), '그만두기'],
+    );
+    if (k < 0 || k >= m.moves.length) return false;
+    const s = m.moves[k];
+    if (missing(s) <= 0) return say('그 기술은 PP가 가득 차 있다.').then(() => false);
+    const add = Math.min(missing(s), it.pp ?? missing(s));
+    s.pp += add;
+    removeItem(id);
+    await say(`${MOVES[s.id].name}의 PP가 ${add} 회복되었다!`);
+    return true;
+  }
   if (it.kind === 'stone') {
     const to = SPECIES[m.species].stones?.[id];
     if (!to) return say('효과가 없을 것 같다.').then(() => false);
@@ -445,9 +467,9 @@ export function shopStock(): [string[], number] {
   const f = game.flags;
   const tiers = [
     ['ball', 'potion'],
-    f.badge1 ? ['superball', 'superpotion', 'cure'] : [],
-    f.badge2 ? ['revive', 'hyperpotion'] : [],
-    f.badge3 ? ['hyperball', 'fullrestore'] : [],
+    f.badge1 ? ['superball', 'superpotion', 'cure', 'ppcandy'] : [],
+    f.badge2 ? ['revive', 'hyperpotion', 'ppjar'] : [],
+    f.badge3 ? ['hyperball', 'fullrestore', 'pphoney'] : [],
     f.badge4 ? ['firestone', 'shadestone', 'thornstone'] : [],
     f.ending ? ['maxrevive'] : [],
   ];
