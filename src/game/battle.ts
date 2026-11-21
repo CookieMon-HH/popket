@@ -507,7 +507,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     const n = monName(m);
     await say(`${j(n, '은/는')} ${amount} 경험치를 얻었다!`);
     m.exp += amount;
-    while (m.level < 100 && m.exp >= expFor(m.level + 1)) {
+    while (m.level < 100 && m.exp >= expFor(m.level + 1, m.species)) {
       if (active) {
         const from = v.pExp;
         await tween(20, (p) => (v.pExp = from + (1 - from) * p));

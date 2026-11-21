@@ -26,8 +26,12 @@ export function monName(m: Mon) {
   return SPECIES[m.species].name;
 }
 
-export function expFor(level: number) {
-  return level <= 1 ? 0 : level * level * level;
+/** Total experience needed for a level. Legendary and special monsters grow 1.5x slower. */
+export function expFor(level: number, species?: string) {
+  if (level <= 1) return 0;
+  const sp = species ? SPECIES[species] : undefined;
+  const slow = sp && (sp.legend || sp.special) ? 1.5 : 1;
+  return Math.floor(level * level * level * slow);
 }
 
 export function calcStats(m: Mon): Stats {
@@ -56,7 +60,7 @@ export function createMon(species: string, level: number): Mon {
     uid: ++uidCounter,
     species,
     level,
-    exp: expFor(level),
+    exp: expFor(level, species),
     hp: 1,
     ivs: { hp: rand(0, 15), atk: rand(0, 15), def: rand(0, 15), spe: rand(0, 15) },
     moves: movesAtLevel(species, level).map((id) => ({ id, pp: MOVES[id].pp })),
@@ -76,7 +80,7 @@ export function healMon(m: Mon) {
 
 export function expRatio(m: Mon) {
   if (m.level >= 100) return 1;
-  const a = expFor(m.level);
-  const b = expFor(m.level + 1);
+  const a = expFor(m.level, m.species);
+  const b = expFor(m.level + 1, m.species);
   return Math.max(0, Math.min(1, (m.exp - a) / (b - a)));
 }

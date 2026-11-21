@@ -64,13 +64,13 @@ const SNAIL: L = [[1, 'tackle'], [1, 'curl'], [6, 'absorb'], [11, 'bubble'], [16
 const BING: L = [[1, 'tackle'], [1, 'frostbreath'], [6, 'twinkle'], [11, 'curl'], [16, 'icefang'], [22, 'moondust'], [28, 'avalanche']];
 const BUKGOM: L = [[1, 'tackle'], [1, 'frostbreath'], [6, 'jab'], [12, 'icefang'], [18, 'focus'], [24, 'straight'], [30, 'avalanche'], [36, 'upper']];
 const HYEON: L = [[1, 'tackle'], [1, 'curl'], [6, 'splash'], [12, 'dragonbreath'], [18, 'ironwall'], [24, 'wave'], [30, 'dragontail'], [36, 'tide'], [42, 'skyfury']];
-const SANGUN: L = [[1, 'rockdrop'], [1, 'soulwave'], [30, 'focus'], [35, 'mountainroar'], [38, 'rockstorm']];
+const SANGUN: L = [[1, 'pebble'], [1, 'spook'], [25, 'rockdrop'], [30, 'focus'], [34, 'soulwave'], [42, 'mountainroar'], [50, 'rockstorm']];
 const CHEONJI: L = [[1, 'dragontail'], [1, 'psybeam'], [45, 'meditate'], [50, 'moonsign'], [60, 'skyfury'], [70, 'genesis']];
 const SEOLHWA: L = [[1, 'twinkle'], [1, 'frostbreath'], [40, 'icefang'], [45, 'moondust'], [55, 'avalanche'], [62, 'snowblossom']];
 const CHEOLSAN: L = [[1, 'mudthrow'], [1, 'ironclaw'], [40, 'quake'], [45, 'steelbeam'], [55, 'earthsplit'], [62, 'ironquake']];
 const JUJAK: L = [[1, 'ember'], [1, 'gust'], [40, 'flamedash'], [45, 'wingcut'], [55, 'storm'], [62, 'phoenixfire']];
 const CHEONGRYONG: L = [[1, 'zap'], [1, 'dragonbreath'], [40, 'bolt'], [45, 'dragontail'], [55, 'thunder'], [62, 'azurebolt']];
-const EUNHA: L = [[1, 'wave'], [1, 'gust'], [20, 'breathe'], [25, 'tide'], [30, 'galaxy'], [35, 'storm']];
+const EUNHA: L = [[1, 'splash'], [1, 'gust'], [20, 'breathe'], [25, 'wave'], [38, 'tide'], [45, 'storm'], [55, 'galaxy']];
 
 type Def = Omit<SpeciesDef, 'no'>;
 const s = (id: string, name: string, types: MonType[], b: [number, number, number, number], catchRate: number, baseExp: number,

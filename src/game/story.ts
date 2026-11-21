@@ -356,7 +356,7 @@ export async function whaleTalk() {
   }
   if (!(await yesNo('은하고래가 별빛을 흩뿌리며 노래하고 있다…\n다가가 볼까?'))) return;
   await say('은하고래: 우우웅——!');
-  const res = await wildBattle(createMon('eunha', 30));
+  const res = await wildBattle(createMon('eunha', 25));
   if (res === 'caught') {
     game.flags.whale = true;
     return;
@@ -469,7 +469,7 @@ export async function shrineTalk() {
   await say('짙은 안개가 산꼭대기를 뒤덮었다…\n안개 속에서 두 개의 푸른 눈이 빛난다!');
   await say('산군: 크르르릉…\n방울을 울린 자여. 숲과 물과 바위가 그대를 인정하였구나.');
   await say('산군: 이 산을 지켜 온 천 년의 힘으로 그대를 시험하겠다.\n그대의 동료들과 함께 맞서라!');
-  const res = await wildBattle(createMon('sangun', 38));
+  const res = await wildBattle(createMon('sangun', 34));
   if (res === 'caught') {
     game.flags.sangun = true;
     for (const b of ['bell_forest', 'bell_water', 'bell_rock']) removeItem(b);

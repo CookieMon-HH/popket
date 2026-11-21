@@ -140,7 +140,10 @@ let master: GainNode | null = null;
 let musicBus: GainNode | null = null;
 let sfxBus: GainNode | null = null;
 let noise: AudioBuffer | null = null;
-let enabled = true;
+let musicOn = true;
+let sfxOn = true;
+const MUSIC_VOL = 0.32;
+const SFX_VOL = 0.6;
 
 function ensure(): AudioContext | null {
   if (ctx) return ctx;
@@ -148,13 +151,13 @@ function ensure(): AudioContext | null {
   if (!AC) return null;
   ctx = new AC();
   master = ctx.createGain();
-  master.gain.value = enabled ? 0.5 : 0;
+  master.gain.value = 0.5;
   master.connect(ctx.destination);
   musicBus = ctx.createGain();
-  musicBus.gain.value = 0.32;
+  musicBus.gain.value = musicOn ? MUSIC_VOL : 0;
   musicBus.connect(master);
   sfxBus = ctx.createGain();
-  sfxBus.gain.value = 0.6;
+  sfxBus.gain.value = sfxOn ? SFX_VOL : 0;
   sfxBus.connect(master);
   noise = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
   const d = noise.getChannelData(0);
@@ -169,9 +172,13 @@ export function unlockAudio() {
   if (pendingSong && !current) startSong(pendingSong);
 }
 
-export function setSoundEnabled(on: boolean) {
-  enabled = on;
-  if (master && ctx) master.gain.setTargetAtTime(on ? 0.5 : 0, ctx.currentTime, 0.05);
+/** Background music and sound effects (including jingles) can be switched separately. */
+export function setAudioEnabled(music: boolean, effects: boolean) {
+  musicOn = music;
+  sfxOn = effects;
+  if (!ctx) return;
+  musicBus?.gain.setTargetAtTime(music ? MUSIC_VOL : 0, ctx.currentTime, 0.05);
+  sfxBus?.gain.setTargetAtTime(effects ? SFX_VOL : 0, ctx.currentTime, 0.05);
 }
 
 function tone(bus: GainNode, f: number, t: number, dur: number, wave: OscillatorType, vol: number, slideTo?: number) {
@@ -304,11 +311,11 @@ export function jingle(id: string) {
     t += sd;
   });
   const total = sd * notes.length;
-  if (musicBus) {
+  if (musicBus && musicOn && sfxOn) {
     musicBus.gain.setTargetAtTime(0.06, c.currentTime, 0.03);
     jingleUntil = c.currentTime + total;
     window.setTimeout(() => {
-      if (ctx && musicBus && ctx.currentTime >= jingleUntil - 0.05) musicBus.gain.setTargetAtTime(0.32, ctx.currentTime, 0.15);
+      if (ctx && musicBus && musicOn && ctx.currentTime >= jingleUntil - 0.05) musicBus.gain.setTargetAtTime(MUSIC_VOL, ctx.currentTime, 0.15);
     }, total * 1000 + 30);
   }
 }

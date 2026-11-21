@@ -19,7 +19,7 @@ import { safariEnd, safariLevel } from './safari';
 import { canFly, flyMenu } from './fly';
 import { signedIn, uploadSave } from './cloud';
 import { offerServerSave, accountMenu, accountLabel } from './account';
-import { settings, setControls, setSound } from './settings';
+import { settings, setControls, setMusic, setSfx } from './settings';
 import { playMusic, sfx, jingle } from '../engine/audio';
 import { musicForMap, musicForBattle } from './music';
 
@@ -398,12 +398,17 @@ async function settingsMenu() {
   let i = 0;
   for (;;) {
     const label = settings.controls === 'dpad' ? '방향키' : '조이스틱';
-    i = await ui.run(new Menu({ items: [`조작 방식: ${label}`, `소리: ${settings.sound === false ? '꺼짐' : '켜짐'}`, accountLabel(), '닫기'], cancel: true, x: OX + BW - 166, y: 40, w: 162, index: i }));
+    const onOff = (v?: boolean) => (v === false ? '꺼짐' : '켜짐');
+    i = await ui.run(new Menu({ items: [`조작 방식: ${label}`, `배경음: ${onOff(settings.music)}`, `효과음: ${onOff(settings.sfx)}`, accountLabel(), '닫기'], cancel: true, x: OX + BW - 166, y: 40, w: 162, index: i }));
     if (i === 1) {
-      setSound(settings.sound === false);
+      setMusic(settings.music === false);
       continue;
     }
     if (i === 2) {
+      setSfx(settings.sfx === false);
+      continue;
+    }
+    if (i === 3) {
       await accountMenu();
       continue;
     }

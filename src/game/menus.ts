@@ -157,7 +157,7 @@ export class SummaryView extends Widget<void> {
       text(ctx, k, sx, 54 + i * 13, { size: 10 });
       text(ctx, String(v), W - 10, 54 + i * 13, { size: 10, align: 'right' });
     });
-    const toNext = m.level >= 100 ? 0 : expFor(m.level + 1) - m.exp;
+    const toNext = m.level >= 100 ? 0 : expFor(m.level + 1, m.species) - m.exp;
     text(ctx, `다음 레벨까지 ${toNext}`, sx, 95, { size: 9 });
     ctx.fillStyle = '#3a3e52';
     ctx.fillRect(sx, 108, 148, 4);
