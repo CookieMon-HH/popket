@@ -1,6 +1,6 @@
 import { Pix } from '../engine/pix';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -553,6 +553,13 @@ function build(ch: string, anim: number): Pix {
       p.rect(7, 6, 2, 2, '#9aa0b4');
       p.set(8, 10, '#3a2a1a');
       break;
+    case 'µ': { // music box with a ballerina on a table
+      floor(p);
+      p.rect(0, 8, 16, 7, '#8a5630'); p.rect(0, 8, 16, 2, '#b8804a');
+      p.rect(3, 5, 10, 5, '#8a3a5a'); p.rect(3, 5, 10, 1, '#c86a8a');
+      p.set(8, 4, '#ffd040'); p.ell(8, 3, 2, 0.8, '#ffb8e0'); p.set(8, 1, '#fbe8e0'); p.set(8, 2, '#ffb8e0');
+      break;
+    }
     case '¶': { // rock with fossils sticking out
       p.ell(8, 10, 7.5, 6, '#7a6a5a');
       p.ell(7, 8, 6, 4, '#9a8a78');

@@ -330,7 +330,7 @@ export async function bossScene() {
   await say('흑영: 방해한다면… 힘으로 치워 주마!');
   const t: TrainerDef = {
     id: 'boss', cls: '검은안개단 두목', name: '흑영', pal: PAL.boss,
-    team: [['dodug', 22], ['heukjang', 21], ['beongae', 22], ['dokkae', 23]], reward: 3000,
+    team: [['dodug', 22], ['yeongi', 21], ['beongae', 22], ['dokkae', 23]], reward: 3000,
     intro: '', defeat: '…이 힘은, 대체…', after: '',
     afterWin: bossWin,
   };
@@ -570,7 +570,7 @@ export async function volcanoBossScene() {
   await say('흑영: 이 결정을 화산의 심장에 꽂으면 모든 게 끝난다.\n비켜라. 이번엔 봐주지 않는다!');
   const t: TrainerDef = {
     id: 'boss2', cls: '검은안개단 두목', name: '흑영', pal: PAL.boss,
-    team: [['dodug', 38], ['geosin', 38], ['daewang', 39], ['hwasan', 39], ['dokdae', 41]], reward: 6000,
+    team: [['amheuk', 38], ['geosin', 38], ['daewang', 39], ['hwasan', 39], ['dokdae', 41]], reward: 6000,
     intro: '', defeat: '…졌군. 완전히.', after: '', afterWin: volcanoWin,
   };
   await trainerBattle(t);

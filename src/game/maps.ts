@@ -13,6 +13,7 @@ import {
 import { keeperTalk, escapeeTalk, safariExitTile, specialGate } from './safari';
 import { windTamerTalk } from './fly';
 import { chestProp, chestTalk, fossilSite } from './chests';
+import { antiqueOwner, musicBox } from './events';
 import { boardShip, lockedBridge, lockedEngine, logPage1, portraitTalk, dalnimCabin, wardrobe, candleProp, candleTalk, pianoTalk, valveTalk, generatorTalk, shipAdminWinV2, wheelTalk, captainTalk, shipExitCheck } from './ship';
 import { receptionTalk } from './tournament';
 import { legendEncounter, snowMomPost, hwaryeonPost } from './legends';
@@ -92,7 +93,7 @@ export interface MapDef {
   signs?: { x: number; y: number; text: string }[];
   /** Name tags drawn over buildings (x, y in tile units; x is the tag's center). */
   labels?: { x: number; y: number; text: string; color?: string; ink?: string }[];
-  encounters?: { rate: number; table: Table; tiles?: string };
+  encounters?: { rate: number; table: Table; tiles?: string; /** extra monsters after the ending */ post?: Table };
   fishing?: Table;
   triggers?: { x: number; y: number; when?: () => boolean; run: () => Promise<void> }[];
 }
@@ -547,7 +548,7 @@ const route2: MapDef = {
         intro: '어머, 마침 심심했는데 잘됐다!', defeat: '어머머, 강하시네요.', after: '따끔이를 쓰다듬으면 따끔하지만 정말 귀여워요.',
       },
     },
-    grunt('r2grunt', 14, 16, 'left', 5, [['tosil', 9], ['pojani', 10]],
+    grunt('r2grunt', 14, 16, 'left', 5, [['maekae', 9], ['pojani', 10]],
       '뭘 봐? 검은안개단 일에 끼어들지 마라!', '이, 이럴 수가!', '흥, 숲에 가 봤자 소용없을걸. 간부님이 계시거든!'),
     {
       id: 'r2junho', x: 5, y: 20, dir: 'right', pal: PAL.kid, sight: 4,
@@ -608,7 +609,7 @@ const forest: MapDef = {
     },
     grunt('fgrunt1', 1, 16, 'right', 4, [['pojani', 11], ['kkomul', 11]],
       '숲의 몬스터는 전부 우리 차지다!', '크윽…', '간부님께 혼나겠군…'),
-    grunt('fgrunt2', 20, 16, 'left', 5, [['kkwae', 12], ['dokbul', 12]],
+    grunt('fgrunt2', 20, 16, 'left', 5, [['maekae', 12], ['kkwae', 12]],
       '꼬마가 여긴 왜 왔어? 썩 돌아가!', '말도 안 돼!', '간부 잿빛 님은 우리랑은 차원이 다르다고.'),
     grunt('fgrunt3', 9, 6, 'right', 2, [['jinheuk', 12], ['pojani', 12]],
       '여기서부터는 검은안개단 구역이다!', '쳇, 방심했다…', '별빛결정이라나 뭐라나… 높은 분들 생각은 잘 모르겠어.'),
@@ -617,7 +618,7 @@ const forest: MapDef = {
       requires: ['fgrunt1', 'fgrunt2', 'fgrunt3'],
       waitText: '잿빛: …흥, 꼬마 하나가 숲에 들어왔다고? 내가 직접 나설 것도 없지.\n숲 곳곳에 있는 내 부하들부터 상대해 보시지!',
       trainer: {
-        id: 'admin1', cls: '검은안개단 간부', name: '잿빛', pal: PAL.admin, team: [['dokbul', 13], ['kkwae', 13], ['beoseot', 14]], reward: 1000,
+        id: 'admin1', cls: '검은안개단 간부', name: '잿빛', pal: PAL.admin, team: [['maekae', 13], ['kkwae', 13], ['beoseot', 14]], reward: 1000,
         intro: '흠, 조무래기들을 뚫고 여기까지 왔나.\n숲의 몬스터들은 우리 계획에 쓸 귀한 재료다. 돌려줄 순 없지!',
         defeat: '이 내가… 꼬마에게…!', after: '…', afterWin: forestAdminWin,
       },
@@ -836,7 +837,7 @@ const cave: MapDef = {
     { id: 'cavechest1', x: 2, y: 6, dir: 'down', prop: chestProp('cave1'), talk: () => chestTalk('cave1', 'superpotion', 2, 17) },
     { id: 'cavechest2', x: 12, y: 11, dir: 'down', prop: chestProp('cave2'), talk: () => chestTalk('cave2', 'superball', 3, 18) },
     { id: 'cavechest3', x: 10, y: 5, dir: 'down', prop: chestProp('cave3'), talk: () => chestTalk('cave3', 'revive', 1, 18) },
-    grunt('cgrunt1', 7, 16, 'down', 1, [['ggorichim', 18], ['meokmul', 18]],
+    grunt('cgrunt1', 7, 16, 'down', 1, [['maekae', 18], ['meokmul', 18]],
       '침입자다! 여기서 끝장내 주마!', '으악!', '이 동굴의 별빛결정은 전부 두목님 거다.'),
     grunt('cgrunt2', 9, 8, 'down', 1, [['beoseot', 19], ['dokbul', 19]],
       '두목님의 의식을 방해하게 둘 순 없지!', '크윽…', '의식이 끝나면 은하고래가 우리 편이 될 거다…'),
@@ -845,7 +846,7 @@ const cave: MapDef = {
       requires: ['cgrunt1', 'cgrunt2'],
       waitText: '잿빛: 또 너냐… 하지만 동굴 곳곳의 부하들을 두고 나한테 왔다고?\n그 녀석들부터 이기고 와라!',
       trainer: {
-        id: 'admin2', cls: '검은안개단 간부', name: '잿빛', pal: PAL.admin, team: [['dokkae', 20], ['kkwae', 20], ['heukjang', 21]], reward: 1600,
+        id: 'admin2', cls: '검은안개단 간부', name: '잿빛', pal: PAL.admin, team: [['kkwae', 20], ['heukjang', 20], ['yeongi', 21]], reward: 1600,
         intro: '또 너냐! 숲에서 당한 빚, 여기서 갚아 주지!', defeat: '두 번이나… 말도 안 돼…',
         after: '흑영 님은 호수 앞에 계신다… 하지만 넌 절대 못 이길 거다.',
       },
@@ -876,7 +877,7 @@ const town4: MapDef = {
     '######################',
     '#..YYYYYY....YYYYYY..#',
     '#..YYYYYY....YYYYYY..#',
-    '#..WwWDWW....WwWWwW..#',
+    '#..WwWDWW....WwWDwW..#',
     '#l....=.......l......#',
     '#.BBBB=..MMMM........#',
     '#.BHBB=..MMMM........#',
@@ -895,6 +896,7 @@ const town4: MapDef = {
     { x: 6, y: 3, to: 'gym3', tx: 5, ty: 10, dir: 'up' },
     { x: 3, y: 7, to: 'center4', tx: 4, ty: 6, dir: 'up' },
     { x: 11, y: 7, to: 'shop4', tx: 4, ty: 6, dir: 'up' },
+    { x: 16, y: 3, to: 'antique', tx: 4, ty: 6, dir: 'up' },
     { x: 21, y: 11, to: 'route4', tx: 1, ty: 2, dir: 'right' },
   ],
   labels: [{ x: 4, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 11, y: 5.1, text: '백화점', color: '#fff2c8', ink: '#8a5a10' }, { x: 6, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }, { x: 16, y: 1.1, text: '리그 사무국' }],
@@ -902,7 +904,7 @@ const town4: MapDef = {
   npcs: [
     {
       id: 't4man', x: 15, y: 5, dir: 'down', pal: PAL.man, move: 'wander',
-      talk: '오른쪽 큰 건물은 해솔 리그 별빛 사무소야.\n리그 본부는 먼 해솔고원에 있대. 배지 일곱 개가 있어야 도전할 수 있다더라!',
+      talk: '오른쪽 큰 건물은 오래된 골동품 가게야.\n밤마다 가게 안에서 오르골 소리가 들린다던데… 좀 으스스하지?',
     },
     {
       id: 't4lady', x: 4, y: 12, dir: 'right', pal: PAL.lady, move: 'look',
@@ -925,6 +927,28 @@ const town4: MapDef = {
 };
 
 const center4: MapDef = makeCenter('center4', '별빛시 회복소', 'town4', 3, 8, '해솔 리그에 나가려면 배지 일곱 개가 필요하대.\n동쪽 4번 도로 너머에도 수련관이 더 있다던데?');
+const antique: MapDef = {
+  id: 'antique', name: '별빛시 골동품 가게', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkookkkX',
+    'XooooooooX',
+    'XTToooTToX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town4', tx: 16, ty: 4, dir: 'down' },
+    { x: 5, y: 7, to: 'town4', tx: 16, ty: 4, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'antiqueowner', x: 2, y: 2, dir: 'down', pal: PAL.granny, talk: () => antiqueOwner() },
+    { id: 'musicbox', x: 7, y: 2, dir: 'down', prop: 'µ', talk: () => musicBox() },
+  ],
+};
+
 const shop4 = makeShop('shop4', '별빛시 백화점', 'town4', 11, 8, '상점 물건은 배지를 모을수록 점점 좋아진대요.\n관장님께 도전하기 전에 꼭 둘러보세요!');
 
 const gym3: MapDef = {
@@ -1550,7 +1574,7 @@ const ship_cabins: MapDef = {
   encounters: { rate: 0.07, tiles: '9', table: [['chorong', 24, 26, 18], ['cheongsa', 25, 27, 4], ['mulgwi', 24, 26, 16], ['haegol', 24, 26, 16], ['dokbul', 24, 26, 16], ['dokkae', 25, 27, 6], ['bomulgoe', 26, 27, 2]] },
   npcs: [
     { id: 'shiplog1', x: 2, y: 1, dir: 'down', prop: '(', talk: () => logPage1() },
-    grunt('sgrunt2', 9, 2, 'down', 2, [['dodug', 30], ['ggorichim', 30]], '여기서 한 발짝도 못 지나간다!', '크윽…', '간부님은 조종실을 차지하고 계셔. 문은 잠겨 있지만.'),
+    grunt('sgrunt2', 9, 2, 'down', 2, [['yeongi', 30], ['dodug', 30]], '여기서 한 발짝도 못 지나간다!', '크윽…', '간부님은 조종실을 차지하고 계셔. 문은 잠겨 있지만.'),
     { id: 'sdalnim', x: 15, y: 2, dir: 'down', pal: PAL.dalnim, hidden: () => f('shipDone'), talk: () => dalnimCabin() },
     grunt('sgrunt3', 21, 3, 'up', 1, [['dokkae', 30], ['kkwae', 30], ['meokmul', 30]], '그 옷장엔 손대지 마! 열쇠가… 아, 아니 아무것도 없어!', '열쇠를 지키라고 했는데…', '…'),
     { id: 'swardrobe', x: 22, y: 1, dir: 'down', prop: ']', requires: ['sgrunt3'], waitText: '옷장 앞을 검은안개단이 지키고 있다.', talk: () => wardrobe() },
@@ -1647,7 +1671,7 @@ const ship_bridge: MapDef = {
       id: 'sadmin', x: 7, y: 4, dir: 'down', pal: PAL.admin, sight: 2, hidden: () => f('ship_admin') || f('shipDone'),
       requires: ['sgrunt1', 'sgrunt2', 'sgrunt3', 'sgrunt4', 'sgrunt5', 'sgrunt6'],
       waitText: '잿빛: 흥, 배 곳곳의 부하들도 못 넘은 주제에.\n그 녀석들부터 이기고 오면 상대해 주지.',
-      trainer: tr('admin3', '검은안개단 간부', '잿빛', PAL.admin, [['dokdae', 32], ['meokmul', 32], ['geosin', 33]], 2500,
+      trainer: tr('admin3', '검은안개단 간부', '잿빛', PAL.admin, [['yeongi', 32], ['meokmul', 32], ['geosin', 33]], 2500,
         '또 너냐…! 전기까지 켜고 여기까지 오다니. 이번 유령선 작전만큼은 방해하게 두지 않겠다!', '세 번째… 이젠 할 말도 없군.', '…', shipAdminWinV2),
     },
   ],
@@ -1760,7 +1784,7 @@ const route5: MapDef = {
     { id: 'r5surf1', x: 10, y: 4, dir: 'down', pal: PAL2.surfer, sight: 3, trainer: tr('r5s1', '서퍼', '파랑', PAL2.surfer, [['ubiduck', 32], ['aurora', 33]], 1300, '파도를 타듯 승부를 타 볼까!', '와이프아웃이다…', '해변의 풀숲엔 우비오리가 자주 나와.') },
     { id: 'r5beauty', x: 18, y: 10, dir: 'left', pal: PAL2.beauty, sight: 12, trainer: tr('r5b', '아가씨', '모래', PAL2.beauty, [['beotkkot', 32], ['jangma', 33]], 1300, '선탠을 방해하다니! 승부예요!', '피부가 다 탔잖아요~', '불꽃마을 온천은 피부에 정말 좋대요.') },
     { id: 'r5fire', x: 1, y: 13, dir: 'right', pal: PAL2.firefighter, sight: 4, trainer: tr('r5f', '소방관', '불돌이', PAL2.firefighter, [['jangjak', 33], ['eolpeng', 32]], 1400, '불꽃마을로 가려면 내 시험을 통과해라!', '훌륭한 판단력이다!', '화련 관장님의 불꽃은 물 타입으로 맞서는 게 좋아.') },
-    grunt('r5grunt1', 6, 9, 'left', 1, [['dokjeongal', 33], ['meokmul', 33]],
+    grunt('r5grunt1', 6, 9, 'left', 1, [['yeongi', 33], ['meokmul', 33]],
       '거기 서! 불꽃석 운반을 방해하지 마라!', '끄악!', '이 불꽃석은 전부 불꽃산으로 가져가는 거다.'),
     grunt('r5grunt2', 4, 12, 'right', 1, [['dokkae', 33], ['heukjang', 34]],
       '숯검정 님께는 한 발짝도 못 간다!', '으윽, 너무 세…', '흑영 님은 불꽃산의 심장에 뭘 하려는 걸까…'),
@@ -1885,10 +1909,10 @@ const volcano: MapDef = {
   warps: [{ x: 0, y: 9, to: 'town6', tx: 20, ty: 3, dir: 'left' }],
   encounters: {
     rate: 0.1, tiles: '_',
-    table: [['jangjak', 29, 31, 20], ['hwaro', 29, 30, 8], ['dokjeongal', 29, 31, 15], ['geoam', 30, 31, 6], ['daeji', 29, 31, 8], ['heukjang', 29, 30, 15], ['geosin', 29, 30, 6], ['dokdae', 29, 30, 6], ['sutdol', 29, 30, 14], ['hwarotdol', 30, 31, 6]],
+    table: [['jangjak', 29, 31, 20], ['hwaro', 29, 30, 8], ['dokjeongal', 29, 31, 15], ['geoam', 30, 31, 6], ['daeji', 29, 31, 8], ['heukjang', 29, 30, 15], ['geosin', 29, 30, 6], ['dokdae', 29, 30, 6], ['sutdol', 29, 30, 14], ['hwarotdol', 30, 31, 6]], post: [['maekae', 30, 31, 10], ['yeongi', 31, 32, 6], ['amheuk', 36, 38, 2]],
   },
   npcs: [
-    grunt('vgrunt1', 3, 10, 'right', 6, [['dodug', 35], ['dokjeongal', 35]], '두목님의 마지막 작전이다! 물러서라!', '이럴 수가…', '두목님은 위쪽 심장의 방에 계신다.'),
+    grunt('vgrunt1', 3, 10, 'right', 6, [['yeongi', 35], ['dokjeongal', 35]], '두목님의 마지막 작전이다! 물러서라!', '이럴 수가…', '두목님은 위쪽 심장의 방에 계신다.'),
     grunt('vgrunt2', 20, 6, 'left', 6, [['geosin', 35], ['dokdae', 35]], '여기까지 왔다고? 대단하군. 하지만 끝이다!', '크으…', '두목님은… 사실 이 산을 지키고 싶어 하셔.'),
     { id: 'lg_jujak', x: 12, y: 4, dir: 'down', mon: 'jujak', hidden: () => !f('lg_jujak_ok') || f('lg_jujak'),
       talk: () => legendEncounter('jujak', 65, '붉은 불꽃의 새가 화산의 심장 위에 내려앉아 있다…\n다가가 볼까?', '주작: 끼아아아——!') },
@@ -1953,9 +1977,9 @@ const plateau: MapDef = {
     '#..BHBB...==........=#',
     '#..WEwW...==........=#',
     '======================',
-    '#....................#',
-    '#..fff..........fff..#',
-    '#....................#',
+    '#.....,,,,,,,,,,.....#',
+    '#..fff.,,,,,,,,.fff..#',
+    '#.....,,,,,,,,,,.....#',
     '######################',
   ],
   warps: [
@@ -1972,6 +1996,7 @@ const plateau: MapDef = {
     { x: 5, y: 8.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
   ],
   signs: [],
+  encounters: { rate: 0.12, table: [['jangseung', 44, 47, 30], ['cheonha', 47, 50, 4], ['yeolgigu', 44, 47, 10], ['kkamagwi', 44, 46, 10], ['hoeori', 44, 46, 10]] },
   npcs: [
     { id: 'pguide', x: 13, y: 5, dir: 'left', pal: PAL.guard, talk: async () => {
       if (f('champion')) await say('안내원: 챔피언님! 고원 북쪽 「천공의 길」이 열렸어요.\n구름 위 신전에 태초의 챔피언이 있다는 소문이… 정말 강하대요. 꼭 준비하고 가세요!');
@@ -2277,7 +2302,7 @@ const den: MapDef = {
   npcs: [
     { id: 'denrock1', x: 9, y: 5, dir: 'down', boulder: true, talk: '커다란 바위다. 밀어서 움직일 수 있을 것 같다.' },
     { id: 'denrock2', x: 9, y: 6, dir: 'down', boulder: true, talk: '커다란 바위다. 밀어서 움직일 수 있을 것 같다.' },
-    grunt('dgrunt1', 2, 12, 'right', 6, [['nalgae', 43], ['dokdae', 43]], '여기까지 왔다고?! 먹구름 님께 가게 둘 순 없지!', '이럴 수가…', '바위를 잘못 밀었으면 둥지를 나갔다 오면 돼. …아, 이걸 왜 알려 줬지.'),
+    grunt('dgrunt1', 2, 12, 'right', 6, [['nalgae', 43], ['amheuk', 43]], '여기까지 왔다고?! 먹구름 님께 가게 둘 순 없지!', '이럴 수가…', '바위를 잘못 밀었으면 둥지를 나갔다 오면 돼. …아, 이걸 왜 알려 줬지.'),
     grunt('dgrunt2', 17, 6, 'left', 5, [['geosin', 43], ['beongae', 43]], '여의주는 우리 거다!', '크으…', '먹구름 님은 저 위에 계셔.'),
     { id: 'yongha_den', x: 4, y: 9, dir: 'down', pal: PAL.yongha, hidden: () => f('denDone'), talk: '관장 용하: 녀석들이 길을 바위로 막아 버렸다.\n아래쪽 바위부터 옆으로 밀어 두고, 위쪽 바위를 밀어 올려라!' },
     {
@@ -2288,7 +2313,7 @@ const den: MapDef = {
       id: 'cloud', x: 15, y: 1, dir: 'left', pal: PAL.cloud, sight: 5, hidden: () => f('denDone'),
       requires: ['dgrunt1', 'dgrunt2'],
       waitText: '먹구름: 부하들은 어쩌고 여기까지 왔지? …녀석들부터 쓰러뜨리고 와라.\n그래야 상대해 줄 맛이 나지!',
-      trainer: tr('cloud', '검은안개단 잔당', '먹구름', PAL.cloud, [['beongae', 43], ['dokdae', 43], ['geosin', 44], ['daewang', 44]], 4500,
+      trainer: tr('cloud', '검은안개단 잔당', '먹구름', PAL.cloud, [['beongae', 43], ['amheuk', 44], ['geosin', 44], ['daewang', 44]], 4500,
         '흑영 님은 약해지셨다. 여의주의 힘으로 하늘을 다스리면 아무도 우릴 막지 못해!\n방해하는 녀석은 번개로 날려 주마!', '…여의주가, 나를 거부한다…', '…', cloudWin),
     },
     { id: 'denitem1', x: 5, y: 8, dir: 'down', item: { id: 'maxrevive', qty: 1 } },
@@ -2361,7 +2386,7 @@ const route8: MapDef = {
   signs: [{ x: 11, y: 9, text: '8번 도로\n서쪽: 해솔고원 · 솔빛마을   동쪽: 용의 마을' }],
   encounters: {
     rate: 0.12,
-    table: [['hoeori', 39, 41, 10], ['noejeon', 39, 41, 8], ['jangsa', 39, 41, 8], ['bingsan', 39, 41, 6], ['byeolkkum', 39, 41, 6], ['geosin', 39, 41, 8], ['cheonryong', 40, 41, 2], ['hyeonmu', 39, 41, 6], ['wangbingsu', 39, 41, 8], ['daewang', 39, 41, 8], ['beoseotking', 39, 41, 8], ['wolgung', 39, 41, 8]],
+    table: [['hoeori', 39, 41, 10], ['noejeon', 39, 41, 8], ['jangsa', 39, 41, 8], ['bingsan', 39, 41, 6], ['byeolkkum', 39, 41, 6], ['geosin', 39, 41, 8], ['cheonryong', 40, 41, 2], ['hyeonmu', 39, 41, 6], ['wangbingsu', 39, 41, 8], ['daewang', 39, 41, 8], ['beoseotking', 39, 41, 8], ['wolgung', 39, 41, 8], ['jangseung', 40, 43, 10]],
   },
   fishing: [['eungeo', 36, 39, 50], ['daewang', 37, 39, 30], ['aurora', 36, 39, 20]],
   npcs: [
@@ -2415,7 +2440,7 @@ const skyroad: MapDef = {
   signs: [],
   encounters: {
     rate: 0.12, tiles: 'j',
-    table: [['seolpyo', 52, 58, 12], ['hoeori', 52, 58, 12], ['bingsan', 53, 58, 10], ['geoam', 53, 58, 10], ['wolgung', 53, 58, 10], ['noejeon', 53, 58, 10], ['jangsa', 54, 59, 8], ['byeolkkum', 54, 59, 8], ['daeji', 54, 59, 8], ['eolpeng', 52, 57, 8], ['cheonryong', 56, 60, 4]],
+    table: [['seolpyo', 52, 58, 12], ['hoeori', 52, 58, 12], ['bingsan', 53, 58, 10], ['geoam', 53, 58, 10], ['wolgung', 53, 58, 10], ['noejeon', 53, 58, 10], ['jangsa', 54, 59, 8], ['byeolkkum', 54, 59, 8], ['daeji', 54, 59, 8], ['eolpeng', 52, 57, 8], ['cheonryong', 56, 60, 4], ['amheuk', 54, 58, 5]],
   },
   npcs: [
     { id: 'skychest1', x: 18, y: 9, dir: 'down', prop: chestProp('sky1'), talk: () => chestTalk('sky1', 'maxrevive', 1, 58) },
@@ -2464,7 +2489,7 @@ const summit: MapDef = {
 export const MAPS: Record<string, MapDef> = {
   home, town1, lab, route1, town2, center, shop, dojo,
   route2, forest, town3, center3, shop3, gym2,
-  route3, cave, town4, center4, shop4, gym3, peak, pastel,
+  route3, cave, town4, center4, shop4, antique, gym3, peak, pastel,
   route4, town5, center5, shop5, safarigate, safari, safari_fire, safari_canyon, safari_fairy, safari_special, safari_ice, safari_water, safari_jungle, ship, ship_cabins, ship_ballroom, ship_engine, ship_bridge, ship_ghost, gym4, route5, town6, center6, shop6, gym5, volcano, route6, plateau, center7, league,
   town7, center8, shop8, gym6, icecave, skyroad, summit, route7, town8, center9, shop9, den, gym7, route8,
 };

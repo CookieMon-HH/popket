@@ -1866,6 +1866,96 @@ export const MON_DRAW: Record<string, (p: Pix) => void> = {
     p.line(10, 25, 16, 26, Ih); p.line(30, 25, 24, 26, Ih);
     p.tri(14, 33, 26, 33, 20, 38, F); p.tri(17, 33, 23, 33, 20, 36, Fy);
   },
+  // ── 매캐이 (작은 연기 덩어리, 독) ──────────────────────────────
+  maekae(p) {
+    const S = '#8a7a9a', Sl = '#b8a8c8', Sd = '#5a4a6a', Pu = '#c88aff';
+    p.ell(14, 30, 6, 5, Sd); p.ell(26, 31, 6, 5, Sd);
+    p.ell(20, 24, 11, 10, S);
+    p.ell(12, 17, 6, 6, S); p.ell(27, 16, 7, 7, S); p.ell(20, 12, 7, 6, S);
+    p.ell(18, 13, 3, 2, Sl); p.ell(26, 14, 3, 2, Sl);
+    eye(p, 15, 21, 3); eye(p, 23, 21, 3);
+    p.line(17, 27, 23, 27, Sd); p.set(16, 26, Sd); p.set(24, 26, Sd);
+    for (const [x, y] of [[6, 10], [34, 8], [4, 22], [36, 24]] as const) { p.ell(x, y, 1.6, 1.6, Sl); p.set(x, y, Pu); }
+  },
+  // ── 먹구름연기 (먹구름 같은 독연기, 독+악) ──────────────────────
+  yeongi(p) {
+    const S = '#4a3a5a', Sd = '#2a1e38', Sl = '#7a6a8a', Pu = '#a85ae8', Y = '#ffd040';
+    p.ell(10, 32, 7, 5, Sd); p.ell(30, 32, 7, 5, Sd); p.ell(20, 35, 6, 4, Sd);
+    p.ell(20, 24, 14, 10, S);
+    p.ell(9, 17, 7, 7, S); p.ell(31, 16, 8, 8, S); p.ell(20, 11, 9, 8, S);
+    p.ell(17, 9, 4, 2.5, Sl); p.ell(29, 12, 4, 2.5, Sl);
+    p.rect(13, 20, 4, 3, Y); p.rect(23, 20, 4, 3, Y); p.set(15, 21, K); p.set(25, 21, K);
+    p.line(12, 18, 17, 20, Sd); p.line(28, 18, 23, 20, Sd);
+    p.line(15, 27, 25, 27, Pu); p.tri(17, 27, 19, 27, 18, 29, WHITE); p.tri(21, 27, 23, 27, 22, 29, WHITE);
+    p.tri(36, 24, 40, 20, 38, 30, Pu); p.tri(4, 24, 0, 20, 2, 30, Pu);
+  },
+  // ── 암흑안개 (마을을 덮는 검은 안개, 독+악) ───────────────────────
+  amheuk(p) {
+    const S = '#2a2236', Sd = '#14101e', Sl = '#4a3a5a', Pu = '#8a3ad8', Pl = '#c88aff', R = '#ff3a5a';
+    p.ell(6, 30, 6, 7, Sd); p.ell(34, 30, 6, 7, Sd); p.ell(14, 36, 7, 4, Sd); p.ell(27, 36, 7, 4, Sd);
+    p.ell(20, 24, 16, 12, S);
+    p.ell(7, 15, 7, 8, S); p.ell(33, 14, 7, 8, S); p.ell(20, 9, 11, 9, S);
+    for (const [x, y] of [[14, 6], [27, 8], [6, 12], [34, 11]] as const) p.ell(x, y, 3, 2, Sl);
+    p.tri(11, 19, 18, 20, 12, 23, R); p.tri(29, 19, 22, 20, 28, 23, R); p.set(13, 21, Pl); p.set(27, 21, Pl);
+    p.rect(13, 27, 14, 4, Sd);
+    for (const x of [14, 17, 20, 23]) p.tri(x, 27, x + 2, 27, x + 1, 30, WHITE);
+    for (const [x, y] of [[3, 22], [37, 21], [20, 37], [10, 4], [31, 3]] as const) { p.set(x, y, Pu); p.set(x + 1, y, Pl); }
+  },
+  // ── 꼬마장승 (혼이 깃든 꼬마 장승, 풀+고스트) ─────────────────────
+  jangseung(p) {
+    const Wd = '#a8784a', Wl = '#d0a070', Wdk = '#6a4a2a', R = '#d8323a', G = '#5aa84a', Bl = '#2a2a3a';
+    p.ell(20, 37, 10, 2, '#5a8a3a');
+    p.rect(13, 10, 14, 27, Wd); p.rect(13, 10, 3, 27, Wl);
+    p.ell(20, 9, 8, 5, Bl); p.rect(12, 8, 16, 3, Bl);
+    p.rect(15, 14, 4, 4, WHITE); p.rect(21, 14, 4, 4, WHITE); p.rect(16, 15, 2, 2, K); p.rect(22, 15, 2, 2, K);
+    p.line(14, 13, 18, 12, Bl); p.line(26, 13, 22, 12, Bl);
+    p.tri(18, 18, 22, 18, 20, 23, Wdk);
+    p.rect(16, 24, 8, 3, Bl); p.rect(17, 24, 1, 2, WHITE); p.rect(22, 24, 1, 2, WHITE);
+    p.rect(14, 29, 12, 6, R); for (let x = 15; x < 26; x += 3) p.rect(x, 30, 1, 4, '#ffe0c0');
+    p.ell(9, 22, 3, 4, G); p.ell(31, 20, 3, 4, G); p.line(9, 26, 13, 24, Wdk); p.line(31, 24, 27, 22, Wdk);
+    p.ell(20, 3, 2, 2, G); p.set(19, 1, '#8ad87a');
+  },
+  // ── 천하대장군 (고원의 거대한 장승, 풀+고스트) ─────────────────────
+  cheonha(p) {
+    const Wd = '#8a5a30', Wl = '#b88050', Wdk = '#4a2e18', R = '#c8282a', G = '#3a8a3a', Gl = '#6ac05a', Bl = '#1a1a24', Gd = '#ffd040';
+    p.ell(20, 38, 14, 2, '#3a6a2a');
+    p.rect(11, 9, 18, 29, Wd); p.rect(11, 9, 3, 29, Wl);
+    p.rect(9, 4, 22, 6, Bl); p.tri(9, 4, 31, 4, 20, -2, Bl); p.rect(9, 9, 22, 2, Gd);
+    p.rect(13, 13, 5, 5, WHITE); p.rect(22, 13, 5, 5, WHITE); p.rect(14, 14, 3, 3, '#ff3a3a'); p.rect(23, 14, 3, 3, '#ff3a3a');
+    p.line(12, 11, 18, 12, Bl); p.line(28, 11, 22, 12, Bl);
+    p.tri(17, 18, 23, 18, 20, 24, Wdk);
+    p.rect(14, 25, 12, 4, Bl); for (const x of [15, 18, 21, 24]) p.rect(x, 25, 1, 3, WHITE);
+    p.rect(13, 30, 14, 7, R); for (let i = 0; i < 4; i++) p.rect(14 + i * 3, 31, 2, 5, Gd);
+    chain(p, [[11, 20], [5, 16], [3, 10]], 2, Wdk); p.ell(3, 8, 4, 4, G); p.ell(2, 7, 2, 2, Gl);
+    chain(p, [[29, 20], [35, 16], [37, 10]], 2, Wdk); p.ell(37, 8, 4, 4, G); p.ell(38, 7, 2, 2, Gl);
+  },
+  // ── 열기구곰 (열기구에 매달린 꼬마곰, 비행) ───────────────────────
+  yeolgigu(p) {
+    const R = '#e8402a', Y = '#ffd040', Bl = '#3a8ae8', G = '#4ab86a', Bk = '#a8784a', Bkd = '#6a4a2a', Br = '#c88a5a', Bd = '#8a5a3a';
+    p.ell(20, 13, 14, 13, R);
+    paint(p, 6, 0, 5, 27, Y); paint(p, 15, 0, 4, 27, Bl); paint(p, 23, 0, 4, 27, Y); paint(p, 30, 0, 5, 27, G);
+    p.ell(14, 7, 3, 4, '#ffffff');
+    p.line(10, 23, 15, 30, Bkd); p.line(30, 23, 25, 30, Bkd);
+    p.rect(14, 30, 12, 8, Bk); p.rect(14, 30, 12, 2, Bkd); p.line(14, 34, 26, 34, Bkd);
+    p.ell(20, 27, 4.5, 4, Br); p.ell(16.5, 24, 1.5, 1.5, Br); p.ell(23.5, 24, 1.5, 1.5, Br); p.ell(20, 28.5, 2, 1.2, '#f4d0a8');
+    p.set(18, 26, K); p.set(22, 26, K); p.set(20, 28, K);
+    p.rect(13, 30, 2, 3, Br); p.rect(25, 30, 2, 3, Br);
+  },
+  // ── 오르골인형 (오르골 위 발레리나 혼, 에스퍼+고스트) ───────────────
+  orgol(p) {
+    const Bx = '#8a3a5a', Bxl = '#c86a8a', Gd = '#ffd040', Sk = '#fbe8e0', Tu = '#ffb8e0', Tl = '#ffe0f4', Hr = '#6a4a8a', Gh = '#c8b8ff';
+    p.rect(6, 30, 28, 8, Bx); p.rect(6, 30, 28, 2, Bxl); p.rect(6, 36, 28, 2, '#5a2038');
+    for (const x of [10, 18, 26]) { p.set(x, 33, Gd); p.set(x + 1, 33, Gd); }
+    p.ell(20, 30, 8, 2, Gd);
+    p.line(19, 22, 17, 29, Sk); p.line(21, 22, 21, 29, Sk);
+    p.ell(20, 21, 9, 3, Tu); p.ell(20, 20, 7, 2, Tl);
+    p.rect(18, 13, 4, 7, Tu);
+    p.line(18, 14, 12, 8, Sk); p.line(22, 14, 28, 8, Sk);
+    p.ell(20, 9, 3.5, 3.5, Sk); p.ell(20, 6, 3.5, 2, Hr); p.ell(20, 4, 1.5, 1.5, Hr);
+    p.set(19, 9, K); p.set(21, 9, K); p.set(19, 11, '#ff8aa8'); p.set(21, 11, '#ff8aa8');
+    for (const [x, y] of [[6, 14], [34, 12], [4, 24], [36, 22]] as const) { p.set(x, y, Gh); p.set(x + 1, y + 1, Gh); }
+    p.line(31, 5, 31, 1, Gh); p.ell(30, 5, 1.5, 1, Gh); p.line(35, 8, 35, 4, Gh); p.ell(34, 8, 1.5, 1, Gh);
+  },
   // ── 초롱이 (종이 초롱, 불) ────────────────────────────────
   chorong(p) {
     const R = '#e8402a', Rd = '#a82418', G = '#ffb84a', Gl = '#fff0a0', Cap = '#3a2a20', T = '#ffd040';

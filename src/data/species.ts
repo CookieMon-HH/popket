@@ -82,6 +82,10 @@ const TUGU: L = [[1, 'scratch'], [1, 'curl'], [10, 'bugbite'], [16, 'pebble'], [
 const SIJO: L = [[1, 'peck'], [1, 'pebble'], [10, 'gust'], [16, 'wingcut'], [22, 'rockdrop'], [30, 'dive'], [38, 'rockstorm'], [44, 'storm']];
 const KKAK: L = [[1, 'peck'], [1, 'snatch'], [7, 'growl'], [12, 'gust'], [18, 'bite'], [24, 'wingcut'], [30, 'nightveil'], [36, 'dive'], [42, 'club']];
 const SUTDOL: L = [[1, 'tackle'], [1, 'pebble'], [8, 'ember'], [14, 'curl'], [20, 'rockdrop'], [26, 'flamedash'], [32, 'hotsteam'], [38, 'lava'], [44, 'rockstorm']];
+const MAEKAE: L = [[1, 'tackle'], [1, 'toxshot'], [6, 'snatch'], [11, 'inkspray'], [16, 'bite'], [22, 'poisontail'], [28, 'nightveil'], [34, 'toxblast'], [41, 'club']];
+const JANGSEUNG: L = [[1, 'vine'], [1, 'spook'], [10, 'leafcut'], [18, 'bewitch'], [26, 'soulwave'], [34, 'bloom'], [42, 'nightdance'], [48, 'forestwrath']];
+const GIGU: L = [[1, 'tackle'], [1, 'gust'], [15, 'curl'], [25, 'wingcut'], [33, 'breathe'], [40, 'dive'], [46, 'storm']];
+const ORGOL: L = [[1, 'telekinesis'], [1, 'spook'], [15, 'hoot'], [22, 'psybeam'], [30, 'soulwave'], [38, 'moonsign'], [44, 'nightdance']];
 const SEOLHWA: L = [[1, 'twinkle'], [1, 'frostbreath'], [40, 'icefang'], [45, 'moondust'], [55, 'avalanche'], [62, 'snowblossom']];
 const CHEOLSAN: L = [[1, 'mudthrow'], [1, 'ironclaw'], [40, 'quake'], [45, 'steelbeam'], [55, 'earthsplit'], [62, 'ironquake']];
 const JUJAK: L = [[1, 'ember'], [1, 'gust'], [40, 'flamedash'], [45, 'wingcut'], [55, 'storm'], [62, 'phoenixfire']];
@@ -230,6 +234,14 @@ const list: Def[] = [
   s('sutdol', '숯돌이', ['바위'], [52, 50, 64, 28], 200, 58, SUTDOL, '숯덩이', '해변 모닥불 자리에서 태어난 숯 덩어리 몬스터. 쓰다듬으면 손이 새카매지지만 무척 따뜻하다.', [28, 'hwarotdol']),
   s('hwarotdol', '화롯돌', ['불', '바위'], [72, 78, 90, 38], 120, 142, SUTDOL, '화로', '배 속에 숯불을 품은 화로 모양의 몬스터. 겨울이면 불꽃마을 사람들이 곁에 모여 손을 녹인다.', [38, 'gamasot']),
   s('gamasot', '가마솥대장', ['불', '바위'], [102, 108, 118, 48], 45, 230, SUTDOL, '가마솥', '무쇠 가마솥을 뒤집어쓴 듯한 거대한 몬스터. 뚜껑을 들썩이며 뜨거운 김을 뿜으면 화산도 잠잠해진다.'),
+  // ── 악당·리그 직전 ──
+  s('maekae', '매캐이', ['독'], [48, 52, 46, 52], 190, 60, MAEKAE, '매연', '굴뚝 연기에서 태어난 작은 연기 덩어리. 검은안개단이 즐겨 데리고 다니며, 몸에서 매캐한 냄새가 난다.', [20, 'yeongi']),
+  s('yeongi', '먹구름연기', ['독', '악'], [68, 78, 66, 72], 120, 140, MAEKAE, '먹연기', '먹구름처럼 뭉게뭉게 피어오르는 독연기. 연기 속에 숨어 상대를 놀라게 하고 물건을 훔쳐 간다.', [36, 'amheuk']),
+  s('amheuk', '암흑안개', ['독', '악'], [92, 106, 88, 94], 45, 228, MAEKAE, '암흑안개', '온 마을을 뒤덮을 만큼 짙은 검은 안개. 검은안개단이라는 이름은 이 몬스터에서 따왔다고 한다.'),
+  s('jangseung', '꼬마장승', ['풀', '고스트'], [58, 64, 66, 42], 120, 150, JANGSEUNG, '장승', '마을 입구를 지키던 나무 장승에 혼이 깃들었다. 나쁜 기운이 다가오면 눈을 부릅뜨고 길을 막는다.', [46, 'cheonha']),
+  s('cheonha', '천하대장군', ['풀', '고스트'], [96, 108, 104, 60], 45, 228, JANGSEUNG, '대장군', '해솔고원 길목을 지켜 온 거대한 장승. 리그에 오르는 트레이너의 각오를 시험한다고 전해진다.'),
+  s('yeolgigu', '열기구곰', ['비행'], [86, 72, 80, 92], 45, 175, GIGU, '열기구', '알록달록한 열기구에 작은 곰이 매달려 있다. 바람 부는 날이면 고원 위를 둥실둥실 떠다니며 손을 흔든다.'),
+  s('orgol', '오르골인형', ['에스퍼', '고스트'], [70, 80, 78, 100], 45, 180, ORGOL, '오르골', '오르골 위 발레리나 인형에 깃든 혼. 태엽을 감지 않아도 밤이면 저절로 춤추며 잠을 부르는 멜로디를 울린다.'),
   // ── 유령선과 고스트 ──
   s('chorong', '초롱이', ['불'], [44, 50, 42, 60], 190, 58, CHORONG, '초롱', '밤길을 밝히던 종이 초롱에 작은 불씨가 깃들었다. 길 잃은 사람을 졸졸 따라다니며 발밑을 비춰 준다.', [22, 'cheongsa']),
   s('cheongsa', '청사초롱', ['불', '고스트'], [62, 72, 60, 82], 120, 140, CHORONG, '혼불초롱', '푸른 비단과 붉은 비단을 두른 초롱. 안에서 타는 불은 뜨겁지 않고 푸르스름하게 일렁인다.', [36, 'dokkaechorong']),
@@ -268,6 +280,7 @@ const ORDER = [
   'kkomaryong', 'nalgae', 'cheonryong',
   'bungbung', 'kkuldanji', 'yeowangbeol', 'meongmeong', 'baekgu', 'jindodaejang', 'dotori', 'cheongseolmo', 'bandi', 'banjjakbandi', 'byeolbitbandi', 'jipgesasum', 'jangsu',
   'dukeop', 'dokdukeop', 'dukeopwang', 'geomi', 'geumul', 'wanggeomi', 'dujji', 'gulchak', 'jogae', 'godaetugu', 'kkomasijo', 'sijosae', 'kkakkak', 'kkamagwi', 'sutdol', 'hwarotdol', 'gamasot',
+  'maekae', 'yeongi', 'amheuk', 'jangseung', 'cheonha', 'yeolgigu', 'orgol',
   'chorong', 'cheongsa', 'dokkaechorong', 'mulgwi', 'yuseon', 'haegol', 'yuaeng', 'bomulgoe',
   'sangun', 'eunha', 'seolhwa', 'cheolsan', 'jujak', 'cheongryong', 'cheonji',
 ];

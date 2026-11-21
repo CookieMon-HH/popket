@@ -256,7 +256,9 @@ export class Overworld implements Scene {
     }
     const enc = this.map.encounters;
     if (enc && (enc.tiles ?? ',').includes(this.tileAt(p.x, p.y)) && game.party.some((m) => m.hp > 0) && Math.random() < enc.rate) {
-      this.hooks.run(() => this.hooks.encounter(enc.table));
+      // Some monsters only appear after the ending.
+      const table = game.flags.champion && enc.post ? [...enc.table, ...enc.post] : enc.table;
+      this.hooks.run(() => this.hooks.encounter(table));
       return true;
     }
     return false;
