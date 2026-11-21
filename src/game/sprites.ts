@@ -1,3 +1,4 @@
+import { MON_V2, ART_V2 } from './monsprites2';
 import { Pix } from '../engine/pix';
 import { MON_DRAW, MON_SIZE } from './monsprites';
 import type { Dir } from './common';
@@ -8,6 +9,7 @@ const EYE = '#1c1c28';
 const monCache = new Map<string, HTMLCanvasElement>();
 export function monSprite(species: string): HTMLCanvasElement {
   let c = monCache.get(species);
+  if (!c && ART_V2 && MON_V2[species]) monCache.set(species, (c = MON_V2[species].front().toCanvas()));
   if (!c) {
     const p = new Pix(MON_SIZE, MON_SIZE);
     (MON_DRAW[species] ?? MON_DRAW.tosil)(p);
@@ -26,6 +28,7 @@ const backCache = new Map<string, HTMLCanvasElement>();
  */
 export function monBackSprite(species: string): HTMLCanvasElement {
   let c = backCache.get(species);
+  if (!c && ART_V2 && MON_V2[species]) backCache.set(species, (c = MON_V2[species].back().toCanvas()));
   if (!c) {
     const p = new Pix(MON_SIZE, MON_SIZE);
     (MON_DRAW[species] ?? MON_DRAW.tosil)(p);
