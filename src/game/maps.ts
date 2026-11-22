@@ -76,7 +76,9 @@ export interface NPCDef {
   /** Draw the person see-through and flickering. */
   ghost?: boolean;
   /** A gate drawn as an object; give it `hidden` to open it. */
-  barrier?: 'water' | 'electric' | 'stone' | 'lava';
+  barrier?: 'water' | 'electric' | 'stone' | 'lava' | 'flame';
+  /** Timed barrier: active (blocking) for the first half of every `period` frames, shifted by `offset`. */
+  pulse?: { period: number; offset: number };
   hidden?: () => boolean;
 }
 
@@ -99,6 +101,8 @@ export interface MapDef {
   signs?: { x: number; y: number; text: string }[];
   /** Name tags drawn over buildings (x, y in tile units; x is the tag's center). */
   labels?: { x: number; y: number; text: string; color?: string; ink?: string }[];
+  /** Where a burnt player is sent back to (timed flame jets). */
+  respawn?: [number, number];
   /** Tiles to use instead once something has happened (e.g. the volcano calms down). */
   after?: { when: () => boolean; tiles: string[] };
   /** Default ground under street furniture when no plain ground tile is nearby. */
@@ -2063,7 +2067,7 @@ const town6: MapDef = {
     { x: 3, y: 4, to: 'house6a', tx: 4, ty: 6, dir: 'up' },
     { x: 31, y: 3, to: 'house6b', tx: 4, ty: 6, dir: 'up' },
     { x: 16, y: 0, to: 'route5', tx: 5, ty: 16, dir: 'up' },
-    { x: 12, y: 6, to: 'gym5', tx: 5, ty: 10, dir: 'up' },
+    { x: 12, y: 6, to: 'gym5', tx: 8, ty: 12, dir: 'up' },
     { x: 23, y: 6, to: 'shop6', tx: 4, ty: 6, dir: 'up' },
     { x: 11, y: 11, to: 'center6', tx: 4, ty: 6, dir: 'up' },
     { x: 35, y: 6, to: 'volcano', tx: 1, ty: 9, dir: 'right' },
@@ -2096,35 +2100,50 @@ const center6 = makeCenter('center6', '불꽃마을 회복소', 'town6', 11, 12,
 const shop6 = makeShop('shop6', '불꽃마을 상점', 'town6', 23, 7, '화산에 들어간다면 만능회복약을 꼭 챙기세요!');
 
 const gym5: MapDef = {
-  id: 'gym5', name: '불꽃 체육관', indoor: true,
+  id: 'gym5', name: '불꽃 체육관', indoor: true, ambience: 'volcano', respawn: [8, 12],
   tiles: [
-    'XXXXXXXXXXXX',
-    'XLooooooooLX',
-    'XLooooooooLX',
-    'XLLLLoLLLLLX',
-    'XooooooooooX',
-    'XLLoLLLLLLLX',
-    'XooooooooooX',
-    'XLLLLLLLoLLX',
-    'XooooooooooX',
-    'XooooooooooX',
-    'XooooooooooX',
-    'XXXXXeeXXXXX',
+    'ⅥⅥⅥⅥⅥⅥⅥⅥⅥⅥⅥⅥⅥⅥⅥⅥⅥⅥ',
+    'ⅥLLLLLLϑϑϑϑLLLLLLⅥ',
+    'ⅥLⓤϑϑϑϑϑϑϑϑϑϑϑϑⓤLⅥ',
+    'ⅥLLLLLLLϑϑLLLLLLLⅥ',
+    'ⅥϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑⅥ',
+    'ⅥϑLLLLLLLLLLLLLLLⅥ',
+    'ⅥϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑⅥ',
+    'ⅥLLLLLLLLLLLLLLLϑⅥ',
+    'ⅥϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑⅥ',
+    'ⅥϑLLLLLLLLLLLLLLLⅥ',
+    'ⅥϑϑⅥϑϑϑϑϑϑϑϑϑϑⅥϑϑⅥ',
+    'ⅥϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑⅥ',
+    'ⅥⓤϑϑϑϑϑϑϑϑϑϑϑϑϑϑⓤⅥ',
+    'ⅥⅥⅥⅥⅥⅥⅥⅥeeⅥⅥⅥⅥⅥⅥⅥⅥ',
   ],
   warps: [
-    { x: 5, y: 11, to: 'town6', tx: 12, ty: 7, dir: 'down' },
-    { x: 6, y: 11, to: 'town6', tx: 12, ty: 7, dir: 'down' },
+    { x: 8, y: 13, to: 'town6', tx: 12, ty: 7, dir: 'down' },
+    { x: 9, y: 13, to: 'town6', tx: 12, ty: 7, dir: 'down' },
   ],
   npcs: [
-    { id: 'g5f1', x: 1, y: 8, dir: 'right', pal: PAL2.firefighter, sight: 7, trainer: tr('g5f1', '불꽃수련생', '지글', PAL2.firefighter, [['jangjak', 34], ['hwaro', 34]], 1500, '용암처럼 뜨거운 승부다!', '불이 꺼졌다…', '관장님의 화산뿔은 땅 타입도 가지고 있어.') },
-    { id: 'g5f2', x: 10, y: 4, dir: 'left', pal: PAL2.firefighter, sight: 6, trainer: tr('g5f2', '불꽃수련생', '활활', PAL2.firefighter, [['dokjeongal', 34], ['jangjak', 35]], 1500, '관장님 앞에서 질 수는 없지!', '앗 뜨거!', '물 기술이 있으면 훨씬 수월할 거야.') },
+    { id: 'g5jet0', x: 4, y: 8, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 0 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5jet1', x: 7, y: 8, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 24 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5jet2', x: 10, y: 8, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 48 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5jet3', x: 13, y: 8, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 72 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5jet4', x: 13, y: 6, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 10 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5jet5', x: 10, y: 6, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 40 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5jet6', x: 7, y: 6, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 70 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5jet7', x: 4, y: 6, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 30 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5jet8', x: 3, y: 4, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 0 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5jet9', x: 6, y: 4, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 48 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5jet10', x: 12, y: 4, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 20 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5jet11', x: 15, y: 4, dir: 'down', barrier: 'flame', pulse: { period: 96, offset: 66 }, talk: '화염 분사구다. 불길이 일정한 박자로 치솟았다가 꺼진다.' },
+    { id: 'g5sign', x: 9, y: 11, dir: 'down', pal: PAL2.firefighter, talk: '불꽃 체육관의 시험은 「불길의 박자」야.\n분사구가 꺼진 틈을 노려 한 칸씩 지나가! 불길 위에 서 있다간 입구로 돌아오게 돼.' },
+    { id: 'g5f1', x: 15, y: 11, dir: 'left', pal: PAL2.firefighter, sight: 5, trainer: tr('g5f1', '불꽃수련생', '지글', PAL2.firefighter, [['jangjak', 34], ['hwaro', 34]], 1500, '용암처럼 뜨거운 승부다!', '불이 꺼졌다…', '관장님의 화산뿔은 땅 타입도 가지고 있어.') },
+    { id: 'g5f2', x: 13, y: 2, dir: 'left', pal: PAL2.firefighter, sight: 4, trainer: tr('g5f2', '불꽃수련생', '활활', PAL2.firefighter, [['dokjeongal', 34], ['jangjak', 35]], 1500, '관장님 앞에서 질 수는 없지!', '앗 뜨거!', '물 기술이 있으면 훨씬 수월할 거야.') },
     {
-      id: 'hwaryeon', x: 5, y: 1, dir: 'down', pal: PAL.hwaryeon, hidden: () => f('champion'),
+      id: 'hwaryeon', x: 8, y: 1, dir: 'down', pal: PAL.hwaryeon, hidden: () => f('champion'),
       trainer: tr('leader5', '관장', '화련', PAL.hwaryeon, [['jangjak', 36], ['hwaro', 36], ['seolpyo', 36], ['hwasan', 39]], 4000,
         '불꽃 체육관에 온 걸 환영해! 나는 관장 화련.\n이 마을은 화산과 함께 살아왔지. 그 뜨거운 마음을 보여 줄게!',
         '하하, 내 불꽃이 완전히 꺼졌네!', '화산이 요즘 이상해… 부탁할게.', leader5Win),
     },
-    { id: 'hwaryeon_post', x: 5, y: 1, dir: 'down', pal: PAL.hwaryeon, hidden: () => !f('champion'), talk: () => hwaryeonPost() },
+    { id: 'hwaryeon_post', x: 8, y: 1, dir: 'down', pal: PAL.hwaryeon, hidden: () => !f('champion'), talk: () => hwaryeonPost() },
   ],
 };
 

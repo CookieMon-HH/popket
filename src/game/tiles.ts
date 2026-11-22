@@ -1,7 +1,7 @@
 import { Pix } from '../engine/pix';
 import { drawTownTile, TOWN_ROOF, TOWN_SOLID, TOWN_ANIM } from './towntiles';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', '▛', '▜', '▙', '▟', 'ⓟ', '┏', '┓', '┗', '┛', 'ⓝ', 'ⓦ', 'ⓜ', 'ⓑ', 'ⓒ', 'ⓨ', 'ⓠ', 'ⓘ', 'Ρ', 'Σ', 'Φ', 'Δ', 'Λ', 'Γ', 'Θ', 'Π', ...TOWN_SOLID, ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', '▛', '▜', '▙', '▟', 'ⓟ', '┏', '┓', '┗', '┛', 'ⓝ', 'ⓦ', 'ⓜ', 'ⓑ', 'ⓒ', 'ⓤ', 'ⓨ', 'ⓠ', 'ⓘ', 'Ρ', 'Σ', 'Φ', 'Δ', 'Λ', 'Γ', 'Θ', 'Π', ...TOWN_SOLID, ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -201,6 +201,11 @@ function build(ch: string, anim: number): Pix {
       p.rect(4, 6, 8, 7, '#f0e6cc'); p.rect(4, 6, 8, 1, '#c8b890');
       for (const y of [8, 10]) p.rect(5, y, 6, 1, '#8a7a60');
       p.set(11, 12, '#c8b890');
+      break;
+    case 'ⓤ': // stone brazier with an orange fire
+      caveFloor(p);
+      p.rect(4, 10, 8, 5, '#5a4448'); p.rect(3, 8, 10, 3, '#7a6064'); p.rect(3, 8, 10, 1, '#9a8084');
+      p.ell(8, 5, 3.5, 4, anim ? '#ff6a24' : '#e8501a'); p.ell(8, 6, 2, 2.5, '#ffd060'); p.set(8, 1 + anim, '#fff4c0');
       break;
     case 'ⓑ': case 'ⓒ': { // stone brazier, unlit / lit with a blue dragon flame
       caveFloor(p);
@@ -797,7 +802,7 @@ function build(ch: string, anim: number): Pix {
 
 const cache = new Map<string, HTMLCanvasElement>();
 export function tileCanvas(ch: string, anim: number): HTMLCanvasElement {
-  const animated = TOWN_ANIM.has(ch) || ch === 'Ⅴ' || ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$' || ch === '①' || ch === '②' || ch === '③' || ch === '◰' || ch === '◳' || ch === '◱' || ch === '◲' || ch === '▛' || ch === '▜' || ch === '▙' || ch === '▟' || ch === 'ⓒ' || ch === 'ⓠ';
+  const animated = TOWN_ANIM.has(ch) || ch === 'Ⅴ' || ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$' || ch === '①' || ch === '②' || ch === '③' || ch === '◰' || ch === '◳' || ch === '◱' || ch === '◲' || ch === '▛' || ch === '▜' || ch === '▙' || ch === '▟' || ch === 'ⓒ' || ch === 'ⓤ' || ch === 'ⓠ';
   const key = animated ? ch + anim : ch;
   let c = cache.get(key);
   if (!c) {

@@ -92,12 +92,18 @@ export class Overworld implements Scene {
   }
 
   npcAt(x: number, y: number) {
-    return this.npcs.find((n) => n.x === x && n.y === y);
+    return this.npcs.find((n) => n.x === x && n.y === y && this.pulseOn(n));
+  }
+
+  /** A timed flame jet that is currently off can be walked over. */
+  pulseOn(n: NPC) {
+    const p = n.def.pulse;
+    return !p || (clock.frame + p.offset) % p.period < p.period / 2;
   }
 
   blocked(x: number, y: number, self: Actor) {
     if (SOLID.has(this.tileAt(x, y))) return true;
-    if (this.npcs.some((n) => n !== self && n.x === x && n.y === y)) return true;
+    if (this.npcs.some((n) => n !== self && n.x === x && n.y === y && this.pulseOn(n))) return true;
     if (self !== this.player && this.player.x === x && this.player.y === y) return true;
     return false;
   }
@@ -172,6 +178,20 @@ export class Overworld implements Scene {
     if (arrived) {
       this.syncState();
       if (!runtime.busy && this.onArrive()) return;
+    }
+    // Standing on a flame jet when it fires: back to the start of the room.
+    if (canInput && !runtime.busy && this.player.moving === 0) {
+      const p = this.player;
+      const jet = this.npcs.find((n) => n.def.pulse && n.x === p.x && n.y === p.y && this.pulseOn(n));
+      if (jet) {
+        const [rx, ry] = this.map.respawn ?? [p.x, p.y];
+        this.hooks.run(async () => {
+          sfx('hit');
+          await this.hooks.sign('앗, 뜨거워! 불길에 놀라 입구 쪽으로 물러났다.\n불꽃이 꺼진 틈을 노려 지나가자.');
+          await this.hooks.warp(this.map.id, rx, ry, 'up');
+        });
+        return;
+      }
     }
     if (!canInput || runtime.busy || this.player.moving > 0) return;
     this.handleInput();
@@ -403,6 +423,11 @@ export class Overworld implements Scene {
         continue;
       }
       if (npc?.def.barrier) {
+        if (npc.def.pulse && !this.pulseOn(npc)) {
+          // jet is off: a grate with a few embers (and a warning flicker just before it fires)
+          g.drawImage(barrierSprite('flame', -1), sx, sy);
+          continue;
+        }
         g.drawImage(barrierSprite(npc.def.barrier, clock.frame), sx, sy);
         continue;
       }
