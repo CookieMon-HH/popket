@@ -8,7 +8,7 @@ import { MAPS, type MapDef, type NPCDef, type Ambience } from './maps';
 import { SOLID, tileCanvas, TALL_CHARS } from './tiles';
 import { DECO, TOWN_GROUND } from './towntiles';
 
-const GROUNDS = '.`d:=_o' + TOWN_GROUND;
+const GROUNDS = '.`d:=_oi' + TOWN_GROUND;
 import { silhouette } from '../engine/pix';
 import { personSprite, itemSprite, monSprite, boulderSprite, barrierSprite, type Pal } from './sprites';
 import { game, runtime, beatenAll } from './state';
@@ -66,7 +66,10 @@ export class Overworld implements Scene {
     this.npcs = [];
     this.refreshNPCs();
     this.bannerT = this.map.indoor ? 0 : 150;
+    this.spotCheck = true;
   }
+  /** Look for trainers who can already see the player right after arriving on a map. */
+  private spotCheck = false;
 
   syncState() {
     game.x = this.player.x;
@@ -178,6 +181,14 @@ export class Overworld implements Scene {
     if (arrived) {
       this.syncState();
       if (!runtime.busy && this.onArrive()) return;
+    }
+    if (this.spotCheck && canInput && !runtime.busy && !ui.active && this.player.moving === 0) {
+      this.spotCheck = false;
+      const sp = this.findSpotter();
+      if (sp) {
+        this.hooks.run(() => this.hooks.spotted(sp));
+        return;
+      }
     }
     // Standing on a flame jet when it fires: back to the start of the room.
     if (canInput && !runtime.busy && this.player.moving === 0) {
