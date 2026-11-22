@@ -7,8 +7,9 @@ import { DIRS, DIRV, OPP, pick, rand, clamp, type Dir } from './common';
 import { MAPS, type MapDef, type NPCDef, type Ambience } from './maps';
 import { SOLID, tileCanvas, TALL_CHARS } from './tiles';
 import { DECO, TOWN_GROUND, LEDGE } from './towntiles';
+import { IN_DECO, IN_GROUND } from './interior';
 
-const GROUNDS = '.`d:=_oi' + TOWN_GROUND;
+const GROUNDS = '.`d:=_oi' + TOWN_GROUND + IN_GROUND;
 import { silhouette } from '../engine/pix';
 import { personSprite, itemSprite, monSprite, boulderSprite, barrierSprite, type Pal } from './sprites';
 import { game, runtime, beatenAll } from './state';
@@ -427,7 +428,7 @@ export class Overworld implements Scene {
         const ch = this.tileAt(tx, ty);
         if (ch === ' ') continue;
         // Street furniture is drawn over the ground of a neighbouring tile.
-        if (DECO.has(ch)) g.drawImage(tileCanvas(this.groundNear(tx, ty), anim), tx * 16 - cx, ty * 16 - cy);
+        if (DECO.has(ch) || IN_DECO.has(ch)) g.drawImage(tileCanvas(this.groundNear(tx, ty), anim), tx * 16 - cx, ty * 16 - cy);
         g.drawImage(tileCanvas(ch, anim), tx * 16 - cx, ty * 16 - cy);
       }
     }
@@ -487,6 +488,16 @@ export class Overworld implements Scene {
       const under = this.tileAt(a.x, a.y);
       if (TALL_CHARS.includes(under) && a.moving < STEP / 2) {
         g.drawImage(under === ',' ? tall : tileCanvas(under, 0), 0, 9, 16, 7, a.x * 16 - cx, a.y * 16 - cy + 9, 16, 7);
+      }
+      if (npc && npc.bubble <= 0 && npc.def.quest?.()) {
+        const qy = sy - 19 + Math.round(Math.sin(clock.frame / 12));
+        g.fillStyle = '#26263a';
+        g.fillRect(sx + 4, qy, 8, 11);
+        g.fillStyle = '#ffd84a';
+        g.fillRect(sx + 5, qy + 1, 6, 9);
+        g.fillStyle = '#26263a';
+        g.fillRect(sx + 7, qy + 2, 2, 4);
+        g.fillRect(sx + 7, qy + 7, 2, 2);
       }
       if (npc && npc.bubble > 0) {
         g.fillStyle = '#26263a';

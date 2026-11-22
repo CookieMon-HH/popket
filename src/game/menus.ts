@@ -10,6 +10,8 @@ import { game, itemCount, addItem, removeItem } from './state';
 import { monName, maxHp, calcStats, expFor, expRatio, type Mon } from './monster';
 import { monSprite } from './sprites';
 import { j } from './common';
+import { BADGES, badgeSprite } from './badges';
+import { clock } from '../engine/timing';
 
 function statusTag(ctx: Ctx, m: Mon, x: number, y: number) {
   if (m.hp <= 0) return typeChip(ctx, '기절', '#606070', x, y);
@@ -580,19 +582,59 @@ export class TrainerCard extends Widget<void> {
 
   paint(ctx: Ctx) {
     panel(ctx, '#d8e4f4');
-    box(ctx, 16, 20, W - 32, 140);
-    text(ctx, '트레이너 카드', W / 2, 30, { align: 'center' });
+    box(ctx, 12, 4, W - 24, 62);
+    text(ctx, '트레이너 카드', W / 2, 9, { size: 10, align: 'center', color: '#3a4060' });
     const secs = Math.floor(game.frames / 60);
-    const rows: [string, string][] = [
+    const cells: [string, string][] = [
       ['이름', game.name],
       ['소지금', `${game.money.toLocaleString()}원`],
-      ['도감', `${game.caught.length}마리 포획 / ${game.seen.length}마리 발견`],
-      ['플레이 시간', `${Math.floor(secs / 3600)}:${String(Math.floor(secs / 60) % 60).padStart(2, '0')}`],
-      ['배지', `${['badge1', 'badge2', 'badge3', 'badge4', 'badge5', 'badge6', 'badge7'].filter((b) => game.flags[b]).length}개 / 7개${game.flags.champion ? '  ★챔피언' : ''}`],
+      ['도감', `${game.caught.length} / ${game.seen.length}`],
+      ['시간', `${Math.floor(secs / 3600)}:${String(Math.floor(secs / 60) % 60).padStart(2, '0')}`],
     ];
-    rows.forEach(([k, v], i) => {
-      text(ctx, k, 32, 54 + i * 19, { size: 10, color: '#5a6080' });
-      text(ctx, v, W - 32, 54 + i * 19, { size: 10, align: 'right' });
+    cells.forEach(([k, v], i) => {
+      const x = i % 2 ? W / 2 + 6 : 22;
+      const y = 26 + Math.floor(i / 2) * 17;
+      text(ctx, k, x, y, { size: 10, color: '#5a6080' });
+      text(ctx, v, x + W / 2 - 34, y, { size: 10, align: 'right' });
+    });
+
+    // Badge case: a velvet-lined box with a slot for every gym badge.
+    const got = BADGES.filter((b) => game.flags[b.flag]).length;
+    const cx = 12, cy = 70, cw = W - 24, ch = 112;
+    ctx.fillStyle = '#5a3a24';
+    ctx.fillRect(cx, cy, cw, ch);
+    ctx.fillStyle = '#8a5a34';
+    ctx.fillRect(cx + 1, cy + 1, cw - 2, 1);
+    ctx.fillStyle = '#2a1e3e';
+    ctx.fillRect(cx + 4, cy + 15, cw - 8, ch - 19);
+    ctx.fillStyle = '#3a2c54';
+    ctx.fillRect(cx + 4, cy + 15, cw - 8, 1);
+    text(ctx, '배지 케이스', cx + 8, cy + 3, { size: 10, color: '#f8e8c8' });
+    const champ = game.flags.champion ? '★챔피언  ' : '';
+    text(ctx, `${champ}${got} / ${BADGES.length}`, cx + cw - 8, cy + 3, { size: 10, color: got === BADGES.length ? '#ffd84a' : '#f8e8c8', align: 'right' });
+    const slot = 52;
+    BADGES.forEach((bd, i) => {
+      const earned = !!game.flags[bd.flag];
+      const row = i < 4 ? 0 : 1;
+      const n = row ? 3 : 4;
+      const col = row ? i - 4 : i;
+      const bx = cx + Math.floor((cw - slot * n) / 2) + col * slot + 6;
+      const by = cy + 18 + row * 46;
+      ctx.fillStyle = earned ? '#4a3a6a' : '#221832';
+      ctx.fillRect(bx - 2, by + 36, 44, 4);
+      ctx.drawImage(badgeSprite(i, earned), bx, by, 40, 40);
+      if (earned) {
+        // a glint sweeps across the earned badges now and then
+        const t = (Math.floor(clock.frame / 3) + i * 11) % 70;
+        if (t < 6) {
+          ctx.fillStyle = 'rgba(255,255,255,0.85)';
+          ctx.fillRect(bx + 8 + t * 4, by + 4 + t * 3, 2, 6);
+          ctx.fillRect(bx + 6 + t * 4, by + 6 + t * 3, 6, 2);
+        }
+        text(ctx, bd.name.replace('배지', ''), bx + 20, by + 40, { size: 8, color: '#e8dcff', align: 'center' });
+      } else {
+        text(ctx, '???', bx + 20, by + 40, { size: 8, color: '#5a4e72', align: 'center' });
+      }
     });
   }
 }

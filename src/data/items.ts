@@ -43,6 +43,8 @@ const list: ItemDef[] = [
   { id: 'fossil_shell', name: '껍질화석', price: 0, kind: 'key', desc: '소용돌이 무늬가 새겨진 고대 조개 화석. 한별 연구소에서 되살릴 수 있다고 한다.' },
   { id: 'fossil_wing', name: '날개화석', price: 0, kind: 'key', desc: '깃털 자국이 남은 고대 새의 날개 화석. 한별 연구소에서 되살릴 수 있다고 한다.' },
   { id: 'oldphoto', name: '낡은사진', price: 0, kind: 'key', desc: '흑영의 일기장 사이에서 떨어진 사진. 숯골 마을 앞에서 웃고 있는 소년과 여자아이, 아기 모닥뿔이 찍혀 있다.' },
+  { id: 'bouquet', name: '들국화꽃다발', price: 0, kind: 'key', desc: '들꽃마을 꽃집에서 맡긴 하얀 들국화 꽃다발. 파도항구 등대지기에게 전해 주자.' },
+  { id: 'keeperletter', name: '등대지기의편지', price: 0, kind: 'key', desc: '등대지기가 들꽃마을 꽃집에 보내는 답장.' },
   { id: 'rod', name: '낚싯대', price: 0, kind: 'key', desc: '물가를 바라보고 A 버튼을 누르면 낚시를 할 수 있다.' },
 ];
 
