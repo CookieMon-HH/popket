@@ -10,11 +10,12 @@ import type { Pix } from '../engine/pix';
 
 export const TOWN_GROUND = 'αβγϖϱϑ';
 /** Walkable town tiles (everything else here is solid). */
-export const TOWN_WALKABLE = 'αβγδϖϱϑⅲ';
+export const TOWN_WALKABLE = 'αβγδϖϱϑⅲⅸⅹⓔⓕ';
 /** Drawn over the ground of a neighbouring tile. */
 export const DECO = new Set([...'εζθικλμρςφψωϘνξοπστυχⅠⅡⅢⅦⅧⅨⅩⅪⅫⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⓣⓐⓓⓔⓕ']);
 export const TOWN_ANIM = new Set([...'νξοπⅠⅤⅦⅫⓛϘ']);
-export const TOWN_SOLID = [...'δεζθικλμρςφψωϘνξοπστυχⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫⅰⅱⅳⅴⅵⅶⅷⅸⅹⓖⓛⓣⓐⓓⓔⓕϜϝϟ'].filter((c) => c !== 'δ');
+// The observatory's lower half (with its door) and the pavilion floor can be walked onto.
+export const TOWN_SOLID = [...'εζθικλμρςφψωϘνξοπστυχⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫⅰⅱⅳⅴⅵⅶⅷⓖⓛⓣⓐⓓϜϝϟ'];
 
 /** Extra roof colours: [base, dark]. */
 export const TOWN_ROOF: Record<string, [string, string]> = {

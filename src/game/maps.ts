@@ -205,8 +205,8 @@ const home: MapDef = {
     'XXXXeeXXXX',
   ],
   warps: [
-    { x: 4, y: 7, to: 'town1', tx: 4, ty: 5, dir: 'down' },
-    { x: 5, y: 7, to: 'town1', tx: 4, ty: 5, dir: 'down' },
+    { x: 4, y: 7, to: 'town1', tx: 11, ty: 8, dir: 'down' },
+    { x: 5, y: 7, to: 'town1', tx: 11, ty: 8, dir: 'down' },
   ],
   npcs: [{ id: 'mom', x: 6, y: 2, dir: 'down', pal: PAL.mom, talk: () => momTalk() }],
 };
@@ -214,38 +214,50 @@ const home: MapDef = {
 const town1: MapDef = {
   id: 'town1', name: '솔빛마을',
   tiles: [
-    '########==##########',
-    '#ff.....==........f#',
-    '#.RRRR..==..GGGGG..#',
-    '#.RRRR..==..GGGGG..#',
-    '#.WwDW..==..WwWDW..#',
-    '#...============...#',
-    '#.......==.........#',
-    '#......S==...fff...#',
-    '#.......============',
-    '#~~~~...==....FFFF.#',
-    '#~~~~...==....F..F.#',
-    '#~~~~...==....FFFF.#',
-    '#.......==.........#',
-    '#.ff....==......ff.#',
-    '####################',
+    '###############==#################',
+    '#.#.#.#.#.ε....==..εε.#.#.#.#.ε..#',
+    '#..............==................#',
+    '#ζζζζζζ........==...........ΠΠΠΠ.#',
+    '#.στ....ff.....==........f..ΠΠΠΠ.#',
+    '#.υχ.....RRRR..==..GGGGG....WwDW.#',
+    '#........RRRR..==..GGGGG......=..#',
+    '#........WwDW..==..WwWDW......=..#',
+    '#.=====================....θ..=.ι#',
+    '#....=.........==.............=..#',
+    '#φφφφ=........S==...fff.......=..#',
+    '#φφφφ=.........===================',
+    '#ωφφφ=..~~~~...==....FFFF........#',
+    '#φφφφ=..~~~~...==....F..F........#',
+    '#ςς..=..~~~~...==....FFFF..ε.ε...#',
+    '#....=.........==................#',
+    '#....=...ff....==......ff..ζζζ...#',
+    '#....=......θ....................#',
+    '#.ΠΠΠΠΠ..........................#',
+    '#.ΠΠΠΠΠ..ζζζζζζζζ..εε.εε.........#',
+    '#.WwDwW..........................#',
+    '#....=...........................#',
+    '##################################',
   ],
   warps: [
-    { x: 4, y: 4, to: 'home', tx: 4, ty: 6, dir: 'up' },
-    { x: 15, y: 4, to: 'lab', tx: 4, ty: 6, dir: 'up' },
-    { x: 8, y: 0, to: 'route1', tx: 8, ty: 22, dir: 'up' },
-    { x: 9, y: 0, to: 'route1', tx: 9, ty: 22, dir: 'up' },
-    { x: 19, y: 8, to: 'plateau', tx: 1, ty: 11, dir: 'right' },
+    { x: 30, y: 5, to: 'house1a', tx: 4, ty: 6, dir: 'up' },
+    { x: 4, y: 20, to: 'house1b', tx: 4, ty: 6, dir: 'up' },
+    { x: 11, y: 7, to: 'home', tx: 4, ty: 6, dir: 'up' },
+    { x: 22, y: 7, to: 'lab', tx: 4, ty: 6, dir: 'up' },
+    { x: 15, y: 0, to: 'route1', tx: 8, ty: 22, dir: 'up' },
+    { x: 16, y: 0, to: 'route1', tx: 9, ty: 22, dir: 'up' },
+    { x: 33, y: 11, to: 'plateau', tx: 1, ty: 11, dir: 'right' },
   ],
-  signs: [{ x: 7, y: 7, text: '솔빛마을\n햇살이 가장 먼저 닿는 시작의 마을' }],
-  labels: [{ x: 4, y: 2.2, text: '우리 집' }, { x: 14.5, y: 2.2, text: '한별 연구소', color: '#e0f4e4', ink: '#2a6a3a' }],
+  signs: [{ x: 14, y: 10, text: '솔빛마을\n햇살이 가장 먼저 닿는 시작의 마을' }],
+  labels: [ { x: 30, y: 3.2, text: '이웃집', color: '#ffe8d0', ink: '#8a4a1a' }, { x: 4, y: 18.2, text: '마을회관', color: '#ffe8d0', ink: '#8a4a1a' }, { x: 3, y: 2.2, text: '풍차', color: '#fff6d8', ink: '#7a5a20' },{ x: 11, y: 5.2, text: '우리 집' }, { x: 21.5, y: 5.2, text: '한별 연구소', color: '#e0f4e4', ink: '#2a6a3a' }],
   npcs: [
+    { id: 't1farmer', x: 5, y: 12, dir: 'left', pal: PAL.hiker, move: 'look', talk: '농부: 올해 감자 농사는 풍년이야! 허수아비 덕분인지,\n밭을 망치는 몬스터도 없었다니까.' },
+    { id: 't1girl2', x: 24, y: 17, dir: 'up', pal: PAL.girl, move: 'wander', talk: '연구소 앞 울타리 텃밭은 한별 박사님 거야.\n몬스터들이 좋아하는 열매를 키우신대.' },
     {
-      id: 't1girl', x: 12, y: 8, dir: 'down', pal: PAL.girl, move: 'wander',
+      id: 't1girl', x: 19, y: 11, dir: 'down', pal: PAL.girl, move: 'wander',
       talk: '풀숲에 들어가면 야생 몬스터가 튀어나와!\n몬스터 친구가 있어야 안전하게 지나갈 수 있어.',
     },
     {
-      id: 't1old', x: 5, y: 12, dir: 'up', pal: PAL.oldman, move: 'look',
+      id: 't1old', x: 12, y: 15, dir: 'up', pal: PAL.oldman, move: 'look',
       talk: async () => {
         if (f('rod')) await say('오, 낚싯대를 얻었구먼! 이 연못에도 반짝피라가 산다네.');
         else await say('연못에 비친 햇살이 참 곱지?\n그래서 이 마을 이름이 솔빛마을이라네.');
@@ -254,11 +266,11 @@ const town1: MapDef = {
   ],
   triggers: [
     {
-      x: 18, y: 8, when: () => !f('badge7'),
+      x: 25, y: 11, when: () => !f('badge7'),
       run: pushBack(['동쪽은 해솔고원으로 가는 길이다.', '「이 앞 해솔고원 — 배지 일곱 개를 모은 트레이너만 지나갈 수 있습니다」\n아직은 지나갈 수 없을 것 같다.'], 'left'),
     },
-    ...[8, 9].map((x) => ({
-      x, y: 1,
+    ...[15, 16].map((x) => ({
+      x, y: 4,
       when: () => !f('gotStarter'),
       run: pushBack(['한별 박사: 잠깐, {name}! 몬스터 없이 풀숲에 들어가면 위험해!', '먼저 오른쪽 연구소에 들러 주렴.'], 'down'),
     })),
@@ -278,8 +290,8 @@ const lab: MapDef = {
     'XXXXeeXXXX',
   ],
   warps: [
-    { x: 4, y: 7, to: 'town1', tx: 15, ty: 5, dir: 'down' },
-    { x: 5, y: 7, to: 'town1', tx: 15, ty: 5, dir: 'down' },
+    { x: 4, y: 7, to: 'town1', tx: 22, ty: 8, dir: 'down' },
+    { x: 5, y: 7, to: 'town1', tx: 22, ty: 8, dir: 'down' },
   ],
   npcs: [
     { id: 'prof', x: 4, y: 2, dir: 'down', pal: PAL.prof, talk: () => labProfessor() },
@@ -323,10 +335,10 @@ const route1: MapDef = {
     '########==##########',
   ],
   warps: [
-    { x: 8, y: 23, to: 'town1', tx: 8, ty: 1, dir: 'down' },
-    { x: 9, y: 23, to: 'town1', tx: 9, ty: 1, dir: 'down' },
-    { x: 8, y: 0, to: 'town2', tx: 8, ty: 13, dir: 'up' },
-    { x: 9, y: 0, to: 'town2', tx: 9, ty: 13, dir: 'up' },
+    { x: 8, y: 23, to: 'town1', tx: 15, ty: 1, dir: 'down' },
+    { x: 9, y: 23, to: 'town1', tx: 16, ty: 1, dir: 'down' },
+    { x: 8, y: 0, to: 'town2', tx: 15, ty: 21, dir: 'up' },
+    { x: 9, y: 0, to: 'town2', tx: 16, ty: 21, dir: 'up' },
   ],
   signs: [{ x: 7, y: 22, text: '1번 도로\n북쪽: 들꽃마을   남쪽: 솔빛마을' }],
   encounters: {
@@ -386,58 +398,71 @@ const route1: MapDef = {
 const town2: MapDef = {
   id: 'town2', name: '들꽃마을',
   tiles: [
-    '##############=#####',
-    '#f..KKKKKK....=.f..#',
-    '#...KKKKKK....=....#',
-    '#...WwWDWW....=....#',
-    '#......=......=....#',
-    '#..BBBB=..MMMM=....#',
-    '#..BHBB=..MMMM=....#',
-    '#..WEwW=..WwDW=....#',
-    '#...===========....#',
-    '#.......==.....S...#',
-    '#.ff....==.......ff#',
-    '#~~~....==.........#',
-    '#~~~....==....fff..#',
-    '#.......==.........#',
-    '########==##########',
+    '#####################=############',
+    '#.ζζ.εε.ζζ...........=..εε.ζζζ.εε#',
+    '#....................=...........#',
+    '#ΘΘΘΘ................=......ΡΡΡΡ.#',
+    '#ΘΘΘΘ...f..KKKKKK....=.f....ΡΡΡΡ.#',
+    '#WwDW......KKKKKK....=......WwDW.#',
+    '#..........WwWDWW....=........=..#',
+    '#..=..........=......=........=..#',
+    '#..=......BBBB=..MMMM=......κ.λ..#',
+    '#..=......BHBB=..MMMM=........=..#',
+    '#..=====..WEwW=..WwDW=........=..#',
+    '#..........===========.....====..#',
+    '#ff.ff.........==.....S..........#',
+    '#ff.ff...ff....==.......ff.ff.ff.#',
+    '#ψ.ψ.ψ..~~~....==..........ff.ff.#',
+    '#.......~~~....==....fff.........#',
+    '#εεεεε.........==..........ε.ε.ε.#',
+    '#ff.ff.........==................#',
+    '#..............==..θααααααα......#',
+    '#ff.ff.ffε..ε..==εεααανξααα......#',
+    '#fff.ff.ff.....==αααααοπααα......#',
+    '#..............==..αααααααθ......#',
+    '###############==#################',
   ],
   warps: [
-    { x: 8, y: 14, to: 'route1', tx: 8, ty: 1, dir: 'down' },
-    { x: 9, y: 14, to: 'route1', tx: 9, ty: 1, dir: 'down' },
-    { x: 7, y: 3, to: 'dojo', tx: 5, ty: 10, dir: 'up' },
-    { x: 4, y: 7, to: 'center', tx: 4, ty: 6, dir: 'up' },
-    { x: 12, y: 7, to: 'shop', tx: 4, ty: 6, dir: 'up' },
-    { x: 14, y: 0, to: 'route2', tx: 9, ty: 26, dir: 'up' },
+    { x: 3, y: 5, to: 'house2a', tx: 4, ty: 6, dir: 'up' },
+    { x: 30, y: 5, to: 'house2b', tx: 4, ty: 6, dir: 'up' },
+    { x: 15, y: 22, to: 'route1', tx: 8, ty: 1, dir: 'down' },
+    { x: 16, y: 22, to: 'route1', tx: 9, ty: 1, dir: 'down' },
+    { x: 14, y: 6, to: 'dojo', tx: 5, ty: 10, dir: 'up' },
+    { x: 11, y: 10, to: 'center', tx: 4, ty: 6, dir: 'up' },
+    { x: 19, y: 10, to: 'shop', tx: 4, ty: 6, dir: 'up' },
+    { x: 21, y: 0, to: 'route2', tx: 9, ty: 26, dir: 'up' },
   ],
-  labels: [{ x: 5, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 12, y: 5.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 7, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
-  signs: [{ x: 15, y: 9, text: '들꽃마을\n바람에 꽃향기가 실려 오는 마을  ·  북쪽: 2번 도로' }],
+  labels: [ { x: 3, y: 3.2, text: '온실', color: '#e0fff4', ink: '#2a7a5a' }, { x: 30, y: 3.2, text: '꽃집', color: '#ffe8f0', ink: '#b03a6a' }, { x: 23, y: 18.1, text: '꽃 광장', color: '#fff6d8', ink: '#8a6a20' },{ x: 12, y: 8.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 19, y: 8.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 14, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
+  signs: [{ x: 22, y: 12, text: '들꽃마을\n바람에 꽃향기가 실려 오는 마을  ·  북쪽: 2번 도로' }],
   npcs: [
-    { id: 't2foxgirl', x: 13, y: 12, dir: 'down', pal: PAL.girl, move: 'look', talk: () => foxGirl() },
+    { id: 't2beekeeper', x: 4, y: 15, dir: 'up', pal: PAL.hiker, move: 'look', talk: '양봉가: 이 벌통엔 붕붕이들이 살아. 꿀단지벌로 자라면\n꿀을 한가득 모아 온다니까!' },
+    { id: 't2girl', x: 25, y: 20, dir: 'left', pal: PAL.girl, move: 'wander', talk: '분수에 동전을 던지면 몬스터 친구가 생긴대!\n…나는 벌써 세 번이나 던졌는데.' },
+    { id: 't2vendor', x: 29, y: 9, dir: 'down', pal: PAL.lady, talk: '꽃 노점: 오늘의 꽃은 들장미예요!\n…트레이너는 꽃보다 회복약이 필요하려나요?' },
+    { id: 't2foxgirl', x: 20, y: 15, dir: 'down', pal: PAL.girl, move: 'look', talk: () => foxGirl() },
     {
-      id: 't2kid', x: 11, y: 10, dir: 'down', pal: PAL.kid, move: 'wander',
+      id: 't2kid', x: 18, y: 13, dir: 'down', pal: PAL.kid, move: 'wander',
       talk: '파란 지붕은 회복소, 노란 지붕은 상점이야!\n보라색 지붕은 수련관이고.',
     },
     {
-      id: 't2lady', x: 16, y: 4, dir: 'down', pal: PAL.lady, move: 'look',
+      id: 't2lady', x: 23, y: 7, dir: 'down', pal: PAL.lady, move: 'look',
       talk: '봄이 되면 이 마을은 온통 들꽃으로 뒤덮여요.\n그때 꼭 다시 놀러 오세요.',
     },
     {
-      id: 't2old', x: 5, y: 12, dir: 'right', pal: PAL.oldman,
+      id: 't2old', x: 12, y: 15, dir: 'right', pal: PAL.oldman,
       talk: '수련관 관장 단단은 바위처럼 흔들림이 없지.\n관장의 바위갑옷은 방어가 아주 높다네. 꾹 버텨야 해!',
     },
-    { id: 't2potato', x: 17, y: 11, dir: 'left', pal: PAL.hiker, talk: () => potatoTalk() },
-    { id: 'rival_t2', x: 9, y: 6, dir: 'left', pal: PAL.rival, hidden: () => !f('badge1') || f('ch2') },
+    { id: 't2potato', x: 24, y: 14, dir: 'left', pal: PAL.hiker, talk: () => potatoTalk() },
+    { id: 'rival_t2', x: 16, y: 9, dir: 'left', pal: PAL.rival, hidden: () => !f('badge1') || f('ch2') },
   ],
   triggers: [
-    { x: 14, y: 1, when: () => !f('badge1'), run: pushBack(['북쪽은 2번 도로다. 길목에 안내문이 붙어 있다.', '「이 앞은 야생 몬스터가 강합니다.\n수련관 배지를 가진 트레이너만 지나가 주세요.」'], 'down') },
-    { x: 7, y: 5, when: () => f('badge1') && !f('ch2'), run: chapter2Scene },
-    { x: 7, y: 6, when: () => f('badge1') && !f('ch2'), run: chapter2Scene },
+    { x: 21, y: 4, when: () => !f('badge1'), run: pushBack(['북쪽은 2번 도로다. 길목에 안내문이 붙어 있다.', '「이 앞은 야생 몬스터가 강합니다.\n수련관 배지를 가진 트레이너만 지나가 주세요.」'], 'down') },
+    { x: 14, y: 8, when: () => f('badge1') && !f('ch2'), run: chapter2Scene },
+    { x: 14, y: 9, when: () => f('badge1') && !f('ch2'), run: chapter2Scene },
   ],
 };
 
-const center = makeCenter('center', '들꽃마을 회복소', 'town2', 4, 8, '오른쪽 PC로 몬스터를 맡기거나 찾을 수 있어.\n동료는 여섯 마리까지만 데리고 다닐 수 있거든.');
-const shop = makeShop('shop', '들꽃마을 상점', 'town2', 12, 8, '수련관에 가기 전에 회복약을 넉넉히 사 두는 게 좋아요.');
+const center = makeCenter('center', '들꽃마을 회복소', 'town2', 11, 11, '오른쪽 PC로 몬스터를 맡기거나 찾을 수 있어.\n동료는 여섯 마리까지만 데리고 다닐 수 있거든.');
+const shop = makeShop('shop', '들꽃마을 상점', 'town2', 19, 11, '수련관에 가기 전에 회복약을 넉넉히 사 두는 게 좋아요.');
 
 const dojo: MapDef = {
   id: 'dojo', name: '들꽃 수련관', indoor: true,
@@ -456,8 +481,8 @@ const dojo: MapDef = {
     'XXXXXeeXXXXX',
   ],
   warps: [
-    { x: 5, y: 11, to: 'town2', tx: 7, ty: 4, dir: 'down' },
-    { x: 6, y: 11, to: 'town2', tx: 7, ty: 4, dir: 'down' },
+    { x: 5, y: 11, to: 'town2', tx: 14, ty: 7, dir: 'down' },
+    { x: 6, y: 11, to: 'town2', tx: 14, ty: 7, dir: 'down' },
   ],
   npcs: [
     {
@@ -536,7 +561,7 @@ const route2: MapDef = {
     '#########=##########',
   ],
   warps: [
-    { x: 9, y: 27, to: 'town2', tx: 14, ty: 1, dir: 'down' },
+    { x: 9, y: 27, to: 'town2', tx: 21, ty: 1, dir: 'down' },
     { x: 9, y: 0, to: 'forest', tx: 10, ty: 24, dir: 'up' },
   ],
   signs: [{ x: 8, y: 25, text: '2번 도로\n북쪽: 속삭임숲   남쪽: 들꽃마을' }],
@@ -606,7 +631,7 @@ const forest: MapDef = {
   ],
   warps: [
     { x: 10, y: 25, to: 'route2', tx: 9, ty: 1, dir: 'down' },
-    { x: 10, y: 0, to: 'town3', tx: 10, ty: 14, dir: 'up' },
+    { x: 10, y: 0, to: 'town3', tx: 17, ty: 22, dir: 'up' },
     { x: 0, y: 24, to: 'forest_grove', tx: 7, ty: 10, dir: 'up' },
   ],
   encounters: {
@@ -701,58 +726,70 @@ const forest_tree: MapDef = {
   ],
 };
 const town3: MapDef = {
-  id: 'town3', name: '물안개마을',
+  id: 'town3', name: '물안개마을', ambience: 'mist',
   tiles: [
-    '######################',
-    '#....AAAAAA...~~~~~~~#',
-    '#....AAAAAA...~~~~~~~#',
-    '#....WwWDWW...~~~~~~~#',
-    '#.......=.....+++~~~~#',
-    '#..BBBB.=..MMMM.~~~~~#',
-    '#..BHBB.=..MMMM.~~~~~#',
-    '#..WEwW.=..WwDW.~~~~~#',
-    '#...==================',
-    '#.........=......S...#',
-    '#~~~~.....=..........#',
-    '#~~~~..ff.=...,,,,...#',
-    '#~~~~.....=...,,,,...#',
-    '#.........=..........#',
-    '===========..........#',
-    '##########=###########',
+    '####################################',
+    '#...................~~~~~ⓛ~~~~AAAAⓖ#',
+    '#AAAA...............~~ⓛ~~~~~~~AAAA~#',
+    '#AAAA...............ⓖ.......ⓖ~ϜϝDϜ~#',
+    '#ϜϝDϜ.......AAAAAA...~~~~~~~~~~~γ~ⓛ#',
+    '#..=........AAAAAA...~~~~~~~~Ⅳ~~γ~~#',
+    '#..=........WwWDWW...~~~~~~~~~~~γ~~#',
+    '#..=...........=.....+++~~~~~γγγγγγ#',
+    '#ⓖ~δ~~ⓖ...BBBB.=..MMMM.~~~~~~~~~γ~Ⅳ#',
+    '#~~δ~~~...BHBB.=..MMMM.~~~~~~ⓛ~~γ~~#',
+    '#~~δ~~~...WEwW.=..WwDW.~~~~~ⓖ~~~γⓛⓖ#',
+    '#ⓛ~δ~ⓖ~....=========================',
+    '#~~δ~~~..........=......S..........#',
+    '#..=....~~~~.....=.................#',
+    '#..=....~~~~..ff.=...,,,,..........#',
+    '#..=....~~~~.....=...,,,,..........#',
+    '#..=.............=.................#',
+    '==================.................#',
+    '#................=........ⓣ...ⓣ....#',
+    '##.#.#...Ϙ...Ϙ...=...Ϙ...Ϙ.........#',
+    '#.#.#.....θ......θ........εε.εε....#',
+    '##.#.#...........=.................#',
+    '#................=.................#',
+    '#################=##################',
   ],
   warps: [
-    { x: 0, y: 14, to: 'pastel', tx: 20, ty: 10, dir: 'left' },
-    { x: 10, y: 15, to: 'forest', tx: 10, ty: 1, dir: 'down' },
-    { x: 8, y: 3, to: 'gym2', tx: 5, ty: 10, dir: 'up' },
-    { x: 4, y: 7, to: 'center3', tx: 4, ty: 6, dir: 'up' },
-    { x: 13, y: 7, to: 'shop3', tx: 4, ty: 6, dir: 'up' },
-    { x: 21, y: 8, to: 'route3', tx: 1, ty: 6, dir: 'right' },
+    { x: 32, y: 3, to: 'house3a', tx: 4, ty: 6, dir: 'up' },
+    { x: 3, y: 4, to: 'house3b', tx: 4, ty: 6, dir: 'up' },
+    { x: 0, y: 17, to: 'pastel', tx: 20, ty: 10, dir: 'left' },
+    { x: 17, y: 23, to: 'forest', tx: 10, ty: 1, dir: 'down' },
+    { x: 15, y: 6, to: 'gym2', tx: 5, ty: 10, dir: 'up' },
+    { x: 11, y: 10, to: 'center3', tx: 4, ty: 6, dir: 'up' },
+    { x: 20, y: 10, to: 'shop3', tx: 4, ty: 6, dir: 'up' },
+    { x: 35, y: 11, to: 'route3', tx: 1, ty: 6, dir: 'right' },
   ],
-  labels: [{ x: 5, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 13, y: 5.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 8, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
-  signs: [{ x: 17, y: 9, text: '물안개마을\n새벽마다 호수에 안개가 피어오르는 마을\n동쪽: 3번 도로  ·  서쪽: 솜사탕언덕' }],
+  labels: [ { x: 32, y: 1.2, text: '어부의 집', color: '#e0f4ff', ink: '#2a5a8a' }, { x: 2.5, y: 2.2, text: '안개 찻집', color: '#e8fff4', ink: '#2a6a5a' },{ x: 12, y: 8.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 20, y: 8.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 15, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
+  signs: [{ x: 24, y: 12, text: '물안개마을\n새벽마다 호수에 안개가 피어오르는 마을\n동쪽: 3번 도로  ·  서쪽: 솜사탕언덕' }],
   encounters: { rate: 0.1, table: [['pojani', 9, 11, 25], ['jinheuk', 9, 11, 20], ['baramsae', 10, 12, 20], ['dalto', 9, 11, 18], ['kkwae', 9, 11, 17], ['mongmong', 9, 11, 12], ['dukeop', 9, 11, 18]] },
   fishing: [['banjjak', 8, 12, 55], ['munu', 8, 11, 25], ['mulgwi', 9, 12, 12], ['eungeo', 15, 17, 8]],
   npcs: [
-    { id: 'fisher', x: 15, y: 4, dir: 'right', pal: PAL.fisher, talk: () => fisherTalk() },
+    { id: 't3boatman', x: 31, y: 7, dir: 'right', pal: PAL.fisher, talk: '뱃사공: 호수 건너편까진 못 가지만, 데크 끝에서 낚시는 할 수 있지.\n물안개 속에서 낚싯대를 드리우면 마음이 차분해진다네.' },
+    { id: 't3lantern', x: 22, y: 20, dir: 'up', pal: PAL.lady, move: 'wander', talk: '밤이 되면 이 등불들이 안개 속에서 반딧불처럼 번져 보여요.\n물안개마을에서 제일 좋아하는 길이에요.' },
+    { id: 'fisher', x: 22, y: 7, dir: 'right', pal: PAL.fisher, talk: () => fisherTalk() },
     {
-      id: 't3guard', x: 20, y: 8, dir: 'left', pal: PAL.guard, hidden: () => f('badge2'),
+      id: 't3guard', x: 27, y: 11, dir: 'left', pal: PAL.guard, hidden: () => f('badge2'),
       talk: '경비: 동쪽 3번 도로는 지금 위험해. 검은안개단이 들락거리거든.\n수련관 관장 마루 님께 인정받은 트레이너만 보내 줄 수 있어.',
     },
     {
-      id: 't3kid', x: 6, y: 13, dir: 'up', pal: PAL.kid, move: 'wander',
+      id: 't3kid', x: 13, y: 16, dir: 'up', pal: PAL.kid, move: 'wander',
       talk: '물안개 수련관은 안에 물웅덩이가 가득해!\n나무 다리를 따라가야 관장님한테 갈 수 있어.',
     },
     {
-      id: 't3old', x: 3, y: 9, dir: 'down', pal: PAL.oldman, move: 'look',
+      id: 't3old', x: 10, y: 12, dir: 'down', pal: PAL.oldman, move: 'look',
       talk: '옛날이야기 하나 해 줄까? 동쪽 별빛동굴 깊은 곳에는\n별을 삼킨 고래가 잠들어 있다네. 그 고래가 깨면 밤하늘에 별비가 내린다지.',
     },
-    { id: 'rival_t3', x: 10, y: 11, dir: 'down', pal: PAL.rival, hidden: () => f('rival2') || !f('forestCleared') },
+    { id: 'rival_t3', x: 17, y: 14, dir: 'down', pal: PAL.rival, hidden: () => f('rival2') || !f('forestCleared') },
   ],
-  triggers: [{ x: 10, y: 13, when: () => !f('rival2') && f('forestCleared'), run: rival2Scene }],
+  triggers: [{ x: 17, y: 16, when: () => !f('rival2') && f('forestCleared'), run: rival2Scene }],
 };
 
-const center3 = makeCenter('center3', '물안개마을 회복소', 'town3', 4, 8, '물 타입 몬스터는 전기 기술에 약해.\n관장님께 도전하기 전에 잘 준비해!');
-const shop3 = makeShop('shop3', '물안개마을 상점', 'town3', 13, 8, '물가에서는 낚싯대로 물속 몬스터를 낚을 수 있대요.');
+const center3 = makeCenter('center3', '물안개마을 회복소', 'town3', 11, 11, '물 타입 몬스터는 전기 기술에 약해.\n관장님께 도전하기 전에 잘 준비해!');
+const shop3 = makeShop('shop3', '물안개마을 상점', 'town3', 20, 11, '물가에서는 낚싯대로 물속 몬스터를 낚을 수 있대요.');
 
 const gym2: MapDef = {
   id: 'gym2', name: '물안개 수련관', indoor: true,
@@ -771,8 +808,8 @@ const gym2: MapDef = {
     'XXXXXeeXXXXX',
   ],
   warps: [
-    { x: 5, y: 11, to: 'town3', tx: 8, ty: 4, dir: 'down' },
-    { x: 6, y: 11, to: 'town3', tx: 8, ty: 4, dir: 'down' },
+    { x: 5, y: 11, to: 'town3', tx: 15, ty: 7, dir: 'down' },
+    { x: 6, y: 11, to: 'town3', tx: 15, ty: 7, dir: 'down' },
   ],
   fishing: [['banjjak', 10, 14, 65], ['munu', 10, 13, 25], ['eungeo', 17, 18, 10]],
   triggers: [
@@ -829,7 +866,7 @@ const route3: MapDef = {
     '##############################',
   ],
   warps: [
-    { x: 0, y: 6, to: 'town3', tx: 20, ty: 8, dir: 'left' },
+    { x: 0, y: 6, to: 'town3', tx: 34, ty: 11, dir: 'left' },
     { x: 25, y: 5, to: 'cave', tx: 1, ty: 18, dir: 'up' },
     { x: 13, y: 0, to: 'peak', tx: 9, ty: 19, dir: 'up' },
   ],
@@ -892,7 +929,7 @@ const cave: MapDef = {
   ],
   warps: [
     { x: 1, y: 19, to: 'route3', tx: 25, ty: 6, dir: 'down' },
-    { x: 21, y: 0, to: 'town4', tx: 10, ty: 14, dir: 'up' },
+    { x: 21, y: 0, to: 'town4', tx: 17, ty: 22, dir: 'up' },
   ],
   encounters: {
     rate: 0.1,
@@ -942,59 +979,73 @@ const cave: MapDef = {
 const town4: MapDef = {
   id: 'town4', name: '별빛시',
   tiles: [
-    '######################',
-    '#..YYYYYY....YYYYYY..#',
-    '#..YYYYYY....YYYYYY..#',
-    '#..WwWDWW....WwWDwW..#',
-    '#l....=.......l......#',
-    '#.BBBB=..MMMM........#',
-    '#.BHBB=..MMMM........#',
-    '#.WEwW=..WwDW........#',
-    '#.===========......l.#',
-    '#.........=.....S....#',
-    '#.ff......=........l.#',
-    '#l........============',
-    '#.........=..fff.....#',
-    '#.........=..........#',
-    '#.........=..........#',
-    '##########=###########',
+    '####################################',
+    '#ααααααααⓣααϘααⓣααϘααⓣααϘααⓣααααααα#',
+    '#αⓐⓓαααααααααααααααααααααααααΣΣΣΣΣα#',
+    '#αⓔⓕαααααααααααααααααααααααααΣΣΣΣΣα#',
+    '#αββααααααYYYYYYααααYYYYYYαααWwDwWα#',
+    '#ββββββαααYYYYYYααααYYYYYYαααααβααα#',
+    '#αααααβαααWwWDWWααααWwWDwWαααααβααα#',
+    '#ΣΣΣΣΣβαϘααααβαααααααϘαααααααααβααα#',
+    '#ΣΣΣΣΣβααBBBBβααMMMMαααααααααραβαρα#',
+    '#WwwwWβααBHBBβααMMMMαααααααααααβααα#',
+    '#.....βααWEwWβααWwDWαααααααααααβααα#',
+    '#ⓣ.ⓣ.ⓣβααβββββββββββααααααϘααααβααα#',
+    '#αααααβααααααααααβαααααSαααααααβααα#',
+    '#αααααβααffααααααβααααααααϘααααβααα#',
+    '#αααααβαϘααααααααβββββββββββββββββββ',
+    '#αααααβααααααααααβααfffαααααααααααα#',
+    '#αααααβααααααααααβααααααααααακαλακα#',
+    '#ββββββααααααααααβααααααααααααααααα#',
+    '#ααααααα........αβαααααααααα......α#',
+    '#ΣΣΣΣααα........αβαϘϖϖνξϖϖϖϘ.ⓣ...ⓣα#',
+    '#ΣΣΣΣαααε.ε.ε.ε.αβαϖϖϖοπϖϖϖϖ......α#',
+    '#WwwWααα........αβαθϖϖϖϖϖϖϖθ.ⓣ...ⓣα#',
+    '#ααααααααααααααααβααααααααααααααααα#',
+    '#################β##################',
   ],
   warps: [
-    { x: 10, y: 15, to: 'cave', tx: 21, ty: 1, dir: 'down' },
-    { x: 6, y: 3, to: 'gym3', tx: 5, ty: 10, dir: 'up' },
-    { x: 3, y: 7, to: 'center4', tx: 4, ty: 6, dir: 'up' },
-    { x: 11, y: 7, to: 'shop4', tx: 4, ty: 6, dir: 'up' },
-    { x: 16, y: 3, to: 'antique', tx: 4, ty: 6, dir: 'up' },
-    { x: 21, y: 11, to: 'route4', tx: 1, ty: 2, dir: 'right' },
+    { x: 2, y: 3, to: 'house4a', tx: 4, ty: 6, dir: 'up' },
+    { x: 3, y: 3, to: 'house4a', tx: 5, ty: 6, dir: 'up' },
+    { x: 31, y: 4, to: 'house4b', tx: 4, ty: 6, dir: 'up' },
+    { x: 17, y: 23, to: 'cave', tx: 21, ty: 1, dir: 'down' },
+    { x: 13, y: 6, to: 'gym3', tx: 5, ty: 10, dir: 'up' },
+    { x: 10, y: 10, to: 'center4', tx: 4, ty: 6, dir: 'up' },
+    { x: 18, y: 10, to: 'shop4', tx: 4, ty: 6, dir: 'up' },
+    { x: 23, y: 6, to: 'antique', tx: 4, ty: 6, dir: 'up' },
+    { x: 35, y: 14, to: 'route4', tx: 1, ty: 2, dir: 'right' },
   ],
-  labels: [{ x: 4, y: 5.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 11, y: 5.1, text: '백화점', color: '#fff2c8', ink: '#8a5a10' }, { x: 6, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }, { x: 16, y: 1.1, text: '리그 사무국' }],
-  signs: [{ x: 16, y: 9, text: '별빛시\n밤에도 별처럼 불빛이 반짝이는 도시  ·  별빛 수련관' }],
+  labels: [ { x: 3, y: 1.2, text: '천문대', color: '#e0e8ff', ink: '#2a3a7a' }, { x: 31, y: 2.2, text: '트레이너 학원', color: '#e0e8ff', ink: '#2a3a7a' }, { x: 3, y: 7.2, text: '별빛 아파트', color: '#e0e8ff', ink: '#2a3a7a' }, { x: 23.5, y: 18.1, text: '별빛 광장', color: '#fff6c8', ink: '#6a5a20' },{ x: 11, y: 8.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 18, y: 8.1, text: '백화점', color: '#fff2c8', ink: '#8a5a10' }, { x: 13, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }, { x: 23, y: 4.1, text: '골동품 가게', color: '#f4e8d8', ink: '#6a4a2a' }],
+  signs: [{ x: 23, y: 12, text: '별빛시\n밤에도 별처럼 불빛이 반짝이는 도시  ·  별빛 수련관' }],
   npcs: [
+    { id: 't4busker', x: 26, y: 20, dir: 'left', pal: PAL.man, talk: '거리 악사: ♪ 별빛 광장에 밤이 오면~ 분수에 별이 잠기네~\n…박수 좀 쳐 주겠나?' },
+    { id: 't4vendor', x: 30, y: 17, dir: 'up', pal: PAL.clerk, talk: '노점 상인: 별빛시 명물, 별사탕 꼬치 있어요!\n…몬스터한테 먹이면 안 돼요. 이빨 상해요.' },
+    { id: 't4jogger', x: 6, y: 13, dir: 'down', pal: PAL.swimmer, move: 'wander', talk: '아침마다 벽돌길을 따라 도시를 한 바퀴 뛰어.\n천문대 앞 언덕에서 보는 해돋이가 최고야!' },
     {
-      id: 't4man', x: 15, y: 5, dir: 'down', pal: PAL.man, move: 'wander',
+      id: 't4man', x: 22, y: 8, dir: 'down', pal: PAL.man, move: 'wander',
       talk: '오른쪽 큰 건물은 오래된 골동품 가게야.\n밤마다 가게 안에서 오르골 소리가 들린다던데… 좀 으스스하지?',
     },
     {
-      id: 't4lady', x: 4, y: 12, dir: 'right', pal: PAL.lady, move: 'look',
+      id: 't4lady', x: 11, y: 15, dir: 'right', pal: PAL.lady, move: 'look',
       talk: async () => {
         if (f('bossDone')) await say('별빛동굴에서 검은안개단을 쫓아낸 게 당신이에요?\n요즘 밤하늘에 별똥별이 부쩍 많아졌대요!');
         else await say('별빛동굴 쪽이 요즘 시끄러워서 걱정이에요.');
       },
     },
     {
-      id: 't4eng', x: 18, y: 10, dir: 'left', pal: PAL.engineer, move: 'look',
+      id: 't4eng', x: 25, y: 13, dir: 'left', pal: PAL.engineer, move: 'look',
       talk: '별빛 수련관 관장 하람 님은 발전소 기술자 출신이야.\n전기 타입은 땅 타입 몬스터한테 기술이 통하지 않아!',
     },
-    { id: 'sanji', x: 20, y: 13, dir: 'left', pal: PAL.oldman, talk: () => sanjiTalk() },
-    { id: 'rival_t4', x: 10, y: 10, dir: 'down', pal: PAL.rival, hidden: () => f('rival3') },
+    { id: 'sanji', x: 27, y: 16, dir: 'left', pal: PAL.oldman, talk: () => sanjiTalk() },
+    { id: 'rival_t4', x: 17, y: 13, dir: 'down', pal: PAL.rival, hidden: () => f('rival3') },
   ],
   triggers: [
-    { x: 10, y: 12, when: () => !f('rival3'), run: rival3Scene },
-    { x: 20, y: 11, when: () => !f('ending'), run: pushBack(['동쪽 4번 도로 입구다.', '경비: 이 앞은 험한 길이야.\n별빛 수련관 배지를 받으면 지나가게 해 줄게.'], 'left') },
+    { x: 17, y: 15, when: () => !f('rival3'), run: rival3Scene },
+    { x: 27, y: 14, when: () => !f('ending'), run: pushBack(['동쪽 4번 도로 입구다.', '경비: 이 앞은 험한 길이야.\n별빛 수련관 배지를 받으면 지나가게 해 줄게.'], 'left') },
   ],
 };
 
-const center4: MapDef = makeCenter('center4', '별빛시 회복소', 'town4', 3, 8, '해솔 리그에 나가려면 배지 일곱 개가 필요하대.\n동쪽 4번 도로 너머에도 수련관이 더 있다던데?');
+const center4: MapDef = makeCenter('center4', '별빛시 회복소', 'town4', 10, 11, '해솔 리그에 나가려면 배지 일곱 개가 필요하대.\n동쪽 4번 도로 너머에도 수련관이 더 있다던데?');
 const antique: MapDef = {
   id: 'antique', name: '별빛시 골동품 가게', indoor: true,
   tiles: [
@@ -1008,8 +1059,8 @@ const antique: MapDef = {
     'XXXXeeXXXX',
   ],
   warps: [
-    { x: 4, y: 7, to: 'town4', tx: 16, ty: 4, dir: 'down' },
-    { x: 5, y: 7, to: 'town4', tx: 16, ty: 4, dir: 'down' },
+    { x: 4, y: 7, to: 'town4', tx: 23, ty: 7, dir: 'down' },
+    { x: 5, y: 7, to: 'town4', tx: 23, ty: 7, dir: 'down' },
   ],
   npcs: [
     { id: 'antiqueowner', x: 2, y: 2, dir: 'down', pal: PAL.granny, talk: () => antiqueOwner() },
@@ -1017,7 +1068,7 @@ const antique: MapDef = {
   ],
 };
 
-const shop4 = makeShop('shop4', '별빛시 백화점', 'town4', 11, 8, '상점 물건은 배지를 모을수록 점점 좋아진대요.\n관장님께 도전하기 전에 꼭 둘러보세요!');
+const shop4 = makeShop('shop4', '별빛시 백화점', 'town4', 18, 11, '상점 물건은 배지를 모을수록 점점 좋아진대요.\n관장님께 도전하기 전에 꼭 둘러보세요!');
 
 const gym3: MapDef = {
   id: 'gym3', name: '별빛 수련관', indoor: true,
@@ -1036,8 +1087,8 @@ const gym3: MapDef = {
     'XXXXXeeXXXXX',
   ],
   warps: [
-    { x: 5, y: 11, to: 'town4', tx: 6, ty: 4, dir: 'down' },
-    { x: 6, y: 11, to: 'town4', tx: 6, ty: 4, dir: 'down' },
+    { x: 5, y: 11, to: 'town4', tx: 13, ty: 7, dir: 'down' },
+    { x: 6, y: 11, to: 'town4', tx: 13, ty: 7, dir: 'down' },
   ],
   triggers: [[1, 9], [10, 6], [1, 4]].map(([x, y]) => ({ x, y, run: toggleSwitch('g3') })),
   npcs: [
@@ -1075,8 +1126,8 @@ const gym3: MapDef = {
 
 // center4's door is at x=3, so arrivals land one tile to the right of the usual spot.
 center4.warps = [
-  { x: 4, y: 7, to: 'town4', tx: 3, ty: 8, dir: 'down' },
-  { x: 5, y: 7, to: 'town4', tx: 3, ty: 8, dir: 'down' },
+  { x: 4, y: 7, to: 'town4', tx: 10, ty: 11, dir: 'down' },
+  { x: 5, y: 7, to: 'town4', tx: 10, ty: 11, dir: 'down' },
 ];
 
 const peak: MapDef = {
@@ -1150,7 +1201,7 @@ const pastel: MapDef = {
     'g;;;;;::::::::;;;;;;;g',
     'gggggggggggggggggggggg',
   ],
-  warps: [{ x: 21, y: 10, to: 'town3', tx: 1, ty: 14, dir: 'right' }],
+  warps: [{ x: 21, y: 10, to: 'town3', tx: 1, ty: 17, dir: 'right' }],
   signs: [],
   encounters: {
     rate: 0.13,
@@ -1232,8 +1283,8 @@ const route4: MapDef = {
     '###########=########',
   ],
   warps: [
-    { x: 0, y: 2, to: 'town4', tx: 20, ty: 11, dir: 'left' },
-    { x: 11, y: 25, to: 'town5', tx: 11, ty: 1, dir: 'down' },
+    { x: 0, y: 2, to: 'town4', tx: 34, ty: 14, dir: 'left' },
+    { x: 11, y: 25, to: 'town5', tx: 18, ty: 1, dir: 'down' },
   ],
   signs: [{ x: 16, y: 10, text: '4번 도로\n북쪽: 별빛시   남쪽: 파도항구' }],
   encounters: {
@@ -1255,61 +1306,74 @@ const route4: MapDef = {
 const town5: MapDef = {
   id: 'town5', name: '파도항구',
   tiles: [
-    '###########=#################',
-    '#..KKKKK...=...MMMM.....GGGG#',
-    '#..KKKKK...=...MMMM.....GGGG#',
-    '#..WwDwW...=...WDwW.....WDwW#',
-    '#....=.....=....=........=..#',
-    '#....=====================..#',
-    '#..BBBB....=................#',
-    '#..BHBB....=....l...........#',
-    '#..WEwW....=................#',
-    '====================........#',
-    '#..................+........#',
-    '#~~~~~~~~~~~~~~~~~~+~~~~~~~~#',
-    '#~~~~~~~~~~~~~~~~~~+~~~~~~~~#',
-    '#~~~~~~~~~ZZZZZZZZZDZZ~~~~~~#',
-    '#~~~~~~~~~ZZZZZZZZZZZZ~~~~~~#',
-    '#############################',
+    '##################=########################',
+    '#........ζζ..ε.ε..=ζ................ΦΦΦΦΦ.#',
+    '#ΦΦΦΦΦ............=.................ΦΦΦΦΦ.#',
+    '#ΦΦΦΦΦ............=.................WwDwW.#',
+    '#ϜϜϝϜϜ....KKKKK...=...MMMM.....GGGG...=...#',
+    '#.........KKKKK...=...MMMM.....GGGG...=...#',
+    '#κ.λ.κ....WwDwW...=...WDwW.....WDwW.ΦΦΦΦ..#',
+    '#...........=.....=....=........=...ΦΦΦΦ..#',
+    '#μ...μ......=====================...ϜϝDϜ..#',
+    '#.........BBBB....=...................α.Ⅰ.#',
+    '#αααααααααBHBBαααα=ααααϘαααααααμαμααααααⅡα#',
+    '#αααααααααWEwWαααα=αααααααααααααααααααααⅢα#',
+    '===========================ααααααααααααααα#',
+    '#ααααααααααααααααααααααααα+αααααααααααγγαα#',
+    '#~~γγ~~~~~~~~~~~~~~~~~~~~~+~~~~~~~~~~~γγ~~#',
+    '#~~γγ~~~~~~~~~~~~~~~~~~~~~+~~~~~~~~~~~γγ~~#',
+    '#Ⅳ~γγ~~~~~~~~~~~~ZZZZZZZZZDZZ~~~~~~~~~γγ~~#',
+    '#~~γγ~~~~~~~~~~~~ZZZZZZZZZZZZ~~~~~~~~~γγ~Ⅳ#',
+    '#~~γγⅣ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~γγ~~#',
+    '#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Ⅳ~γγ~~#',
+    '#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#',
+    '#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#',
+    '#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#',
+    '#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#',
   ],
   warps: [
-    { x: 11, y: 0, to: 'route4', tx: 11, ty: 24, dir: 'up' },
-    { x: 5, y: 3, to: 'gym4', tx: 6, ty: 11, dir: 'up' },
-    { x: 16, y: 3, to: 'shop5', tx: 4, ty: 6, dir: 'up' },
-    { x: 4, y: 8, to: 'center5', tx: 4, ty: 6, dir: 'up' },
-    { x: 19, y: 13, to: 'ship', tx: 2, ty: 11, dir: 'right' },
-    { x: 0, y: 9, to: 'route5', tx: 24, ty: 3, dir: 'left' },
-    { x: 25, y: 3, to: 'safarigate', tx: 4, ty: 6, dir: 'up' },
+    { x: 38, y: 8, to: 'house5a', tx: 4, ty: 6, dir: 'up' },
+    { x: 38, y: 3, to: 'house5b', tx: 4, ty: 6, dir: 'up' },
+    { x: 18, y: 0, to: 'route4', tx: 11, ty: 24, dir: 'up' },
+    { x: 12, y: 6, to: 'gym4', tx: 6, ty: 11, dir: 'up' },
+    { x: 23, y: 6, to: 'shop5', tx: 4, ty: 6, dir: 'up' },
+    { x: 11, y: 11, to: 'center5', tx: 4, ty: 6, dir: 'up' },
+    { x: 26, y: 16, to: 'ship', tx: 2, ty: 11, dir: 'right' },
+    { x: 0, y: 12, to: 'route5', tx: 24, ty: 3, dir: 'left' },
+    { x: 32, y: 6, to: 'safarigate', tx: 4, ty: 6, dir: 'up' },
   ],
-  labels: [
-    { x: 5, y: 6.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
-    { x: 17, y: 1.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
-    { x: 26, y: 1.1, text: '사파리', color: '#e0f8d0', ink: '#2a6a2a' },
-    { x: 5.5, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' },
-    { x: 16, y: 13.1, text: '유령선', color: '#d8d0f8', ink: '#3a2a6a' },
+  labels: [ { x: 38, y: 6.2, text: '등대지기의 집', color: '#e0f0ff', ink: '#2a4a7a' }, { x: 38.5, y: 1.2, text: '파도 식당', color: '#e0f0ff', ink: '#2a4a7a' }, { x: 3, y: 2.2, text: '창고', color: '#f0e8d8', ink: '#6a4a2a' }, { x: 3, y: 5.3, text: '수산시장', color: '#fff2c8', ink: '#8a5a10' },
+    { x: 12, y: 9.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
+    { x: 24, y: 4.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
+    { x: 33, y: 4.1, text: '사파리', color: '#e0f8d0', ink: '#2a6a2a' },
+    { x: 12.5, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' },
+    { x: 23, y: 16.1, text: '유령선', color: '#d8d0f8', ink: '#3a2a6a' },
   ],
   signs: [],
   fishing: [['meokmul', 24, 27, 40], ['munu', 22, 26, 20], ['eungeo', 24, 27, 25], ['daewang', 29, 30, 5], ['jelly', 24, 26, 10], ['mulgwi', 22, 25, 14]],
   npcs: [
-    { id: 't5shipwright', x: 22, y: 10, dir: 'left', pal: PAL.oldman, talk: () => shipwright() },
-    { id: 't5sailor', x: 13, y: 2, dir: 'left', pal: PAL2.sailor, talk: '뱃사람: 유령선은 남쪽 부두 끝에 있다네.\n파란 도깨비불이 둥둥 떠다니니 조심하게!' },
-    { id: 't5old', x: 20, y: 6, dir: 'down', pal: PAL.oldman, move: 'look', talk: '이 항구에서 서쪽 해변길을 따라 남쪽으로 가면 불꽃마을이 나온다네.\n뜨끈한 온천이 아주 좋지!' },
-    { id: 't5kid', x: 8, y: 10, dir: 'right', pal: PAL.kid, move: 'wander', talk: '아빠가 그러는데, 바다 깊은 곳엔 배만 한 대왕문어가 산대!' },
-    { id: 't5safarifan', x: 23, y: 6, dir: 'down', pal: PAL.girl, move: 'look', talk: async () => {
+    { id: 't5fishmonger', x: 2, y: 7, dir: 'down', pal: PAL.hiker, talk: '생선 장수: 싱싱한 은빛잉어 있어요! 오늘 새벽에 잡은 거라고요!\n…아, 몬스터는 팔지 않아요. 진짜 생선이에요.' },
+    { id: 't5angler', x: 4, y: 18, dir: 'down', pal: PAL.fisher, talk: '부두 끝에서 낚싯대를 드리우면 먹물이가 잘 물어.\n먹물을 뒤집어쓰는 건 각오해야 하지만!' },
+    { id: 't5keeperkid', x: 39, y: 15, dir: 'up', pal: PAL.kid, move: 'look', talk: '등대 불빛은 밤마다 바다 끝까지 닿는대!\n나도 커서 등대지기가 될 거야.' },
+    { id: 't5shipwright', x: 29, y: 13, dir: 'left', pal: PAL.oldman, talk: () => shipwright() },
+    { id: 't5sailor', x: 20, y: 5, dir: 'left', pal: PAL2.sailor, talk: '뱃사람: 유령선은 남쪽 부두 끝에 있다네.\n파란 도깨비불이 둥둥 떠다니니 조심하게!' },
+    { id: 't5old', x: 27, y: 9, dir: 'down', pal: PAL.oldman, move: 'look', talk: '이 항구에서 서쪽 해변길을 따라 남쪽으로 가면 불꽃마을이 나온다네.\n뜨끈한 온천이 아주 좋지!' },
+    { id: 't5kid', x: 15, y: 13, dir: 'right', pal: PAL.kid, move: 'wander', talk: '아빠가 그러는데, 바다 깊은 곳엔 배만 한 대왕문어가 산대!' },
+    { id: 't5safarifan', x: 30, y: 9, dir: 'down', pal: PAL.girl, move: 'look', talk: async () => {
       if (f('safariOpen')) await say('사파리에는 꼬마룡이나 무지개유니 같은 귀한 몬스터도 산대!\n연못에서 낚시를 하면 신기한 게 걸린다던데?');
       else await say('저기 초록 지붕이 팜팜 사파리 입구야.\n그런데 요즘 문을 닫았대. 무슨 일이 있나 봐.');
     } },
-    { id: 't5windtamer', x: 21, y: 6, dir: 'down', pal: PAL2.surfer, move: 'look', talk: () => windTamerTalk() },
-    { id: 'lost_mong', x: 27, y: 9, dir: 'down', mon: 'mongmong', hidden: () => !f('safariQuest') || f('lost_mong'), talk: () => escapeeTalk('lost_mong', '몽몽이') },
+    { id: 't5windtamer', x: 28, y: 9, dir: 'down', pal: PAL2.surfer, move: 'look', talk: () => windTamerTalk() },
+    { id: 'lost_mong', x: 34, y: 12, dir: 'down', mon: 'mongmong', hidden: () => !f('safariQuest') || f('lost_mong'), talk: () => escapeeTalk('lost_mong', '몽몽이') },
   ],
   triggers: [
-    { x: 11, y: 2, when: () => !f('portIntro'), run: port1Scene },
-    { x: 1, y: 9, when: () => !f('badge4'), run: pushBack(['경비: 미안하지만 서쪽 해변길은 파도가 거세서 막아 두었어.', '수련관 관장 달님 님께 인정받으면 지나갈 수 있단다!'], 'right') },
+    { x: 18, y: 5, when: () => !f('portIntro'), run: port1Scene },
+    { x: 8, y: 12, when: () => !f('badge4'), run: pushBack(['경비: 미안하지만 서쪽 해변길은 파도가 거세서 막아 두었어.', '수련관 관장 달님 님께 인정받으면 지나갈 수 있단다!'], 'right') },
   ],
 };
 
-const center5 = makeCenter('center5', '파도항구 회복소', 'town5', 4, 9, '바다 몬스터는 전기 기술에 약한 경우가 많아.\n고스트 타입에는 악 타입 기술이 잘 통하고!');
-const shop5 = makeShop('shop5', '파도항구 상점', 'town5', 16, 4, '뱃사람들은 늘 회복약을 넉넉히 챙긴대요.');
+const center5 = makeCenter('center5', '파도항구 회복소', 'town5', 11, 12, '바다 몬스터는 전기 기술에 약한 경우가 많아.\n고스트 타입에는 악 타입 기술이 잘 통하고!');
+const shop5 = makeShop('shop5', '파도항구 상점', 'town5', 23, 7, '뱃사람들은 늘 회복약을 넉넉히 챙긴대요.');
 
 const safarigate: MapDef = {
   id: 'safarigate', name: '팜팜 사파리 입구', indoor: true,
@@ -1324,8 +1388,8 @@ const safarigate: MapDef = {
     'XXXXeeXXXX',
   ],
   warps: [
-    { x: 4, y: 7, to: 'town5', tx: 25, ty: 4, dir: 'down' },
-    { x: 5, y: 7, to: 'town5', tx: 25, ty: 4, dir: 'down' },
+    { x: 4, y: 7, to: 'town5', tx: 32, ty: 7, dir: 'down' },
+    { x: 5, y: 7, to: 'town5', tx: 32, ty: 7, dir: 'down' },
   ],
   npcs: [
     { id: 'keeper', x: 4, y: 1, dir: 'down', pal: PAL2.ranger, talk: () => keeperTalk() },
@@ -1792,8 +1856,8 @@ const gym4: MapDef = {
     'XXXXXXeeXXXXXX',
   ],
   warps: [
-    { x: 6, y: 12, to: 'town5', tx: 5, ty: 4, dir: 'down' },
-    { x: 7, y: 12, to: 'town5', tx: 5, ty: 4, dir: 'down' },
+    { x: 6, y: 12, to: 'town5', tx: 12, ty: 7, dir: 'down' },
+    { x: 7, y: 12, to: 'town5', tx: 12, ty: 7, dir: 'down' },
     { x: 2, y: 3, to: 'gym4', tx: 6, ty: 10, dir: 'down' },
   ],
   // Moon pads: destination = [초승달, 반달, 보름달]. Solution: west room crystal → 보름달,
@@ -1847,8 +1911,8 @@ const route5: MapDef = {
     '#####=####################',
   ],
   warps: [
-    { x: 25, y: 3, to: 'town5', tx: 1, ty: 9, dir: 'left' },
-    { x: 5, y: 17, to: 'town6', tx: 9, ty: 1, dir: 'down' },
+    { x: 25, y: 3, to: 'town5', tx: 1, ty: 12, dir: 'left' },
+    { x: 5, y: 17, to: 'town6', tx: 16, ty: 1, dir: 'down' },
   ],
   signs: [{ x: 13, y: 15, text: '5번 도로 해변길\n북동쪽: 파도항구   남쪽: 불꽃마을' }],
   encounters: {
@@ -1951,54 +2015,65 @@ const volcano_heart: MapDef = {
 const town6: MapDef = {
   id: 'town6', name: '불꽃마을',
   tiles: [
-    '#########=############',
-    '#..RRRRR.=.....MMMM..#',
-    '#..RRRRR.=.....MMMM..#',
-    '#..WwDwW.=.....WDwW.==',
-    '#....=...=......=====#',
-    '#....============....#',
-    '#..BBBB..=...........#',
-    '#..BHBB..=...~~~~....#',
-    '#..WEwW..=...~~~~....#',
-    '#...======...........#',
-    '#........=...........#',
-    '#..ff....=......ff...#',
-    '=========............#',
-    '#....................#',
-    '#..LLL.......LLL.....#',
-    '######################',
+    '################=###################',
+    '#ϑϑϑϑϑϑϑϑϑϑϑⅥϑϑⅥ=ϑϑⅥϑⅥϑϑϑϑϑϑϑΔΔΔΔΔϑ#',
+    '#ΔΔΔΔΔϑϑϑϑϑϑϑϑϑϑ=ϑϑϑϑϑϑϑϑϑϑϑϑΔΔΔΔΔϑ#',
+    '#ΔΔΔΔΔϑϑϑϑϑϑϑϑϑϑ=ϑϑϑϑϑϑϑϑϑϑϑϑWwDwWϑ#',
+    '#ϜϝDϜϜϑϑϑϑRRRRRϑ=ϑϑϑϑϑMMMMϑϑϑϑϑ=ϑϑϑ#',
+    '#ϑϑ=ϑϑϑϑϑϑRRRRRϑ=ϑϑϑϑϑMMMMϑϑϑϑϑ=ϑϑϑ#',
+    '#μϑ=ϑⅦϑϑϑϑWwDwWϑ=ϑϑϑϑϑWDwWϑ=========',
+    '#ϑϑ=ϑϑϑϑϑϑϑϑ=ϑϑϑ=ϑϑϑϑϑϑ=====ϑϑϑϑϑϑϑ#',
+    '#ϑϑ=ϑϑϑϑϑϑϑϑ============ϑϑϑϑϑϑϑϑϑϑϑ#',
+    '#ⅥⅥ=ϑϑϑϑϑϑBBBBϑϑ=ϑϑϑϑϑϑϑϑϑϑϑϑⅥⅥⅥⅥⅥⅥ#',
+    '#Ⅴϑ=ϑϑϑϑϑϑBHBBϑϑ=ϑϑϑⅤⅤⅤⅤϑϑϑϑϑⅥⅤⅤⅤⅤⅥ#',
+    '#ⅥⅥ=ϑϑϑϑϑϑWEwWϑϑ=ϑϑϑⅤⅤⅤⅤϑϑϑϑϑⅥⅤⅤⅤⅤⅥ#',
+    '#ϑϑ=ϑϑϑϑϑϑϑ======ϑϑϑϑϑϑϑϑϑϑϑϑⅥⅤⅤⅤⅤⅥ#',
+    '#ϑϑ=ϑϑϑϑϑϑϑϑϑϑϑϑ=ϑϑϑϑϑϑϑϑϑϑϑϑⅥⅥϑϑⅥⅥ#',
+    '#ϑϑ=ϑϑϑϑϑϑffϑϑϑϑ=ϑϑϑϑϑϑffϑϑϑϑϑϑϑϑϑϑ#',
+    '================ϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑ#',
+    '#ϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϘϑϑϑϘ#',
+    '#ϑϑϑϑϑϑϑϑϑLLLϑϑϑϑϑϑϑLLLϑϑϑϑϑϑϑϑϑϑϑϑ#',
+    '#ϑϑϑϑⅥⅤⅥϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑϑ#',
+    '#ϑϑϑϑϑϑϑⅥϑϑⅥⅥⅥϑⅥⅥϑⅥⅥⅥϑϑⅥⅤϑϑϑϑϑϑϑϑϑϑ#',
+    '#ϑϑϑϘϑϑϑϑϑϘϑϑϑϑϑϘϑϑϑϑϑϘϑϑϑϑϑϘϑϑϑϑϑϑ#',
+    '#ϑϑϑϑϑϑθϑϑϑϑϑϑϑϑϑϑϑθϑϑϑϑϑθϑϑϑϑϑϑϑϑϑ#',
+    '####################################',
   ],
   warps: [
-    { x: 9, y: 0, to: 'route5', tx: 5, ty: 16, dir: 'up' },
-    { x: 5, y: 3, to: 'gym5', tx: 5, ty: 10, dir: 'up' },
-    { x: 16, y: 3, to: 'shop6', tx: 4, ty: 6, dir: 'up' },
-    { x: 4, y: 8, to: 'center6', tx: 4, ty: 6, dir: 'up' },
-    { x: 21, y: 3, to: 'volcano', tx: 1, ty: 9, dir: 'right' },
-    { x: 0, y: 12, to: 'route6', tx: 38, ty: 6, dir: 'left' },
+    { x: 3, y: 4, to: 'house6a', tx: 4, ty: 6, dir: 'up' },
+    { x: 31, y: 3, to: 'house6b', tx: 4, ty: 6, dir: 'up' },
+    { x: 16, y: 0, to: 'route5', tx: 5, ty: 16, dir: 'up' },
+    { x: 12, y: 6, to: 'gym5', tx: 5, ty: 10, dir: 'up' },
+    { x: 23, y: 6, to: 'shop6', tx: 4, ty: 6, dir: 'up' },
+    { x: 11, y: 11, to: 'center6', tx: 4, ty: 6, dir: 'up' },
+    { x: 35, y: 6, to: 'volcano', tx: 1, ty: 9, dir: 'right' },
+    { x: 0, y: 15, to: 'route6', tx: 38, ty: 6, dir: 'left' },
   ],
-  labels: [
-    { x: 5, y: 6.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
-    { x: 17, y: 1.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
-    { x: 5.5, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' },
-    { x: 15, y: 6.6, text: '온천', color: '#d8f0ff', ink: '#2a5a8a' },
+  labels: [ { x: 3, y: 2.2, text: '대장간', color: '#ffe0d0', ink: '#8a2a1a' }, { x: 31, y: 1.2, text: '온천장', color: '#ffe0d0', ink: '#8a2a1a' }, { x: 31.5, y: 9.1, text: '노천 온천', color: '#d8f0ff', ink: '#2a5a8a' },
+    { x: 12, y: 9.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
+    { x: 24, y: 4.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
+    { x: 12.5, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' },
+    { x: 22, y: 9.6, text: '온천', color: '#d8f0ff', ink: '#2a5a8a' },
   ],
   signs: [],
   npcs: [
-    { id: 't6old', x: 12, y: 9, dir: 'down', pal: PAL.oldman, move: 'look', talk: '십 년 전 불꽃산이 크게 터졌을 때, 산 너머 마을 하나가 사라졌지…\n그 마을에서 살아남은 아이가 있었다는데, 지금은 어디서 뭘 하는지.' },
-    { id: 't6spa', x: 18, y: 8, dir: 'left', pal: PAL.lady, talk: async () => {
+    { id: 't6bather', x: 31, y: 14, dir: 'up', pal: PAL.swimmer, talk: '노천 온천은 무료야! …몬스터는 출입 금지래.\n불 타입 몬스터가 들어가면 물이 끓어 버린다나.' },
+    { id: 't6miner', x: 6, y: 9, dir: 'left', pal: PAL.hiker, move: 'look', talk: '광부: 화산 근처 돌은 열을 오래 머금어서 대장간에서 귀하게 쓰지.\n담장도 전부 화산석으로 쌓았다네.' },
+    { id: 't6old', x: 19, y: 12, dir: 'down', pal: PAL.oldman, move: 'look', talk: '십 년 전 불꽃산이 크게 터졌을 때, 산 너머 마을 하나가 사라졌지…\n그 마을에서 살아남은 아이가 있었다는데, 지금은 어디서 뭘 하는지.' },
+    { id: 't6spa', x: 25, y: 11, dir: 'left', pal: PAL.lady, talk: async () => {
       await say('온천지기: 어서 오세요! 불꽃마을 온천에 몸을 담그고 가세요~');
       await healParty();
       await say('온천지기: 동료들이 모두 기운을 되찾았어요!');
     } },
   ],
   triggers: [
-    { x: 20, y: 3, when: () => !f('badge5'), run: pushBack(['소방관: 잠깐! 화산 입구는 출입 금지야.', '수련관 관장 화련 님께 먼저 가 봐!'], 'left') },
-    { x: 1, y: 12, when: () => !f('volcanoDone'), run: pushBack(['서쪽 6번 도로 입구다.', '화산이 계속 흔들려서 길이 위험해 보인다…\n먼저 화산의 소동을 해결해야 할 것 같다.'], 'right') },
+    { x: 27, y: 6, when: () => !f('badge5'), run: pushBack(['소방관: 잠깐! 화산 입구는 출입 금지야.', '수련관 관장 화련 님께 먼저 가 봐!'], 'left') },
+    { x: 8, y: 15, when: () => !f('volcanoDone'), run: pushBack(['서쪽 6번 도로 입구다.', '화산이 계속 흔들려서 길이 위험해 보인다…\n먼저 화산의 소동을 해결해야 할 것 같다.'], 'right') },
   ],
 };
 
-const center6 = makeCenter('center6', '불꽃마을 회복소', 'town6', 4, 9, '불 타입은 물·땅·바위 기술에 약해.\n화련 관장님께 가기 전에 꼭 챙겨 둬!');
-const shop6 = makeShop('shop6', '불꽃마을 상점', 'town6', 16, 4, '화산에 들어간다면 만능회복약을 꼭 챙기세요!');
+const center6 = makeCenter('center6', '불꽃마을 회복소', 'town6', 11, 12, '불 타입은 물·땅·바위 기술에 약해.\n화련 관장님께 가기 전에 꼭 챙겨 둬!');
+const shop6 = makeShop('shop6', '불꽃마을 상점', 'town6', 23, 7, '화산에 들어간다면 만능회복약을 꼭 챙기세요!');
 
 const gym5: MapDef = {
   id: 'gym5', name: '불꽃 수련관', indoor: true,
@@ -2017,8 +2092,8 @@ const gym5: MapDef = {
     'XXXXXeeXXXXX',
   ],
   warps: [
-    { x: 5, y: 11, to: 'town6', tx: 5, ty: 4, dir: 'down' },
-    { x: 6, y: 11, to: 'town6', tx: 5, ty: 4, dir: 'down' },
+    { x: 5, y: 11, to: 'town6', tx: 12, ty: 7, dir: 'down' },
+    { x: 6, y: 11, to: 'town6', tx: 12, ty: 7, dir: 'down' },
   ],
   npcs: [
     { id: 'g5f1', x: 1, y: 8, dir: 'right', pal: PAL2.firefighter, sight: 7, trainer: tr('g5f1', '불꽃수련생', '지글', PAL2.firefighter, [['jangjak', 34], ['hwaro', 34]], 1500, '용암처럼 뜨거운 승부다!', '불이 꺼졌다…', '관장님의 화산뿔은 땅 타입도 가지고 있어.') },
@@ -2052,7 +2127,7 @@ const volcano: MapDef = {
     'C______________________C',
     'CCCCCCCCCCCCCCCCCCCCCCCC',
   ],
-  warps: [{ x: 0, y: 9, to: 'town6', tx: 20, ty: 3, dir: 'left' }, { x: 12, y: 0, to: 'volcano_forge', tx: 9, ty: 12, dir: 'up' }],
+  warps: [{ x: 0, y: 9, to: 'town6', tx: 34, ty: 6, dir: 'left' }, { x: 12, y: 0, to: 'volcano_forge', tx: 9, ty: 12, dir: 'up' }],
   encounters: {
     rate: 0.1, tiles: '_',
     table: [['jangjak', 29, 31, 20], ['hwaro', 29, 30, 8], ['dokjeongal', 29, 31, 15], ['geoam', 30, 31, 6], ['daeji', 29, 31, 8], ['heukjang', 29, 30, 15], ['geosin', 29, 30, 6], ['dokdae', 29, 30, 6], ['sutdol', 29, 30, 14], ['hwarotdol', 30, 31, 6]], post: [['maekae', 30, 31, 10], ['yeongi', 31, 32, 6], ['amheuk', 36, 38, 2]],
@@ -2086,8 +2161,8 @@ const route6: MapDef = {
     '########################################',
   ],
   warps: [
-    { x: 39, y: 6, to: 'town6', tx: 1, ty: 12, dir: 'right' },
-    { x: 0, y: 6, to: 'town7', tx: 20, ty: 8, dir: 'left' },
+    { x: 39, y: 6, to: 'town6', tx: 1, ty: 15, dir: 'right' },
+    { x: 0, y: 6, to: 'town7', tx: 34, ty: 11, dir: 'left' },
   ],
   signs: [{ x: 36, y: 9, text: '6번 도로\n서쪽: 서리마을   동쪽: 불꽃마을' }],
   encounters: {
@@ -2127,7 +2202,7 @@ const plateau: MapDef = {
     '######################',
   ],
   warps: [
-    { x: 0, y: 11, to: 'town1', tx: 18, ty: 8, dir: 'left' },
+    { x: 0, y: 11, to: 'town1', tx: 32, ty: 11, dir: 'left' },
     { x: 21, y: 11, to: 'route8', tx: 22, ty: 6, dir: 'right' },
     { x: 10, y: 3, to: 'league', tx: 7, ty: 13, dir: 'up' },
     { x: 11, y: 3, to: 'league', tx: 8, ty: 13, dir: 'up' },
@@ -2233,58 +2308,69 @@ const icecave_deep: MapDef = {
 const town7: MapDef = {
   id: 'town7', name: '서리마을', edge: 'h', ambience: northWeather,
   tiles: [
-    'hhhhhhhhhhhhhhhhhhhOhh',
-    'h``YYYYY`````MMMM````h',
-    'h``YYYYY`````MMMM````h',
-    'h``WwDwW`````WDwW````h',
-    'h````=````````=``````h',
-    'h````==========``````h',
-    'h``BBBB``=``````ii```h',
-    'h``BHBB``=``````ii```h',
-    '===WEwW``=============',
-    'h=======`````````````h',
-    'h````````````jjjj````h',
-    'h``````S`````jjjj````h',
-    'h````````````````````h',
-    'h````````````````````h',
-    'h````````````````````h',
-    'hhhhhhhhhhhhhhhhhhhhhh',
+    'hhhhhhhhhhhhhhhhhhhhhhhhhhOhhhhhhhhh',
+    'h```````````h``Ⅷ``h````````````````h',
+    'hΛΛΛΛΛ```````````````````````ΛΛΛΛΛ`h',
+    'hΛΛΛΛΛ```````````````````````ΛΛΛΛΛ`h',
+    'hϜϝDϜϜ````ΛΛΛΛΛ`````MMMM`````WwDwW`h',
+    'h``=``````ΛΛΛΛΛ`````MMMM```````=```h',
+    'h``=``````WwDwW`````WDwW```````=```h',
+    'h``=`Ⅸ``````=````````=```````h`=`h`h',
+    'h``=````````==========`````````=```h',
+    'h``=``````BBBB``=``````ii``````=```h',
+    'h``=``````BHBB``=``````ii``````=```h',
+    '==========WEwW``====================',
+    'h```````=======````````````````````h',
+    'hⅩⅪ`ⅩⅪ``````````````jjjj```````````h',
+    'h`````````````S`````jjjj```````````h',
+    'hⅧ```Ⅷ`````````````````````````````h',
+    'h```````````````````````Ϙ````````Ϙ`h',
+    'h````````````````````````iiiiiiii``h',
+    'hh`h`````````````````````iiiiiiii``h',
+    'h`h``````Ϙ`Ⅸ`Ϙ`Ⅸ`Ϙ`Ⅸ`Ϙ```iiiiiiii``h',
+    'hh`h`````````````````````iiiiiiii``h',
+    'h```````````````````````θ````````θ`h',
+    'hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh',
   ],
   warps: [
-    { x: 21, y: 8, to: 'route6', tx: 1, ty: 6, dir: 'right' },
-    { x: 0, y: 8, to: 'route7', tx: 28, ty: 7, dir: 'left' },
-    { x: 5, y: 3, to: 'gym6', tx: 6, ty: 10, dir: 'up' },
-    { x: 14, y: 3, to: 'shop8', tx: 4, ty: 6, dir: 'up' },
-    { x: 4, y: 8, to: 'center8', tx: 4, ty: 6, dir: 'up' },
-    { x: 19, y: 0, to: 'icecave', tx: 10, ty: 13, dir: 'up' },
+    { x: 3, y: 4, to: 'house7a', tx: 4, ty: 6, dir: 'up' },
+    { x: 31, y: 4, to: 'house7b', tx: 4, ty: 6, dir: 'up' },
+    { x: 35, y: 11, to: 'route6', tx: 1, ty: 6, dir: 'right' },
+    { x: 0, y: 11, to: 'route7', tx: 28, ty: 7, dir: 'left' },
+    { x: 12, y: 6, to: 'gym6', tx: 6, ty: 10, dir: 'up' },
+    { x: 21, y: 6, to: 'shop8', tx: 4, ty: 6, dir: 'up' },
+    { x: 11, y: 11, to: 'center8', tx: 4, ty: 6, dir: 'up' },
+    { x: 26, y: 0, to: 'icecave', tx: 10, ty: 13, dir: 'up' },
   ],
-  labels: [
-    { x: 5, y: 6.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
-    { x: 15, y: 1.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
-    { x: 19, y: 1.4, text: '얼음굴', color: '#e0f4ff', ink: '#2a5a8a' },
-    { x: 5.5, y: 1.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' },
+  labels: [ { x: 3, y: 2.2, text: '얼음 공방', color: '#e8f4ff', ink: '#2a4a7a' }, { x: 31, y: 2.2, text: '코코아 찻집', color: '#fff0e0', ink: '#7a4a2a' }, { x: 29, y: 16.1, text: '스케이트장', color: '#e8f4ff', ink: '#2a4a7a' }, { x: 15, y: 18.1, text: '얼음 조각 정원', color: '#e8f4ff', ink: '#2a4a7a' },
+    { x: 12, y: 9.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
+    { x: 22, y: 4.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
+    { x: 26, y: 1.2, text: '얼음굴', color: '#e0f4ff', ink: '#2a5a8a' },
+    { x: 12.5, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' },
   ],
-  signs: [{ x: 7, y: 11, text: '서리마을\n일 년 내내 눈이 내리는 마을  ·  서쪽: 설원 산길' }],
+  signs: [{ x: 14, y: 14, text: '서리마을\n일 년 내내 눈이 내리는 마을  ·  서쪽: 설원 산길' }],
   encounters: { rate: 0.1, tiles: 'j', table: [['agibuk', 32, 34, 40], ['nunnyang', 32, 34, 30], ['agipeng', 32, 34, 30]] },
   npcs: [
-    { id: 't7old', x: 11, y: 10, dir: 'down', pal: PAL.oldman, move: 'look', talk: '이렇게 지독한 눈보라는 처음일세.\n용의 마을의 여의주가 하늘을 다스린다는 옛말이 있는데… 무슨 일이 있는 게야.' },
-    { id: 't7kid', x: 17, y: 12, dir: 'left', pal: PAL.kid, move: 'wander', talk: '마을 연못은 꽁꽁 얼어서 미끄럼을 탈 수 있어! 수련관 바닥도 다 얼음이래!' },
-    { id: 'rival_t7', x: 15, y: 10, dir: 'down', pal: PAL.rival, hidden: () => f('iceIntro') },
-    { id: 't7mom', x: 8, y: 4, dir: 'down', pal: PAL.lady, move: 'look', talk: async () => {
+    { id: 't7igloo', x: 3, y: 14, dir: 'down', pal: PAL.oldman, move: 'look', talk: '이글루 할아버지: 옛날엔 서리마을 사람들 모두 이글루에서 살았지.\n얼음집이 생각보다 훨씬 따뜻하다네.' },
+    { id: 't7skater', x: 28, y: 19, dir: 'right', pal: PAL.skier, move: 'look', talk: '스케이트장에선 한 방향으로 쭉 미끄러져!\n눈밭 가장자리에 닿아야 멈춘다고.' },
+    { id: 't7old', x: 18, y: 13, dir: 'down', pal: PAL.oldman, move: 'look', talk: '이렇게 지독한 눈보라는 처음일세.\n용의 마을의 여의주가 하늘을 다스린다는 옛말이 있는데… 무슨 일이 있는 게야.' },
+    { id: 't7kid', x: 24, y: 15, dir: 'left', pal: PAL.kid, move: 'wander', talk: '마을 연못은 꽁꽁 얼어서 미끄럼을 탈 수 있어! 수련관 바닥도 다 얼음이래!' },
+    { id: 'rival_t7', x: 22, y: 13, dir: 'down', pal: PAL.rival, hidden: () => f('iceIntro') },
+    { id: 't7mom', x: 15, y: 7, dir: 'down', pal: PAL.lady, move: 'look', talk: async () => {
       if (f('champion')) await snowMomPost();
       else if (f('iceCaveDone')) await say('눈송이 엄마: 눈송이가 아기북곰이랑 꼭 붙어서 안 떨어져요.\n정말 고마웠어요!');
       else await say('눈송이 엄마: 우리 눈송이가 아기북곰을 쫓아서 얼음굴에 들어갔어요…\n얼음굴은 마을 북동쪽이에요. 제발 찾아 주세요!');
     } },
   ],
   triggers: [
-    { x: 5, y: 4, when: () => f('iceIntro') && !f('iceCaveDone') && !f('badge6'), run: pushBack(['수련관 문에 쪽지가 붙어 있다.', '「관장 서리는 얼음굴에 들어간 아이를 찾으러 갔습니다.」'], 'down') },
-    { x: 19, y: 8, when: () => !f('iceIntro'), run: iceIntroScene },
-    { x: 1, y: 8, when: () => !f('badge6'), run: pushBack(['서쪽 설원 산길은 눈보라가 너무 심하다…', '마을 사람: 수련관 관장 서리 님께 인정받으면 길을 안내해 줄 거야.'], 'right') },
+    { x: 12, y: 7, when: () => f('iceIntro') && !f('iceCaveDone') && !f('badge6'), run: pushBack(['수련관 문에 쪽지가 붙어 있다.', '「관장 서리는 얼음굴에 들어간 아이를 찾으러 갔습니다.」'], 'down') },
+    { x: 26, y: 11, when: () => !f('iceIntro'), run: iceIntroScene },
+    { x: 8, y: 11, when: () => !f('badge6'), run: pushBack(['서쪽 설원 산길은 눈보라가 너무 심하다…', '마을 사람: 수련관 관장 서리 님께 인정받으면 길을 안내해 줄 거야.'], 'right') },
   ],
 };
 
-const center8 = makeCenter('center8', '서리마을 회복소', 'town7', 4, 9, '얼음 타입은 불·격투·바위·강철 기술에 약해.\n수련관 바닥은 얼음이라 미끄러우니 조심해!');
-const shop8 = makeShop('shop8', '서리마을 상점', 'town7', 14, 4, '따뜻한 핫초코는 안 팔지만, 회복약은 넉넉하답니다!');
+const center8 = makeCenter('center8', '서리마을 회복소', 'town7', 11, 12, '얼음 타입은 불·격투·바위·강철 기술에 약해.\n수련관 바닥은 얼음이라 미끄러우니 조심해!');
+const shop8 = makeShop('shop8', '서리마을 상점', 'town7', 21, 7, '따뜻한 핫초코는 안 팔지만, 회복약은 넉넉하답니다!');
 
 const gym6: MapDef = {
   id: 'gym6', name: '서리 수련관', indoor: true,
@@ -2303,8 +2389,8 @@ const gym6: MapDef = {
     'XXXXXXeeXXXXX',
   ],
   warps: [
-    { x: 6, y: 11, to: 'town7', tx: 5, ty: 4, dir: 'down' },
-    { x: 7, y: 11, to: 'town7', tx: 5, ty: 4, dir: 'down' },
+    { x: 6, y: 11, to: 'town7', tx: 12, ty: 7, dir: 'down' },
+    { x: 7, y: 11, to: 'town7', tx: 12, ty: 7, dir: 'down' },
   ],
   npcs: [
     { id: 'g6ski1', x: 1, y: 10, dir: 'right', pal: PAL.skier, trainer: tr('g6s1', '스키어', '설아', PAL.skier, [['nunnyang', 40], ['eolpeng', 40]], 1800, '얼음 위에서는 멈추고 싶은 곳에서 멈출 수 없어. 그게 이 수련관의 시험이지!', '미끄러졌다…', '바위에 부딪혀야 멈출 수 있어. 어디서 멈출지 잘 생각해 봐!') },
@@ -2338,7 +2424,7 @@ const icecave: MapDef = {
     'C__________________C',
     'CCCCCCCCCCOCCCCCCCCC',
   ],
-  warps: [{ x: 10, y: 14, to: 'town7', tx: 19, ty: 1, dir: 'down' }, { x: 10, y: 0, to: 'icecave_deep', tx: 9, ty: 13, dir: 'up' }],
+  warps: [{ x: 10, y: 14, to: 'town7', tx: 26, ty: 1, dir: 'down' }, { x: 10, y: 0, to: 'icecave_deep', tx: 9, ty: 13, dir: 'up' }],
   encounters: {
     rate: 0.1,
     tiles: '_',
@@ -2377,8 +2463,8 @@ const route7: MapDef = {
     'hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh',
   ],
   warps: [
-    { x: 29, y: 7, to: 'town7', tx: 1, ty: 8, dir: 'right' },
-    { x: 0, y: 7, to: 'town8', tx: 22, ty: 8, dir: 'left' },
+    { x: 29, y: 7, to: 'town7', tx: 1, ty: 11, dir: 'right' },
+    { x: 0, y: 7, to: 'town8', tx: 36, ty: 11, dir: 'left' },
   ],
   signs: [{ x: 9, y: 11, text: '7번 도로 설원 산길\n서쪽: 용의 마을   동쪽: 서리마을' }],
   encounters: {
@@ -2427,58 +2513,70 @@ const den_altar: MapDef = {
 const town8: MapDef = {
   id: 'town8', name: '용의 마을',
   tiles: [
-    'CCCCCCCCCCCOCCCCCCCCCCCC',
-    '#..KKKKK...=...MMMM....#',
-    '#..KKKKK...=...MMMM....#',
-    '#..WwDwW...=...WDwW....#',
-    '#....=.....=....=......#',
-    '#....============......#',
-    '#..BBBB....=....~~~~...#',
-    '#..BHBB....=....~~~~.J.#',
-    '#..WEwW....=============',
-    '========...=...........#',
-    '#..........=......ff...#',
-    '#..ff......=...........#',
-    '#..........=......,,,,.#',
-    '#..........=......,,,,.#',
-    '#......................#',
-    '########################',
+    '##################O###################',
+    '#...............Ⅻ.ϱ.Ⅻ................#',
+    '#ⓛ~~~~ⓛ..........ⅰⅲⅱ............ΓΓΓΓΓ#',
+    '#~ⅶⅷ~~~.........ⅳ.ϱ.ⅳ...........ΓΓΓΓΓ#',
+    '#~ⅸⅹ~ⓛ~...ΓΓΓΓΓ...ϱ...MMMM......ϜϝDϝϜ#',
+    '#~γγ~~~...ΓΓΓΓΓ...ϱ...MMMM........ϱ..#',
+    '#ⓛγ~~~~...WwDwW...ϱ...WDwW......ⅵ.ϱ.ⅵ#',
+    '#~γ~ⓖ~ⓛ.....ϱ.....ϱ....ϱ..........ϱ..#',
+    '#...........ϱϱϱϱϱϱϱϱϱϱϱϱ..........ϱ..#',
+    '#ⅴⅴ.ⅴⅴⅴ...BBBB....ϱ....~~~~.......ϱ..#',
+    '#ⅴ.ⅴ.ⅴ....BHBB....ϱ....~~~~.J.....ϱ..#',
+    '#.........WEwW....ϱϱϱϱϱϱϱϱϱϱϱϱϱϱϱϱϱϱϱϱ',
+    'ϱϱϱϱϱϱϱϱϱϱϱϱϱϱϱ...ϱ..................#',
+    '#..ϱ..............ϱ......ff..........#',
+    '#..ϱ......ff......ϱ.............ⅴ.ⅴ.ⅴ#',
+    '#ΓΓΓΓΓ............ϱ......,,,,........#',
+    '#ΓΓΓΓΓ............ϱ......,,,,...ⅴ.ⅴ.ⅴ#',
+    '#ϜϝDϝϜⅵ.................ⓛ~~ⓛ~ⓖ.......#',
+    '#..ϱ....................δδδδδδ.......#',
+    '#..ϱ....................ⓖ~ⓛ~~ⓛ.......#',
+    '#..ϱ......Ⅻ....Ⅻ....Ⅻ....Ⅻ....Ⅻ......#',
+    '#..ϱ.................................#',
+    '######################################',
   ],
   warps: [
-    { x: 23, y: 8, to: 'route7', tx: 1, ty: 7, dir: 'right' },
-    { x: 0, y: 9, to: 'route8', tx: 22, ty: 6, dir: 'left' },
-    { x: 11, y: 0, to: 'den', tx: 9, ty: 13, dir: 'up' },
-    { x: 5, y: 3, to: 'gym7', tx: 5, ty: 11, dir: 'up' },
-    { x: 16, y: 3, to: 'shop9', tx: 4, ty: 6, dir: 'up' },
-    { x: 4, y: 8, to: 'center9', tx: 4, ty: 6, dir: 'up' },
+    { x: 34, y: 4, to: 'house8a', tx: 4, ty: 6, dir: 'up' },
+    { x: 3, y: 17, to: 'house8b', tx: 4, ty: 6, dir: 'up' },
+    { x: 37, y: 11, to: 'route7', tx: 1, ty: 7, dir: 'right' },
+    { x: 0, y: 12, to: 'route8', tx: 22, ty: 6, dir: 'left' },
+    { x: 18, y: 0, to: 'den', tx: 9, ty: 13, dir: 'up' },
+    { x: 12, y: 6, to: 'gym7', tx: 5, ty: 11, dir: 'up' },
+    { x: 23, y: 6, to: 'shop9', tx: 4, ty: 6, dir: 'up' },
+    { x: 11, y: 11, to: 'center9', tx: 4, ty: 6, dir: 'up' },
   ],
-  labels: [
-    { x: 5, y: 6.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
-    { x: 17, y: 1.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
-    { x: 5.5, y: 1.1, text: '용의 수련관', color: '#e8e0ff', ink: '#4a3a8a' },
-    { x: 21.5, y: 6.2, text: '사당', color: '#fff2a8', ink: '#7a5a10' },
+  labels: [ { x: 34, y: 2.2, text: '공예방', color: '#f4f0e0', ink: '#4a3a2a' }, { x: 3, y: 15.2, text: '서당', color: '#f4f0e0', ink: '#4a3a2a' }, { x: 3, y: 2.3, text: '정자', color: '#f4f0e0', ink: '#4a3a2a' },
+    { x: 12, y: 9.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
+    { x: 24, y: 4.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
+    { x: 12.5, y: 4.1, text: '용의 수련관', color: '#e8e0ff', ink: '#4a3a8a' },
+    { x: 28.5, y: 9.2, text: '사당', color: '#fff2a8', ink: '#7a5a10' },
   ],
   signs: [],
   encounters: { rate: 0.12, table: [['kkomaryong', 34, 36, 20], ['nalgae', 35, 37, 10], ['hyeonmuk', 34, 36, 12], ['beotkkot', 34, 36, 14], ['wolgung', 34, 36, 10], ['mujigae', 34, 36, 10], ['jangma', 34, 36, 12], ['eungeo', 34, 36, 12], ['kkomadorong', 34, 36, 10]] },
   fishing: [['hyeonmuk', 32, 36, 35], ['eungeo', 34, 37, 45], ['aurora', 34, 37, 20]],
   npcs: [
-    { id: 'elder', x: 20, y: 7, dir: 'right', pal: PAL.elder, talk: () => elderTalk() },
-    { id: 't8lady', x: 8, y: 11, dir: 'right', pal: PAL.lady, move: 'wander', talk: '용의 마을 아이들은 꼬마룡과 함께 자란대요.\n수련관의 용 석상은 문제를 낸다던데, 타입 상성을 잘 알아야 한대요!' },
-    { id: 'heuk_t8', x: 12, y: 1, dir: 'left', pal: PAL.boss, hidden: () => !f('dragonIntro') || f('denDone'), talk: async () => {
+    { id: 't8poet', x: 2, y: 4, dir: 'down', pal: PAL.oldman, talk: '정자에 앉은 선비: 연못에 비친 달을 보며 시 한 수 짓는 중이라네.\n「용이 잠든 마을에 연꽃이 피니, 하늘도 고요하구나」' },
+    { id: 't8jar', x: 33, y: 7, dir: 'down', pal: PAL.granny, move: 'look', talk: '장독대 항아리마다 된장, 간장, 고추장이 익어 간다오.\n용의 마을 장맛은 해솔 지방에서 제일이지.' },
+    { id: 't8kid', x: 19, y: 18, dir: 'down', pal: PAL.kid, move: 'wander', talk: '징검다리 건너는 거 무섭지 않아! 꼬마룡이랑 같이 건너면 하나도 안 무서워.' },
+    { id: 'elder', x: 27, y: 10, dir: 'right', pal: PAL.elder, talk: () => elderTalk() },
+    { id: 't8lady', x: 15, y: 14, dir: 'right', pal: PAL.lady, move: 'wander', talk: '용의 마을 아이들은 꼬마룡과 함께 자란대요.\n수련관의 용 석상은 문제를 낸다던데, 타입 상성을 잘 알아야 한대요!' },
+    { id: 'heuk_t8', x: 19, y: 4, dir: 'left', pal: PAL.boss, hidden: () => !f('dragonIntro') || f('denDone'), talk: async () => {
       if (!f('heukHelp')) await denEntranceScene();
       else await say('흑영: 입구는 내가 지키겠다. 서둘러라.');
     } },
   ],
   triggers: [
-    { x: 21, y: 8, when: () => !f('dragonIntro'), run: dragonIntroScene },
-    { x: 11, y: 1, when: () => f('dragonIntro') && !f('heukHelp'), run: denEntranceScene },
-    { x: 5, y: 4, when: () => !f('pearlReturned'), run: pushBack(['수련관 문에 쪽지가 붙어 있다.', '「관장 용하는 여의주를 찾으러 나갔습니다. — 수련생 일동」'], 'down') },
-    { x: 1, y: 9, when: () => !f('badge7'), run: pushBack(['서쪽 8번 도로 입구다.', '마을 사람: 여의주가 없어서 서쪽 길에 먹구름이 잔뜩 끼었어.\n지금은 위험해!'], 'right') },
+    { x: 28, y: 11, when: () => !f('dragonIntro'), run: dragonIntroScene },
+    { x: 18, y: 4, when: () => f('dragonIntro') && !f('heukHelp'), run: denEntranceScene },
+    { x: 12, y: 7, when: () => !f('pearlReturned'), run: pushBack(['수련관 문에 쪽지가 붙어 있다.', '「관장 용하는 여의주를 찾으러 나갔습니다. — 수련생 일동」'], 'down') },
+    { x: 8, y: 12, when: () => !f('badge7'), run: pushBack(['서쪽 8번 도로 입구다.', '마을 사람: 여의주가 없어서 서쪽 길에 먹구름이 잔뜩 끼었어.\n지금은 위험해!'], 'right') },
   ],
 };
 
-const center9 = makeCenter('center9', '용의 마을 회복소', 'town8', 4, 9, '드래곤 타입은 얼음·드래곤·페어리 기술에 약해.\n용하 관장님께 도전한다면 기억해 둬!');
-const shop9 = makeShop('shop9', '용의 마을 상점', 'town8', 16, 4, '해솔 리그에 가기 전 마지막 상점이에요. 넉넉히 챙기세요!');
+const center9 = makeCenter('center9', '용의 마을 회복소', 'town8', 11, 12, '드래곤 타입은 얼음·드래곤·페어리 기술에 약해.\n용하 관장님께 도전한다면 기억해 둬!');
+const shop9 = makeShop('shop9', '용의 마을 상점', 'town8', 23, 7, '해솔 리그에 가기 전 마지막 상점이에요. 넉넉히 챙기세요!');
 
 const den: MapDef = {
   id: 'den', name: '용의 둥지', dark: true, ambience: 'den',
@@ -2499,7 +2597,7 @@ const den: MapDef = {
     'C__________________C',
     'CCCCCCCCCOCCCCCCCCCC',
   ],
-  warps: [{ x: 9, y: 14, to: 'town8', tx: 11, ty: 1, dir: 'down' }, { x: 10, y: 0, to: 'den_altar', tx: 7, ty: 8, dir: 'up' }],
+  warps: [{ x: 9, y: 14, to: 'town8', tx: 18, ty: 1, dir: 'down' }, { x: 10, y: 0, to: 'den_altar', tx: 7, ty: 8, dir: 'up' }],
   encounters: {
     rate: 0.1, tiles: '_',
     table: [['nalgae', 36, 37, 18], ['dokdae', 36, 37, 12], ['geosin', 36, 37, 10], ['daeji', 36, 37, 10], ['geoam', 36, 37, 10], ['beongae', 36, 37, 10], ['cheonryong', 37, 37, 2], ['hyeonmu', 37, 37, 4], ['dokjeongal', 36, 37, 10], ['kkomaryong', 36, 37, 14]],
@@ -2541,8 +2639,8 @@ const gym7: MapDef = {
     'XXXXXeeXXXXX',
   ],
   warps: [
-    { x: 5, y: 12, to: 'town8', tx: 5, ty: 4, dir: 'down' },
-    { x: 6, y: 12, to: 'town8', tx: 5, ty: 4, dir: 'down' },
+    { x: 5, y: 12, to: 'town8', tx: 12, ty: 7, dir: 'down' },
+    { x: 6, y: 12, to: 'town8', tx: 12, ty: 7, dir: 'down' },
   ],
   npcs: [
     { id: 'gate7a', x: 4, y: 9, dir: 'down', barrier: 'stone', hidden: () => f('quiz1'), talk: '용의 문이 굳게 닫혀 있다. 옆의 석상에게 말을 걸어 보자.' },
@@ -2582,7 +2680,7 @@ const route8: MapDef = {
     '########################',
   ],
   warps: [
-    { x: 23, y: 6, to: 'town8', tx: 1, ty: 9, dir: 'right' },
+    { x: 23, y: 6, to: 'town8', tx: 1, ty: 12, dir: 'right' },
     { x: 0, y: 6, to: 'plateau', tx: 20, ty: 11, dir: 'left' },
   ],
   signs: [{ x: 11, y: 9, text: '8번 도로\n서쪽: 해솔고원 · 솔빛마을   동쪽: 용의 마을' }],
@@ -2688,7 +2786,394 @@ const summit: MapDef = {
   triggers: [7, 8].map((x) => ({ x, y: 5, when: () => !f('haesolMet'), run: haesolMeet })),
 };
 
+const house1a: MapDef = {
+  id: 'house1a', name: '솔빛마을 이웃집', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkookkkX',
+    'XooooooooX',
+    'XTToooooTX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town1', tx: 30, ty: 6, dir: 'down' },
+    { x: 5, y: 7, to: 'town1', tx: 30, ty: 6, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h1a_grandpa', x: 2, y: 2, dir: 'down', pal: PAL.oldman, talk: '이웃 할아버지: 마을 서쪽 풍차는 내가 젊을 때 직접 세운 거라네.\n바람이 좋은 날엔 날개가 하루 종일 돌아가지.' },
+    { id: 'h1a_kid', x: 6, y: 5, dir: 'left', pal: PAL.kid, move: 'wander', talk: '할아버지 밭에서 딴 감자, 진짜 맛있어!\n나중에 크면 나도 몬스터랑 같이 농사지을 거야.' },
+    { id: 'h1a_item', x: 8, y: 2, dir: 'down', item: { id: 'potion', qty: 3 } },
+  ],
+};
+
+const house1b: MapDef = {
+  id: 'house1b', name: '솔빛 마을회관', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkkookkX',
+    'XooooooooX',
+    'XooTTTTooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town1', tx: 4, ty: 21, dir: 'down' },
+    { x: 5, y: 7, to: 'town1', tx: 4, ty: 21, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h1b_chief', x: 4, y: 2, dir: 'down', pal: PAL.elder, talk: '이장: 솔빛마을 마을회관에 온 걸 환영하네.\n해솔 지방 여행은 1번 도로 북쪽에서 시작된다네.' },
+    { id: 'h1b_board', x: 7, y: 1, dir: 'down', prop: 'S', talk: '마을 게시판\n「몬스터가 기절하면 회복소에서 쉬게 해 주세요」\n「풀숲이 깊을수록 다른 몬스터가 나와요」' },
+    { id: 'h1b_lady', x: 2, y: 5, dir: 'right', pal: PAL.lady, talk: '요즘 동쪽 해솔고원 쪽에서 별똥별이 자주 떨어진대요.\n소원 빌어 봤어요?' },
+  ],
+};
+
+const house2a: MapDef = {
+  id: 'house2a', name: '들꽃마을 온실', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XεεoooεεεX',
+    'XooooooooX',
+    'XεεooooεεX',
+    'XooooooooX',
+    'XεooooooεX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town2', tx: 3, ty: 6, dir: 'down' },
+    { x: 5, y: 7, to: 'town2', tx: 3, ty: 6, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h2a_botanist', x: 4, y: 2, dir: 'down', pal: PAL.birder, talk: '식물학자: 이 온실에선 사계절 내내 꽃이 피어요.\n풀 타입 몬스터들이 햇볕 쬐러 자주 놀러 온답니다.' },
+    { id: 'h2a_item', x: 7, y: 4, dir: 'down', item: { id: 'superpotion', qty: 2 } },
+    { id: 'h2a_mon', x: 2, y: 4, dir: 'down', mon: 'kkotip', talk: '꽃잎새가 꽃 사이를 기분 좋게 폴짝폴짝 뛰어다닌다.' },
+  ],
+};
+
+const house2b: MapDef = {
+  id: 'house2b', name: '들꽃마을 꽃집', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkookkkX',
+    'XooooooooX',
+    'XTToooooTX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town2', tx: 30, ty: 6, dir: 'down' },
+    { x: 5, y: 7, to: 'town2', tx: 30, ty: 6, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h2b_florist', x: 4, y: 2, dir: 'down', pal: PAL.girl, talk: '꽃집 주인: 어서 오세요! 들꽃마을 꽃은 해솔 지방 최고랍니다.\n봄 축제 때는 광장 분수 둘레가 꽃으로 가득 차요.' },
+    { id: 'h2b_old', x: 7, y: 5, dir: 'left', pal: PAL.granny, talk: '꽃말 알려 줄까? 해바라기는 「기다림」, 들국화는 「소박한 행복」.\n몬스터와 함께하는 하루하루가 꼭 들국화 같지.' },
+  ],
+};
+
+const house3a: MapDef = {
+  id: 'house3a', name: '어부의 집', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkookkkX',
+    'XooooooooX',
+    'XTTooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town3', tx: 32, ty: 4, dir: 'down' },
+    { x: 5, y: 7, to: 'town3', tx: 32, ty: 4, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h3a_fisher', x: 4, y: 2, dir: 'down', pal: PAL.fisher, talk: '늙은 어부: 물안개가 짙은 새벽에 호수 한가운데로 배를 띄우면\n은빛잉어가 수면 위로 뛰어오르는 걸 볼 수 있지.' },
+    { id: 'h3a_wife', x: 7, y: 4, dir: 'left', pal: PAL.lady, talk: '우리 집은 물 위에 지어서 밤에는 물소리를 들으며 자요.\n가끔 물귀신이 창문을 두드린다던데… 농담이에요!' },
+    { id: 'h3a_item', x: 1, y: 5, dir: 'down', item: { id: 'superball', qty: 3 } },
+  ],
+};
+
+const house3b: MapDef = {
+  id: 'house3b', name: '안개 찻집', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkookkkX',
+    'XooooooooX',
+    'XoTTooTToX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town3', tx: 3, ty: 5, dir: 'down' },
+    { x: 5, y: 7, to: 'town3', tx: 3, ty: 5, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h3b_owner', x: 4, y: 2, dir: 'down', pal: PAL.granny, talk: '찻집 주인: 안개가 걷힐 때까지 차 한잔 하고 가요.\n…몬스터들도 따뜻한 걸 마시면 기운이 난답니다.', },
+    { id: 'h3b_guest', x: 2, y: 4, dir: 'right', pal: PAL.man, talk: '이 찻집 창문으로 보면 습지 징검다리가 안개 속에 둥둥 떠 있는 것 같아.\n그림 그리러 매일 온다네.' },
+    { id: 'h3b_guest2', x: 7, y: 4, dir: 'left', pal: PAL.swimmer, talk: '마루 관장님 수련관 바닥이 물웅덩이투성이라서\n수영 연습 삼아 매일 가요!' },
+  ],
+};
+
+const house4a: MapDef = {
+  id: 'house4a', name: '별빛 천문대', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkoooooX',
+    'XooooooooX',
+    'XooTTooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town4', tx: 2, ty: 4, dir: 'down' },
+    { x: 5, y: 7, to: 'town4', tx: 2, ty: 4, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h4a_astro', x: 4, y: 2, dir: 'down', pal: PAL.prof, talk: '천문학자: 별빛시라는 이름은 이 천문대에서 시작됐다네.\n밤마다 별빛동굴 위로 별똥별이 쏟아지는 걸 관측했거든.' },
+    { id: 'h4a_scope', x: 7, y: 1, dir: 'down', prop: 'ⓨ', talk: '망원경을 들여다보았다… 용의 모양을 한 별자리가 보인다.\n머리, 심장, 꼬리에 유난히 밝은 별이 박혀 있다.' },
+    { id: 'h4a_kid', x: 2, y: 5, dir: 'right', pal: PAL.kid, talk: '은하고래가 밤하늘을 헤엄치면 별비가 내린대!\n천문학자 아저씨는 그걸 꼭 한번 보고 싶대.' },
+  ],
+};
+
+const house4b: MapDef = {
+  id: 'house4b', name: '별빛 트레이너 학원', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkookkkX',
+    'XooooooooX',
+    'XTToooTToX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town4', tx: 31, ty: 5, dir: 'down' },
+    { x: 5, y: 7, to: 'town4', tx: 31, ty: 5, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h4b_teacher', x: 4, y: 1, dir: 'down', pal: PAL.man, talk: '강사: 오늘의 수업! 같은 타입의 기술을 쓰면 위력이 1.5배가 된단다.\n몬스터와 같은 타입의 기술을 하나쯤은 꼭 익혀 두렴.' },
+    { id: 'h4b_s1', x: 2, y: 4, dir: 'up', pal: PAL.pupil, talk: '학생: 상태 이상은 확률로 걸리고, 이미 다른 상태 이상이면 안 걸린대요.\n노트에 적어 둬야지.' },
+    { id: 'h4b_s2', x: 7, y: 4, dir: 'up', pal: PAL.girl, talk: '학생: 기술사탕이랑 기술단지로 PP를 회복할 수 있어요!\n긴 동굴 들어가기 전엔 꼭 챙기래요.' },
+    { id: 'h4b_board', x: 7, y: 1, dir: 'down', prop: 'S', talk: '칠판: 「불 → 풀·얼음·벌레·강철에 강함」 「물 → 불·땅·바위에 강함」\n「전기 → 물·비행에 강함, 땅에는 통하지 않음」' },
+  ],
+};
+
+const house5a: MapDef = {
+  id: 'house5a', name: '등대지기의 집', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkoooTTX',
+    'XooooooooX',
+    'XooooooooX',
+    'XTToooooTX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town5', tx: 38, ty: 9, dir: 'down' },
+    { x: 5, y: 7, to: 'town5', tx: 38, ty: 9, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h5a_keeper', x: 4, y: 2, dir: 'down', pal: PAL.captain, talk: '등대지기: 삼십 년째 저 등대 불을 지키고 있지.\n은파호가 사라지던 폭풍의 밤에도… 나는 불을 끄지 않았다네.' },
+    { id: 'h5a_log', x: 7, y: 1, dir: 'down', prop: '(', talk: '등대 일지가 펼쳐져 있다.\n「오늘도 바다는 조용함. 남쪽 부두 너머로 낡은 배 한 척이 보임.」' },
+    { id: 'h5a_item', x: 2, y: 5, dir: 'down', item: { id: 'hyperpotion', qty: 1 } },
+  ],
+};
+
+const house5b: MapDef = {
+  id: 'house5b', name: '파도 식당', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkookkkX',
+    'XooooooooX',
+    'XoTTooTToX',
+    'XooooooooX',
+    'XoTTooTToX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town5', tx: 38, ty: 4, dir: 'down' },
+    { x: 5, y: 7, to: 'town5', tx: 38, ty: 4, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h5b_cook', x: 4, y: 1, dir: 'down', pal: PAL.clerk, talk: '주방장: 오늘의 메뉴는 먹물 듬뿍 해물 볶음밥!\n…아, 먹물이는 안 넣었어요. 진짜예요.' },
+    { id: 'h5b_sailor', x: 2, y: 4, dir: 'right', pal: PAL2.sailor, talk: '뱃사람: 바다 몬스터는 대개 전기 기술에 약하지.\n그래서 우리 배엔 늘 찌릿이 한 마리가 같이 탄다네.' },
+    { id: 'h5b_sailor2', x: 7, y: 4, dir: 'left', pal: PAL2.surfer, talk: '서핑하다 배고파서 왔어! 파도항구 앞바다는 파도가 딱 좋아.' },
+  ],
+};
+
+const house6a: MapDef = {
+  id: 'house6a', name: '불꽃 대장간', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkoooooX',
+    'XooooooooX',
+    'XoooooooTX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town6', tx: 3, ty: 5, dir: 'down' },
+    { x: 5, y: 7, to: 'town6', tx: 3, ty: 5, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h6a_smith', x: 4, y: 2, dir: 'down', pal: PAL.hiker, talk: '대장장이: 화산의 열기로 쇠를 달구면 아주 단단해지지.\n장작고미가 불을 지펴 주고, 가마솥대장이 쇳물을 데워 준다네.' },
+    { id: 'h6a_anvil', x: 7, y: 3, dir: 'down', prop: 'Ⅶ', talk: '모루 위에서 쇳덩이가 벌겋게 달아올라 있다. 뜨거워서 만질 수 없다.' },
+    { id: 'h6a_apprentice', x: 2, y: 5, dir: 'right', pal: PAL.kid, talk: '견습생: 사부님은 흑영이란 사람이 어릴 때 이 마을에 자주 왔었대요.\n숯골에서 온 아이였다나…' },
+  ],
+};
+
+const house6b: MapDef = {
+  id: 'house6b', name: '불꽃 온천장', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkookkkX',
+    'XooooooooX',
+    'XoⅤⅤooⅤⅤoX',
+    'XoⅤⅤooⅤⅤoX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town6', tx: 31, ty: 4, dir: 'down' },
+    { x: 5, y: 7, to: 'town6', tx: 31, ty: 4, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h6b_owner', x: 4, y: 1, dir: 'down', pal: PAL.lady, talk: async () => {
+      await say('온천장 주인: 어서 오세요! 불꽃산 온천물로 데운 탕이에요.\n동료들도 푹 쉬고 가세요.');
+      await healParty();
+      await say('동료들이 모두 기운을 되찾았다!');
+    } },
+    { id: 'h6b_guest', x: 8, y: 5, dir: 'left', pal: PAL.oldman, talk: '어이구 시원하다~ 화산 덕분에 이 마을 온천은 일 년 내내 뜨끈하다네.\n가끔 숯돌이가 몰래 들어와서 몸을 녹이고 가지.' },
+  ],
+};
+
+const house7a: MapDef = {
+  id: 'house7a', name: '서리 얼음 공방', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkoooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XTToooooTX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town7', tx: 3, ty: 5, dir: 'down' },
+    { x: 5, y: 7, to: 'town7', tx: 3, ty: 5, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h7a_sculptor', x: 4, y: 2, dir: 'down', pal: PAL.seori, talk: '얼음 조각가: 마을 남쪽 조각 정원은 전부 내 작품이야.\n눈꽃 뿔을 가진 하얀 사슴, 설화를 새기는 게 평생의 꿈이지.' },
+    { id: 'h7a_piece', x: 7, y: 3, dir: 'down', prop: 'Ⅸ', talk: '만들다 만 얼음 조각이다. 날개를 펼친 새의 모습 같다.' },
+    { id: 'h7a_item', x: 2, y: 5, dir: 'down', item: { id: 'ppjar', qty: 1 } },
+  ],
+};
+
+const house7b: MapDef = {
+  id: 'house7b', name: '눈꽃 코코아 찻집', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkookkkX',
+    'XooooooooX',
+    'XoTToTTooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town7', tx: 31, ty: 5, dir: 'down' },
+    { x: 5, y: 7, to: 'town7', tx: 31, ty: 5, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h7b_owner', x: 4, y: 1, dir: 'down', pal: PAL.lady, talk: '찻집 주인: 눈보라를 뚫고 오셨군요! 따뜻한 코코아 한 잔 드릴게요.\n…상점에선 안 판다던 핫초코, 사실 여기서 팔아요.' },
+    { id: 'h7b_skater', x: 2, y: 4, dir: 'right', pal: PAL.skier, talk: '남쪽 스케이트장은 한번 미끄러지면 멈출 수가 없어!\n가장자리 눈밭에 닿아야 서는 거, 수련관 바닥이랑 똑같지?' },
+    { id: 'h7b_kid', x: 7, y: 5, dir: 'left', pal: PAL.kid, talk: '눈송이: 아기북곰이 코코아를 엄청 좋아해!\n빙산곰도 사실은 단 걸 좋아한대.' },
+  ],
+};
+
+const house8a: MapDef = {
+  id: 'house8a', name: '용 비늘 공예방', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkoooooX',
+    'XooooooooX',
+    'XooooooTTX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town8', tx: 34, ty: 5, dir: 'down' },
+    { x: 5, y: 7, to: 'town8', tx: 34, ty: 5, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h8a_artisan', x: 4, y: 2, dir: 'down', pal: PAL.yongha, talk: '공예 장인: 꼬마룡이 허물을 벗을 때 떨어진 비늘로 장신구를 만든다네.\n비늘 한 장 한 장에 하늘빛이 담겨 있지.' },
+    { id: 'h8a_work', x: 7, y: 3, dir: 'down', prop: 'T', talk: '작업대 위에 푸른 비늘로 만든 노리개가 놓여 있다. 은은하게 반짝인다.' },
+    { id: 'h8a_item', x: 2, y: 5, dir: 'down', item: { id: 'pphoney', qty: 1 } },
+  ],
+};
+
+const house8b: MapDef = {
+  id: 'house8b', name: '용의 마을 서당', indoor: true,
+  tiles: [
+    'XXXXXXXXXX',
+    'XkkkookkkX',
+    'XooooooooX',
+    'XoTToTTooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XooooooooX',
+    'XXXXeeXXXX',
+  ],
+  warps: [
+    { x: 4, y: 7, to: 'town8', tx: 3, ty: 18, dir: 'down' },
+    { x: 5, y: 7, to: 'town8', tx: 3, ty: 18, dir: 'down' },
+  ],
+  npcs: [
+    { id: 'h8b_teacher', x: 4, y: 1, dir: 'down', pal: PAL.elder, talk: '훈장님: 오늘은 천룡님 이야기를 배우겠다.\n천룡님은 여의주를 하늘에 띄워 비와 눈과 바람을 다스리셨지.' },
+    { id: 'h8b_s1', x: 2, y: 4, dir: 'up', pal: PAL.pupil, talk: '학동: 여의주가 사라지면 북쪽에 눈보라가 그치지 않는대요.\n서리마을이 그래서 그렇게 추웠던 거래요!' },
+    { id: 'h8b_s2', x: 7, y: 4, dir: 'up', pal: PAL.kid, talk: '학동: 용 석상 수수께끼 정답, 나는 다 외웠어!\n…타입 상성만 알면 쉬워.' },
+  ],
+};
+
 export const MAPS: Record<string, MapDef> = {
+  house8b,
+  house8a,
+  house7b,
+  house7a,
+  house6b,
+  house6a,
+  house5b,
+  house5a,
+  house4b,
+  house4a,
+  house3b,
+  house3a,
+  house2b,
+  house2a,
+  house1b,
+  house1a,
   home, town1, lab, route1, town2, center, shop, dojo,
   route2, forest, forest_grove, forest_tree, town3, center3, shop3, gym2,
   route3, cave, town4, center4, shop4, antique, gym3, peak, pastel,

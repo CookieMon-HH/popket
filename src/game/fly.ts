@@ -11,14 +11,14 @@ import { j } from './common';
 
 /** [map id, name, landing x, landing y (in front of the 회복소), progress flag that implies a visit]. */
 const TOWNS: [string, string, number, number, string][] = [
-  ['town1', '솔빛마을', 4, 5, 'gotStarter'],
-  ['town2', '들꽃마을', 4, 8, 'badge1'],
-  ['town3', '물안개마을', 4, 8, 'badge2'],
-  ['town4', '별빛시', 3, 8, 'badge3'],
-  ['town5', '파도항구', 4, 9, 'badge4'],
-  ['town6', '불꽃마을', 4, 9, 'badge5'],
-  ['town7', '서리마을', 4, 9, 'badge6'],
-  ['town8', '용의 마을', 4, 9, 'badge7'],
+  ['town1', '솔빛마을', 11, 8, 'gotStarter'],
+  ['town2', '들꽃마을', 11, 11, 'badge1'],
+  ['town3', '물안개마을', 11, 11, 'badge2'],
+  ['town4', '별빛시', 10, 11, 'badge3'],
+  ['town5', '파도항구', 11, 12, 'badge4'],
+  ['town6', '불꽃마을', 11, 12, 'badge5'],
+  ['town7', '서리마을', 11, 12, 'badge6'],
+  ['town8', '용의 마을', 11, 12, 'badge7'],
   ['plateau', '해솔고원', 4, 11, 'champion'],
 ];
 

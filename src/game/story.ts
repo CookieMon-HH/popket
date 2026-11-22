@@ -715,7 +715,7 @@ export async function iceCaveScene() {
   await say('관장 서리: 아이는 제가 데려갈게요. 수련관에서 기다릴게요!');
   await fadeTo(1, 12);
   game.flags.iceCaveDone = true;
-  world.load('town7', 5, 4, 'down');
+  world.load('town7', 12, 7, 'down');
   await wait(12);
   await fadeTo(0, 12);
   await say('눈송이 엄마: 눈송이를 찾아 주셨군요! 정말… 정말 고마워요.\n이거, 얼마 안 되지만 받아 주세요.');

@@ -2,6 +2,11 @@ import { fixExp, type Mon } from './monster';
 import type { Dir } from './common';
 import { RENAMED } from '../data/species';
 
+/** How far each town's old layout moved when the towns were widened (layout 2). */
+const TOWN_SHIFT: Record<string, [number, number]> = {
+  town1: [7, 3], town2: [7, 3], town3: [7, 3], town4: [7, 3], town5: [7, 3], town6: [7, 3], town7: [7, 3], town8: [7, 3],
+};
+
 export interface GameState {
   name: string;
   map: string;
@@ -16,6 +21,8 @@ export interface GameState {
   seen: string[];
   caught: string[];
   lastHeal: { map: string; x: number; y: number };
+  /** Town layout version (2 = towns widened; older saves get positions shifted). */
+  townLayout?: number;
   frames: number;
   /** Set while inside the safari: frames of time left (runs during battles too). */
   safari?: { left: number; balls?: number };
@@ -43,6 +50,7 @@ function fresh(name: string): GameState {
     caught: [],
     lastHeal: { map: 'home', x: 6, y: 3 },
     frames: 0,
+    townLayout: 2,
   };
 }
 
@@ -101,6 +109,14 @@ export function loadGame(): boolean {
     }
     data.seen = [...new Set((data.seen ?? []).map(fix))];
     data.caught = [...new Set((data.caught ?? []).map(fix))];
+    // Towns were widened: saves standing in a town keep their spot in the new layout.
+    if ((data.townLayout ?? 1) < 2) {
+      const sh = TOWN_SHIFT[data.map];
+      if (sh) { data.x += sh[0]; data.y += sh[1]; }
+      const lh = TOWN_SHIFT[data.lastHeal?.map];
+      if (lh) { data.lastHeal.x += lh[0]; data.lastHeal.y += lh[1]; }
+      data.townLayout = 2;
+    }
     newGame(data.name);
     Object.assign(game, data);
     runtime.savedAt = game.frames;

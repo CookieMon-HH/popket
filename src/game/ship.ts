@@ -242,5 +242,5 @@ export async function shipExitCheck() {
     game.flags.ship_left_once = true;
     await say('…등 뒤에서 누군가 속삭였다. 「돌아… 와…」');
   }
-  await warpTo('town5', 19, 12, 'down');
+  await warpTo('town5', 26, 15, 'down');
 }
