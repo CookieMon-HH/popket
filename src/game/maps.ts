@@ -99,6 +99,8 @@ export interface MapDef {
   signs?: { x: number; y: number; text: string }[];
   /** Name tags drawn over buildings (x, y in tile units; x is the tag's center). */
   labels?: { x: number; y: number; text: string; color?: string; ink?: string }[];
+  /** Default ground under street furniture when no plain ground tile is nearby. */
+  ground?: string;
   /** Atmosphere overlay: tint, particles and weather drawn over the map. */
   ambience?: Ambience | (() => Ambience);
   encounters?: { rate: number; table: Table; tiles?: string; /** extra monsters after the ending */ post?: Table };

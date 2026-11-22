@@ -6,6 +6,9 @@ import type { Scene } from '../engine/scene';
 import { DIRS, DIRV, OPP, pick, rand, clamp, type Dir } from './common';
 import { MAPS, type MapDef, type NPCDef, type Ambience } from './maps';
 import { SOLID, tileCanvas, TALL_CHARS } from './tiles';
+import { DECO, TOWN_GROUND } from './towntiles';
+
+const GROUNDS = '.`d:=_o' + TOWN_GROUND;
 import { silhouette } from '../engine/pix';
 import { personSprite, itemSprite, monSprite, boulderSprite, barrierSprite, type Pal } from './sprites';
 import { game, runtime, beatenAll } from './state';
@@ -344,6 +347,23 @@ export class Overworld implements Scene {
     return [Math.round(cx), Math.round(cy)];
   }
 
+  private groundCache = new Map<string, string>();
+  /** The ground under a decoration: the nearest plain ground tile around it. */
+  groundNear(tx: number, ty: number): string {
+    const key = this.map.id + ':' + tx + ',' + ty;
+    let gch = this.groundCache.get(key);
+    if (gch) return gch;
+    gch = this.map.ground ?? '.';
+    outer: for (let r = 1; r <= 3; r++) {
+      for (const [dx, dy] of [[0, 1], [-1, 0], [1, 0], [0, -1], [-1, 1], [1, 1], [-1, -1], [1, -1]]) {
+        const c = this.tileAt(tx + dx * r, ty + dy * r);
+        if (GROUNDS.includes(c)) { gch = c; break outer; }
+      }
+    }
+    this.groundCache.set(key, gch);
+    return gch;
+  }
+
   drawWorld(g: Ctx) {
     const [cx, cy] = this.camera();
     this.cam = [cx, cy];
@@ -356,6 +376,8 @@ export class Overworld implements Scene {
       for (let tx = x0; tx <= x0 + Math.ceil(W / 16); tx++) {
         const ch = this.tileAt(tx, ty);
         if (ch === ' ') continue;
+        // Street furniture is drawn over the ground of a neighbouring tile.
+        if (DECO.has(ch)) g.drawImage(tileCanvas(this.groundNear(tx, ty), anim), tx * 16 - cx, ty * 16 - cy);
         g.drawImage(tileCanvas(ch, anim), tx * 16 - cx, ty * 16 - cy);
       }
     }

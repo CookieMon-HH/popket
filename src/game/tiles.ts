@@ -1,6 +1,7 @@
 import { Pix } from '../engine/pix';
+import { drawTownTile, TOWN_ROOF, TOWN_SOLID, TOWN_ANIM } from './towntiles';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', 'ⓟ', '┏', '┓', '┗', '┛', 'ⓝ', 'ⓦ', 'ⓜ', 'ⓑ', 'ⓒ', 'ⓨ', 'ⓠ', 'ⓘ', ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', 'ⓟ', '┏', '┓', '┗', '┛', 'ⓝ', 'ⓦ', 'ⓜ', 'ⓑ', 'ⓒ', 'ⓨ', 'ⓠ', 'ⓘ', 'Ρ', 'Σ', 'Φ', 'Δ', 'Λ', 'Γ', 'Θ', 'Π', ...TOWN_SOLID, ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -148,8 +149,8 @@ function build(ch: string, anim: number): Pix {
       p.rect(4, 4, 8, 1, '#7a4a24');
       p.rect(4, 6, 6, 1, '#7a4a24');
       break;
-    case 'R': case 'G': case 'B': case 'M': case 'K': case 'Y': case 'A': {
-      const [base, dark] = ROOF[ch];
+    case 'R': case 'G': case 'B': case 'M': case 'K': case 'Y': case 'A': case 'Ρ': case 'Σ': case 'Φ': case 'Δ': case 'Λ': case 'Γ': case 'Θ': case 'Π': {
+      const [base, dark] = ROOF[ch] ?? TOWN_ROOF[ch];
       p.rect(0, 0, 16, 16, base);
       for (let y = 0; y < 16; y += 4) {
         p.rect(0, y + 3, 16, 1, dark);
@@ -777,14 +778,14 @@ function build(ch: string, anim: number): Pix {
       p.rect(2, 14, 12, 2, '#6a5a50');
       break;
     default:
-      p.rect(0, 0, 16, 16, '#000000');
+      if (!drawTownTile(ch, anim, p)) p.rect(0, 0, 16, 16, '#000000');
   }
   return p;
 }
 
 const cache = new Map<string, HTMLCanvasElement>();
 export function tileCanvas(ch: string, anim: number): HTMLCanvasElement {
-  const animated = ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$' || ch === '①' || ch === '②' || ch === '③' || ch === '◰' || ch === '◳' || ch === '◱' || ch === '◲' || ch === 'ⓒ' || ch === 'ⓠ';
+  const animated = TOWN_ANIM.has(ch) || ch === 'Ⅴ' || ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$' || ch === '①' || ch === '②' || ch === '③' || ch === '◰' || ch === '◳' || ch === '◱' || ch === '◲' || ch === 'ⓒ' || ch === 'ⓠ';
   const key = animated ? ch + anim : ch;
   let c = cache.get(key);
   if (!c) {
