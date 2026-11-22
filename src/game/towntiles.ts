@@ -12,10 +12,12 @@ export const TOWN_GROUND = 'αβγϖϱϑ';
 /** Walkable town tiles (everything else here is solid). */
 export const TOWN_WALKABLE = 'αβγδϖϱϑⅲⅸⅹⓔⓕ';
 /** Drawn over the ground of a neighbouring tile. */
-export const DECO = new Set([...'εζθικλμρςφψωϘνξοπστυχⅠⅡⅢⅦⅧⅨⅩⅪⅫⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⓣⓐⓓⓔⓕ']);
+export const DECO = new Set([...'▽◁▷εζθικλμρςφψωϘνξοπστυχⅠⅡⅢⅦⅧⅨⅩⅪⅫⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⓣⓐⓓⓔⓕ']);
 export const TOWN_ANIM = new Set([...'νξοπⅠⅤⅦⅫⓛϘ♥♠♢♦']);
 // The observatory's lower half (with its door) and the pavilion floor can be walked onto.
-export const TOWN_SOLID = [...'εζθικλμρςφψωϘνξοπστυχⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫⅰⅱⅳⅴⅵⅶⅷⓖⓛⓣⓐⓓϜϝϟ♡♥♣♠♦♤♧'];
+export const TOWN_SOLID = [...'εζθικλμρςφψωϘνξοπστυχⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫⅰⅱⅳⅴⅵⅶⅷⓖⓛⓣⓐⓓϜϝϟ♡♥♣♠♦♤♧▽◁▷▓▒'];
+/** One-way ledges: walking onto one in its direction hops over it. */
+export const LEDGE: Record<string, [number, number]> = { '▽': [0, 1], '◁': [-1, 0], '▷': [1, 0] };
 
 /** Extra roof colours: [base, dark]. */
 export const TOWN_ROOF: Record<string, [string, string]> = {
@@ -287,6 +289,30 @@ export function drawTownTile(ch: string, anim: number, p: Pix): boolean {
     case 'ϟ': // grey stone wall
       p.rect(0, 0, 16, 16, '#8a8a94');
       for (let y = 0; y < 16; y += 4) { p.rect(0, y + 3, 16, 1, '#6a6a74'); const off = (y / 4) % 2 ? 4 : 0; for (let x = off; x < 16; x += 8) p.rect(x, y, 1, 3, '#6a6a74'); }
+      return true;
+    // ── elevation: ledges, cliffs, stairs ───────────────────────
+    case '▽': // ledge you can hop down (lip along the bottom)
+      p.rect(0, 10, 16, 6, '#8a6a44'); p.rect(0, 10, 16, 1, '#c8a070'); p.rect(0, 15, 16, 1, '#5a4228');
+      for (const x of [2, 7, 12]) p.rect(x, 12, 2, 1, '#6a5034');
+      return true;
+    case '◁': case '▷': { // ledge facing left / right
+      const x0 = ch === '◁' ? 0 : 10;
+      p.rect(x0, 0, 6, 16, '#8a6a44'); p.rect(ch === '◁' ? 5 : 10, 0, 1, 16, '#c8a070'); p.rect(ch === '◁' ? 0 : 15, 0, 1, 16, '#5a4228');
+      for (const y of [3, 8, 13]) p.rect(x0 + 2, y, 1, 2, '#6a5034');
+      return true;
+    }
+    case '▓': case '▒': { // cliff face (▒: snow-capped)
+      const snow = ch === '▒';
+      p.rect(0, 0, 16, 16, snow ? '#7a8494' : '#8a6a4e');
+      for (const [x, y, w] of [[1, 4, 6], [9, 2, 6], [3, 9, 7], [11, 11, 4]]) { p.rect(x, y, w, 1, snow ? '#5a6474' : '#6a4e38'); p.rect(x, y + 1, w, 1, snow ? '#9aa4b4' : '#a8886a'); }
+      p.rect(0, 0, 16, 3, snow ? '#f4f8fc' : '#6ab45a'); p.rect(0, 3, 16, 1, snow ? '#c8d4e4' : '#4a8a3e');
+      p.rect(0, 15, 16, 1, snow ? '#4a5464' : '#4a3828');
+      return true;
+    }
+    case '▤': // stone stairs
+      p.rect(0, 0, 16, 16, '#9a9aa0');
+      for (const y of [0, 4, 8, 12]) { p.rect(0, y, 16, 3, '#b8b8c0'); p.rect(0, y + 3, 16, 1, '#6a6a74'); }
+      p.rect(0, 0, 1, 16, '#7a7a84'); p.rect(15, 0, 1, 16, '#7a7a84');
       return true;
     // ── the ghost ship seen from the harbour (water behind it) ──
     case '♡': // broken mast with a tattered flag

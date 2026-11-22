@@ -6,7 +6,7 @@ import type { Scene } from '../engine/scene';
 import { DIRS, DIRV, OPP, pick, rand, clamp, type Dir } from './common';
 import { MAPS, type MapDef, type NPCDef, type Ambience } from './maps';
 import { SOLID, tileCanvas, TALL_CHARS } from './tiles';
-import { DECO, TOWN_GROUND } from './towntiles';
+import { DECO, TOWN_GROUND, LEDGE } from './towntiles';
 
 const GROUNDS = '.`d:=_oi' + TOWN_GROUND;
 import { silhouette } from '../engine/pix';
@@ -23,6 +23,8 @@ export interface Actor {
   offY: number;
   moving: number;
   step: number;
+  /** Frames left of a ledge hop (0 = walking). */
+  hop?: number;
 }
 
 export interface NPC extends Actor {
@@ -125,6 +127,20 @@ export class Overworld implements Scene {
         this.tryMove(rock, dir);
       }
     }
+    // Hop down a ledge facing this way (two tiles in one bouncy step).
+    const lg = a === this.player ? LEDGE[this.tileAt(a.x + dx, a.y + dy)] : undefined;
+    if (lg && lg[0] === dx && lg[1] === dy) {
+      if (this.blocked(a.x + dx * 2, a.y + dy * 2, a) || this.npcAt(a.x + dx * 2, a.y + dy * 2)) return false;
+      a.x += dx * 2;
+      a.y += dy * 2;
+      a.offX = -dx * 32;
+      a.offY = -dy * 32;
+      a.moving = STEP * 2;
+      a.hop = STEP * 2;
+      a.step++;
+      sfx('bump');
+      return true;
+    }
     if (this.blocked(a.x + dx, a.y + dy, a)) return false;
     a.x += dx;
     a.y += dy;
@@ -138,9 +154,11 @@ export class Overworld implements Scene {
   private stepActor(a: Actor): boolean {
     if (a.moving <= 0) return false;
     a.moving--;
-    const k = a.moving / STEP;
-    a.offX = Math.sign(a.offX) * 16 * k;
-    a.offY = Math.sign(a.offY) * 16 * k;
+    const span = a.hop ? STEP * 2 : STEP;
+    const k = a.moving / span;
+    a.offX = Math.sign(a.offX) * 16 * (a.hop ? 2 : 1) * k;
+    a.offY = Math.sign(a.offY) * 16 * (a.hop ? 2 : 1) * k;
+    if (a.moving === 0) a.hop = 0;
     return a.moving === 0;
   }
 
@@ -461,9 +479,10 @@ export class Overworld implements Scene {
       const prog = 1 - a.moving / STEP;
       const striding = a.moving > 0 && prog > 0.05 && prog < 0.9 && !(a === this.player && this.sliding);
       const frame = striding ? (a.step % 2 ? 1 : 3) : 0;
+      const lift = a.hop ? Math.round(Math.sin((1 - a.moving / (STEP * 2)) * Math.PI) * 7) : 0;
       const pal = npc ? npc.def.pal ?? PLAYER_PAL : PLAYER_PAL;
       if (npc?.def.ghost) g.globalAlpha = 0.45 + Math.sin(clock.frame / 9) * 0.15;
-      g.drawImage(personSprite(pal, a.dir, frame), sx, sy - 5);
+      g.drawImage(personSprite(pal, a.dir, frame), sx, sy - 5 - lift);
       g.globalAlpha = 1;
       const under = this.tileAt(a.x, a.y);
       if (TALL_CHARS.includes(under) && a.moving < STEP / 2) {
