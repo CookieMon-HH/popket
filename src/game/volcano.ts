@@ -88,3 +88,30 @@ export async function photoEpilogue() {
   jingle('item');
   await giveItem('firestone', 1);
 }
+
+// --- after the battle ------------------------------------------------------------
+
+/** 흑영's parting gift, left on the ledge that appears when the heart cools. */
+export async function heartChest() {
+  if (game.flags.heartChest) {
+    await say('텅 빈 상자다. 바닥에 「고맙다」라고 새겨져 있다.');
+    return;
+  }
+  game.flags.heartChest = true;
+  world.refreshNPCs();
+  sfx('door');
+  await say('굳은 용암 위에 낡은 상자가 놓여 있다. 뚜껑에 쪽지가 붙어 있다.');
+  await say('「검은안개단이 이 산에서 모은 것들이다. 이제는 필요 없지.\n 산이 다시 숨 쉬게 해 준 답례다. — 흑영」');
+  await giveItem('hyperball', 5);
+  await giveItem('pphoney', 2);
+  await giveItem('maxrevive', 1);
+}
+
+/** Played right after the boss fight while still standing in the heart. */
+export async function heartCalms() {
+  sfx('thunder');
+  await flashes(1);
+  await say('쿠르르르… 화산의 심장이 마지막으로 크게 고동치더니,\n이글거리던 불빛이 천천히 가라앉는다.');
+  await flashes(1);
+  await say('심장을 둘러싼 용암이 식어 검은 바위로 굳었다.\n안쪽 바위턱으로 건너갈 수 있는 길이 생겼다!');
+}

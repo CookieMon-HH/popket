@@ -1,4 +1,5 @@
 import { SPECIES } from '../data/species';
+import { game } from './state';
 import type { TrainerDef } from './maps';
 
 // ---------------------------------------------------------------------------
@@ -14,7 +15,7 @@ const BY_MAP: Record<string, string> = {
 export function musicForMap(id: string): string {
   if (BY_MAP[id]) return BY_MAP[id];
   if (id.startsWith('ship')) return 'ship';
-  if (id.startsWith('volcano')) return 'volcano';
+  if (id.startsWith('volcano')) return game.flags.volcanoDone ? 'cave' : 'volcano';
   if (id.startsWith('forest')) return 'forest';
   if (id.startsWith('icecave')) return 'icecave';
   if (id.startsWith('den')) return 'den';

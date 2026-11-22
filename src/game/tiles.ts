@@ -1,7 +1,7 @@
 import { Pix } from '../engine/pix';
 import { drawTownTile, TOWN_ROOF, TOWN_SOLID, TOWN_ANIM } from './towntiles';
 
-export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', 'ⓟ', '┏', '┓', '┗', '┛', 'ⓝ', 'ⓦ', 'ⓜ', 'ⓑ', 'ⓒ', 'ⓨ', 'ⓠ', 'ⓘ', 'Ρ', 'Σ', 'Φ', 'Δ', 'Λ', 'Γ', 'Θ', 'Π', ...TOWN_SOLID, ' ']);
+export const SOLID = new Set(['#', '~', 'F', 'S', 'R', 'G', 'B', 'M', 'K', 'Y', 'A', 'W', 'w', 'X', 'T', 'c', 'k', 'b', 'P', 'r', 'C', 'l', 'z', 'H', 'q', 'Q', 'm', 'v', 's', 'n', 'y', 'J', 'g', 'L', 'Z', 'h', '%', '&', '$', '7', '8', '-', '{', '}', '|', '<', '>', '@', '[', ']', '(', ')', '!', '"', '§', '¤', '¶', 'µ', '①', '②', '③', 'ⓡ', 'ⓥ', 'ⓢ', '◰', '◳', '◱', '◲', '▛', '▜', '▙', '▟', 'ⓟ', '┏', '┓', '┗', '┛', 'ⓝ', 'ⓦ', 'ⓜ', 'ⓑ', 'ⓒ', 'ⓨ', 'ⓠ', 'ⓘ', 'Ρ', 'Σ', 'Φ', 'Δ', 'Λ', 'Γ', 'Θ', 'Π', ...TOWN_SOLID, ' ']);
 
 const ROOF: Record<string, [string, string]> = {
   R: ['#d85a4a', '#a83c34'],
@@ -258,6 +258,18 @@ function build(ch: string, anim: number): Pix {
       p.set(6, 8, '#6aa8c8'); p.set(8, 9, '#6aa8c8');
       p.line(1, 11, 4, 9, '#8a6a3a'); p.line(12, 9, 15, 11, '#8a6a3a');
       break;
+    case '▛': case '▜': case '▙': case '▟': { // the heart after it calmed: a cooled crust, warm at the centre
+      const qx = ch === '▜' || ch === '▟' ? 1 : 0, qy = ch === '▙' || ch === '▟' ? 1 : 0;
+      const cx = 16 - qx * 16, cy = 16 - qy * 16;
+      p.rect(0, 0, 16, 16, '#2a2020');
+      p.ell(cx, cy, 15, 15, '#3a2e2e');
+      p.ell(cx, cy, 13, 13, '#4a3a38');
+      p.ell(cx - 3, cy - 4, 6, 4, '#5a4a46');
+      p.ell(cx, cy, 4.5, 4.5, anim ? '#c8501a' : '#a8401a');
+      p.ell(cx, cy, 2, 2, '#ffb060');
+      for (const [x1, y1, x2, y2] of [[cx - 10, cy - 2, cx - 5, cy], [cx + 4, cy + 3, cx + 10, cy + 6], [cx - 2, cy + 6, cx, cy + 11]]) p.line(x1, y1, x2, y2, '#8a3a1a');
+      break;
+    }
     case '◰': case '◳': case '◱': case '◲': { // the volcano's heart: one magma core over 2×2 tiles
       const qx = ch === '◳' || ch === '◲' ? 1 : 0, qy = ch === '◱' || ch === '◲' ? 1 : 0;
       const cx = 16 - qx * 16, cy = 16 - qy * 16;
@@ -785,7 +797,7 @@ function build(ch: string, anim: number): Pix {
 
 const cache = new Map<string, HTMLCanvasElement>();
 export function tileCanvas(ch: string, anim: number): HTMLCanvasElement {
-  const animated = TOWN_ANIM.has(ch) || ch === 'Ⅴ' || ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$' || ch === '①' || ch === '②' || ch === '③' || ch === '◰' || ch === '◳' || ch === '◱' || ch === '◲' || ch === 'ⓒ' || ch === 'ⓠ';
+  const animated = TOWN_ANIM.has(ch) || ch === 'Ⅴ' || ch === '~' || ch === 'f' || ch === 'L' || ch === '*' || ch === '%' || ch === '&' || ch === '$' || ch === '①' || ch === '②' || ch === '③' || ch === '◰' || ch === '◳' || ch === '◱' || ch === '◲' || ch === '▛' || ch === '▜' || ch === '▙' || ch === '▟' || ch === 'ⓒ' || ch === 'ⓠ';
   const key = animated ? ch + anim : ch;
   let c = cache.get(key);
   if (!c) {

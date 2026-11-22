@@ -85,7 +85,8 @@ export class Overworld implements Scene {
   }
 
   tileAt(x: number, y: number): string {
-    const row = this.map.tiles[y];
+    const a = this.map.after;
+    const row = (a && a.when() ? a.tiles : this.map.tiles)[y];
     if (!row || x < 0 || x >= row.length) return this.map.edge ?? (this.map.indoor ? ' ' : '#');
     return row[x];
   }
@@ -601,6 +602,8 @@ export class Overworld implements Scene {
       });
       // rumbles: a shake and a distant boom now and then
       if (!this.nextRumble) this.nextRumble = f + 300;
+      // once the volcano is calm, the ground stops shaking
+      if (game.flags.volcanoDone) this.nextRumble = f + 600;
       if (f >= this.nextRumble && !ui.active) {
         this.shake = heart ? 22 : 14;
         this.nextRumble = f + (heart ? 360 : 600) + Math.floor(Math.random() * 400);

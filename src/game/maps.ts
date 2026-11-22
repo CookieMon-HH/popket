@@ -16,7 +16,7 @@ import { chestProp, chestTalk, fossilSite } from './chests';
 import { fireflyAt, groveExit, fireflyTalk, whisper, oldTree, nestTalk, lostMong } from './forest';
 import { brazier, brazierProp, altarOpen, starMural, cloudNote, pearlAltar } from './den';
 import { mittenTalk, mural, northWeather } from './ice';
-import { forgeValve, forgeSchematic, channelCool, volcanoNote1, volcanoNote2, volcanoNote3 } from './volcano';
+import { forgeValve, forgeSchematic, channelCool, volcanoNote1, volcanoNote2, volcanoNote3, heartChest } from './volcano';
 import { antiqueOwner, musicBox, foxGirl, shipwright, moonCrystal, moonCrystalProp, moonPad, moonRiddle } from './events';
 import { boardShip, lockedBridge, lockedEngine, logPage1, portraitTalk, dalnimCabin, wardrobe, candleProp, candleTalk, pianoTalk, valveTalk, generatorTalk, shipAdminWinV2, wheelTalk, captainTalk, shipExitCheck } from './ship';
 import { receptionTalk } from './tournament';
@@ -99,6 +99,8 @@ export interface MapDef {
   signs?: { x: number; y: number; text: string }[];
   /** Name tags drawn over buildings (x, y in tile units; x is the tag's center). */
   labels?: { x: number; y: number; text: string; color?: string; ink?: string }[];
+  /** Tiles to use instead once something has happened (e.g. the volcano calms down). */
+  after?: { when: () => boolean; tiles: string[] };
   /** Default ground under street furniture when no plain ground tile is nearby. */
   ground?: string;
   /** Atmosphere overlay: tint, particles and weather drawn over the map. */
@@ -1977,16 +1979,33 @@ const volcano_forge: MapDef = {
     { id: 'vvalve2', x: 11, y: 12, dir: 'down', prop: 'ⓥ', talk: () => forgeValve(2) },
     { id: 'vvalve3', x: 3, y: 8, dir: 'down', prop: 'ⓥ', talk: () => forgeValve(3) },
     { id: 'vschem', x: 7, y: 12, dir: 'down', prop: 'ⓢ', talk: () => forgeSchematic() },
-    { id: 'vlavaC', x: 15, y: 10, dir: 'down', barrier: 'lava', hidden: () => channelCool.C(), talk: '용암이 펄펄 끓고 있다. 냉각수로 식히면 건널 수 있을 것 같다.' },
-    { id: 'vlavaB', x: 5, y: 6, dir: 'down', barrier: 'lava', hidden: () => channelCool.B(), talk: '용암이 펄펄 끓고 있다. 냉각수로 식히면 건널 수 있을 것 같다.' },
-    { id: 'vlavaA', x: 13, y: 3, dir: 'down', barrier: 'lava', hidden: () => channelCool.A(), talk: '용암이 펄펄 끓고 있다. 냉각수로 식히면 건널 수 있을 것 같다.' },
+    { id: 'vlavaC', x: 15, y: 10, dir: 'down', barrier: 'lava', hidden: () => channelCool.C() || f('volcanoDone'), talk: '용암이 펄펄 끓고 있다. 냉각수로 식히면 건널 수 있을 것 같다.' },
+    { id: 'vlavaB', x: 5, y: 6, dir: 'down', barrier: 'lava', hidden: () => channelCool.B() || f('volcanoDone'), talk: '용암이 펄펄 끓고 있다. 냉각수로 식히면 건널 수 있을 것 같다.' },
+    { id: 'vlavaA', x: 13, y: 3, dir: 'down', barrier: 'lava', hidden: () => channelCool.A() || f('volcanoDone'), talk: '용암이 펄펄 끓고 있다. 냉각수로 식히면 건널 수 있을 것 같다.' },
     { id: 'vnote2', x: 10, y: 8, dir: 'down', prop: 'ⓟ', hidden: () => f('vnote2'), talk: () => volcanoNote2() },
     { id: 'vnote3', x: 15, y: 2, dir: 'down', prop: 'ⓟ', hidden: () => f('vnote3'), talk: () => volcanoNote3() },
     grunt('vgrunt3', 12, 5, 'left', 4, [['amheuk', 36], ['hwarotdol', 35]], '제련소까지 들어오다니! 냉각 설비는 손대지 마라!', '밸브를… 이미 다 돌려 놨잖아…', '두목님은 산을 미워하시는 게 아니야. 산이 무서우신 거지.'),
   ],
 };
 const volcano_heart: MapDef = {
-  id: 'volcano_heart', name: '불꽃산 — 화산의 심장', dark: true, ambience: 'volcanoheart', edge: 'C',
+  id: 'volcano_heart', name: '불꽃산 — 화산의 심장', dark: true, edge: 'C',
+  ambience: () => (f('volcanoDone') ? 'volcano' : 'volcanoheart'),
+  // Once 흑영 withdraws the crystal the heart cools: the core settles and the lava around it
+  // hardens into black rock, opening a ledge where his parting gift waits.
+  after: { when: () => f('volcanoDone'), tiles: [
+      'CCCCCCCCCCCCCCCC',
+      'CLLLLLⓚⓚⓚⓚLLLLLC',
+      'CLLLⓚⓚ____ⓚⓚLLLC',
+      'CLLⓚ___▛▜___ⓚLLC',
+      'CLⓚ____▙▟____ⓚLC',
+      'Cⓚ____________ⓚC',
+      'Cⓚ____________ⓚC',
+      'CLⓚ__________ⓚLC',
+      'CLLⓚ________ⓚLLC',
+      'CLLLⓚⓚ____ⓚⓚLLLC',
+      'CLLLLLⓚ__ⓚLLLLLC',
+      'CCCCCCC__CCCCCCC',
+  ] },
   tiles: [
     'CCCCCCCCCCCCCCCC',
     'CLLLLLLLLLLLLLLC',
@@ -2006,6 +2025,7 @@ const volcano_heart: MapDef = {
     { x: 8, y: 11, to: 'volcano_forge', tx: 10, ty: 1, dir: 'down' },
   ],
   npcs: [
+    { id: 'heartchest', x: 8, y: 1, dir: 'down', prop: () => (f('heartChest') ? '¤' : '§'), hidden: () => !f('volcanoDone'), talk: () => heartChest() },
     { id: 'lg_jujak', x: 7, y: 5, dir: 'down', mon: 'jujak', hidden: () => !f('lg_jujak_ok') || f('lg_jujak'),
       talk: () => legendEncounter('jujak', 65, '붉은 불꽃의 새가 화산의 심장 위에 내려앉아 있다…\\n다가가 볼까?', '주작: 끼아아아——!') },
     { id: 'vboss', x: 8, y: 5, dir: 'down', pal: PAL.boss, hidden: () => f('volcanoDone'), requires: ['vgrunt1', 'vgrunt2', 'vgrunt3'], waitText: '흑영: …아직 내 부하들이 남아 있다. 그들을 넘어서지 못한다면\\n나와 겨룰 자격도 없다.', talk: () => volcanoBossScene() },

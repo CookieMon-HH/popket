@@ -1,5 +1,7 @@
 import { say, yesNo, choose } from '../engine/ui';
-import { photoEpilogue } from './volcano';
+import { photoEpilogue, heartCalms } from './volcano';
+import { playMusic } from '../engine/audio';
+import { musicForMap } from './music';
 import { allMurals } from './ice';
 import { wait } from '../engine/timing';
 import { fadeTo, flashes } from '../engine/scene';
@@ -594,8 +596,10 @@ async function volcanoWin() {
   await fadeTo(1, 12);
   game.flags.volcanoDone = true;
   world.refreshNPCs();
+  playMusic(musicForMap(world.map.id));
   await wait(12);
   await fadeTo(0, 12);
+  if (world.map.id === 'volcano_heart') await heartCalms();
   await say('검은안개단이 해산했다!\n불꽃마을 서쪽 6번 도로를 따라가면 눈 덮인 서리마을이 나온다고 한다.');
   await giveItem('maxrevive', 2);
 }
