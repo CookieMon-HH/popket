@@ -78,6 +78,13 @@ export function healMon(m: Mon) {
   for (const s of m.moves) s.pp = MOVES[s.id].pp;
 }
 
+/** Older saves stored EXP on a different curve (legends now level 1.5× slower): lift EXP
+ *  to at least the minimum for the monster's current level so the bar fills again. */
+export function fixExp(m: Mon) {
+  const min = expFor(m.level, m.species);
+  if (!(m.exp >= min)) m.exp = min;
+}
+
 export function expRatio(m: Mon) {
   if (m.level >= 100) return 1;
   const a = expFor(m.level, m.species);

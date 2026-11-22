@@ -1,4 +1,4 @@
-import type { Mon } from './monster';
+import { fixExp, type Mon } from './monster';
 import type { Dir } from './common';
 import { RENAMED } from '../data/species';
 
@@ -95,7 +95,10 @@ export function loadGame(): boolean {
     const data = JSON.parse(raw) as GameState;
     // Migrate species that were replaced in later versions.
     const fix = (id: string) => RENAMED[id] ?? id;
-    for (const m of [...(data.party ?? []), ...(data.box ?? [])]) m.species = fix(m.species);
+    for (const m of [...(data.party ?? []), ...(data.box ?? [])]) {
+      m.species = fix(m.species);
+      fixExp(m);
+    }
     data.seen = [...new Set((data.seen ?? []).map(fix))];
     data.caught = [...new Set((data.caught ?? []).map(fix))];
     newGame(data.name);

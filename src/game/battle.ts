@@ -9,7 +9,7 @@ import { SPECIES } from '../data/species';
 import { ITEMS } from '../data/items';
 import { effectiveness, TYPE_COLOR } from '../data/types';
 import { game, removeItem, markSeen, markCaught, addMon } from './state';
-import { monName, maxHp, calcStats, expFor, expRatio, type Mon } from './monster';
+import { monName, maxHp, calcStats, expFor, expRatio, fixExp, type Mon } from './monster';
 import { monSprite, monBackSprite, personSprite, capsuleSprite, type Pal } from './sprites';
 import { silhouette } from '../engine/pix';
 import { ART_V2 } from './monsprites2';
@@ -557,6 +557,7 @@ export async function runBattle(o: BattleOpts): Promise<BattleResult> {
     const active = m === me.mon;
     const n = monName(m);
     await say(`${j(n, '은/는')} ${amount} 경험치를 얻었다!`);
+    fixExp(m);
     m.exp += amount;
     while (m.level < 100 && m.exp >= expFor(m.level + 1, m.species)) {
       if (active) {
