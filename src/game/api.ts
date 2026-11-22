@@ -10,6 +10,7 @@ import { game, runtime, addItem, saveGame, markCaught, addMon, itemCount, beaten
 import { createMon, healMon, monName, maxHp, type Mon } from './monster';
 import { runBattle, type BattleResult } from './battle';
 import { monSprite } from './sprites';
+import { WorldMapView } from './worldmap';
 import { partyMenu, bagMenu, DexView, TrainerCard, pickPartyMember, BoxView, hooksForMenus } from './menus';
 import { learnMove, movesLearnedAt } from './learn';
 import { OPP, j, rand } from './common';
@@ -359,7 +360,7 @@ async function saveWithMessage(): Promise<boolean> {
 export async function startMenu() {
   let idx = 0;
   for (;;) {
-    const items = ['도감', '동료', '가방', ...(canFly() ? ['날아가기'] : []), game.name, '저장', '설정', '그만하기', '닫기'];
+    const items = ['도감', '동료', '가방', '지도', ...(canFly() ? ['날아가기'] : []), game.name, '저장', '설정', '그만하기', '닫기'];
     idx = await ui.run(new Menu({ items, cancel: true, x: OX + BW - 80, y: 2, w: 76, rowH: 15, index: idx }));
     const pick = items[idx];
     if (idx < 0 || pick === '닫기') return;
@@ -388,6 +389,7 @@ export async function startMenu() {
       else await ui.run(new DexView());
     } else if (pick === '동료') await partyMenu();
     else if (pick === '가방') await bagMenu();
+    else if (pick === '지도') await ui.run(new WorldMapView());
     else if (pick === game.name) await ui.run(new TrainerCard());
     else if (pick === '저장') {
       if (await yesNo('지금까지의 모험을 기록할까요?')) await saveWithMessage();

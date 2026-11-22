@@ -13,9 +13,9 @@ export const TOWN_GROUND = 'αβγϖϱϑ';
 export const TOWN_WALKABLE = 'αβγδϖϱϑⅲⅸⅹⓔⓕ';
 /** Drawn over the ground of a neighbouring tile. */
 export const DECO = new Set([...'εζθικλμρςφψωϘνξοπστυχⅠⅡⅢⅦⅧⅨⅩⅪⅫⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⓣⓐⓓⓔⓕ']);
-export const TOWN_ANIM = new Set([...'νξοπⅠⅤⅦⅫⓛϘ']);
+export const TOWN_ANIM = new Set([...'νξοπⅠⅤⅦⅫⓛϘ♥♠♢♦']);
 // The observatory's lower half (with its door) and the pavilion floor can be walked onto.
-export const TOWN_SOLID = [...'εζθικλμρςφψωϘνξοπστυχⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫⅰⅱⅳⅴⅵⅶⅷⓖⓛⓣⓐⓓϜϝϟ'];
+export const TOWN_SOLID = [...'εζθικλμρςφψωϘνξοπστυχⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫⅰⅱⅳⅴⅵⅶⅷⓖⓛⓣⓐⓓϜϝϟ♡♥♣♠♦♤♧'];
 
 /** Extra roof colours: [base, dark]. */
 export const TOWN_ROOF: Record<string, [string, string]> = {
@@ -288,6 +288,45 @@ export function drawTownTile(ch: string, anim: number, p: Pix): boolean {
       p.rect(0, 0, 16, 16, '#8a8a94');
       for (let y = 0; y < 16; y += 4) { p.rect(0, y + 3, 16, 1, '#6a6a74'); const off = (y / 4) % 2 ? 4 : 0; for (let x = off; x < 16; x += 8) p.rect(x, y, 1, 3, '#6a6a74'); }
       return true;
+    // ── the ghost ship seen from the harbour (water behind it) ──
+    case '♡': // broken mast with a tattered flag
+      WATER(p);
+      p.rect(7, 0, 2, 16, '#3a3036'); p.rect(4, 3, 8, 1, '#3a3036');
+      p.tri(9, 4, 9, 9, 14, 8, '#6a6a5a'); p.set(12, 6, '#3a6a4a');
+      return true;
+    case '♥': // soot-black funnel with a ghostly wisp
+      WATER(p);
+      p.rect(4, 5, 8, 11, '#2a2228'); p.rect(4, 8, 8, 2, '#5a2226'); p.rect(4, 5, 8, 1, '#4a4048');
+      p.ell(9 + anim, 2, 2.5, 1.8, '#8ae0b0'); p.set(8, 3 - anim, '#c8ffe0');
+      return true;
+    case '♣': // upper deck rail
+      WATER(p);
+      p.rect(0, 8, 16, 8, '#6e7672'); p.rect(0, 8, 16, 1, '#8a928e');
+      for (const x of [1, 6, 11]) p.rect(x, 3, 1, 5, '#4a504e');
+      p.rect(0, 3, 16, 1, '#5a605e');
+      return true;
+    case '♠': // grimy superstructure with a porthole glowing ghost-green
+      p.rect(0, 0, 16, 16, '#7a827e'); p.rect(0, 14, 16, 2, '#4a5050');
+      p.rect(3, 11, 1, 3, '#7a5238'); p.rect(12, 10, 1, 4, '#7a5238');
+      p.ell(8, 7, 3.5, 3.5, '#3a4040'); p.ell(8, 7, 2.5, 2.5, anim ? '#5ae0a0' : '#3a9a70'); p.set(7, 6, '#c8ffe0');
+      return true;
+    case '♢': // gangway opening in the hull (walkable)
+      p.rect(0, 0, 16, 16, '#7a827e'); p.rect(3, 2, 10, 14, '#141a1e'); p.rect(3, 2, 10, 1, '#4a5050');
+      p.rect(5, 12, 6, 4, '#6a4a2a'); p.ell(8, 7, 2, 2, anim ? '#3a9a70' : '#2a6a50');
+      return true;
+    case '♦': // rusted hull above the waterline
+      p.rect(0, 0, 16, 16, '#4a9ee6'); p.rect(0, 0, 16, 12, '#2a2a34'); p.rect(0, 0, 16, 2, '#c8c8c0');
+      p.rect(0, 9, 16, 2, '#5a2226'); p.rect(4, 2, 1, 5, '#6a4030'); p.rect(11, 3, 1, 6, '#6a4030');
+      for (let x = 0; x < 16; x += 5) p.set(x + anim, 13, '#a6d8fa');
+      return true;
+    case '♤': case '♧': { // bow (left) / stern (right)
+      WATER(p);
+      const L = ch === '♤';
+      p.tri(L ? 16 : 0, 0, L ? 16 : 0, 12, L ? 2 : 14, 0, '#2a2a34');
+      p.rect(L ? 6 : 0, 0, 10, 2, '#c8c8c0');
+      p.tri(L ? 16 : 0, 9, L ? 16 : 0, 11, L ? 8 : 8, 9, '#5a2226');
+      return true;
+    }
   }
   return false;
 }
