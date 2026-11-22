@@ -435,6 +435,24 @@ export class ShadePix extends Pix {
     const dark = r + g + b < 170, white = r > 232 && g > 232 && b > 232;
     return area <= 14 || ((dark || white || c === OLD_K || c === LASH) && area <= 60);
   }
+  /** Front-facing species: body width of the front view (0 = profile / not frontal). */
+  frontalWidth = 0;
+  /** Frontal back view: a shape that lies wholly inside the body (belly, muzzle, chest
+   *  patch) is on the front, so it is hidden — except wide thin bands (belts, sashes). */
+  private hiddenFront(shape: (m: Pix) => void) {
+    if (!this.back || !this.frontalWidth || this.group) return false;
+    const m = new Pix(this.w, this.h);
+    shape(m);
+    let minX = 99, maxX = -1, minY = 99, maxY = -1, n = 0;
+    for (let y = 0; y < this.h; y++) for (let x = 0; x < this.w; x++) {
+      if (m.get(x, y) === null) continue;
+      if (this.get(x, y) === null) return false; // sticks out: part of the silhouette
+      n++; minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+    }
+    if (!n) return false;
+    const band = maxX - minX + 1 >= this.frontalWidth * 0.6 && maxY - minY + 1 <= 5;
+    return !band;
+  }
   private asDetail(draw: () => void) {
     this.onlyEmpty = true;
     try { draw(); } finally { this.onlyEmpty = false; }
@@ -459,7 +477,7 @@ export class ShadePix extends Pix {
 
   ell(cx: number, cy: number, rx: number, ry: number, c: string) {
     c = this.m(c);
-    if (this.detail(c, Math.PI * rx * ry)) { this.asDetail(() => super.ell(cx, cy, rx, ry, c)); return; }
+    if (this.detail(c, Math.PI * rx * ry) || this.hiddenFront((m) => m.ell(cx, cy, rx, ry, c))) { this.asDetail(() => super.ell(cx, cy, rx, ry, c)); return; }
     if (this.group || rx * ry < 4.5 || c === OLD_K || c === WHITE || c === LASH) { super.ell(cx, cy, rx, ry, c); return; }
     const m = new Pix(this.w, this.h);
     m.ell(cx, cy, rx, ry, c);
@@ -468,7 +486,7 @@ export class ShadePix extends Pix {
 
   rect(x: number, y: number, w: number, h: number, c: string) {
     c = this.m(c);
-    if (this.detail(c, w * h)) { this.asDetail(() => super.rect(x, y, w, h, c)); return; }
+    if (this.detail(c, w * h) || this.hiddenFront((m) => m.rect(x, y, w, h, c))) { this.asDetail(() => super.rect(x, y, w, h, c)); return; }
     if (this.group || w * h <= 4 || w === 1 || h === 1 || c === OLD_K || c === WHITE || c === LASH) { super.rect(x, y, w, h, c); return; }
     const m = new Pix(this.w, this.h);
     m.rect(x, y, w, h, c);
@@ -478,7 +496,7 @@ export class ShadePix extends Pix {
   tri(ax: number, ay: number, bx: number, by: number, cx: number, cy: number, c: string) {
     c = this.m(c);
     const area = Math.abs((bx - ax) * (cy - ay) - (cx - ax) * (by - ay)) / 2;
-    if (this.detail(c, area)) { this.asDetail(() => super.tri(ax, ay, bx, by, cx, cy, c)); return; }
+    if (this.detail(c, area) || this.hiddenFront((m) => m.tri(ax, ay, bx, by, cx, cy, c))) { this.asDetail(() => super.tri(ax, ay, bx, by, cx, cy, c)); return; }
     if (this.group || area < 6 || c === OLD_K || c === WHITE || c === LASH) { super.tri(ax, ay, bx, by, cx, cy, c); return; }
     const m = new Pix(this.w, this.h);
     m.tri(ax, ay, bx, by, cx, cy, c);
@@ -591,6 +609,21 @@ const BACK_REMAP: Record<string, Record<string, string>> = {
   olppaemi: { '#2e2250': '#4a3a7a', '#7ae0ff': '#4a3a7a', '#c8b8f0': '#4a3a7a', '#ffe070': '#4a3a7a', '#f0b030': '#4a3a7a' },
 };
 
+/** Body width if the front view is roughly left-right symmetric (faces the viewer), else 0. */
+function frontalWidth(draw: (p: Pix) => void): number {
+  const p = new Pix(MON_SIZE, MON_SIZE);
+  draw(p);
+  let minX = 99, maxX = -1;
+  for (let y = 0; y < p.h; y++) for (let x = 0; x < p.w; x++) if (p.get(x, y) !== null) { minX = Math.min(minX, x); maxX = Math.max(maxX, x); }
+  if (maxX < 0) return 0;
+  let same = 0, total = 0;
+  for (let y = 0; y < p.h; y++) for (let x = minX; x <= maxX; x++) {
+    const a = p.get(x, y) !== null, b = p.get(minX + maxX - x, y) !== null;
+    if (a || b) { total++; if (a && b) same++; }
+  }
+  return same / total > 0.86 ? maxX - minX + 1 : 0;
+}
+
 /** Front (facing left) or back (facing right) v2 sprite for any species. */
 export function v2Sprite(species: string, back: boolean, draw: (p: Pix) => void): Pix {
   const hand = MON_V2[species];
@@ -599,6 +632,7 @@ export function v2Sprite(species: string, back: boolean, draw: (p: Pix) => void)
   try {
     const p = new ShadePix();
     p.back = back;
+    if (back) p.frontalWidth = frontalWidth(draw);
     if (back) p.remap = BACK_REMAP[species] ?? {};
     draw(p);
     p.finish();

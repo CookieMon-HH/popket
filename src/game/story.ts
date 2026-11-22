@@ -170,7 +170,7 @@ export async function labProfessor() {
     await fadeTo(0, 8);
     await say('한별 박사: 하하, 성격 급한 건 여전하구나.\n{name}, 몬스터를 잡을 때 쓰는 팜팜볼도 가져가렴.');
     await giveItem('ball', 5);
-    await say('한별 박사: 북쪽 1번 도로를 지나면 들꽃마을이 나온단다.\n그곳 수련관의 관장에게 도전해 보렴!');
+    await say('한별 박사: 북쪽 1번 도로를 지나면 들꽃마을이 나온단다.\n그곳 체육관의 관장에게 도전해 보렴!');
     await say('한별 박사: 지칠 땐 집에 들러 쉬거나 회복소를 찾아가렴.\nB 버튼(X 키)으로 메뉴를 열어 저장하는 것도 잊지 말고!');
     return;
   }
@@ -195,7 +195,7 @@ export async function labProfessor() {
     return;
   }
   if (!game.flags.badge1) {
-    await say('한별 박사: 북쪽으로 가면 들꽃마을이 있단다.\n수련관의 관장 단단에게 도전해 보렴!');
+    await say('한별 박사: 북쪽으로 가면 들꽃마을이 있단다.\n체육관의 관장 단단에게 도전해 보렴!');
   } else if (!game.flags.forestCleared) {
     await say('한별 박사: 속삭임숲에 검은안개단이 나타났다고?\n숲지기 할머니가 걱정이구나… 부디 조심하렴.');
   } else {
@@ -220,7 +220,7 @@ export async function chapter2Scene() {
 
 export const leader1Win = async () => {
   game.flags.badge1 = true;
-  await say('관장 단단: 이 바위배지를 받아라.\n내 수련관을 이겨 낸 증표다.');
+  await say('관장 단단: 이 바위배지를 받아라.\n내 체육관을 이겨 낸 증표다.');
   await say('{name}은(는) 관장 단단에게서 바위배지를 받았다!');
   await giveItem('superpotion', 2);
   await say('관장 단단: 요즘 북쪽에서 수상한 무리가 돌아다닌다는 소문이 있다.\n배지를 가진 트레이너라면 2번 도로를 지나갈 수 있지. 조심해라!');
@@ -287,7 +287,7 @@ export async function rival2Scene() {
   await say('은재: {name}! 숲에서 검은안개단을 쫓아냈다며? 나도 소문 들었어.');
   await say('은재: 나도 그동안 엄청 강해졌다고!\n얼마나 강해졌는지 확인해 볼래?');
   await rivalBattle(2);
-  await say('은재: 이 마을 수련관의 관장 마루 님은 물 타입의 달인이래.\n전기나 풀 기술을 준비해 두라고!');
+  await say('은재: 이 마을 체육관의 관장 마루 님은 물 타입의 달인이래.\n전기나 풀 기술을 준비해 두라고!');
   await say('은재: 그럼 다음에 또 보자!');
   await fadeTo(1, 8);
   world.refreshNPCs();
@@ -384,7 +384,7 @@ export async function rival3Scene() {
   await say('은재: {name}! 별빛동굴에서 검은안개단 두목을 이겼다며!\n정말 굉장하다… 이제 너를 따라잡기도 힘들겠어.');
   await say('은재: 하지만 세 번째 배지 앞에서 너만 앞서가게 둘 순 없지.\n진짜 실력으로 승부다!');
   await rivalBattle(3);
-  await say('은재: 별빛 수련관의 관장 하람 님은 전기 타입을 써.\n땅 타입 몬스터가 있으면 훨씬 유리할 거야!');
+  await say('은재: 별빛 체육관의 관장 하람 님은 전기 타입을 써.\n땅 타입 몬스터가 있으면 훨씬 유리할 거야!');
   await say('은재: 난 해솔 리그를 목표로 계속 수련할 거야. 거기서 다시 만나자!');
   await fadeTo(1, 8);
   world.refreshNPCs();
@@ -501,7 +501,7 @@ export async function potatoTalk() {
     return;
   }
   await say('군고구마 아저씨: 이봐, 트레이너! 글쎄 군고구마 하나가\n눈을 뜨고 꼼지락거리지 뭔가. 몬스터였어!');
-  await say('군고구마 아저씨: 수련관 배지를 가진 자네라면 잘 키워 주겠지.\n데려가 주게!');
+  await say('군고구마 아저씨: 체육관 배지를 가진 자네라면 잘 키워 주겠지.\n데려가 주게!');
   await giveMon('gungo', 10);
   game.flags.gotGungo = true;
 }
@@ -512,7 +512,7 @@ export async function potatoTalk() {
 export async function port1Scene() {
   game.flags.portIntro = true;
   await say('뱃사람: 이봐, 트레이너! 혹시 소문 들었나?\n밤마다 항구에 파란 불을 단 유령선이 나타난다네!');
-  await say('뱃사람: 그 뒤로 항구의 몬스터들이 하나둘 사라지고 있어.\n수련관 관장 달님 님이 조사하러 배에 올라가셨는데… 아직 소식이 없다네.');
+  await say('뱃사람: 그 뒤로 항구의 몬스터들이 하나둘 사라지고 있어.\n체육관 관장 달님 님이 조사하러 배에 올라가셨는데… 아직 소식이 없다네.');
   await say('뱃사람: 유령선은 남쪽 부두 끝에 묶여 있어. 부탁하네!');
 }
 
@@ -522,7 +522,7 @@ export async function dalnimShipTalk() {
     await say('관장 달님: 배 가운데에서 지휘하는 간부를 쓰러뜨려야 해요.\n저는 붙잡힌 아이들을 지킬게요. 부탁해요!');
     return;
   }
-  await say('관장 달님: 고마워요. 수련관에서 기다릴게요!');
+  await say('관장 달님: 고마워요. 체육관에서 기다릴게요!');
 }
 
 export const shipAdminWin = async () => {
@@ -535,7 +535,7 @@ export const shipAdminWin = async () => {
   world.refreshNPCs();
   await wait(10);
   await fadeTo(0, 10);
-  await say('갇혀 있던 몬스터들이 풀려났다!\n관장 달님은 수련관으로 돌아갔다.');
+  await say('갇혀 있던 몬스터들이 풀려났다!\n관장 달님은 체육관으로 돌아갔다.');
 };
 
 export const leader4Win = async () => {
@@ -716,7 +716,7 @@ export async function iceCaveScene() {
   if (allMurals()) {
     await say('관장 서리: …호수 아래 벽화를 보셨군요. 여의주가 하늘을 떠나면 북녘의 눈이\n그치지 않는다는 옛이야기예요. 설마 그 이야기가 진짜일 줄은…');
   }
-  await say('관장 서리: 아이는 제가 데려갈게요. 수련관에서 기다릴게요!');
+  await say('관장 서리: 아이는 제가 데려갈게요. 체육관에서 기다릴게요!');
   await fadeTo(1, 12);
   game.flags.iceCaveDone = true;
   world.load('town7', 12, 7, 'down');
@@ -724,7 +724,7 @@ export async function iceCaveScene() {
   await fadeTo(0, 12);
   await say('눈송이 엄마: 눈송이를 찾아 주셨군요! 정말… 정말 고마워요.\n이거, 얼마 안 되지만 받아 주세요.');
   await giveItem('fullrestore', 2);
-  await say('관장 서리가 수련관으로 돌아갔다.\n이제 서리 수련관에 도전할 수 있다!');
+  await say('관장 서리가 체육관으로 돌아갔다.\n이제 서리 체육관에 도전할 수 있다!');
 }
 
 export const leader6Win = async () => {
@@ -761,11 +761,11 @@ export async function elderTalk() {
     game.flags.pearlReturned = true;
     await say('촌장: 이 은혜를 어찌 갚을꼬… 그래, 사당 연못에서 깨어난 이 아이를 데려가게.\n천룡님과 함께 북쪽 바다를 지킨다는 현무의 새끼라네.');
     await giveMon('hyeonmuk', 38);
-    await say('촌장: 수련관의 용하도 이제 돌아올 걸세. 마음껏 겨뤄 보게나!');
+    await say('촌장: 체육관의 용하도 이제 돌아올 걸세. 마음껏 겨뤄 보게나!');
     return;
   }
   await say('촌장: 여의주를 훔쳐 간 자들은 마을 북쪽의 용의 둥지로 들어갔다네.\n먹구름이라 불리는 자가 우두머리라고 하더군…');
-  await say('촌장: 수련관 관장 용하도 녀석들을 쫓아 둥지로 들어갔네. 부디 도와주게!');
+  await say('촌장: 체육관 관장 용하도 녀석들을 쫓아 둥지로 들어갔네. 부디 도와주게!');
 }
 
 export async function denEntranceScene() {
@@ -790,7 +790,7 @@ export const cloudWin = async () => {
   await fadeTo(0, 12);
   await say('{name}은(는) 여의주를 되찾았다!\n흑영은 먹구름과 잔당들을 데리고 떠났다.');
   await giveItem('pearl');
-  await say('관장 용하: 고맙다, 트레이너. 덕분에 여의주를 되찾았군.\n촌장님께 여의주를 돌려 드린 뒤, 수련관으로 와라. 제대로 겨뤄 보자!');
+  await say('관장 용하: 고맙다, 트레이너. 덕분에 여의주를 되찾았군.\n촌장님께 여의주를 돌려 드린 뒤, 체육관으로 와라. 제대로 겨뤄 보자!');
 };
 
 export const leader7Win = async () => {
@@ -802,7 +802,7 @@ export const leader7Win = async () => {
 };
 
 // ---------------------------------------------------------------------------
-// 수련관 퍼즐
+// 체육관 퍼즐
 
 /** A lever that opens something once. */
 export function lever(flag: string, text: string) {

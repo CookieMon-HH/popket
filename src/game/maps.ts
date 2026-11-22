@@ -350,7 +350,7 @@ const route1: MapDef = {
   npcs: [
     {
       id: 'r1tip', x: 11, y: 4, dir: 'down', pal: PAL.man, move: 'look',
-      talk: '들꽃마을 수련관의 관장은 바위 타입을 쓴다더군.\n바위 타입은 물과 풀, 땅 기술에 약하지!',
+      talk: '들꽃마을 체육관의 관장은 바위 타입을 쓴다더군.\n바위 타입은 물과 풀, 땅 기술에 약하지!',
     },
     {
       id: 'r1minsu', x: 4, y: 9, dir: 'right', pal: PAL.bugkid, sight: 4,
@@ -380,7 +380,7 @@ const route1: MapDef = {
       trainer: {
         id: 'r1kid', cls: '반바지소년', name: '현우', pal: PAL.kid, team: [['tosil', 4], ['jjaek', 5]], reward: 100,
         intro: '반바지는 사계절 내내 입어야 제맛이지! 승부다!', defeat: '으, 다리가 시려…',
-        after: '들꽃마을 수련관에도 수련생들이 잔뜩 있대. 미리 연습해 둬!',
+        after: '들꽃마을 체육관에도 수련생들이 잔뜩 있대. 미리 연습해 둬!',
       },
     },
     {
@@ -434,7 +434,7 @@ const town2: MapDef = {
     { x: 19, y: 10, to: 'shop', tx: 4, ty: 6, dir: 'up' },
     { x: 21, y: 0, to: 'route2', tx: 9, ty: 26, dir: 'up' },
   ],
-  labels: [ { x: 3, y: 3.2, text: '온실', color: '#e0fff4', ink: '#2a7a5a' }, { x: 30, y: 3.2, text: '꽃집', color: '#ffe8f0', ink: '#b03a6a' }, { x: 23, y: 18.1, text: '꽃 광장', color: '#fff6d8', ink: '#8a6a20' },{ x: 12, y: 8.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 19, y: 8.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 14, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
+  labels: [ { x: 3, y: 3.2, text: '온실', color: '#e0fff4', ink: '#2a7a5a' }, { x: 30, y: 3.2, text: '꽃집', color: '#ffe8f0', ink: '#b03a6a' }, { x: 23, y: 18.1, text: '꽃 광장', color: '#fff6d8', ink: '#8a6a20' },{ x: 12, y: 8.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 19, y: 8.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 14, y: 4.1, text: '체육관', color: '#e8e0ff', ink: '#4a3a8a' }],
   signs: [{ x: 22, y: 12, text: '들꽃마을\n바람에 꽃향기가 실려 오는 마을  ·  북쪽: 2번 도로' }],
   npcs: [
     { id: 't2beekeeper', x: 4, y: 15, dir: 'up', pal: PAL.hiker, move: 'look', talk: '양봉가: 이 벌통엔 붕붕이들이 살아. 꿀단지벌로 자라면\n꿀을 한가득 모아 온다니까!' },
@@ -443,7 +443,7 @@ const town2: MapDef = {
     { id: 't2foxgirl', x: 20, y: 15, dir: 'down', pal: PAL.girl, move: 'look', talk: () => foxGirl() },
     {
       id: 't2kid', x: 18, y: 13, dir: 'down', pal: PAL.kid, move: 'wander',
-      talk: '파란 지붕은 회복소, 노란 지붕은 상점이야!\n보라색 지붕은 수련관이고.',
+      talk: '파란 지붕은 회복소, 노란 지붕은 상점이야!\n보라색 지붕은 체육관이고.',
     },
     {
       id: 't2lady', x: 23, y: 7, dir: 'down', pal: PAL.lady, move: 'look',
@@ -451,23 +451,23 @@ const town2: MapDef = {
     },
     {
       id: 't2old', x: 12, y: 15, dir: 'right', pal: PAL.oldman,
-      talk: '수련관 관장 단단은 바위처럼 흔들림이 없지.\n관장의 바위갑옷은 방어가 아주 높다네. 꾹 버텨야 해!',
+      talk: '체육관 관장 단단은 바위처럼 흔들림이 없지.\n관장의 바위갑옷은 방어가 아주 높다네. 꾹 버텨야 해!',
     },
     { id: 't2potato', x: 24, y: 14, dir: 'left', pal: PAL.hiker, talk: () => potatoTalk() },
     { id: 'rival_t2', x: 16, y: 9, dir: 'left', pal: PAL.rival, hidden: () => !f('badge1') || f('ch2') },
   ],
   triggers: [
-    { x: 21, y: 4, when: () => !f('badge1'), run: pushBack(['북쪽은 2번 도로다. 길목에 안내문이 붙어 있다.', '「이 앞은 야생 몬스터가 강합니다.\n수련관 배지를 가진 트레이너만 지나가 주세요.」'], 'down') },
+    { x: 21, y: 4, when: () => !f('badge1'), run: pushBack(['북쪽은 2번 도로다. 길목에 안내문이 붙어 있다.', '「이 앞은 야생 몬스터가 강합니다.\n체육관 배지를 가진 트레이너만 지나가 주세요.」'], 'down') },
     { x: 14, y: 8, when: () => f('badge1') && !f('ch2'), run: chapter2Scene },
     { x: 14, y: 9, when: () => f('badge1') && !f('ch2'), run: chapter2Scene },
   ],
 };
 
 const center = makeCenter('center', '들꽃마을 회복소', 'town2', 11, 11, '오른쪽 PC로 몬스터를 맡기거나 찾을 수 있어.\n동료는 여섯 마리까지만 데리고 다닐 수 있거든.');
-const shop = makeShop('shop', '들꽃마을 상점', 'town2', 19, 11, '수련관에 가기 전에 회복약을 넉넉히 사 두는 게 좋아요.');
+const shop = makeShop('shop', '들꽃마을 상점', 'town2', 19, 11, '체육관에 가기 전에 회복약을 넉넉히 사 두는 게 좋아요.');
 
 const dojo: MapDef = {
-  id: 'dojo', name: '들꽃 수련관', indoor: true,
+  id: 'dojo', name: '들꽃 체육관', indoor: true,
   tiles: [
     'XXXXXXXXXXXX',
     'XroooooooorX',
@@ -499,13 +499,13 @@ const dojo: MapDef = {
       id: 'pupil2', x: 10, y: 5, dir: 'left', pal: PAL.pupil, sight: 3,
       trainer: {
         id: 'seoyeon', cls: '수련생', name: '서연', pal: PAL.pupil, team: [['jjaek', 6], ['doldol', 7]], reward: 280,
-        intro: '수련관에서는 기합이 생명이야! 이얍!', defeat: '기합이 모자랐나…',
+        intro: '체육관에서는 기합이 생명이야! 이얍!', defeat: '기합이 모자랐나…',
         after: '돌돌이는 몸을 웅크리면 방어가 더 올라가. 빨리 쓰러뜨리는 게 좋아!',
       },
     },
     { id: 'dojorock1', x: 3, y: 5, dir: 'down', boulder: true, talk: '커다란 바위다. 밀어서 움직일 수 있을 것 같다.' },
     { id: 'dojorock2', x: 6, y: 4, dir: 'down', boulder: true, talk: '커다란 바위다. 밀어서 움직일 수 있을 것 같다.' },
-    { id: 'dojohint', x: 9, y: 9, dir: 'left', pal: PAL.pupil, talk: '수련생: 이 수련관에서는 바위를 밀어서 길을 열어야 해!\n잘못 밀어서 막혔다면 밖에 나갔다 들어오면 바위가 제자리로 돌아와.' },
+    { id: 'dojohint', x: 9, y: 9, dir: 'left', pal: PAL.pupil, talk: '수련생: 이 체육관에서는 바위를 밀어서 길을 열어야 해!\n잘못 밀어서 막혔다면 밖에 나갔다 들어오면 바위가 제자리로 돌아와.' },
     {
       id: 'pupil3', x: 2, y: 2, dir: 'right', pal: PAL.pupil, sight: 3,
       trainer: {
@@ -518,7 +518,7 @@ const dojo: MapDef = {
       id: 'leader', x: 5, y: 1, dir: 'down', pal: PAL.leader,
       trainer: {
         id: 'leader1', cls: '관장', name: '단단', pal: PAL.leader, team: [['doldol', 8], ['bawi', 10]], reward: 1200,
-        intro: '수련관에 잘 왔다! 나는 관장 단단.\n바위처럼 흔들리지 않는 마음으로 수련하고 있지.\n자, 네 실력을 보여 봐라!',
+        intro: '체육관에 잘 왔다! 나는 관장 단단.\n바위처럼 흔들리지 않는 마음으로 수련하고 있지.\n자, 네 실력을 보여 봐라!',
         defeat: '훌륭하다…! 바위를 깎아 내는 물방울 같은 끈기였다.',
         after: '북쪽 2번 도로 너머엔 더 넓은 세상이 있다.\n흔들리지 말고 나아가라!',
         afterWin: leader1Win,
@@ -765,7 +765,7 @@ const town3: MapDef = {
     { x: 20, y: 10, to: 'shop3', tx: 4, ty: 6, dir: 'up' },
     { x: 35, y: 11, to: 'route3', tx: 1, ty: 6, dir: 'right' },
   ],
-  labels: [ { x: 32, y: 1.2, text: '어부의 집', color: '#e0f4ff', ink: '#2a5a8a' }, { x: 2.5, y: 2.2, text: '안개 찻집', color: '#e8fff4', ink: '#2a6a5a' },{ x: 12, y: 8.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 20, y: 8.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 15, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }],
+  labels: [ { x: 32, y: 1.2, text: '어부의 집', color: '#e0f4ff', ink: '#2a5a8a' }, { x: 2.5, y: 2.2, text: '안개 찻집', color: '#e8fff4', ink: '#2a6a5a' },{ x: 12, y: 8.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 20, y: 8.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' }, { x: 15, y: 4.1, text: '체육관', color: '#e8e0ff', ink: '#4a3a8a' }],
   signs: [{ x: 24, y: 12, text: '물안개마을\n새벽마다 호수에 안개가 피어오르는 마을\n동쪽: 3번 도로  ·  서쪽: 솜사탕언덕' }],
   encounters: { rate: 0.1, table: [['pojani', 9, 11, 25], ['jinheuk', 9, 11, 20], ['baramsae', 10, 12, 20], ['dalto', 9, 11, 18], ['kkwae', 9, 11, 17], ['mongmong', 9, 11, 12], ['dukeop', 9, 11, 18]] },
   fishing: [['banjjak', 8, 12, 55], ['munu', 8, 11, 25], ['mulgwi', 9, 12, 12], ['eungeo', 15, 17, 8]],
@@ -775,11 +775,11 @@ const town3: MapDef = {
     { id: 'fisher', x: 22, y: 7, dir: 'right', pal: PAL.fisher, talk: () => fisherTalk() },
     {
       id: 't3guard', x: 27, y: 11, dir: 'left', pal: PAL.guard, hidden: () => f('badge2'),
-      talk: '경비: 동쪽 3번 도로는 지금 위험해. 검은안개단이 들락거리거든.\n수련관 관장 마루 님께 인정받은 트레이너만 보내 줄 수 있어.',
+      talk: '경비: 동쪽 3번 도로는 지금 위험해. 검은안개단이 들락거리거든.\n체육관 관장 마루 님께 인정받은 트레이너만 보내 줄 수 있어.',
     },
     {
       id: 't3kid', x: 13, y: 16, dir: 'up', pal: PAL.kid, move: 'wander',
-      talk: '물안개 수련관은 안에 물웅덩이가 가득해!\n나무 다리를 따라가야 관장님한테 갈 수 있어.',
+      talk: '물안개 체육관은 안에 물웅덩이가 가득해!\n나무 다리를 따라가야 관장님한테 갈 수 있어.',
     },
     {
       id: 't3old', x: 10, y: 12, dir: 'down', pal: PAL.oldman, move: 'look',
@@ -794,7 +794,7 @@ const center3 = makeCenter('center3', '물안개마을 회복소', 'town3', 11, 
 const shop3 = makeShop('shop3', '물안개마을 상점', 'town3', 20, 11, '물가에서는 낚싯대로 물속 몬스터를 낚을 수 있대요.');
 
 const gym2: MapDef = {
-  id: 'gym2', name: '물안개 수련관', indoor: true,
+  id: 'gym2', name: '물안개 체육관', indoor: true,
   tiles: [
     'XXXXXXXXXXXX',
     'X~~ooooo~~~X',
@@ -839,7 +839,7 @@ const gym2: MapDef = {
       id: 'maru', x: 5, y: 1, dir: 'down', pal: PAL.maru,
       trainer: {
         id: 'leader2', cls: '관장', name: '마루', pal: PAL.maru, team: [['banjjak', 15], ['mulbora', 16], ['eungeo', 18]], reward: 1900,
-        intro: '물안개 수련관에 온 걸 환영해! 나는 관장 마루.\n물은 막으면 돌아가고, 고이면 깊어지지.\n네 몬스터들이 얼마나 깊은지 보여 줘!',
+        intro: '물안개 체육관에 온 걸 환영해! 나는 관장 마루.\n물은 막으면 돌아가고, 고이면 깊어지지.\n네 몬스터들이 얼마나 깊은지 보여 줘!',
         defeat: '흐르는 물을 멈추게 하다니… 대단해!',
         after: '검은안개단은 별빛동굴에 있어. 부디 조심해.',
         afterWin: leader2Win,
@@ -1017,8 +1017,8 @@ const town4: MapDef = {
     { x: 23, y: 6, to: 'antique', tx: 4, ty: 6, dir: 'up' },
     { x: 35, y: 14, to: 'route4', tx: 1, ty: 2, dir: 'right' },
   ],
-  labels: [ { x: 3, y: 1.2, text: '천문대', color: '#e0e8ff', ink: '#2a3a7a' }, { x: 31, y: 2.2, text: '트레이너 학원', color: '#e0e8ff', ink: '#2a3a7a' }, { x: 3, y: 7.2, text: '별빛 아파트', color: '#e0e8ff', ink: '#2a3a7a' }, { x: 23.5, y: 18.1, text: '별빛 광장', color: '#fff6c8', ink: '#6a5a20' },{ x: 11, y: 8.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 18, y: 8.1, text: '백화점', color: '#fff2c8', ink: '#8a5a10' }, { x: 13, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' }, { x: 23, y: 4.1, text: '골동품 가게', color: '#f4e8d8', ink: '#6a4a2a' }],
-  signs: [{ x: 23, y: 12, text: '별빛시\n밤에도 별처럼 불빛이 반짝이는 도시  ·  별빛 수련관' }],
+  labels: [ { x: 3, y: 1.2, text: '천문대', color: '#e0e8ff', ink: '#2a3a7a' }, { x: 31, y: 2.2, text: '트레이너 학원', color: '#e0e8ff', ink: '#2a3a7a' }, { x: 3, y: 7.2, text: '별빛 아파트', color: '#e0e8ff', ink: '#2a3a7a' }, { x: 23.5, y: 18.1, text: '별빛 광장', color: '#fff6c8', ink: '#6a5a20' },{ x: 11, y: 8.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' }, { x: 18, y: 8.1, text: '백화점', color: '#fff2c8', ink: '#8a5a10' }, { x: 13, y: 4.1, text: '체육관', color: '#e8e0ff', ink: '#4a3a8a' }, { x: 23, y: 4.1, text: '골동품 가게', color: '#f4e8d8', ink: '#6a4a2a' }],
+  signs: [{ x: 23, y: 12, text: '별빛시\n밤에도 별처럼 불빛이 반짝이는 도시  ·  별빛 체육관' }],
   npcs: [
     { id: 't4busker', x: 26, y: 20, dir: 'left', pal: PAL.man, talk: '거리 악사: ♪ 별빛 광장에 밤이 오면~ 분수에 별이 잠기네~\n…박수 좀 쳐 주겠나?' },
     { id: 't4vendor', x: 30, y: 17, dir: 'up', pal: PAL.clerk, talk: '노점 상인: 별빛시 명물, 별사탕 꼬치 있어요!\n…몬스터한테 먹이면 안 돼요. 이빨 상해요.' },
@@ -1036,18 +1036,18 @@ const town4: MapDef = {
     },
     {
       id: 't4eng', x: 25, y: 13, dir: 'left', pal: PAL.engineer, move: 'look',
-      talk: '별빛 수련관 관장 하람 님은 발전소 기술자 출신이야.\n전기 타입은 땅 타입 몬스터한테 기술이 통하지 않아!',
+      talk: '별빛 체육관 관장 하람 님은 발전소 기술자 출신이야.\n전기 타입은 땅 타입 몬스터한테 기술이 통하지 않아!',
     },
     { id: 'sanji', x: 27, y: 16, dir: 'left', pal: PAL.oldman, talk: () => sanjiTalk() },
     { id: 'rival_t4', x: 17, y: 13, dir: 'down', pal: PAL.rival, hidden: () => f('rival3') },
   ],
   triggers: [
     { x: 17, y: 15, when: () => !f('rival3'), run: rival3Scene },
-    { x: 27, y: 14, when: () => !f('ending'), run: pushBack(['동쪽 4번 도로 입구다.', '경비: 이 앞은 험한 길이야.\n별빛 수련관 배지를 받으면 지나가게 해 줄게.'], 'left') },
+    { x: 27, y: 14, when: () => !f('ending'), run: pushBack(['동쪽 4번 도로 입구다.', '경비: 이 앞은 험한 길이야.\n별빛 체육관 배지를 받으면 지나가게 해 줄게.'], 'left') },
   ],
 };
 
-const center4: MapDef = makeCenter('center4', '별빛시 회복소', 'town4', 10, 11, '해솔 리그에 나가려면 배지 일곱 개가 필요하대.\n동쪽 4번 도로 너머에도 수련관이 더 있다던데?');
+const center4: MapDef = makeCenter('center4', '별빛시 회복소', 'town4', 10, 11, '해솔 리그에 나가려면 배지 일곱 개가 필요하대.\n동쪽 4번 도로 너머에도 체육관이 더 있다던데?');
 const antique: MapDef = {
   id: 'antique', name: '별빛시 골동품 가게', indoor: true,
   tiles: [
@@ -1073,7 +1073,7 @@ const antique: MapDef = {
 const shop4 = makeShop('shop4', '별빛시 백화점', 'town4', 18, 11, '상점 물건은 배지를 모을수록 점점 좋아진대요.\n관장님께 도전하기 전에 꼭 둘러보세요!');
 
 const gym3: MapDef = {
-  id: 'gym3', name: '별빛 수련관', indoor: true,
+  id: 'gym3', name: '별빛 체육관', indoor: true,
   tiles: [
     'XXXXXXXXXXXX',
     'XPooooooooPX',
@@ -1117,7 +1117,7 @@ const gym3: MapDef = {
       id: 'haram', x: 5, y: 1, dir: 'down', pal: PAL.haram,
       trainer: {
         id: 'leader3', cls: '관장', name: '하람', pal: PAL.haram, team: [['jjirit', 24], ['beonjjeok', 25], ['beongae', 25], ['noejeon', 27]], reward: 2900,
-        intro: '별빛 수련관에 온 걸 환영한다. 나는 관장 하람.\n이 도시의 불빛은 전부 내 몬스터들의 전기로 켜지지.\n너의 번뜩임을 보여 줘!',
+        intro: '별빛 체육관에 온 걸 환영한다. 나는 관장 하람.\n이 도시의 불빛은 전부 내 몬스터들의 전기로 켜지지.\n너의 번뜩임을 보여 줘!',
         defeat: '번개보다 빠른 판단… 완벽한 패배다.',
         after: '4번 도로 너머에도 강한 관장들이 기다린다. 계속 나아가라!',
         afterWin: leader3Win,
@@ -1348,7 +1348,7 @@ const town5: MapDef = {
     { x: 12, y: 9.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
     { x: 24, y: 4.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
     { x: 33, y: 4.1, text: '사파리', color: '#e0f8d0', ink: '#2a6a2a' },
-    { x: 12.5, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' },
+    { x: 12.5, y: 4.1, text: '체육관', color: '#e8e0ff', ink: '#4a3a8a' },
     { x: 23, y: 16.1, text: '유령선', color: '#d8d0f8', ink: '#3a2a6a' },
   ],
   signs: [],
@@ -1370,7 +1370,7 @@ const town5: MapDef = {
   ],
   triggers: [
     { x: 18, y: 5, when: () => !f('portIntro'), run: port1Scene },
-    { x: 8, y: 12, when: () => !f('badge4'), run: pushBack(['경비: 미안하지만 서쪽 해변길은 파도가 거세서 막아 두었어.', '수련관 관장 달님 님께 인정받으면 지나갈 수 있단다!'], 'right') },
+    { x: 8, y: 12, when: () => !f('badge4'), run: pushBack(['경비: 미안하지만 서쪽 해변길은 파도가 거세서 막아 두었어.', '체육관 관장 달님 님께 인정받으면 지나갈 수 있단다!'], 'right') },
   ],
 };
 
@@ -1841,7 +1841,7 @@ const ship_ghost: MapDef = {
 };
 
 const gym4: MapDef = {
-  id: 'gym4', name: '파도 수련관', indoor: true, dark: true,
+  id: 'gym4', name: '파도 체육관', indoor: true, dark: true,
   tiles: [
     'XXXXXXXXXXXXXX',
     'XooooooooooooX',
@@ -1875,13 +1875,13 @@ const gym4: MapDef = {
   npcs: [
     { id: 'g4crystal', x: 1, y: 5, dir: 'down', prop: moonCrystalProp, talk: () => moonCrystal() },
     { id: 'g4riddle', x: 12, y: 9, dir: 'down', prop: 'ⓡ', talk: () => moonRiddle() },
-    { id: 'g4note', x: 9, y: 10, dir: 'left', pal: PAL.pupil, hidden: () => f('shipDone'), talk: '수련생: 관장님은 항구의 유령선을 조사하러 가셨어요.\n이 수련관은 어둠 속 순간이동 발판을 찾아 관장님께 가야 해요.' },
+    { id: 'g4note', x: 9, y: 10, dir: 'left', pal: PAL.pupil, hidden: () => f('shipDone'), talk: '수련생: 관장님은 항구의 유령선을 조사하러 가셨어요.\n이 체육관은 어둠 속 순간이동 발판을 찾아 관장님께 가야 해요.' },
     { id: 'g4medium1', x: 5, y: 5, dir: 'down', pal: PAL2.medium, sight: 2, hidden: () => !f('shipDone'), trainer: tr('g4m1', '무녀', '은하', PAL2.medium, [['haegol', 31], ['dokkae', 32]], 1200, '어둠 속에서 무엇이 보이나요…?', '당신 뒤에서 빛이 보여요.', '관장님의 고스트 몬스터에겐 노말 기술이 통하지 않아요.') },
     { id: 'g4medium2', x: 12, y: 5, dir: 'left', pal: PAL2.medium, sight: 4, hidden: () => !f('shipDone'), trainer: tr('g4m2', '무녀', '새벽', PAL2.medium, [['mulgwi', 31], ['jeolgu', 31]], 1200, '달빛이 당신을 시험할 거예요.', '달빛이 당신 편이군요.', '관장님은 악 타입 기술을 조심하신대요.') },
     {
       id: 'dalnim', x: 6, y: 1, dir: 'down', pal: PAL.dalnim, hidden: () => !f('shipDone'),
       trainer: tr('leader4', '관장', '달님', PAL.dalnim, [['cheongsa', 31], ['meokmul', 32], ['wolgung', 32], ['dokdae', 34]], 3500,
-        '유령선에서는 정말 고마웠어요. 저는 파도 수련관의 관장 달님.\n하지만 승부는 승부예요. 달빛 아래 그림자를 보여 드릴게요!',
+        '유령선에서는 정말 고마웠어요. 저는 파도 체육관의 관장 달님.\n하지만 승부는 승부예요. 달빛 아래 그림자를 보여 드릴게요!',
         '당신의 빛이 제 그림자를 모두 비췄네요…', '흑영은 불꽃산에 있어요. 부디 조심하세요.', leader4Win),
     },
   ],
@@ -2072,7 +2072,7 @@ const town6: MapDef = {
   labels: [ { x: 3, y: 2.2, text: '대장간', color: '#ffe0d0', ink: '#8a2a1a' }, { x: 31, y: 1.2, text: '온천장', color: '#ffe0d0', ink: '#8a2a1a' }, { x: 31.5, y: 9.1, text: '노천 온천', color: '#d8f0ff', ink: '#2a5a8a' },
     { x: 12, y: 9.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
     { x: 24, y: 4.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
-    { x: 12.5, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' },
+    { x: 12.5, y: 4.1, text: '체육관', color: '#e8e0ff', ink: '#4a3a8a' },
     { x: 22, y: 9.6, text: '온천', color: '#d8f0ff', ink: '#2a5a8a' },
   ],
   signs: [],
@@ -2087,7 +2087,7 @@ const town6: MapDef = {
     } },
   ],
   triggers: [
-    { x: 27, y: 6, when: () => !f('badge5'), run: pushBack(['소방관: 잠깐! 화산 입구는 출입 금지야.', '수련관 관장 화련 님께 먼저 가 봐!'], 'left') },
+    { x: 27, y: 6, when: () => !f('badge5'), run: pushBack(['소방관: 잠깐! 화산 입구는 출입 금지야.', '체육관 관장 화련 님께 먼저 가 봐!'], 'left') },
     { x: 8, y: 15, when: () => !f('volcanoDone'), run: pushBack(['서쪽 6번 도로 입구다.', '화산이 계속 흔들려서 길이 위험해 보인다…\n먼저 화산의 소동을 해결해야 할 것 같다.'], 'right') },
   ],
 };
@@ -2096,7 +2096,7 @@ const center6 = makeCenter('center6', '불꽃마을 회복소', 'town6', 11, 12,
 const shop6 = makeShop('shop6', '불꽃마을 상점', 'town6', 23, 7, '화산에 들어간다면 만능회복약을 꼭 챙기세요!');
 
 const gym5: MapDef = {
-  id: 'gym5', name: '불꽃 수련관', indoor: true,
+  id: 'gym5', name: '불꽃 체육관', indoor: true,
   tiles: [
     'XXXXXXXXXXXX',
     'XLooooooooLX',
@@ -2121,7 +2121,7 @@ const gym5: MapDef = {
     {
       id: 'hwaryeon', x: 5, y: 1, dir: 'down', pal: PAL.hwaryeon, hidden: () => f('champion'),
       trainer: tr('leader5', '관장', '화련', PAL.hwaryeon, [['jangjak', 36], ['hwaro', 36], ['seolpyo', 36], ['hwasan', 39]], 4000,
-        '불꽃 수련관에 온 걸 환영해! 나는 관장 화련.\n이 마을은 화산과 함께 살아왔지. 그 뜨거운 마음을 보여 줄게!',
+        '불꽃 체육관에 온 걸 환영해! 나는 관장 화련.\n이 마을은 화산과 함께 살아왔지. 그 뜨거운 마음을 보여 줄게!',
         '하하, 내 불꽃이 완전히 꺼졌네!', '화산이 요즘 이상해… 부탁할게.', leader5Win),
     },
     { id: 'hwaryeon_post', x: 5, y: 1, dir: 'down', pal: PAL.hwaryeon, hidden: () => !f('champion'), talk: () => hwaryeonPost() },
@@ -2289,7 +2289,7 @@ const league: MapDef = {
 };
 
 // ---------------------------------------------------------------------------
-// 제6장 — 서리마을 · 서리 수련관(얼음 미끄럼 퍼즐)
+// 제6장 — 서리마을 · 서리 체육관(얼음 미끄럼 퍼즐)
 
 const icecave_deep: MapDef = {
   id: 'icecave_deep', name: '얼음굴 — 얼어붙은 호수', dark: true, ambience: 'icecave', edge: 'C',
@@ -2366,7 +2366,7 @@ const town7: MapDef = {
     { x: 12, y: 9.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
     { x: 22, y: 4.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
     { x: 26, y: 1.2, text: '얼음굴', color: '#e0f4ff', ink: '#2a5a8a' },
-    { x: 12.5, y: 4.1, text: '수련관', color: '#e8e0ff', ink: '#4a3a8a' },
+    { x: 12.5, y: 4.1, text: '체육관', color: '#e8e0ff', ink: '#4a3a8a' },
   ],
   signs: [{ x: 14, y: 14, text: '서리마을\n일 년 내내 눈이 내리는 마을  ·  서쪽: 설원 산길' }],
   encounters: { rate: 0.1, tiles: 'j', table: [['agibuk', 32, 34, 40], ['nunnyang', 32, 34, 30], ['agipeng', 32, 34, 30]] },
@@ -2374,7 +2374,7 @@ const town7: MapDef = {
     { id: 't7igloo', x: 3, y: 14, dir: 'down', pal: PAL.oldman, move: 'look', talk: '이글루 할아버지: 옛날엔 서리마을 사람들 모두 이글루에서 살았지.\n얼음집이 생각보다 훨씬 따뜻하다네.' },
     { id: 't7skater', x: 28, y: 19, dir: 'right', pal: PAL.skier, move: 'look', talk: '스케이트장에선 한 방향으로 쭉 미끄러져!\n눈밭 가장자리에 닿아야 멈춘다고.' },
     { id: 't7old', x: 18, y: 13, dir: 'down', pal: PAL.oldman, move: 'look', talk: '이렇게 지독한 눈보라는 처음일세.\n용의 마을의 여의주가 하늘을 다스린다는 옛말이 있는데… 무슨 일이 있는 게야.' },
-    { id: 't7kid', x: 24, y: 15, dir: 'left', pal: PAL.kid, move: 'wander', talk: '마을 연못은 꽁꽁 얼어서 미끄럼을 탈 수 있어! 수련관 바닥도 다 얼음이래!' },
+    { id: 't7kid', x: 24, y: 15, dir: 'left', pal: PAL.kid, move: 'wander', talk: '마을 연못은 꽁꽁 얼어서 미끄럼을 탈 수 있어! 체육관 바닥도 다 얼음이래!' },
     { id: 'rival_t7', x: 22, y: 13, dir: 'down', pal: PAL.rival, hidden: () => f('iceIntro') },
     { id: 't7mom', x: 15, y: 7, dir: 'down', pal: PAL.lady, move: 'look', talk: async () => {
       if (f('champion')) await snowMomPost();
@@ -2383,17 +2383,17 @@ const town7: MapDef = {
     } },
   ],
   triggers: [
-    { x: 12, y: 7, when: () => f('iceIntro') && !f('iceCaveDone') && !f('badge6'), run: pushBack(['수련관 문에 쪽지가 붙어 있다.', '「관장 서리는 얼음굴에 들어간 아이를 찾으러 갔습니다.」'], 'down') },
+    { x: 12, y: 7, when: () => f('iceIntro') && !f('iceCaveDone') && !f('badge6'), run: pushBack(['체육관 문에 쪽지가 붙어 있다.', '「관장 서리는 얼음굴에 들어간 아이를 찾으러 갔습니다.」'], 'down') },
     { x: 26, y: 11, when: () => !f('iceIntro'), run: iceIntroScene },
-    { x: 8, y: 11, when: () => !f('badge6'), run: pushBack(['서쪽 설원 산길은 눈보라가 너무 심하다…', '마을 사람: 수련관 관장 서리 님께 인정받으면 길을 안내해 줄 거야.'], 'right') },
+    { x: 8, y: 11, when: () => !f('badge6'), run: pushBack(['서쪽 설원 산길은 눈보라가 너무 심하다…', '마을 사람: 체육관 관장 서리 님께 인정받으면 길을 안내해 줄 거야.'], 'right') },
   ],
 };
 
-const center8 = makeCenter('center8', '서리마을 회복소', 'town7', 11, 12, '얼음 타입은 불·격투·바위·강철 기술에 약해.\n수련관 바닥은 얼음이라 미끄러우니 조심해!');
+const center8 = makeCenter('center8', '서리마을 회복소', 'town7', 11, 12, '얼음 타입은 불·격투·바위·강철 기술에 약해.\n체육관 바닥은 얼음이라 미끄러우니 조심해!');
 const shop8 = makeShop('shop8', '서리마을 상점', 'town7', 21, 7, '따뜻한 핫초코는 안 팔지만, 회복약은 넉넉하답니다!');
 
 const gym6: MapDef = {
-  id: 'gym6', name: '서리 수련관', indoor: true,
+  id: 'gym6', name: '서리 체육관', indoor: true,
   tiles: [
     'XXXXXXXXXXXXX',
     'XiiiiioooiiiX',
@@ -2413,18 +2413,18 @@ const gym6: MapDef = {
     { x: 7, y: 11, to: 'town7', tx: 12, ty: 7, dir: 'down' },
   ],
   npcs: [
-    { id: 'g6ski1', x: 1, y: 10, dir: 'right', pal: PAL.skier, trainer: tr('g6s1', '스키어', '설아', PAL.skier, [['nunnyang', 40], ['eolpeng', 40]], 1800, '얼음 위에서는 멈추고 싶은 곳에서 멈출 수 없어. 그게 이 수련관의 시험이지!', '미끄러졌다…', '바위에 부딪혀야 멈출 수 있어. 어디서 멈출지 잘 생각해 봐!') },
+    { id: 'g6ski1', x: 1, y: 10, dir: 'right', pal: PAL.skier, trainer: tr('g6s1', '스키어', '설아', PAL.skier, [['nunnyang', 40], ['eolpeng', 40]], 1800, '얼음 위에서는 멈추고 싶은 곳에서 멈출 수 없어. 그게 이 체육관의 시험이지!', '미끄러졌다…', '바위에 부딪혀야 멈출 수 있어. 어디서 멈출지 잘 생각해 봐!') },
     { id: 'g6ski2', x: 11, y: 10, dir: 'left', pal: PAL.skier, trainer: tr('g6s2', '스키어', '한겨울', PAL.skier, [['agibuk', 40], ['wangbingsu', 41]], 1800, '관장님께 가는 길은 얼음판 너머야!', '쌩하고 졌네…', '힌트? 오른쪽 벽을 따라가 봐.') },
     {
       id: 'seori', x: 7, y: 1, dir: 'down', pal: PAL.seori, hidden: () => !f('iceCaveDone') && !f('badge6'),
       trainer: tr('leader6', '관장', '서리', PAL.seori, [['eolpeng', 43], ['seolpyo', 44], ['wangbingsu', 44], ['bingsan', 47]], 4400,
-        '얼음판을 건너왔군요. 저는 서리 수련관의 관장 서리.\n차갑지만 투명한 얼음처럼, 거짓 없는 승부를 해요!',
+        '얼음판을 건너왔군요. 저는 서리 체육관의 관장 서리.\n차갑지만 투명한 얼음처럼, 거짓 없는 승부를 해요!',
         '얼음이 녹듯… 졌네요.', '눈보라의 원인은 용의 마을에 있어요.', leader6Win),
     },
   ],
 };
 
-/** 서리마을 북쪽 얼음굴 — 서리 수련관에 가기 전의 이야기. 미끄러운 얼음판을 건너야 한다. */
+/** 서리마을 북쪽 얼음굴 — 서리 체육관에 가기 전의 이야기. 미끄러운 얼음판을 건너야 한다. */
 const icecave: MapDef = {
   id: 'icecave', name: '얼음굴', dark: true, ambience: 'icecave',
   tiles: [
@@ -2462,7 +2462,7 @@ const icecave: MapDef = {
 };
 
 // ---------------------------------------------------------------------------
-// 제7장 — 7번 도로 설원 산길 · 용의 마을 · 용의 둥지 · 용의 수련관(퀴즈)
+// 제7장 — 7번 도로 설원 산길 · 용의 마을 · 용의 둥지 · 용의 체육관(퀴즈)
 
 const route7: MapDef = {
   id: 'route7', name: '7번 도로 설원 산길', ambience: northWeather, edge: 'h',
@@ -2570,7 +2570,7 @@ const town8: MapDef = {
   labels: [ { x: 34, y: 2.2, text: '공예방', color: '#f4f0e0', ink: '#4a3a2a' }, { x: 3, y: 15.2, text: '서당', color: '#f4f0e0', ink: '#4a3a2a' }, { x: 3, y: 2.3, text: '정자', color: '#f4f0e0', ink: '#4a3a2a' },
     { x: 12, y: 9.1, text: '회복소', color: '#ffe0ea', ink: '#c83a6a' },
     { x: 24, y: 4.1, text: '상점', color: '#fff2c8', ink: '#8a5a10' },
-    { x: 12.5, y: 4.1, text: '용의 수련관', color: '#e8e0ff', ink: '#4a3a8a' },
+    { x: 12.5, y: 4.1, text: '용의 체육관', color: '#e8e0ff', ink: '#4a3a8a' },
     { x: 28.5, y: 9.2, text: '사당', color: '#fff2a8', ink: '#7a5a10' },
   ],
   signs: [],
@@ -2581,7 +2581,7 @@ const town8: MapDef = {
     { id: 't8jar', x: 33, y: 7, dir: 'down', pal: PAL.granny, move: 'look', talk: '장독대 항아리마다 된장, 간장, 고추장이 익어 간다오.\n용의 마을 장맛은 해솔 지방에서 제일이지.' },
     { id: 't8kid', x: 19, y: 18, dir: 'down', pal: PAL.kid, move: 'wander', talk: '징검다리 건너는 거 무섭지 않아! 꼬마룡이랑 같이 건너면 하나도 안 무서워.' },
     { id: 'elder', x: 27, y: 10, dir: 'right', pal: PAL.elder, talk: () => elderTalk() },
-    { id: 't8lady', x: 15, y: 14, dir: 'right', pal: PAL.lady, move: 'wander', talk: '용의 마을 아이들은 꼬마룡과 함께 자란대요.\n수련관의 용 석상은 문제를 낸다던데, 타입 상성을 잘 알아야 한대요!' },
+    { id: 't8lady', x: 15, y: 14, dir: 'right', pal: PAL.lady, move: 'wander', talk: '용의 마을 아이들은 꼬마룡과 함께 자란대요.\n체육관의 용 석상은 문제를 낸다던데, 타입 상성을 잘 알아야 한대요!' },
     { id: 'heuk_t8', x: 19, y: 4, dir: 'left', pal: PAL.boss, hidden: () => !f('dragonIntro') || f('denDone'), talk: async () => {
       if (!f('heukHelp')) await denEntranceScene();
       else await say('흑영: 입구는 내가 지키겠다. 서둘러라.');
@@ -2590,7 +2590,7 @@ const town8: MapDef = {
   triggers: [
     { x: 28, y: 11, when: () => !f('dragonIntro'), run: dragonIntroScene },
     { x: 18, y: 4, when: () => f('dragonIntro') && !f('heukHelp'), run: denEntranceScene },
-    { x: 12, y: 7, when: () => !f('pearlReturned'), run: pushBack(['수련관 문에 쪽지가 붙어 있다.', '「관장 용하는 여의주를 찾으러 나갔습니다. — 수련생 일동」'], 'down') },
+    { x: 12, y: 7, when: () => !f('pearlReturned'), run: pushBack(['체육관 문에 쪽지가 붙어 있다.', '「관장 용하는 여의주를 찾으러 나갔습니다. — 수련생 일동」'], 'down') },
     { x: 8, y: 12, when: () => !f('badge7'), run: pushBack(['서쪽 8번 도로 입구다.', '마을 사람: 여의주가 없어서 서쪽 길에 먹구름이 잔뜩 끼었어.\n지금은 위험해!'], 'right') },
   ],
 };
@@ -2642,7 +2642,7 @@ const den: MapDef = {
 };
 
 const gym7: MapDef = {
-  id: 'gym7', name: '용의 수련관', indoor: true,
+  id: 'gym7', name: '용의 체육관', indoor: true,
   tiles: [
     'XXXXXXXXXXXX',
     'XroooooooorX',
@@ -2674,7 +2674,7 @@ const gym7: MapDef = {
     {
       id: 'yongha', x: 5, y: 1, dir: 'down', pal: PAL.yongha, hidden: () => !f('pearlReturned'),
       trainer: tr('leader7', '관장', '용하', PAL.yongha, [['nalgae', 48], ['eungeo', 48], ['hyeonmu', 49], ['cheonryong', 52]], 5000,
-        '용의 시험을 모두 통과했군. 나는 용의 수련관 관장 용하.\n여의주를 되찾아 준 은혜는 잊지 않겠다. 하지만 승부에서는 봐주지 않는다!',
+        '용의 시험을 모두 통과했군. 나는 용의 체육관 관장 용하.\n여의주를 되찾아 준 은혜는 잊지 않겠다. 하지만 승부에서는 봐주지 않는다!',
         '…용의 마음을 가진 트레이너로군.', '해솔고원은 8번 도로 너머다.', leader7Win),
     },
   ],
@@ -2939,7 +2939,7 @@ const house3b: MapDef = {
   npcs: [
     { id: 'h3b_owner', x: 4, y: 2, dir: 'down', pal: PAL.granny, talk: '찻집 주인: 안개가 걷힐 때까지 차 한잔 하고 가요.\n…몬스터들도 따뜻한 걸 마시면 기운이 난답니다.', },
     { id: 'h3b_guest', x: 2, y: 4, dir: 'right', pal: PAL.man, talk: '이 찻집 창문으로 보면 습지 징검다리가 안개 속에 둥둥 떠 있는 것 같아.\n그림 그리러 매일 온다네.' },
-    { id: 'h3b_guest2', x: 7, y: 4, dir: 'left', pal: PAL.swimmer, talk: '마루 관장님 수련관 바닥이 물웅덩이투성이라서\n수영 연습 삼아 매일 가요!' },
+    { id: 'h3b_guest2', x: 7, y: 4, dir: 'left', pal: PAL.swimmer, talk: '마루 관장님 체육관 바닥이 물웅덩이투성이라서\n수영 연습 삼아 매일 가요!' },
   ],
 };
 
@@ -3126,7 +3126,7 @@ const house7b: MapDef = {
   ],
   npcs: [
     { id: 'h7b_owner', x: 4, y: 1, dir: 'down', pal: PAL.lady, talk: '찻집 주인: 눈보라를 뚫고 오셨군요! 따뜻한 코코아 한 잔 드릴게요.\n…상점에선 안 판다던 핫초코, 사실 여기서 팔아요.' },
-    { id: 'h7b_skater', x: 2, y: 4, dir: 'right', pal: PAL.skier, talk: '남쪽 스케이트장은 한번 미끄러지면 멈출 수가 없어!\n가장자리 눈밭에 닿아야 서는 거, 수련관 바닥이랑 똑같지?' },
+    { id: 'h7b_skater', x: 2, y: 4, dir: 'right', pal: PAL.skier, talk: '남쪽 스케이트장은 한번 미끄러지면 멈출 수가 없어!\n가장자리 눈밭에 닿아야 서는 거, 체육관 바닥이랑 똑같지?' },
     { id: 'h7b_kid', x: 7, y: 5, dir: 'left', pal: PAL.kid, talk: '눈송이: 아기북곰이 코코아를 엄청 좋아해!\n빙산곰도 사실은 단 걸 좋아한대.' },
   ],
 };

@@ -181,8 +181,11 @@ appHooks.toTitle = () =>
 const inWorld = () => scenes.current === world && game.flags.gotStarter;
 
 // Closing the tab with unsaved progress: ask the browser to confirm.
+// (any time after the adventure has started — also mid-battle or in a menu — once more
+// than a second of play has not been saved)
 window.addEventListener('beforeunload', (e) => {
-  if (inWorld() && game.frames - runtime.savedAt > 600) {
+  const playing = game.flags.gotStarter && !(scenes.current instanceof TitleScene);
+  if (playing && game.frames - runtime.savedAt > 60) {
     e.preventDefault();
     e.returnValue = '';
   }

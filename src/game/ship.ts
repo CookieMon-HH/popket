@@ -69,7 +69,7 @@ export async function dalnimCabin() {
   if (!f('ship_dalnim')) {
     game.flags.ship_dalnim = true;
     await say('관장 달님: 누, 누구세요…! 아, 트레이너군요. 다행이다…');
-    await say('관장 달님: 저는 파도 수련관의 관장 달님이에요. 유령선 소문을 조사하러 왔다가\n검은 옷의 사람들에게 이 선실에 갇혀 버렸어요.');
+    await say('관장 달님: 저는 파도 체육관의 관장 달님이에요. 유령선 소문을 조사하러 왔다가\n검은 옷의 사람들에게 이 선실에 갇혀 버렸어요.');
     await say('관장 달님: 갑판의 도깨비불은 가짜예요. 그 사람들이 붙잡은 도깨비불에게\n억지로 불을 피우게 하고 있어요. 하지만…');
     await say('관장 달님: 이 배에는 진짜 무언가가 있어요. 밤마다 연회장에서 피아노 소리가 나고,\n선장실 쪽에서 누군가 우는 소리도 들렸어요.');
     await say('관장 달님: 지친 몬스터들은 제가 돌봐 줄게요. 조심해서 다녀오세요!');
@@ -233,7 +233,7 @@ export async function captainTalk() {
   await fadeTo(0, 16);
   await say('선장은 사라지고, 선장실에는 고요한 빛만 남았다.\n도깨비불 한 마리가 떠나지 않고 곁을 맴돈다.');
   await giveMon('dokbul', 30);
-  await say('갑판 쪽에서 관장 달님의 목소리가 들려왔다.\n「고마워요! 수련관에서 기다릴게요!」');
+  await say('갑판 쪽에서 관장 달님의 목소리가 들려왔다.\n「고마워요! 체육관에서 기다릴게요!」');
 }
 
 export async function shipExitCheck() {

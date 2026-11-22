@@ -66,7 +66,7 @@ export async function foxGirl() {
     await say('여우를 좋아하는 소녀: 우리 집 꼬리별여우가 새끼를 낳았어!\n그런데 이 아이는 자꾸 밤마다 별을 보러 나가 버려…');
     return;
   }
-  await say('여우를 좋아하는 소녀: 앗, 그 배지! 수련관에서 이긴 트레이너구나!');
+  await say('여우를 좋아하는 소녀: 앗, 그 배지! 체육관에서 이긴 트레이너구나!');
   await say('여우를 좋아하는 소녀: 이 꼬리별여우는 마을 밖 넓은 세상을 보고 싶어 해.\n너라면 맡겨도 될 것 같아. 데려가 줄래?');
   if ((await choose('꼬리별여우를 데려갈까?', ['데려간다', '나중에'])) !== 0) {
     await say('여우를 좋아하는 소녀: 그래… 마음이 바뀌면 언제든 말해 줘!');
@@ -97,7 +97,7 @@ export async function shipwright() {
 }
 
 // ---------------------------------------------------------------------------
-// 파도 수련관: the moon crystal. Every pad leads somewhere different depending on
+// 파도 체육관: the moon crystal. Every pad leads somewhere different depending on
 // the moon's phase, and only a full moon lights the way to 달님.
 
 const PHASE = ['초승달', '반달', '보름달'];
