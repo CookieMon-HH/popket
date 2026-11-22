@@ -6,6 +6,10 @@ import { RENAMED } from '../data/species';
 const TOWN_SHIFT: Record<string, [number, number]> = {
   town1: [7, 3], town2: [7, 3], town3: [7, 3], town4: [7, 3], town5: [7, 3], town6: [7, 3], town7: [7, 3], town8: [7, 3],
 };
+/** Routes were redrawn in layout 3: a save standing on one restarts at its entrance. */
+const ROUTE_START: Record<string, [number, number]> = {
+  route1: [15, 32], route2: [15, 30], route3: [1, 9], route4: [1, 3], route5: [28, 3], route6: [44, 10], route7: [38, 12], route8: [38, 9],
+};
 
 export interface GameState {
   name: string;
@@ -50,7 +54,7 @@ function fresh(name: string): GameState {
     caught: [],
     lastHeal: { map: 'home', x: 6, y: 3 },
     frames: 0,
-    townLayout: 2,
+    townLayout: 3,
   };
 }
 
@@ -116,6 +120,11 @@ export function loadGame(): boolean {
       const lh = TOWN_SHIFT[data.lastHeal?.map];
       if (lh) { data.lastHeal.x += lh[0]; data.lastHeal.y += lh[1]; }
       data.townLayout = 2;
+    }
+    if ((data.townLayout ?? 1) < 3) {
+      const rs = ROUTE_START[data.map];
+      if (rs) { data.x = rs[0]; data.y = rs[1]; }
+      data.townLayout = 3;
     }
     newGame(data.name);
     Object.assign(game, data);
